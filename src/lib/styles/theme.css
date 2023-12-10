@@ -1,0 +1,11 @@
+:root{
+    --deep-blue : #022873;
+    --dark-blue : #193DCF;
+    --light-blue : #007def;
+    --submit-blue: #007bff;
+
+    --dark-orange : #F29F05;
+    --light-orange : #F2C94C;
+    --red : rgb(175, 40, 17);
+    font-size: 16px;
+}
