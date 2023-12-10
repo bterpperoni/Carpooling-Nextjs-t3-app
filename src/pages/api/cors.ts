@@ -33,5 +33,5 @@ export default async function handler(
   await runMiddleware(req, res, cors)
 
   // Rest of the API logic
-  res.json({ message: 'Hello Everyone!' })
+  res.json({ message: 'Hello Everyone! it is useless asf' })
 }
