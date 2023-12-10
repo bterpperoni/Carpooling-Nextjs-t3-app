@@ -16,9 +16,10 @@ export const userRouter = createTRPCRouter({
     }),
 
   userList: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.db.user.findMany();
+    const userList =  ctx.db.user.findMany();
+    return userList;
   }
-  ),
+),
 
   userById: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -37,7 +38,24 @@ export const userRouter = createTRPCRouter({
       return ctx.db.user.create({
         data: {
           name: input.name,
-          email: ctx.session.user.email
+          email: ctx.session.user.email,
+          image: ctx.session.user.image,
+          // ../utils/interface.ts
+        },
+      });
+    }),
+
+  update: protectedProcedure
+    .input(z.object({ id: z.string(), name: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      // simulate a slow db call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      return ctx.db.user.update({
+        where: { id: input.id },
+        data: {
+          name: input.name,
+
         },
       });
     }),
