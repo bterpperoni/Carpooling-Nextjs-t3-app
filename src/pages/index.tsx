@@ -18,7 +18,7 @@ export default function Home() {
         <h1 className="text-6xl text-white">CARHEH</h1>
         <h2 className="text-2xl text-white">Carpooling for students from Mons</h2>
           <div className="flex flex-col items-center">
-            {!session && <Button className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20" onClick={() => void signIn()}>Sign in</Button>}
+            {!session && <Button className="mt-4 rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20" onClick={() => void signIn()}>Sign in</Button>}
             {session && (
               <>
                 <h1>Logged in as {session.user.name}</h1>

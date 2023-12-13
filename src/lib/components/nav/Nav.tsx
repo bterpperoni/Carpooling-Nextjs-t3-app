@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 
 const navigation = [
-  { name: 'Rides', href: '#', current: true },
+  { name: 'Home', href: '/', current: true },
+  { name: 'Rides', href: '#', current: false },
   { name: 'Wallet', href: '#', current: false },
   { name: 'Social', href: '#', current: false },
   { name: 'Calendar', href: '#', current: false },
@@ -99,7 +100,7 @@ export default function Nav() {
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Menu.Item>
                         {({ active }) => (
-                          <Link href={`/index/${session?.user.id}`} className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                          <Link href={`/users/${session?.user.id}`} className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
                             Profile
                           </Link>
                         )}
