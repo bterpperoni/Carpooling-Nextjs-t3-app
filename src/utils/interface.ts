@@ -1,4 +1,4 @@
-import { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
+import { AnchorHTMLAttributes, ButtonHTMLAttributes, ChangeEvent } from "react";
 
 export type Children = {
     children : React.ReactNode;
@@ -28,3 +28,11 @@ export type ButtonProps = {
     children: React.ReactNode;
   } & ButtonHTMLAttributes<HTMLButtonElement> &
     AnchorHTMLAttributes<HTMLAnchorElement>;
+
+export interface InputProps {
+        label: string;
+        type: string;
+        value: string;
+        onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+        placeholder?: string;
+      }
