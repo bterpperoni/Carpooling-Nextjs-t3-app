@@ -1,7 +1,7 @@
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 
 
-export default function All() {
+export default function New() {
 
 
     return (

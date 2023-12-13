@@ -31,8 +31,8 @@ export default function User() {
   console.log(user);
 
   const handleEditClick = () => {
+    setIsEditing(true);
     if(user?.name && user?.email) {
-      setIsEditing(true);
       setEditedName(user.name);
       setEditedEmail(user.email);
     }
