@@ -6,10 +6,10 @@ import { signOut, useSession } from 'next-auth/react'
 
 const navigation = [
   { name: 'Home', href: '/', current: true },
-  { name: 'Rides', href: '#', current: false },
+  { name: 'Rides', href: '/rides/all', current: false },
   { name: 'Wallet', href: '#', current: false },
   { name: 'Social', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
+  { name: 'Calendar', href: '/calendar', current: false },
 ]
 
 function classNames(...classes: string[]) {
