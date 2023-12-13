@@ -1,3 +1,5 @@
+import { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
+
 export type Children = {
     children : React.ReactNode;
 }
@@ -20,3 +22,9 @@ export enum userRole{
     USER = 'user',
     BANNED = 'banned'
 }
+
+export type ButtonProps = {
+    href?: string;
+    children: React.ReactNode;
+  } & ButtonHTMLAttributes<HTMLButtonElement> &
+    AnchorHTMLAttributes<HTMLAnchorElement>;

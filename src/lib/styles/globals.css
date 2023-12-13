@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import url("theme.css");
+@import url('../components/button/Button.css');
 
 
 html {
@@ -11,7 +12,6 @@ html {
     font-family: 'Open Sans', sans-serif;
 }
 
-@import url("theme.css");
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
 
 body {
@@ -87,3 +87,5 @@ label {
 }
 
 
+
+  
