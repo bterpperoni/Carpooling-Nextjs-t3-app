@@ -1,14 +1,20 @@
+
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 
+import  Map  from '$/lib/components/map/Map'; 
 
-export default function All() {
-
-
-    return (
-         <>
+const All: React.FC = () => {
+        const center: google.maps.LatLngLiteral = { lat: 37.7749, lng: -122.4194 };
+        const zoom: number = 12;
+        const markerPosition: google.maps.LatLngLiteral = { lat: 37.7749, lng: -122.4194 };
+    
+        return (
+            <>
             <LayoutMain>
-                <h1>Hello</h1>
+                    <Map center={center} zoom={zoom} markerPosition={markerPosition} />
             </LayoutMain>
-        </>
-       );
-}
+            </>
+        );
+    };
+    
+export default All;

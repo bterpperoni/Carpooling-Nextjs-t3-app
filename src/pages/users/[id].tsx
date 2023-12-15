@@ -64,7 +64,7 @@ export default function User() {
                   <h1 className="text-2xl font-bold text-gray-800 md:text-4xl text-left">
                     {isEditing ? (
                       <Input
-                        label="Nom"
+                        label=""
                         type="text"
                         value={editedName}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedName(e.target.value)}
@@ -78,7 +78,7 @@ export default function User() {
                   <p className="text-gray-600 md:text-3xl text-left">
                     {isEditing ? (
                       <Input
-                      label="Email"
+                      label=""
                       type="email"
                       value={editedEmail}
                       onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedEmail(e.target.value)}

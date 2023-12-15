@@ -6,9 +6,11 @@ import { type AppType } from "next/app";
 
 
 import { api } from "$/utils/api";
+import { env } from "process";
+import GOOGLEProvider from 'next-auth/providers/GOOGLE';
 
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const Carheh: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
@@ -19,4 +21,5 @@ const MyApp: AppType<{ session: Session | null }> = ({
   );
 };
 
-export default api.withTRPC(MyApp);
+// default _app export with trpc context
+export default api.withTRPC(Carheh);

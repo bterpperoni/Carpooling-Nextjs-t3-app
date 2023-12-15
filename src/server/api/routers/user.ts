@@ -15,6 +15,7 @@ export const userRouter = createTRPCRouter({
       };
     }),
 
+
   userList: protectedProcedure.query(async ({ ctx }) => {
     const userList =  ctx.db.user.findMany();
     return userList;
@@ -46,7 +47,7 @@ export const userRouter = createTRPCRouter({
     }),
 
   update: protectedProcedure
-    .input(z.object({ id: z.string(), name: z.string().min(1), email: z.string().min(1)}))
+    .input(z.object({ id: z.string(), name: z.string().min(1), email: z.string().email().min(1)}))
     .mutation(async ({ ctx, input }) => {
       // simulate a slow db call
       await new Promise((resolve) => setTimeout(resolve, 1000));
