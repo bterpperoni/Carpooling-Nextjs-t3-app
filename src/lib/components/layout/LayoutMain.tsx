@@ -14,9 +14,8 @@ export default function LayoutMain({ children }: { children: React.ReactNode }) 
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <NavBar />
-            <main className=" flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-                {children}
-            </main>
+            {children}
+            {/* After : add footer /!\ */}
         </>
     );
 }

@@ -1,3 +1,4 @@
+import Button from '$/lib/components/button/simple/Button';
 import LayoutMain from '$/lib/components/layout/LayoutMain';
 
 
@@ -18,7 +19,7 @@ export default function Calendar() {
                                 <option value="inactive">Inactive</option>
                             </select>
                         </div>
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">Create new ride</button>
+                        <Button href="/trips/new" className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">New Trip</Button>
                     </div>
                     <table className="w-full">
                         <thead>

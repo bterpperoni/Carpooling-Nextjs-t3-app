@@ -3,13 +3,15 @@
 @tailwind utilities;
 
 @import url("theme.css");
-@import url('../components/button/Button.css');
+@import url('../components/button/simple/Button.css');
+@import url('../components/button/slider/Slider.css');
 
 
 html {
     background: rgb(31,56,172);
-    background: linear-gradient(90deg, rgba(31,56,172,1) 0%, rgba(0,147,244,1) 50%, rgba(31,56,172,1) 100%);
+    background: linear-gradient( var(--purple-g2) 50% ,var(--purple-g2) 100%);
     font-family: 'Open Sans', sans-serif;
+    position: static;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');

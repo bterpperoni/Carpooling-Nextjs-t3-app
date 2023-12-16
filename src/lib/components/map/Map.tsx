@@ -12,18 +12,17 @@ interface MapProps {
 const Map: React.FC<MapProps> = ({ center, zoom, markerPosition }) => {
   const mapContainerStyle = {
     width: '100%',
-    height: '400px',
+    height: '25rem',
   };
 
-  const key = process.env.GOOGLE_MAPS_API_KEY as string;
-
-  console.log(key);
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY as string;
 
 
-  if(!key) return <h1>no key</h1>
+
+  if(!apiKey) return <h1>no key</h1>
   return (
     <>
-      <LoadScript googleMapsApiKey={key}>
+      <LoadScript googleMapsApiKey={apiKey}>
         <GoogleMap center={center} zoom={zoom} mapContainerStyle={mapContainerStyle}>
           <Marker position={markerPosition} />
         </GoogleMap>

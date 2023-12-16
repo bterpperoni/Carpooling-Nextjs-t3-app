@@ -1,5 +1,6 @@
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
+import MainHtml from "$/lib/components/layout/MainHtml";
 import { api } from "$/utils/api";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
@@ -28,7 +29,7 @@ export default function User() {
 
   const { data: updatedUser, error, isLoading, mutate: updateUser } = api.user.update.useMutation();
 
-  console.log(user);
+ 
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -57,6 +58,7 @@ export default function User() {
         return (
           <>
           <LayoutMain>
+            <MainHtml>
             <div className="max-w-5xl mx-auto mt-8 bg-white p-8 rounded shadow-md">
               <div className="flex items-center">
                 <img className="w-18 h-18 rounded-full mr-6" src={sessionData?.user.image} alt="Profile" />
@@ -119,6 +121,7 @@ export default function User() {
                 {/* Ajoutez d'autres sections de profil en fonction de vos besoins */}
               </div>
             </div>
+            </MainHtml>
           </LayoutMain> 
       </>
     );
