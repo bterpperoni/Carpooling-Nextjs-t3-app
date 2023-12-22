@@ -18,7 +18,7 @@ function classNames(...classes: string[]) {
 
 export default function Nav() {
   const { data: session } = useSession();
-  console.log(session?.user.id)
+  
   return (
     <Disclosure as="nav" className="bg-gray-800">
     {({ open }: { open: boolean }) => (

@@ -2,7 +2,6 @@
 import LayoutMain from '../lib/components/layout/LayoutMain';
 import { signIn, useSession } from "next-auth/react";
 import Button from "$/lib/components/button/simple/Button";
-import MainHtml from '../lib/components/layout/MainHtml';
 
 export default function Home() {
 

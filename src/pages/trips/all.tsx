@@ -4,7 +4,6 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import  Map  from '$/lib/components/map/Map'; 
 import Slider from '$/lib/components/button/slider/Slider';
 import { useState } from 'react';
-import MainHtml from '$/lib/components/layout/MainHtml';
 import Button from '$/lib/components/button/simple/Button';
 
 const All: React.FC = () => {
@@ -37,17 +36,16 @@ const All: React.FC = () => {
                             </div>
                     </div>
                 </div>
-                <MainHtml>
-                
+                <div>
                         {/* ----------------------------------------- display list ----------------------------------------- */}
                         {checked && (
                             <>   
                                 <p className="text-4xl text-white font-bold">Display list of trips </p>
                             </>
                         )}
-                       {/* ---------------------display map --------------------------------------------------------- */}
+                        {/* -------------------------------------- display map ---------------------------------------------- */}
                         {!checked && <Map center={center} zoom={zoom} markerPosition={markerPosition} />}
-                </MainHtml>
+                </div>
             </LayoutMain>
             </>
         );

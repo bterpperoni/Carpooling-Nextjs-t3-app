@@ -1,3 +1,4 @@
+'use client';
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
@@ -10,22 +11,23 @@ import { ChangeEvent, useState } from "react";
 export default function User() {
 
 
+  // a Hook is a function that lets you tap into a React feature like state or lifecycle methods
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState<string>('');
   const [editedEmail, setEditedEmail] = useState<string>('');
 
-  const { query } = useRouter();
+  const { query, reload } = useRouter();
   const id = query.id as string;
 
 
+  // Session recovery
   const { data: sessionData } = useSession();
 
+  // Get user by id
   const {data: user} = api.user.userById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
 
-
+  // Update user
   const { data: updatedUser, error, isLoading, mutate: updateUser } = api.user.update.useMutation();
-
- 
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -33,20 +35,21 @@ export default function User() {
       setEditedName(user.name);
       setEditedEmail(user.email);
     }
-    
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
 
     if (user?.id && editedName && editedEmail) {
-      updateUser({
+        updateUser({
           id: user.id,
           name: editedName,
           email: editedEmail
       });
-    setIsEditing(false);
+      setIsEditing(false);
     }
-    
+    await(new Promise(r => setTimeout(r, 500)));
+    reload();
+
   };
 
   if (user){
@@ -57,7 +60,7 @@ export default function User() {
               <div className="flex items-center">
                 <img className="w-18 h-18 rounded-full mr-6" src={sessionData?.user.image} alt="Profile" />
                 <div className="">
-                  <p className="text-3xl text-gray-600 md:text-3xl text-left mb-2">
+                  <div className="text-3xl text-gray-600 md:text-3xl text-left mb-2">
                     {isEditing ? (
                       <Input
                         label=""
@@ -67,10 +70,10 @@ export default function User() {
                         placeholder="Votre nom"
                       />
                     ) : (
-                      <p className="">{user.name}</p>
+                      user.name
                     )}
-                  </p>
-                  <p className="text-2xl text-gray-600 md:text-3xl text-left mb-2 mr-3">
+                  </div>
+                  <div className="text-2xl text-gray-600 md:text-3xl text-left mb-2 mr-3">
                     {isEditing ? (
                       <Input
                       label=""
@@ -78,11 +81,11 @@ export default function User() {
                       value={editedEmail}
                       onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedEmail(e.target.value)}
                       placeholder="Votre email"
-                    />
+                      />
                     ) : (
-                      <p className="">{user.email}</p>
+                      user.email
                     )}
-                  </p>
+                  </div>
                 </div>
               </div>
               <div className="mt-4">
