@@ -59,7 +59,7 @@ export default function User() {
             <div className="max-w-5xl mx-auto mt-8 bg-white p-8 rounded shadow-md">
               <div className="flex items-center">
                 <img className="w-18 h-18 rounded-full mr-6" src={sessionData?.user.image} alt="Profile" />
-                <div className="">
+                <div>
                   <div className="text-3xl text-gray-600 md:text-3xl text-left mb-2">
                     {isEditing ? (
                       <Input
