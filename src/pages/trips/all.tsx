@@ -40,13 +40,13 @@ const All: React.FC = () => {
                 <MainHtml>
                 
                         {/* ----------------------------------------- display list ----------------------------------------- */}
-                        {!checked && (
+                        {checked && (
                             <>   
                                 <p className="text-4xl text-white font-bold">Display list of trips </p>
                             </>
                         )}
                        {/* ---------------------display map --------------------------------------------------------- */}
-                        {checked && <Map center={center} zoom={zoom} markerPosition={markerPosition} />}
+                        {!checked && <Map center={center} zoom={zoom} markerPosition={markerPosition} />}
                 </MainHtml>
             </LayoutMain>
             </>

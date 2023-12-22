@@ -1,6 +1,5 @@
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
-import MainHtml from "$/lib/components/layout/MainHtml";
 import { api } from "$/utils/api";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
@@ -23,9 +22,6 @@ export default function User() {
 
   const {data: user} = api.user.userById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
 
-  // const { data: userList } = api.user.userList.useQuery(undefined,
-  //   { enabled: sessionData?.user !== undefined }  
-  //   );
 
   const { data: updatedUser, error, isLoading, mutate: updateUser } = api.user.update.useMutation();
 
@@ -41,8 +37,7 @@ export default function User() {
   };
 
   const handleSaveClick = () => {
-    // Mettez en œuvre la logique pour sauvegarder les modifications dans votre application
-    // Dans cet exemple, nous mettons simplement à jour l'état local avec les nouvelles valeurs
+
     if (user?.id && editedName && editedEmail) {
       updateUser({
           id: user.id,
@@ -58,12 +53,11 @@ export default function User() {
         return (
           <>
           <LayoutMain>
-            <MainHtml>
             <div className="max-w-5xl mx-auto mt-8 bg-white p-8 rounded shadow-md">
               <div className="flex items-center">
                 <img className="w-18 h-18 rounded-full mr-6" src={sessionData?.user.image} alt="Profile" />
                 <div className="">
-                  <h1 className="text-2xl font-bold text-gray-800 md:text-4xl text-left">
+                  <p className="text-3xl text-gray-600 md:text-3xl text-left mb-2">
                     {isEditing ? (
                       <Input
                         label=""
@@ -72,12 +66,11 @@ export default function User() {
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedName(e.target.value)}
                         placeholder="Votre nom"
                       />
-                   
                     ) : (
-                      user.name
+                      <p className="">{user.name}</p>
                     )}
-                  </h1>
-                  <p className="text-gray-600 md:text-3xl text-left">
+                  </p>
+                  <p className="text-2xl text-gray-600 md:text-3xl text-left mb-2 mr-3">
                     {isEditing ? (
                       <Input
                       label=""
@@ -87,7 +80,7 @@ export default function User() {
                       placeholder="Votre email"
                     />
                     ) : (
-                      user.email
+                      <p className="">{user.email}</p>
                     )}
                   </p>
                 </div>
@@ -121,15 +114,15 @@ export default function User() {
                 {/* Ajoutez d'autres sections de profil en fonction de vos besoins */}
               </div>
             </div>
-            </MainHtml>
           </LayoutMain> 
       </>
     );
   }
   return (
     <>
-      <h1>Not Connected</h1>      
+      <LayoutMain>
+            <h1>Not Connected, <p>Please Sign in</p></h1> 
+      </LayoutMain> 
     </>
   );
-  
-};
+}

@@ -6,8 +6,6 @@ import { type AppType } from "next/app";
 
 
 import { api } from "$/utils/api";
-import { env } from "process";
-import GOOGLEProvider from 'next-auth/providers/GOOGLE';
 
 
 const Carheh: AppType<{ session: Session | null }> = ({
