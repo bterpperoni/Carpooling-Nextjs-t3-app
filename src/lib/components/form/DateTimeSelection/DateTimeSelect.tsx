@@ -2,8 +2,6 @@ import { DatePicker, PickersActionBar, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
-import MuiStyleButton from '../../../styles/MuiButton.module.css';
-import MuiStyleInput from '../../../styles/MuiInput.module.css';
 
 
 
@@ -21,11 +19,10 @@ export default function DateSelect({labelexp, labelexpTime}: {labelexp: string, 
                     label={labelexp}
                     disablePast
                     maxDate={dayjs(maxDate)}
-                    className={MuiStyleButton.MuiButtonBaseRoot}
                 />
                 <TimePicker
                     label={labelexpTime}
-                    className="mt-4 ml-2 md:ml-2 md:mt-0"
+                    className="mt-4 ml-0 md:ml-2 md:mt-0"
                     ampm={false}
                     ampmInClock={true}
                 />

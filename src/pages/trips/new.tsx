@@ -2,7 +2,7 @@ import Autocomplete  from 'react-google-autocomplete';
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 import DateTimeSelect from '../../lib/components/form/DateTimeSelection/DateTimeSelect';
 import { Button } from '@mui/material';
-import MuiStyle from '../../lib/styles/MuiButton.module.css';
+import MuiStyle from '../../lib/styles/MuiNewTrip.module.css';
 
 export default function NewTravel() {
 
