@@ -32,7 +32,6 @@ const All: React.FC = () => {
                                     <p>Here you can submit a new trip,</p>
                                     <p>Or find a driver who goes to your school</p>
                                 </div>
-
                             </div>
                     </div>
                 </div>

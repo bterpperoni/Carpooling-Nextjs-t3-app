@@ -1,6 +1,8 @@
 import Autocomplete  from 'react-google-autocomplete';
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 import DateTimeSelect from '../../lib/components/form/DateTimeSelection/DateTimeSelect';
+import { Button } from '@mui/material';
+import MuiStyle from '../../lib/styles/MuiButton.module.css';
 
 export default function NewTravel() {
 
@@ -31,7 +33,7 @@ export default function NewTravel() {
                     <form className="flex flex-col w-auto m-auto justify-center items-center">
                         {/* Departure */}
                         <div className='my-16'>
-                            <div className='ml-4 sm:flex sm:flex-col'>
+                            <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
                                 <label htmlFor="departure" className='text-xl md:text-3xl text-white mb-1'>Departure : </label>
                                 <Autocomplete
                                     apiKey={apiKey}
@@ -52,7 +54,7 @@ export default function NewTravel() {
                     
                         {/* Destination */}
                         <div>
-                            <div className='ml-4 sm:flex sm:flex-col'>
+                            <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
                                 <label htmlFor="destination" className='text-xl md:text-3xl text-white mb-1'>Destination : </label>
                                 <Autocomplete
                                     apiKey={apiKey}
@@ -70,6 +72,8 @@ export default function NewTravel() {
                                 <DateTimeSelect labelexpTime="Time Return " labelexp="Date Return" />
                             </div>
                         </div>
+                        {/* Submit */}
+                        <Button className={MuiStyle.MuiButtonText}> Submit </Button>
                     </form>
                 </div>
             </LayoutMain>

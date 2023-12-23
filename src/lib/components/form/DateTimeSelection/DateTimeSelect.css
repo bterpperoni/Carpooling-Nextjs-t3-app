@@ -1,5 +1,6 @@
 /* DateSelect.css */
 /* ----------------------------------------------------------------------------------------------------------- */
+
 /* Style for Input DatePicker */
 .MuiInputBase-input {
     font-size: 1.75rem;
@@ -11,9 +12,10 @@
     color: white!important;
     background-color: var(--purple-g3);
     border: 1px solid var(--dark-orange)!important;
+    font-size: 2rem;
 }
 
-.MuiInputBase-root::-moz-focus-inner {
+.MuiInputBase-root:hover {
     color: white!important;
     background-color: var(--purple-g3);
     border: 1px solid var(--dark-orange)!important;
@@ -34,27 +36,13 @@
 .MuiSvgIcon-root {
     color: var(--dark-orange);
 }
-/* -------- */
 
-/* Button select Date & Time */
-.MuiButtonBase-root {
-    color: var(--purple-g3);
-    background-color: var(--purple-g3);
-    border: 1px solid var(--dark-orange);
-    margin: 0 0 0 8px;
-}
-.MuiButtonBase-root:hover {
-    color: var(--dark-orange);
-    background-color: white;
-    border: 1px solid var(--dark-orange);
-}
 
 /* Selected date modal Calendar */
 .MuiPickersDay-root.Mui-selected {
     background-color: var(--dark-orange)!important;
     color: white!important;
 }
-/* ------------------------------ */
 
 /* Label */
 .MuiFormLabel-root {
@@ -62,12 +50,14 @@
     color:  var(--dark-orange)!important;
     background-color: var(--purple-g3)!important;
 }
+
 .MuiFormLabel-root.Mui-focused {
     color: white!important;
     background-color: var(--purple-g3)!important;
 }
 
 @media screen and (max-width: 600px) {
+    /* Style for Input DatePicker */
     .MuiInputBase-input {
         font-size: 1.25rem;
     }
@@ -79,15 +69,11 @@
 }
 
 
-/* -------------------------------------------Menu Item Time Picker---------------------------------------------------------------- */
+/* -------------------------------------------Menu Item Time Picker------------------------------------ */
 .MuiMenuItem-root {
     color: white!important;
     background-color: var(--purple-g3)!important;
     min-width: auto;
-}
-
-.MuiPopper-root {
-    z-index: 9999!important;
 }
 
 

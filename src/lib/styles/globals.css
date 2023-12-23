@@ -5,7 +5,7 @@
 @import url("theme.css");
 @import url('../components/button/simple/Button.css');
 @import url('../components/button/slider/Slider.css');
-@import url('../components/form//DateTimeSelection/DateTimeSelect.css');
+@import url('../components/form//DateTimeSelection/DateTimeSelect.css'); 
 
 html {
     background: rgb(31,56,172);
