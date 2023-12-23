@@ -3,16 +3,21 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import DateTimeSelect from '../../lib/components/form/DateTimeSelection/DateTimeSelect';
 import { Button } from '@mui/material';
 import MuiStyle from '../../lib/styles/MuiNewTrip.module.css';
+import { log } from 'console';
 
 export default function NewTravel() {
 
     // Get date
     const maxDate = new Date();
+
+    // Set the date to just allow the user to select a date in the next 7 days in DatePicker component
     maxDate.setDate(maxDate.getDate() + 7);
 
 
-    // Address
+    // Address of departure and destination from google autocomplete
     let address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
+    let departure: string| undefined;
+    let destination: string| undefined;
 
     const apiKey = process.env.GOOGLE_MAPS_API_KEY as string;
 
@@ -23,7 +28,9 @@ export default function NewTravel() {
         types: ['address']
         };
 
-    
+    function handleClick(): void {
+       console.log(departure, destination);
+    }
 
     return (
          <>
@@ -39,8 +46,8 @@ export default function NewTravel() {
                                     apiKey={apiKey}
                                     options={options}
                                     onPlaceSelected={(place) => {
-                                        address.departure = place;
-                                        console.log(address.departure.formatted_address);
+                                            address.departure = place;
+                                            departure = address.departure.formatted_address;
                                         }
                                     }
                                     className="w-auto my-2"
@@ -60,8 +67,8 @@ export default function NewTravel() {
                                     apiKey={apiKey}
                                     options={options}
                                     onPlaceSelected={(place) => {
-                                        address.destination = place;
-                                        console.log(address.destination.formatted_address);
+                                            address.destination = place;
+                                            destination = address.destination.formatted_address;
                                         }
                                     }
                                     className="max-w-[90vw] my-2"
@@ -73,7 +80,7 @@ export default function NewTravel() {
                             </div>
                         </div>
                         {/* Submit */}
-                        <Button className={MuiStyle.MuiButtonText}> Submit </Button>
+                        <Button className={MuiStyle.MuiButtonText} onClick={handleClick}> Submit </Button>
                     </form>
                 </div>
             </LayoutMain>
