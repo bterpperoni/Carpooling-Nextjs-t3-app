@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ButtonProps } from '../../../../utils/interface';
 
 const SlideButton: React.FC<{ check: () => void; checked: boolean; classSlider: string }> = ({ check, checked, classSlider }) => {
   const [isChecked, setIsChecked] = useState(checked);

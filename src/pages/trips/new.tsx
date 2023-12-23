@@ -1,10 +1,6 @@
 import Autocomplete  from 'react-google-autocomplete';
 import LayoutMain from '../../lib/components/layout/LayoutMain';
-import DateTimePicker from 'react-datetime-picker'
-import 'react-datetime-picker/dist/DateTimePicker.css';
-import 'react-calendar/dist/Calendar.css';
-import 'react-clock/dist/Clock.css';
-import { get } from 'http';
+import DateSelect from '../../lib/components/form/DateTimeSelection/DateSelect';
 
 export default function NewTravel() {
 
@@ -45,21 +41,15 @@ export default function NewTravel() {
                                         console.log(address.departure.formatted_address);
                                         }
                                     }
-                                    className="w-[50%] my-4"
+                                    className="w-auto my-4"
                                     id="departure"
                                 />
                             </div>
-                            <div>
-                                <DateTimePicker
-                                    onChange={(date) => console.log(date)}
-                                    value={new Date()}
-                                    className="bg-white mb-6"
-                                    minDate={new Date()}
-                                    maxDate={maxDate}
-                                />
+                            <div className='p-4'>
+                                <DateSelect labelexp="Destination Date" />
                             </div>
                         </div>
-                        
+                    
                         {/* Destination */}
                         <div>
                             <div>
@@ -76,18 +66,12 @@ export default function NewTravel() {
                                     id="destination"
                                 />
                             </div>
-                            <div>
-                                <DateTimePicker
-                                    onChange={(date) => console.log(date)}
-                                    value={new Date()}
-                                    className="bg-white mb-6"
-                                    minDate={new Date()}
-                                    maxDate={maxDate}
-                                />
+                            <div className='p-4'>
+                                <DateSelect labelexp="Destination Date" />
                             </div>
                         </div>
                     </form>
-                   
+                    
                 </div>
             </LayoutMain>
         </>

@@ -47,7 +47,7 @@ export default function User() {
       });
       setIsEditing(false);
     }
-    await(new Promise(r => setTimeout(r, 500)));
+    await(new Promise(r => setTimeout(r, 750)));
     reload();
 
   };
@@ -56,37 +56,37 @@ export default function User() {
         return (
           <>
           <LayoutMain>
-            <div className="max-w-5xl mx-auto mt-8 bg-white p-8 rounded shadow-md">
-              <div className="flex items-center">
+            <div className="w-[90vw] h-auto mx-auto mt-8 bg-white p-8 rounded shadow-md ">
+              <div className="flex flex-col items-center md:flex-row ">
                 <img className="w-18 h-18 rounded-full mr-6" src={sessionData?.user.image} alt="Profile" />
-                <div>
-                  <div className="text-3xl text-gray-600 md:text-3xl text-left mb-2">
-                    {isEditing ? (
+                  <div className="text-2xl text-gray-600 md:text-4xl lg:text-5xl text-left">
+                    {!isEditing ? (
+                      <>
+                      <div className="ml-2 mt-4">{user.name}</div>
+                      <div className="ml-2 mt-4">{user.email}</div>
+                      </>
+                    ) : (
+                      <>
                       <Input
                         label=""
                         type="text"
                         value={editedName}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedName(e.target.value)}
                         placeholder="Votre nom"
+                        classInput="ml-2 mt-4"
                       />
-                    ) : (
-                      user.name
-                    )}
-                  </div>
-                  <div className="text-2xl text-gray-600 md:text-3xl text-left mb-2 mr-3">
-                    {isEditing ? (
+                      
                       <Input
-                      label=""
-                      type="email"
-                      value={editedEmail}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedEmail(e.target.value)}
-                      placeholder="Votre email"
+                        label=""
+                        type="email"
+                        value={editedEmail}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedEmail(e.target.value)}
+                        placeholder="Votre email"
+                        classInput="ml-2 mt-4"
                       />
-                    ) : (
-                      user.email
+                      </>
                     )}
                   </div>
-                </div>
               </div>
               <div className="mt-4">
                 {isEditing ? (

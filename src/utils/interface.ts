@@ -35,4 +35,5 @@ export interface InputProps {
         value: string;
         onChange: (e: ChangeEvent<HTMLInputElement>) => void;
         placeholder?: string;
+        classInput?: string;
       }

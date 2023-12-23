@@ -1,0 +1,57 @@
+/* DateSelect.css */
+
+/* Style Input DatePicker */
+.MuiInputBase-input {
+    color: white!important;
+    /* background-color: var(--purple-g3);*/
+    border: 1px solid var(--dark-orange); 
+}
+
+.MuiInputBase-root {
+    color: white!important;
+    background-color: var(--purple-g3);
+    border: 1px solid var(--dark-orange)!important;
+}
+/* ---------------------- */
+
+/* SVG Icon */
+.MuiSvgIcon-root {
+    color: var(--dark-orange);
+}
+/* -------- */
+
+/* Button */
+.MuiButtonBase-root {
+    color: var(--purple-g3);
+    background-color: var(--purple-g3);
+    border: 1px solid var(--dark-orange);
+    margin: 0 0 0 8px;
+}
+
+.MuiButtonBase-root:hover {
+    color: var(--dark-orange);
+    background-color: white;
+    border: 1px solid var(--dark-orange);
+}
+
+.MuiButton-root {
+    color: white!important;
+    background-color:white!important;
+}
+/* ----------------------------------------------------- */
+
+
+/* Label */
+.MuiFormLabel-root {
+    color:  var(--dark-orange)!important;
+    background-color: var(--purple-g3)!important;
+}
+
+.MuiFormLabel-root.Mui-focused {
+    color: white!important;
+    background-color: var(--purple-g3)!important;
+}
+/* ------------------ */
+
+
+
