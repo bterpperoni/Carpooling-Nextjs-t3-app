@@ -1,6 +1,6 @@
 import Autocomplete  from 'react-google-autocomplete';
 import LayoutMain from '../../lib/components/layout/LayoutMain';
-import DateSelect from '../../lib/components/form/DateTimeSelection/DateSelect';
+import DateTimeSelect from '../../lib/components/form/DateTimeSelection/DateTimeSelect';
 
 export default function NewTravel() {
 
@@ -26,13 +26,13 @@ export default function NewTravel() {
     return (
          <>
             <LayoutMain>
-                <div className="bg-[var(--purple-g3)]">
-                    <h1 className="text-6xl text-white">New Travel</h1>
-                    <form className="flex flex-col w-[75%] m-auto justify-center items-center">
+                <div className="bg-[var(--purple-g3)]  h-screen">
+                    <h1 className="text-6xl text-white mt-6">New Travel</h1>
+                    <form className="flex flex-col w-auto m-auto justify-center items-center">
                         {/* Departure */}
-                        <div>
-                            <div>
-                                <label htmlFor="departure">Departure : </label>
+                        <div className='my-16'>
+                            <div className='ml-4 sm:flex sm:flex-col'>
+                                <label htmlFor="departure" className='text-xl md:text-3xl text-white mb-1'>Departure : </label>
                                 <Autocomplete
                                     apiKey={apiKey}
                                     options={options}
@@ -41,19 +41,19 @@ export default function NewTravel() {
                                         console.log(address.departure.formatted_address);
                                         }
                                     }
-                                    className="w-auto my-4"
+                                    className="w-auto my-2"
                                     id="departure"
                                 />
                             </div>
                             <div className='p-4'>
-                                <DateSelect labelexp="Destination Date" />
+                                <DateTimeSelect labelexpTime='Time Departure' labelexp="Date Departure" />
                             </div>
                         </div>
                     
                         {/* Destination */}
                         <div>
-                            <div>
-                                <label htmlFor="destination">Destination : </label>
+                            <div className='ml-4 sm:flex sm:flex-col'>
+                                <label htmlFor="destination" className='text-xl md:text-3xl text-white mb-1'>Destination : </label>
                                 <Autocomplete
                                     apiKey={apiKey}
                                     options={options}
@@ -62,16 +62,15 @@ export default function NewTravel() {
                                         console.log(address.destination.formatted_address);
                                         }
                                     }
-                                    className="w-[50%] my-4"
+                                    className="max-w-[90vw] my-2"
                                     id="destination"
                                 />
                             </div>
                             <div className='p-4'>
-                                <DateSelect labelexp="Destination Date" />
+                                <DateTimeSelect labelexpTime="Time Return " labelexp="Date Return" />
                             </div>
                         </div>
                     </form>
-                    
                 </div>
             </LayoutMain>
         </>

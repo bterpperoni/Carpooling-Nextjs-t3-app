@@ -1,0 +1,95 @@
+/* DateSelect.css */
+/* ----------------------------------------------------------------------------------------------------------- */
+/* Style for Input DatePicker */
+.MuiInputBase-input {
+    font-size: 1.75rem;
+    color: white!important;
+    border: 1px solid var(--dark-orange); 
+}
+
+.MuiInputBase-root {
+    color: white!important;
+    background-color: var(--purple-g3);
+    border: 1px solid var(--dark-orange)!important;
+}
+
+.MuiInputBase-root::-moz-focus-inner {
+    color: white!important;
+    background-color: var(--purple-g3);
+    border: 1px solid var(--dark-orange)!important;
+}
+
+.MuiOutlinedInput-input {
+    padding: 14px 14px!important;
+}
+
+.MuiFormControl-root:focus, .MuiTextField-root:focus {
+    color: white!important;
+    background-color: var(--purple-g3);
+    border: 1px solid var(--dark-orange)!important;
+}
+/* ---------------------- */
+
+/* SVG Icon select Date */
+.MuiSvgIcon-root {
+    color: var(--dark-orange);
+}
+/* -------- */
+
+/* Button select Date & Time */
+.MuiButtonBase-root {
+    color: var(--purple-g3);
+    background-color: var(--purple-g3);
+    border: 1px solid var(--dark-orange);
+    margin: 0 0 0 8px;
+}
+.MuiButtonBase-root:hover {
+    color: var(--dark-orange);
+    background-color: white;
+    border: 1px solid var(--dark-orange);
+}
+
+/* Selected date modal Calendar */
+.MuiPickersDay-root.Mui-selected {
+    background-color: var(--dark-orange)!important;
+    color: white!important;
+}
+/* ------------------------------ */
+
+/* Label */
+.MuiFormLabel-root {
+    font-size: 1.5rem;
+    color:  var(--dark-orange)!important;
+    background-color: var(--purple-g3)!important;
+}
+.MuiFormLabel-root.Mui-focused {
+    color: white!important;
+    background-color: var(--purple-g3)!important;
+}
+
+@media screen and (max-width: 600px) {
+    .MuiInputBase-input {
+        font-size: 1.25rem;
+    }
+
+    /* Label */
+    .MuiFormLabel-root {
+    font-size: 1rem;
+    }
+}
+
+
+/* -------------------------------------------Menu Item Time Picker---------------------------------------------------------------- */
+.MuiMenuItem-root {
+    color: white!important;
+    background-color: var(--purple-g3)!important;
+    min-width: auto;
+}
+
+.MuiPopper-root {
+    z-index: 9999!important;
+}
+
+
+
+

@@ -5,7 +5,7 @@
 @import url("theme.css");
 @import url('../components/button/simple/Button.css');
 @import url('../components/button/slider/Slider.css');
-@import url('../components/form//DateTimeSelection/DateSelect.css');
+@import url('../components/form//DateTimeSelection/DateTimeSelect.css');
 
 html {
     background: rgb(31,56,172);
@@ -34,60 +34,29 @@ h2{
     font-weight: bold;
 }
 
-.display-center{
-    display: flex;
-    align-items: center;
-    justify-content: center;}
 
-.display-row-center{
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    justify-content: center;
-}
-
-.display-column-center{
-    display: flex;
-    flex-flow: column wrap;
-    align-items: center;
-    justify-content: center;
-}
-
-.display-row-space-between{
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    justify-content: space-between;
-}  
-
-.marker-label {
-    background-color: black;
-  }
 /* ------------------------------------ */
-
-.div-main-page {
-    height: 75vh;
-}
-
-.div-auth-register{
-    border: 2px solid white;
-    position: relative;
-    /* bottom: 15vh; */
-}
-
-.h1-auth-register{
-    position: relative;
-    top: 2vh;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.49);
-    width: 80%;
-    margin: 0 auto;
-}
 
 label {
     color: white;
     margin:0 10px;
 }
 
+/* ----------------------------------------------------- */
+
+#departure, #destination {
+    font-size: 1.5rem;
+    color: var(--dark-orange);
+    background-color: var(--purple-g3);
+}
+
+#lblDeparture, #lblDestination {
+    font-size: 1.75rem;
+    color: white !important;
+    background-color: var(--purple-g3);
+    border: 1px solid var(--dark-orange) !important;
+    padding: 10px; /* Ajustez la valeur de rembourrage selon vos préférences */
+}
 
 
   
