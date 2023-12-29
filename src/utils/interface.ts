@@ -26,3 +26,11 @@ export enum userRole{
     USER = 'user',
     BANNED = 'banned'
 }
+
+/* --------------------------------------------- INTERFACES -------------------------------------------------- */
+
+export interface MapProps {
+    center: google.maps.LatLngLiteral;
+    zoom: number;
+    markerPosition: google.maps.LatLngLiteral;
+  }

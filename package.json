@@ -46,7 +46,6 @@
     "react-google-autocomplete": "^2.7.3",
     "react-icon": "^1.0.0",
     "react-icons": "^4.12.0",
-    "styled-components": "^5.3.11",
     "superjson": "^2.2.1",
     "use-places-autocomplete": "^4.0.1",
     "zod": "^3.22.4"
