@@ -3,7 +3,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { Dayjs } from 'dayjs';
 import {  useState } from 'react';
-
+import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 
 
 export default function DateSelect({labelexp, labelexpTime, disableDate, disableTime , handleChangeDate, handleChangeTime}: {
@@ -37,10 +37,11 @@ export default function DateSelect({labelexp, labelexpTime, disableDate, disable
                     onChange={(date) => {
                         handleChangeDate(date)
                     }}
+                    className={MuiStyle.MuiInputBaseRoot}
                 />
                 <TimePicker
                     label={labelexpTime}
-                    className="mt-4 ml-0 md:ml-2 md:mt-0"
+                    className={`mt-4 ml-0 md:ml-2 md:mt-0 ${MuiStyle.MuiInputBaseRoot}`}
                     disabled={disableTime}
                     ampm={false}
                     ampmInClock={true}

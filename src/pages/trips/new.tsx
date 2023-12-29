@@ -2,12 +2,18 @@ import Autocomplete  from 'react-google-autocomplete';
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 import DateTimeSelect from '../../lib/components/form/DateTimeSelection/DateTimeSelect';
 import { Button } from '@mui/material';
-import MuiStyle from '../../lib/styles/MuiStyle.module.css';
+import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 import { useEffect, useState } from 'react';
 import { env } from 'next.config';
 import dayjs, { Dayjs } from 'dayjs';
+import { useSession } from 'next-auth/react';
 
 export default function NewTravel() {
+
+    /* ------------ States ------------------ */
+
+    // Session recovery
+    const { data: sessionData } = useSession();
 
     // Address of departure and destination from google autocomplete
     let address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
@@ -30,7 +36,9 @@ export default function NewTravel() {
         strictBounds: false,
         types: ['address']
         };
+    
 
+    /* ------------ Behaviors ------------------ */
     // Merge the date of [departure | return] with the time of [departure | return] to juste keep one field
     useEffect(() => {
         if (dateDeparture && timeDeparture) {
@@ -40,28 +48,36 @@ export default function NewTravel() {
         if (dateReturn && timeReturn) {
             setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute())); 
         }
-    }, [dateDeparture, timeDeparture, dateReturn, timeReturn]);
 
-    
+        /*  Check if the date of return is after the date of departure and if not, 
+            Set the date of return to the date of departure + 8 hours (the normal duration of a school day)
+
+                if(dateDeparture && timeDeparture && dateReturn && timeReturn) {
+                    if(dateReturn?.isBefore(dateDeparture)) {
+                    setDateReturn(dateDeparture.add(8, 'hour'));
+                    }
+                }
+        */   
+    }, [dateDeparture, timeDeparture, dateReturn, timeReturn]);
     
     // Handle the click on the submit button of the form new travel
-    function handleClick() {
-        /* 
-            if(dateDeparture) {
-                console.log(dateDeparture?.format('DD-MM-YYYY HH:mm') + ' --> ' + dateReturn?.format('DD-MM-YYYY HH:mm'));
-            } 
-        */
-        
+    function handleClick() { 
+        if(dateDeparture || dateReturn) {
+            console.log(dateDeparture?.format('DD-MM-YYYY HH:mm') + ' --> ' + dateReturn?.format('DD-MM-YYYY HH:mm'));
+        }
+
         // Check if the date of return is after the date of departure
-        if(dateDeparture && dateReturn) {
-            if(dateReturn?.isAfter(dateDeparture)) {
-                    console.log('ok');
-            }else{
-                alert('La date de retour doit être après la date de départ');
-            }   
+        if(dateDeparture && timeDeparture && dateReturn) {
+            if(dateReturn?.isBefore(dateDeparture)) {
+                alert('La date de retour doit être après la date de départ'); 
+            }
         }
     }
 
+
+
+    /* ------------ Render ------------------ */
+    if(sessionData) {
     return (
          <>
             <LayoutMain>
@@ -70,9 +86,10 @@ export default function NewTravel() {
                     <form className="flex flex-col w-auto m-auto justify-center items-center">
                         
                         <h1 className='mt-6 text-3xl text-white'>
-                            Ajouter nombre de passager maximum + <br /> Choix d'école pour destination
+                            Ajouter nombre de passager maximum +
+                            <p className='mt-6'> Choix d'école pour destination</p>
                         </h1>
-
+                    
                         {/* Departure */}
                         <div className='my-16'>
                             <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
@@ -85,7 +102,7 @@ export default function NewTravel() {
                                             setDeparture(address.departure.formatted_address);
                                         }
                                     }
-                                    className="w-auto my-2"
+                                    className="w-[75%] my-2 md:w-[75%]"
                                     id="departure"
                                 />
                             </div>
@@ -96,8 +113,7 @@ export default function NewTravel() {
                                     disableDate={false}
                                     disableTime={false}
                                     handleChangeDate={(date) => {
-                                        setDateDeparture(date)
-                                        
+                                        setDateDeparture(date)    
                                     }}    
                                     handleChangeTime={(time) => {
                                         setTimeDeparture(time)
@@ -118,7 +134,7 @@ export default function NewTravel() {
                                             setDestination(address.destination.formatted_address);
                                         }
                                     }
-                                    className="max-w-[90vw] my-2"
+                                    className="w-[75%] my-2 md:w-[75%]"
                                     id="destination"
                                 />
                             </div>
@@ -148,4 +164,12 @@ export default function NewTravel() {
             </LayoutMain>
         </>
        );
+    }
+    return (
+        <>     
+            <LayoutMain>
+                <h1>Not Connected, <p>Please Sign in</p></h1> 
+            </LayoutMain> 
+        </>
+    );
 }

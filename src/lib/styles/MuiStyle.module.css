@@ -1,21 +1,35 @@
-/* Styles for MUI Button Components */
+/* Styles for MUI Components */
 
 .MuiButtonText {
-    background-color: var(--purple-g3);
-    color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
-    border: 1px solid var(--pink-g1);
-    padding: 10px;
-    margin: 1.5rem 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    background-color: var(--purple-g3)!important;
+    color: white!important;
+    font-size: 1.5rem!important;
+    font-weight: bold!important;
+    border: 1px solid var(--pink-g1)!important;
+    padding: 10px!important;
+    margin: 1.5rem 10px!important;
+    border-radius: 5px!important;
+    cursor: pointer!important;
+    transition: all 0.3s ease-in-out!important;
 }
 
 .MuiButtonText:hover {
-    background-color: var(--pink-g1);
-    border: 1px solid var(--pink-g1);
-    transition: all 0.3s ease-in-out;
+    background-color: var(--pink-g1)!important;
+    border: 1px solid var(--pink-g1)!important;
+    transition: all 0.3s ease-in-out!important;
 }
+
+.MuiInputBaseRoot {
+    color: white!important;
+    background-color: var(--purple-g3)!important;
+    border: 1px solid var(--pink-g1)!important;
+    margin:10px!important;
+}
+
+.MuiInputBaseRoot:hover {
+    color: white!important;
+    background-color: var(--purple-g3)!important;
+    border: 1px solid var(--pink-g1)!important;
+}
+
 

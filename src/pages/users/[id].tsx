@@ -54,9 +54,10 @@ export default function User() {
     setIsEditing(false);
   };
 
-  if (user && sessionData?.user){
+  if (sessionData?.user){
+    if(user) {
         return (
-          <>
+        <>
           <LayoutMain>
             <div className="w-[90vw] h-auto mx-auto mt-8 bg-white p-8 rounded shadow-md ">
               <div className="flex flex-col items-center md:flex-row ">
@@ -119,8 +120,9 @@ export default function User() {
               </div>
             </div>
           </LayoutMain> 
-      </>
-    );
+        </>
+      );
+    }
   }
   return (
     <>
