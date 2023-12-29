@@ -2,13 +2,15 @@ import { DatePicker, DateTimePicker, PickersActionBar, TimePicker } from '@mui/x
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { Dayjs } from 'dayjs';
-import { use, useEffect, useState } from 'react';
+import {  useState } from 'react';
 
 
 
-export default function DateSelect({labelexp, labelexpTime, handleChangeDate, handleChangeTime}: {
+export default function DateSelect({labelexp, labelexpTime, disableDate, disableTime , handleChangeDate, handleChangeTime}: {
     labelexp: string, 
-    labelexpTime: string, 
+    labelexpTime: string,
+    disableDate: boolean,
+    disableTime: boolean,
     handleChangeDate: (date: Dayjs | null) => void
     handleChangeTime: (time: Dayjs | null) => void;
 }) {
@@ -29,6 +31,7 @@ export default function DateSelect({labelexp, labelexpTime, handleChangeDate, ha
                 <DatePicker
                     label={labelexp}
                     disablePast
+                    disabled={disableDate}
                     maxDate={dayjs(maxDate)}
                     value={date}
                     onChange={(date) => {
@@ -38,6 +41,7 @@ export default function DateSelect({labelexp, labelexpTime, handleChangeDate, ha
                 <TimePicker
                     label={labelexpTime}
                     className="mt-4 ml-0 md:ml-2 md:mt-0"
+                    disabled={disableTime}
                     ampm={false}
                     ampmInClock={true}
                     value={time}

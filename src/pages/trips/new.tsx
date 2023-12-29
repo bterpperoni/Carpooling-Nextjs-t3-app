@@ -3,10 +3,9 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import DateTimeSelect from '../../lib/components/form/DateTimeSelection/DateTimeSelect';
 import { Button } from '@mui/material';
 import MuiStyle from '../../lib/styles/MuiStyle.module.css';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { env } from 'next.config';
 import dayjs, { Dayjs } from 'dayjs';
-import { date, set } from 'zod';
 
 export default function NewTravel() {
 
@@ -36,9 +35,10 @@ export default function NewTravel() {
     useEffect(() => {
         if (dateDeparture && timeDeparture) {
             setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
+            
         }
         if (dateReturn && timeReturn) {
-            setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute()));
+            setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute())); 
         }
     }, [dateDeparture, timeDeparture, dateReturn, timeReturn]);
 
@@ -46,10 +46,20 @@ export default function NewTravel() {
     
     // Handle the click on the submit button of the form new travel
     function handleClick() {
-        if(dateDeparture) console.log(  dateDeparture?.format('DD-MM-YYYY HH:mm') +
-                                        ' --> ' + dateReturn?.format('DD-MM-YYYY HH:mm'));
-        console.log(departure, destination);
-
+        /* 
+            if(dateDeparture) {
+                console.log(dateDeparture?.format('DD-MM-YYYY HH:mm') + ' --> ' + dateReturn?.format('DD-MM-YYYY HH:mm'));
+            } 
+        */
+        
+        // Check if the date of return is after the date of departure
+        if(dateDeparture && dateReturn) {
+            if(dateReturn?.isAfter(dateDeparture)) {
+                    console.log('ok');
+            }else{
+                alert('La date de retour doit être après la date de départ');
+            }   
+        }
     }
 
     return (
@@ -72,7 +82,7 @@ export default function NewTravel() {
                                     options={options}
                                     onPlaceSelected={(place) => {
                                             address.departure = place;
-                                            setDeparture(address.departure.formatted_address) ;
+                                            setDeparture(address.departure.formatted_address);
                                         }
                                     }
                                     className="w-auto my-2"
@@ -83,8 +93,11 @@ export default function NewTravel() {
                                 <DateTimeSelect 
                                     labelexpTime='Time Departure' 
                                     labelexp="Date Departure"
+                                    disableDate={false}
+                                    disableTime={false}
                                     handleChangeDate={(date) => {
                                         setDateDeparture(date)
+                                        
                                     }}    
                                     handleChangeTime={(time) => {
                                         setTimeDeparture(time)
@@ -113,6 +126,12 @@ export default function NewTravel() {
                                 <DateTimeSelect 
                                     labelexpTime="Time Return "
                                     labelexp="Date Return"
+                                    // Disable the date and time of return when the date and time of departure are not selected
+                                    disableDate={true}
+                                    disableTime={true}
+                                    // Enable the date and time of return
+                                    {...(dateDeparture && {disableDate: false})}
+                                    {...(dateDeparture && {disableTime: false})}
                                     handleChangeDate={(date) => {
                                         setDateReturn(date)
                                     }}    
