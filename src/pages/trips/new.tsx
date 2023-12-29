@@ -17,6 +17,9 @@ export default function NewTravel() {
     // Date of departure and destination
     let [dateDeparture, setDateDeparture] = useState<Dayjs | null>(null);
     let [dateReturn, setDateReturn] = useState<Dayjs | null>(null);
+    
+    let [timeDeparture, setTimeDeparture] = useState<Dayjs | null>(null);
+    let [timeReturn, setTimeReturn] = useState<Dayjs | null>(null);
 
     const apiKey = env.GOOGLE_MAPS_API_KEY as string;
 
@@ -28,7 +31,8 @@ export default function NewTravel() {
         };
 
     function handleClick(): void {
-       console.log(departure + ':' + dateDeparture, destination + ':' + dateReturn);
+       console.log( departure + ':' + dateDeparture + '/' + timeDeparture?.get('hour') + ':' + timeDeparture?.get('minute') + ' -> ' +
+                    destination + ' : ' + dateReturn + '/' + timeReturn?.get('hour') + ':' + timeReturn?.get('minute'));
     }
 
     return (
@@ -57,10 +61,12 @@ export default function NewTravel() {
                                 <DateTimeSelect 
                                     labelexpTime='Time Departure' 
                                     labelexp="Date Departure"
-                                    // value={dateDeparture}
-                                    handleChange={(date) => {
+                                    handleChangeDate={(date) => {
                                         setDateDeparture(date)
                                     }}    
+                                    handleChangeTime={(time) => {
+                                        setTimeDeparture(time)
+                                    }}
                                 />
                             </div>
                         </div>
@@ -85,9 +91,12 @@ export default function NewTravel() {
                                 <DateTimeSelect 
                                     labelexpTime="Time Return "
                                     labelexp="Date Return"
-                                    handleChange={(date) => {
+                                    handleChangeDate={(date) => {
                                         setDateReturn(date)
                                     }}    
+                                    handleChangeTime={(time) => {
+                                        setTimeReturn(time)
+                                    }}
                                 />
                             </div>
                         </div>
