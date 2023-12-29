@@ -5,20 +5,20 @@
 .MuiInputBase-input {
     font-size: 1.75rem;
     color: white!important;
-    border: 1px solid var(--dark-orange); 
+    border: 1px solid var(--pink-g1); 
 }
 
 .MuiInputBase-root {
     color: white!important;
     background-color: var(--purple-g3);
-    border: 1px solid var(--dark-orange)!important;
+    border: 1px solid var(--pink-g1)!important;
     font-size: 2rem;
 }
 
 .MuiInputBase-root:hover {
     color: white!important;
     background-color: var(--purple-g3);
-    border: 1px solid var(--dark-orange)!important;
+    border: 1px solid var(--pink-g1)!important;
 }
 
 .MuiOutlinedInput-input {
@@ -28,26 +28,26 @@
 .MuiFormControl-root:focus, .MuiTextField-root:focus {
     color: white!important;
     background-color: var(--purple-g3);
-    border: 1px solid var(--dark-orange)!important;
+    border: 1px solid var(--pink-g1)!important;
 }
 /* ---------------------- */
 
 /* SVG Icon select Date */
 .MuiSvgIcon-root {
-    color: var(--dark-orange);
+    color: var(--pink-g1);
 }
 
 
 /* Selected date modal Calendar */
 .MuiPickersDay-root.Mui-selected {
-    background-color: var(--dark-orange)!important;
+    background-color: var(--pink-g1)!important;
     color: white!important;
 }
 
 /* Label */
 .MuiFormLabel-root {
     font-size: 1.5rem;
-    color:  var(--dark-orange)!important;
+    color:  var(--pink-g1)!important;
     background-color: var(--purple-g3)!important;
 }
 

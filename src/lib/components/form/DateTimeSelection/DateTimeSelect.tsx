@@ -1,14 +1,22 @@
 import { DatePicker, PickersActionBar, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import { useState } from 'react';
 
 
 
-export default function DateSelect({labelexp, labelexpTime}: {labelexp: string, labelexpTime: string}) {
+export default function DateSelect({labelexp, labelexpTime, handleChange}: {
+    labelexp: string, 
+    labelexpTime: string, 
+    handleChange: (date: Dayjs | null) => void;
+}) {
+    
+    // Get actual date & Set the date to just allow the user to select a date in the next 7 days in DatePicker component
     let maxDate = new Date();
     maxDate.setDate(maxDate.getDate() + 7);
 
+    const [date, setDate] = useState<Dayjs | null>();
 
     return (
         // LocalizationProvider allows to change the locale of the DatePicker
@@ -19,6 +27,12 @@ export default function DateSelect({labelexp, labelexpTime}: {labelexp: string, 
                     label={labelexp}
                     disablePast
                     maxDate={dayjs(maxDate)}
+
+                    onChange={(value) => {
+                        setDate(value);
+                        handleChange(value)
+                    } 
+                    }
                 />
                 <TimePicker
                     label={labelexpTime}

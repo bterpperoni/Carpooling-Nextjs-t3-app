@@ -2,24 +2,23 @@ import Autocomplete  from 'react-google-autocomplete';
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 import DateTimeSelect from '../../lib/components/form/DateTimeSelection/DateTimeSelect';
 import { Button } from '@mui/material';
-import MuiStyle from '../../lib/styles/MuiNewTrip.module.css';
-import { log } from 'console';
+import MuiStyle from '../../lib/styles/MuiStyle.module.css';
+import { useState } from 'react';
+import { env } from 'next.config';
+import { Dayjs } from 'dayjs';
 
 export default function NewTravel() {
 
-    // Get date
-    const maxDate = new Date();
-
-    // Set the date to just allow the user to select a date in the next 7 days in DatePicker component
-    maxDate.setDate(maxDate.getDate() + 7);
-
-
     // Address of departure and destination from google autocomplete
     let address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
-    let departure: string| undefined;
-    let destination: string| undefined;
+    let [departure, setDeparture] = useState<string>();
+    let [destination, setDestination] = useState<string>();
 
-    const apiKey = process.env.GOOGLE_MAPS_API_KEY as string;
+    // Date of departure and destination
+    let [dateDeparture, setDateDeparture] = useState<Dayjs | null>(null);
+    let [dateReturn, setDateReturn] = useState<Dayjs | null>(null);
+
+    const apiKey = env.GOOGLE_MAPS_API_KEY as string;
 
     // Options for autocomplete
     const options = {
@@ -29,14 +28,14 @@ export default function NewTravel() {
         };
 
     function handleClick(): void {
-       console.log(departure, destination);
+       console.log(departure + ':' + dateDeparture, destination + ':' + dateReturn);
     }
 
     return (
          <>
             <LayoutMain>
                 <div className="bg-[var(--purple-g3)]  h-screen">
-                    <h1 className="text-6xl text-white mt-6">New Travel</h1>
+                    <h1 className="text-6xl text-white mt-6">New Trip</h1>
                     <form className="flex flex-col w-auto m-auto justify-center items-center">
                         {/* Departure */}
                         <div className='my-16'>
@@ -47,7 +46,7 @@ export default function NewTravel() {
                                     options={options}
                                     onPlaceSelected={(place) => {
                                             address.departure = place;
-                                            departure = address.departure.formatted_address;
+                                            setDeparture(address.departure.formatted_address) ;
                                         }
                                     }
                                     className="w-auto my-2"
@@ -55,7 +54,14 @@ export default function NewTravel() {
                                 />
                             </div>
                             <div className='p-4'>
-                                <DateTimeSelect labelexpTime='Time Departure' labelexp="Date Departure" />
+                                <DateTimeSelect 
+                                    labelexpTime='Time Departure' 
+                                    labelexp="Date Departure"
+                                    // value={dateDeparture}
+                                    handleChange={(date) => {
+                                        setDateDeparture(date)
+                                    }}    
+                                />
                             </div>
                         </div>
                     
@@ -68,7 +74,7 @@ export default function NewTravel() {
                                     options={options}
                                     onPlaceSelected={(place) => {
                                             address.destination = place;
-                                            destination = address.destination.formatted_address;
+                                            setDestination(address.destination.formatted_address);
                                         }
                                     }
                                     className="max-w-[90vw] my-2"
@@ -76,7 +82,13 @@ export default function NewTravel() {
                                 />
                             </div>
                             <div className='p-4'>
-                                <DateTimeSelect labelexpTime="Time Return " labelexp="Date Return" />
+                                <DateTimeSelect 
+                                    labelexpTime="Time Return "
+                                    labelexp="Date Return"
+                                    handleChange={(date) => {
+                                        setDateReturn(date)
+                                    }}    
+                                />
                             </div>
                         </div>
                         {/* Submit */}
