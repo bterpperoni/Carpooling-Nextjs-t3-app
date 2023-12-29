@@ -3,9 +3,10 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import DateTimeSelect from '../../lib/components/form/DateTimeSelection/DateTimeSelect';
 import { Button } from '@mui/material';
 import MuiStyle from '../../lib/styles/MuiStyle.module.css';
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { env } from 'next.config';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import { date, set } from 'zod';
 
 export default function NewTravel() {
 
@@ -30,9 +31,39 @@ export default function NewTravel() {
         types: ['address']
         };
 
-    function handleClick(): void {
-       console.log( departure + ':' + dateDeparture + '/' + timeDeparture?.get('hour') + ':' + timeDeparture?.get('minute') + ' -> ' +
-                    destination + ' : ' + dateReturn + '/' + timeReturn?.get('hour') + ':' + timeReturn?.get('minute'));
+    // Merge the date of departure with the time of departure to juste have one date
+    useEffect(() => {
+        if (dateDeparture && timeDeparture) {
+            setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
+        }
+    }, [dateDeparture, timeDeparture]);
+
+    // Merge the date of destination with the time of destination to juste have one date
+    useEffect(() => {
+        if (dateReturn && timeReturn) {
+            setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute()));
+        }
+    }, [dateReturn, timeReturn]);
+
+    function handleClick() {
+    //     const travel: Travel = {
+    //         id: 0,
+    //         driverId: driverId,
+    //         passengers : passenger,
+    //         departure : address.departure.formatted_address,
+    //         departureLatitude: address.departure.geometry?.location?.lat(),
+    //         departureLongitude: address.departure.geometry?.location?.lng(),
+    //         departureDate: parseISODateToMS(selectedDateDeparture.toString()),
+    //         destination: address.destination.formatted_address,
+    //         destinationLatitude: address.destination.geometry?.location?.lat(),
+    //         destinationLongitude: address.destination.geometry?.location?.lng(),
+    //         destinationDate: parseISODateToMS(finalDateDestination.toString()),
+    //         maxPassengers: maxPassengers,
+    //         status : 0
+    // };
+        if(dateDeparture) console.log(  dateDeparture?.format('DD-MM-YYYY HH:mm') +
+                                        ' --> ' + dateReturn?.format('DD-MM-YYYY HH:mm'));
+
     }
 
     return (
@@ -41,6 +72,11 @@ export default function NewTravel() {
                 <div className="bg-[var(--purple-g3)]  h-screen">
                     <h1 className="text-6xl text-white mt-6">New Trip</h1>
                     <form className="flex flex-col w-auto m-auto justify-center items-center">
+                        
+                        <h1 className='mt-6 text-3xl text-white'>
+                            Ajouter nombre de passager maximum + <br /> Choix d'école pour destination
+                        </h1>
+
                         {/* Departure */}
                         <div className='my-16'>
                             <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>

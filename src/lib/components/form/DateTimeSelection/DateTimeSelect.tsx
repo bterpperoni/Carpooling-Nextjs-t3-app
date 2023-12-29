@@ -1,4 +1,4 @@
-import { DatePicker, PickersActionBar, TimePicker } from '@mui/x-date-pickers';
+import { DatePicker, DateTimePicker, PickersActionBar, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { Dayjs } from 'dayjs';

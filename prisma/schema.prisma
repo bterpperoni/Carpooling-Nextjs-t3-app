@@ -64,21 +64,22 @@ model User {
 }
 
 model Travel {
-      id               Int      @id @default(autoincrement())
-  departure            String
-  departureLatitude    Float
-  departureLongitude   Float
-  departureDate        DateTime
-  destination          String
-  destinationLatitude  Float
-  destinationLongitude Float
-  destinationDate      DateTime
-  status               Int      @default(0)
-  driverId             String
-  driver               User     @relation(fields: [driverId], references: [id])
-  passengers           User[]   @relation("Passengers")
+      id                   Int      @id @default(autoincrement())
+      driverId             String
+      departure            String
+      departureLatitude    Float
+      departureLongitude   Float
+      departureDate        DateTime
+      destination          String
+      destinationLatitude  Float
+      destinationLongitude Float
+      destinationDate      DateTime
+      maxPassengers        Int      @default(2)
+      status               Int      @default(0)
+      driver               User     @relation(fields: [driverId], references: [id])
+      passengers           User[]   @relation("Passengers")
 
-  @@index([departureLatitude, departureLongitude], name: "departure")
-  @@index([destinationLatitude, destinationLongitude], name: "destination")
+      @@index([departureLatitude, departureLongitude], name: "departure")
+      @@index([destinationLatitude, destinationLongitude], name: "destination")
 }
 
