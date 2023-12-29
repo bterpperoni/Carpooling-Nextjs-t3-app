@@ -58,4 +58,67 @@ label {
 
 
 
+/* DateSelect.tsx override Mui classes */
+/* ----------------------------------------------------------------------------------------------------------- */
+
+/* Style for Input DatePicker */
+.MuiInputBase-input {
+    font-size: 1.75rem!important;
+    color: rgb(255, 255, 255)!important;
+    border: 1px solid var(--pink-g1)!important;
+}
+
+.MuiFormControl-root:focus, .MuiTextField-root:focus {
+    color: white!important;
+    background-color: var(--purple-g3);
+    border: 1px solid var(--pink-g1)!important;
+}
+/* ---------------------- */
+
+/* SVG Icon select Date */
+.MuiSvgIcon-root {
+    color: var(--pink-g1);
+}
+
+/* Label */
+.MuiFormLabel-root {
+    font-size: 1.25rem!important;
+    color:  var(--pink-g1)!important;
+    background-color: var(--purple-g3)!important;
+}
+
+.MuiFormLabel-root.Mui-focused {
+    color: white!important;
+    background-color: var(--purple-g3)!important;
+}
+
+/* -------------------------------------------Menu Item Time Picker------------------------------------ */
+.MuiMenuItem-root {
+    color: white!important;
+    background-color: var(--purple-g3)!important;
+    min-width: auto;
+}
+
+.MuiOutlinedInput-input {
+    padding: 14px 14px!important;
+}
+
+/* Selected date modal Calendar */
+.MuiPickersDay-root.Mui-selected {
+    background-color: var(--pink-g1)!important;
+    color: white!important;
+}
+
+@media screen and (max-width: 768px) {
+    /* Style for Input DatePicker */
+    .MuiInputBase-input {
+        font-size: 1.25rem!important;
+    }
+
+    /* Label */
+    .MuiFormLabel-root {
+        font-size: 1rem!important;
+    }
+}
+
   

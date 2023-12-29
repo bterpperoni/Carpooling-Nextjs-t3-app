@@ -37,11 +37,11 @@ export default function DateSelect({labelexp, labelexpTime, disableDate, disable
                     onChange={(date) => {
                         handleChangeDate(date)
                     }}
-                    className={MuiStyle.MuiInputBaseRoot}
+                    className={`${MuiStyle.MuiInputBaseRoot} ${MuiStyle.MuiInputBaseInput} ${MuiStyle.MuiFormLabelRoot}`}
                 />
                 <TimePicker
                     label={labelexpTime}
-                    className={`mt-4 ml-0 md:ml-2 md:mt-0 ${MuiStyle.MuiInputBaseRoot}`}
+                    className={`mt-4 ml-0 md:ml-2 md:mt-0 ${MuiStyle.MuiInputBaseRoot} ${MuiStyle.MuiInputBaseInput} ${MuiStyle.MuiFormLabelRoot}`}
                     disabled={disableTime}
                     ampm={false}
                     ampmInClock={true}

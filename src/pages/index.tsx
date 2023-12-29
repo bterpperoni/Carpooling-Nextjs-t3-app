@@ -1,7 +1,7 @@
 
 import LayoutMain from '../lib/components/layout/LayoutMain';
 import { signIn, useSession } from "next-auth/react";
-import Button from "$/lib/components/button/simple/Button";
+import Button from "$/lib/components/button/Button";
 
 export default function Home() {
 

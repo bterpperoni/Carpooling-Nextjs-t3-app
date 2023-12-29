@@ -5,7 +5,6 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "$/server/api/trpc";
-import { create } from "domain";
 
 
 // API definition for travels
@@ -27,11 +26,12 @@ export const travelRouter = createTRPCRouter({
     create: protectedProcedure
         .input(z.object(
             { 
-                departure: z.string().min(1),
+                driverId: z.string(),
+                departure: z.string(),
                 departureLatitude : z.number(),
                 departureLongitude : z.number(), 
                 departureDateTime: z.date(),
-                destination: z.string().min(1),
+                destination: z.string(),
                 destinationLatitude : z.number(),
                 destinationLongitude : z.number(), 
                 returnDateTime: z.date(),

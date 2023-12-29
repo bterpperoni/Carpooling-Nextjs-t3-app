@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { env } from 'next.config';
 import dayjs, { Dayjs } from 'dayjs';
 import { useSession } from 'next-auth/react';
+import { api } from '$/utils/api';
 
 export default function NewTravel() {
 
@@ -30,6 +31,7 @@ export default function NewTravel() {
 
     const apiKey = env.GOOGLE_MAPS_API_KEY as string;
 
+    const { data: travel, mutate: createTravel } = api.travel.create.useMutation();
     // Options for autocomplete
     const options = {
         componentRestrictions: { country: 'be' },
@@ -42,35 +44,45 @@ export default function NewTravel() {
     // Merge the date of [departure | return] with the time of [departure | return] to juste keep one field
     useEffect(() => {
         if (dateDeparture && timeDeparture) {
-            setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
-            
+            setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));    
         }
         if (dateReturn && timeReturn) {
             setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute())); 
         }
-
-        /*  Check if the date of return is after the date of departure and if not, 
-            Set the date of return to the date of departure + 8 hours (the normal duration of a school day)
-
-                if(dateDeparture && timeDeparture && dateReturn && timeReturn) {
-                    if(dateReturn?.isBefore(dateDeparture)) {
-                    setDateReturn(dateDeparture.add(8, 'hour'));
-                    }
-                }
-        */   
     }, [dateDeparture, timeDeparture, dateReturn, timeReturn]);
     
     // Handle the click on the submit button of the form new travel
     function handleClick() { 
-        if(dateDeparture || dateReturn) {
-            console.log(dateDeparture?.format('DD-MM-YYYY HH:mm') + ' --> ' + dateReturn?.format('DD-MM-YYYY HH:mm'));
-        }
+        // if(dateDeparture || dateReturn) {
+        //     console.log(dateDeparture?.format('DD-MM-YYYY HH:mm') + ' --> ' + dateReturn?.format('DD-MM-YYYY HH:mm'));
+        // }
+        // Check if the user is connected
+        if(sessionData) {
 
+        }
+        // Check if the departure and destination are selected
+        if(departure && destination && address.departure?.geometry?.location && address.destination?.geometry?.location && sessionData?.user?.id) {
         // Check if the date of return is after the date of departure
-        if(dateDeparture && timeDeparture && dateReturn) {
-            if(dateReturn?.isBefore(dateDeparture)) {
-                alert('La date de retour doit être après la date de départ'); 
+            if(dateDeparture && timeDeparture && dateReturn) {
+                if(dateReturn?.isBefore(dateDeparture)) {
+                    alert('Return date must be after departure date'); 
+                }else {
+                    createTravel({
+                        driverId: sessionData.user.id,
+                        departure: departure,
+                        departureLatitude: address.departure.geometry.location.lat(),
+                        departureLongitude: address.departure.geometry.location.lng(),
+                        departureDateTime: dateDeparture.toDate(),
+                        destination: destination,
+                        destinationLatitude: address.destination.geometry.location.lat(),
+                        destinationLongitude: address.destination.geometry.location.lng(),
+                        returnDateTime: dateReturn.toDate(),
+                        status:0
+                    });
+                }
             }
+        }else {
+            alert('Please select a departure and destination');
         }
     }
 

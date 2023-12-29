@@ -4,7 +4,7 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import  Map  from '$/lib/components/map/Map'; 
 import Slider from '$/lib/components/button/slider/Slider';
 import { useState } from 'react';
-import Button from '$/lib/components/button/simple/Button';
+import Button from '$/lib/components/button/Button';
 
 const All: React.FC = () => {
         const center: google.maps.LatLngLiteral =  { lat: 50.463727, lng: 3.938247 };

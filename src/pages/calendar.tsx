@@ -1,4 +1,4 @@
-import Button from '$/lib/components/button/simple/Button';
+import Button from '$/lib/components/button/Button';
 import LayoutMain from '$/lib/components/layout/LayoutMain';
 
 
