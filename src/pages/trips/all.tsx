@@ -36,10 +36,13 @@ const All: React.FC = () => {
                         </div>
                     </div>
                     <div>
-                        {/* ----------------------------------------- display list ----------------------------------------- */}
+                        {/* ------------------------------------- display list --------------------------------------------- */}
                         {checked && (
                             <>   
                                 <p className="text-4xl text-white font-bold">Display list of trips </p>
+                                {/* 
+                                    TODO : Component ListTrips & ListTripsItem
+                                */}
                             </>
                         )}
                         {/* -------------------------------------- display map ---------------------------------------------- */}

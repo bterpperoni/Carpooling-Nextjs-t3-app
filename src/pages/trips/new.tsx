@@ -8,6 +8,7 @@ import { env } from 'next.config';
 import dayjs, { Dayjs } from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
+import { set } from 'zod';
 
 export default function NewTravel() {
 
@@ -18,16 +19,22 @@ export default function NewTravel() {
 
     // Address of departure and destination from google autocomplete
     let address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
-    let [departure, setDeparture] = useState<string>();
-    let [destination, setDestination] = useState<string>();
+    const [departure, setDeparture] = useState<string>();
+    const [destination, setDestination] = useState<string>();
 
     // Date of departure and destination
-    let [dateDeparture, setDateDeparture] = useState<Dayjs | null>(null);
-    let [dateReturn, setDateReturn] = useState<Dayjs | null>(null);
+    const [dateDeparture, setDateDeparture] = useState<Dayjs | null>(null);
+    const [dateReturn, setDateReturn] = useState<Dayjs | null>(null);
     
     // Time of departure and destination
-    let [timeDeparture, setTimeDeparture] = useState<Dayjs | null>(null);
-    let [timeReturn, setTimeReturn] = useState<Dayjs | null>(null);
+    const [timeDeparture, setTimeDeparture] = useState<Dayjs | null>(null);
+    const [timeReturn, setTimeReturn] = useState<Dayjs | null>(null);
+
+    // Latitude and longitude of departure and destination
+    const [departureLatitude, setDepartureLatitude] = useState<number>(0);
+    const [departureLongitude, setDepartureLongitude] = useState<number>(0);
+    const [destinationLatitude, setDestinationLatitude] = useState<number>(0);
+    const [destinationLongitude, setDestinationLongitude] = useState<number>(0);
 
     const apiKey = env.GOOGLE_MAPS_API_KEY as string;
 
@@ -51,38 +58,31 @@ export default function NewTravel() {
         }
     }, [dateDeparture, timeDeparture, dateReturn, timeReturn]);
     
-    // Handle the click on the submit button of the form new travel
+    // HSubmit a new travel
     function handleClick() { 
-        // if(dateDeparture || dateReturn) {
-        //     console.log(dateDeparture?.format('DD-MM-YYYY HH:mm') + ' --> ' + dateReturn?.format('DD-MM-YYYY HH:mm'));
-        // }
-        // Check if the user is connected
         if(sessionData) {
-
-        }
-        // Check if the departure and destination are selected
-        if(departure && destination && address.departure?.geometry?.location && address.destination?.geometry?.location && sessionData?.user?.id) {
-        // Check if the date of return is after the date of departure
-            if(dateDeparture && timeDeparture && dateReturn) {
-                if(dateReturn?.isBefore(dateDeparture)) {
-                    alert('Return date must be after departure date'); 
-                }else {
+            // Check if the departure and destination are selected
+            if(departure && destination) {
+                // Check if the date of return is after the date of departure
+                if(dateDeparture && dateReturn) {
+                    if(dateReturn?.isBefore(dateDeparture)) {
+                        alert('Return date must be after departure date'); 
+                    }
                     createTravel({
                         driverId: sessionData.user.id,
                         departure: departure,
-                        departureLatitude: address.departure.geometry.location.lat(),
-                        departureLongitude: address.departure.geometry.location.lng(),
+                        departureLatitude: departureLatitude,
+                        departureLongitude: departureLongitude,
                         departureDateTime: dateDeparture.toDate(),
                         destination: destination,
-                        destinationLatitude: address.destination.geometry.location.lat(),
-                        destinationLongitude: address.destination.geometry.location.lng(),
+                        destinationLatitude: destinationLatitude,
+                        destinationLongitude: destinationLongitude,
                         returnDateTime: dateReturn.toDate(),
                         status:0
                     });
+                    console.log('Travel created');
                 }
             }
-        }else {
-            alert('Please select a departure and destination');
         }
     }
 
@@ -112,6 +112,10 @@ export default function NewTravel() {
                                     onPlaceSelected={(place) => {
                                             address.departure = place;
                                             setDeparture(address.departure.formatted_address);
+                                            if(address.departure.geometry?.location?.lat() && address.departure.geometry?.location?.lng()) {
+                                                setDepartureLatitude(address.departure.geometry.location.lat());
+                                                setDepartureLongitude(address.departure.geometry.location.lng()); 
+                                            }
                                         }
                                     }
                                     className="w-[75%] my-2 md:w-[75%]"
@@ -144,6 +148,10 @@ export default function NewTravel() {
                                     onPlaceSelected={(place) => {
                                             address.destination = place;
                                             setDestination(address.destination.formatted_address);
+                                            if(address.destination.geometry?.location?.lat() && address.destination.geometry?.location?.lng()) {
+                                            setDestinationLatitude(address.destination.geometry.location.lat());
+                                            setDestinationLongitude(address.destination.geometry.location.lng()); 
+                                            }
                                         }
                                     }
                                     className="w-[75%] my-2 md:w-[75%]"
