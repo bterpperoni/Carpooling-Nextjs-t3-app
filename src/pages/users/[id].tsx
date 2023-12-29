@@ -110,7 +110,7 @@ export default function User() {
 
               <div className="mt-8">
                 <div className="mb-4">
-                  <h2 className="text-2xl font-semibold mb-2 text-gray-800">Statistiques</h2>
+                  <h2 className="text-2xl font-semibold mb-2 text-gray-800">Stat -- styles à modifier </h2>
                   <p className="border-t-2 border-b-0 border-l-0 border-r-0 border-black">Nombre de trajets : 0</p>
                   <p className="border-t-2 border-b-0 border-l-0 border-r-0 border-black">Montant du portefeuille : 0</p>
                   <p className="border-t-2 border-b-0 border-l-0 border-r-0 border-black">Note moyenne : 0/5</p>

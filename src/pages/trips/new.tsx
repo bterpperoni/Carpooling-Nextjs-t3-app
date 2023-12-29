@@ -83,7 +83,7 @@ export default function NewTravel() {
             <LayoutMain>
                 <div className="bg-[var(--purple-g3)]  h-screen">
                     <h1 className="text-6xl text-white mt-6">New Trip</h1>
-                    <form className="flex flex-col w-auto m-auto justify-center items-center">
+                    <form className="flex flex-col w-auto m-auto justify-center items-center bg-[var(--purple-g3)]">
                         
                         <h1 className='mt-6 text-3xl text-white'>
                             Ajouter nombre de passager maximum +
@@ -146,8 +146,8 @@ export default function NewTravel() {
                                     disableDate={true}
                                     disableTime={true}
                                     // Enable the date and time of return
-                                    {...(dateDeparture && {disableDate: false})}
-                                    {...(dateDeparture && {disableTime: false})}
+                                    {...(dateDeparture && timeDeparture && {disableDate: false})}
+                                    {...(dateDeparture && timeDeparture && {disableTime: false})}
                                     handleChangeDate={(date) => {
                                         setDateReturn(date)
                                     }}    

@@ -4,7 +4,6 @@
 
 @import url("theme.css");
 @import url('../components/button/slider/Slider.css');
-@import url('../components/form//DateTimeSelection/DateTimeSelect.css'); 
 
 html {
     background: rgb(31,56,172);
@@ -56,6 +55,7 @@ label {
     border: 1px solid var(--pink-g1) !important;
     padding: 10px; /* Ajustez la valeur de rembourrage selon vos préférences */
 }
+
 
 
   
