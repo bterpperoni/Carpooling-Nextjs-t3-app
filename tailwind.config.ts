@@ -3,7 +3,7 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   darkMode: "class",
-  content: ["./src/**/*.tsx"],
+  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
         colors: {
@@ -29,7 +29,11 @@ export default {
         'Segoe UI Symbol', 
         'Noto Color Emoji'
       ]
-    }   
+    },
+    plugins: [require("daisyui")],
+    daisyui: {
+      themes: ["light", "dark", "cupcake"],
+    }
   }
 }satisfies Config;
 

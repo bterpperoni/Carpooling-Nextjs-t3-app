@@ -4,7 +4,15 @@
     --light-blue : #007def;
     --submit-blue: #007bff;
 
-    --dark-orange : #F29F05;
+    --purple-g1 : #5F4B8B;
+    --purple-g2 : #2e026d; 
+    --purple-g3 : #15162c;
+
+    --dark-gray : #333333;
+    --light-gray : #F2F2F2;
+
+    --pink-g1 : #a749bf;
+    /*  --dark-orange : #F29F05; */
     --light-orange : #F2C94C;
     --red : rgb(175, 40, 17);
     font-size: 16px;

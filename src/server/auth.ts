@@ -9,7 +9,6 @@ import GOOGLEProvider from "next-auth/providers/GOOGLE";
 
 import { env } from "$/env";
 import { db } from "$/server/db";
-import { userRouter } from './api/routers/user';
 import { userRole } from "$/utils/interface";
 
 /**
