@@ -5,7 +5,7 @@ import { api } from "$/utils/api";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, use, useEffect, useState } from "react";
 
 
 export default function User() {
@@ -27,7 +27,7 @@ export default function User() {
   const {data: user} = api.user.userById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
 
   // Update user
-  const { data: updatedUser, error, isLoading, mutate: updateUser } = api.user.update.useMutation();
+  const { data: updatedUser, mutate: updateUser } = api.user.update.useMutation();
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -37,19 +37,19 @@ export default function User() {
     }
   };
 
-  const handleSaveClick = async () => {
-
-    if (user?.id && editedName && editedEmail) {
-        updateUser({
-          id: user.id,
-          name: editedName,
-          email: editedEmail
-      });
-      setIsEditing(false);
+ useEffect(() => {
+    if (updatedUser) {
+      reload();
     }
-    await(new Promise(r => setTimeout(r, 750)));
-    reload();
+  }, [updatedUser, reload]);
 
+  const handleSaveClick = () => {
+    updateUser({
+      id: id,
+      name: editedName,
+      email: editedEmail,
+    });
+    setIsEditing(false);
   };
 
   if (user){

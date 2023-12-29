@@ -6,6 +6,8 @@ import {
   publicProcedure,
 } from "$/server/api/trpc";
 
+
+// API definition for users
 export const userRouter = createTRPCRouter({
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
@@ -19,16 +21,15 @@ export const userRouter = createTRPCRouter({
   userList: protectedProcedure.query(async ({ ctx }) => {
     const userList =  ctx.db.user.findMany();
     return userList;
-  }
-),
+    }),
 
   userById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.user.findUnique({
-        where: { id: input.id },
-      });
-    }),
+        return ctx.db.user.findUnique({
+          where: { id: input.id },
+        });
+      }),
   
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
@@ -61,7 +62,8 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
-  }),
+   
+    getSecretMessage: protectedProcedure.query(() => {
+      return "you can now see this secret message!";
+    }),
 });

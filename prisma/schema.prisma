@@ -69,12 +69,12 @@ model Travel {
       departure            String
       departureLatitude    Float
       departureLongitude   Float
-      departureDate        DateTime
+      departureDateTime    DateTime
       destination          String
       destinationLatitude  Float
       destinationLongitude Float
-      destinationDate      DateTime
-      maxPassengers        Int      @default(2)
+      returnDateTime       DateTime?
+      maxPassengers        Int?      @default(2)
       status               Int      @default(0)
       driver               User     @relation(fields: [driverId], references: [id])
       passengers           User[]   @relation("Passengers")

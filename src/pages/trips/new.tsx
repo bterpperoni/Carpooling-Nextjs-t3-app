@@ -19,6 +19,7 @@ export default function NewTravel() {
     let [dateDeparture, setDateDeparture] = useState<Dayjs | null>(null);
     let [dateReturn, setDateReturn] = useState<Dayjs | null>(null);
     
+    // Time of departure and destination
     let [timeDeparture, setTimeDeparture] = useState<Dayjs | null>(null);
     let [timeReturn, setTimeReturn] = useState<Dayjs | null>(null);
 
@@ -31,38 +32,23 @@ export default function NewTravel() {
         types: ['address']
         };
 
-    // Merge the date of departure with the time of departure to juste have one date
+    // Merge the date of [departure | return] with the time of [departure | return] to juste keep one field
     useEffect(() => {
         if (dateDeparture && timeDeparture) {
             setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
         }
-    }, [dateDeparture, timeDeparture]);
-
-    // Merge the date of destination with the time of destination to juste have one date
-    useEffect(() => {
         if (dateReturn && timeReturn) {
             setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute()));
         }
-    }, [dateReturn, timeReturn]);
+    }, [dateDeparture, timeDeparture, dateReturn, timeReturn]);
 
+    
+    
+    // Handle the click on the submit button of the form new travel
     function handleClick() {
-    //     const travel: Travel = {
-    //         id: 0,
-    //         driverId: driverId,
-    //         passengers : passenger,
-    //         departure : address.departure.formatted_address,
-    //         departureLatitude: address.departure.geometry?.location?.lat(),
-    //         departureLongitude: address.departure.geometry?.location?.lng(),
-    //         departureDate: parseISODateToMS(selectedDateDeparture.toString()),
-    //         destination: address.destination.formatted_address,
-    //         destinationLatitude: address.destination.geometry?.location?.lat(),
-    //         destinationLongitude: address.destination.geometry?.location?.lng(),
-    //         destinationDate: parseISODateToMS(finalDateDestination.toString()),
-    //         maxPassengers: maxPassengers,
-    //         status : 0
-    // };
         if(dateDeparture) console.log(  dateDeparture?.format('DD-MM-YYYY HH:mm') +
                                         ' --> ' + dateReturn?.format('DD-MM-YYYY HH:mm'));
+        console.log(departure, destination);
 
     }
 
