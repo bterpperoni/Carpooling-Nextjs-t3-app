@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Children, useEffect, useRef, useState } from 'react';
 import { MapProps } from '$/utils/interface';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { env } from 'next.config';
 
 
 
-const Map: React.FC<MapProps> = ({ center, zoom, markerPosition }) => {
+const Map: React.FC<MapProps> = ({ center, zoom, children}: { center: google.maps.LatLngLiteral, zoom: number, children: React.ReactNode}) => {
   const mapContainerStyle = {
     width: '100%',
     height: '25rem',
@@ -41,7 +41,8 @@ const Map: React.FC<MapProps> = ({ center, zoom, markerPosition }) => {
             }}
             onUnmount={() => setIsMapLoaded(false)}
         >
-           {isMapLoaded && <Marker position={markerPosition} /> }
+           {isMapLoaded && <p>ok good</p>}
+           {children}
         </GoogleMap>
       </LoadScript>
     </>

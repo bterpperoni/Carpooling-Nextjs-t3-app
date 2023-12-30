@@ -29,8 +29,8 @@ export enum userRole{
 
 /* --------------------------------------------- INTERFACES -------------------------------------------------- */
 
-export interface MapProps {
+export type MapProps = {
     center: google.maps.LatLngLiteral;
     zoom: number;
-    markerPosition: google.maps.LatLngLiteral;
+    children: React.ReactNode;
   }

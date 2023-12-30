@@ -5,11 +5,20 @@ import  Map  from '$/lib/components/map/Map';
 import Slider from '$/lib/components/button/slider/Slider';
 import { useState } from 'react';
 import Button from '$/lib/components/button/Button';
+import { useSession } from 'next-auth/react';
+import { api } from '$/utils/api';
+import { Marker } from '@react-google-maps/api';
 
 const All: React.FC = () => {
+        
         const center: google.maps.LatLngLiteral =  { lat: 50.463727, lng: 3.938247 };
         const zoom: number = 12;
-        const markerPosition: google.maps.LatLngLiteral = { lat: 50.463727, lng: 3.938247 };
+        // const markerPosition: google.maps.LatLngLiteral = { lat: 50.463727, lng: 3.938247 };
+
+        const { data : sessionData } = useSession();
+        const { data: travelList } = api.travel.travelList.useQuery(undefined,
+            { enabled: sessionData?.user !== undefined }  
+        );
 
         const [checked, setChecked] = useState(false);
 
@@ -24,7 +33,7 @@ const All: React.FC = () => {
                         <div className=" flex flex-row items-center justify-between mt-4 mx-4">
                             <Slider check={handleCheck} checked={checked} classSlider='' />
                             <h1 className="md:text-6xl text-3xl font-bold mb-4 mt-4  w-[50%] text-center text-fuchsia-700">Trips</h1>
-                            <Button href="/trips/new" className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">New Trip</Button>
+                            <Button href="/trips/new" className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] border-2 text-white px-3 py-2 rounded-md">New Trip</Button>
                         </div>
                         <div className='flex flex-col items-center'>  
                             
@@ -39,14 +48,27 @@ const All: React.FC = () => {
                         {/* ------------------------------------- display list --------------------------------------------- */}
                         {checked && (
                             <>   
-                                <p className="text-4xl text-white font-bold">Display list of trips </p>
+                                <p className="text-4xl text-white font-bold m-7">Display list of trips </p>
                                 {/* 
                                     TODO : Component ListTrips & ListTripsItem
                                 */}
+                                <div className='m-6 h-box w-auto bg-white border-fuchsia-700 text-fuchsia-700'>
+                                    {travelList?.map((travel) => (
+                                        <div key={travel.id} className='m-6 flex flex-col justify-center items-center'>
+                                            <p>{travel.id}</p>
+                                            <p>{travel.driverId}</p>
+                                            <p>{travel.departure}</p>
+                                            <p>{travel.destination}</p>
+                                        </div>
+                                    ))}            
+                                </div>
                             </>
                         )}
                         {/* -------------------------------------- display map ---------------------------------------------- */}
-                        {!checked && <Map center={center} zoom={zoom} markerPosition={markerPosition} />}
+                        {!checked && 
+                        <Map center={center} zoom={zoom}>
+                            <Marker position={center} />
+                        </Map>}
                     </div>
                 </LayoutMain>
             </>
