@@ -1,7 +1,7 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { MapProps } from '$/utils/interface';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { env } from 'next.config';
 
 
 
@@ -11,7 +11,7 @@ const Map: React.FC<MapProps> = ({ center, zoom, markerPosition }) => {
     height: '25rem',
   };
 
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY as string;
+  const apiKey = env.GOOGLE_MAPS_API_KEY as string;
 
   // Used to access the map object
   const mapRef = useRef<google.maps.Map | null>(null);

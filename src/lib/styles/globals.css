@@ -6,8 +6,7 @@
 @import url('../components/button/slider/Slider.css');
 
 html {
-    background: rgb(31,56,172);
-    background: linear-gradient( var(--purple-g2) 50% ,var(--purple-g2) 100%);
+    background: var(--purple-g3);
     font-family: 'Open Sans', sans-serif;
     position: static;
 }

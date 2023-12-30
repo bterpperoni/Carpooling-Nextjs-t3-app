@@ -20,17 +20,17 @@ const All: React.FC = () => {
         return (
             <>
                 <LayoutMain>
-                    <div className="bg-[var(--purple-g2)]">
-                        <div className=" flex items-center justify-between mt-4 mx-4">
+                    <div className="bg-[var(--purple-g3)]">
+                        <div className=" flex flex-row items-center justify-between mt-4 mx-4">
                             <Slider check={handleCheck} checked={checked} classSlider='' />
+                            <h1 className="md:text-6xl text-3xl font-bold mb-4 mt-4  w-[50%] text-center text-fuchsia-700">Trips</h1>
                             <Button href="/trips/new" className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">New Trip</Button>
                         </div>
-                        <div>  
-                            <h1 className="md:text-6xl text-3xl font-bold mb-4 mt-4">Trips</h1>
+                        <div className='flex flex-col items-center'>  
+                            
                                 <div className='border-b-t-2 border-0 border-white'>   
-                                    <div className='md:text-4xl text-2xl bg-[#8041FF] text-center rounded-[10%] p-4 mb-4 text-white border-white border-2'>                    
-                                        <p>Here you can submit a new trip,</p>
-                                        <p>Or find a driver who goes to your school</p>
+                                    <div className='md:text-4xl text-2xl mx-12 bg-[var(--purple-g3)] text-center rounded-[10%] p-4 mb-4 text-fuchsia-700 border-fuchsia-700 border-2 '>                    
+                                        <p>Find the best trip</p>
                                     </div>
                                 </div>
                         </div>
