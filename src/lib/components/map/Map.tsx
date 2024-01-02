@@ -5,7 +5,7 @@ import { env } from 'next.config';
 
 
 
-const Map: React.FC<MapProps> = ({ center, zoom, children}: { center: google.maps.LatLngLiteral, zoom: number, children: React.ReactNode}) => {
+const Map: React.FC<MapProps> = ({ center, zoom, children}: { center: google.maps.LatLngLiteral, zoom: number, children: React.ReactNode | undefined}) => {
   const mapContainerStyle = {
     width: '100%',
     height: '25rem',

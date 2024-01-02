@@ -54,7 +54,7 @@ const All: React.FC = () => {
                                 */}
                                 <div className='m-6 h-box w-auto bg-white border-fuchsia-700 text-fuchsia-700'>
                                     {travelList?.map((travel) => (
-                                        <TravelCard  key={travel.id} travel={travel} driver={travel.driverId} goToTravel={() => console.log("ok")} />
+                                        <TravelCard  key={travel.id} travel={travel} driver={travel.driverId} goToTravel={() => window.location.href = `/trips/${travel.id}`} />
                                     ))}            
                                 </div>
                             </>
@@ -66,7 +66,7 @@ const All: React.FC = () => {
                             <Marker 
                                 key={travel.id} 
                                 position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
-                                onClick={() => console.log('click')} 
+                                onClick={() => window.location.href = `/trips/${travel.id}`} 
                             />
                         ))}
                         </Map>}
