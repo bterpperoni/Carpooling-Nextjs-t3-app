@@ -39,9 +39,8 @@ const Map: React.FC<MapProps> = ({ center, zoom, children}: { center: google.map
                 mapRef.current = map;
                 setIsMapLoaded(true);
             }}
-            onUnmount={() => setIsMapLoaded(false)}
-        >
-           {isMapLoaded && <p>ok good</p>}
+            onUnmount={() => setIsMapLoaded(false)}>
+           {isMapLoaded}
            {children}
         </GoogleMap>
       </LoadScript>

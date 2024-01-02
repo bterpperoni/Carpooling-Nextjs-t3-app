@@ -8,20 +8,21 @@ import Button from '$/lib/components/button/Button';
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import { Marker } from '@react-google-maps/api';
+import TravelCard from '$/lib/components/travel/TravelCard';
 
 const All: React.FC = () => {
-        
         const center: google.maps.LatLngLiteral =  { lat: 50.463727, lng: 3.938247 };
         const zoom: number = 12;
-        // const markerPosition: google.maps.LatLngLiteral = { lat: 50.463727, lng: 3.938247 };
 
         const { data : sessionData } = useSession();
+
         const { data: travelList } = api.travel.travelList.useQuery(undefined,
             { enabled: sessionData?.user !== undefined }  
         );
 
+        // Used to display the list of trips or the map
         const [checked, setChecked] = useState(false);
-
+        
         const handleCheck = () => {
           setChecked(!checked);
         };
@@ -36,7 +37,6 @@ const All: React.FC = () => {
                             <Button href="/trips/new" className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] border-2 text-white px-3 py-2 rounded-md">New Trip</Button>
                         </div>
                         <div className='flex flex-col items-center'>  
-                            
                                 <div className='border-b-t-2 border-0 border-white'>   
                                     <div className='md:text-4xl text-2xl mx-12 bg-[var(--purple-g3)] text-center rounded-[10%] p-4 mb-4 text-fuchsia-700 border-fuchsia-700 border-2 '>                    
                                         <p>Find the best trip</p>
@@ -54,12 +54,7 @@ const All: React.FC = () => {
                                 */}
                                 <div className='m-6 h-box w-auto bg-white border-fuchsia-700 text-fuchsia-700'>
                                     {travelList?.map((travel) => (
-                                        <div key={travel.id} className='m-6 flex flex-col justify-center items-center'>
-                                            <p>{travel.id}</p>
-                                            <p>{travel.driverId}</p>
-                                            <p>{travel.departure}</p>
-                                            <p>{travel.destination}</p>
-                                        </div>
+                                        <TravelCard  key={travel.id} travel={travel} driver={travel.driverId} goToTravel={() => console.log("ok")} />
                                     ))}            
                                 </div>
                             </>
@@ -67,7 +62,13 @@ const All: React.FC = () => {
                         {/* -------------------------------------- display map ---------------------------------------------- */}
                         {!checked && 
                         <Map center={center} zoom={zoom}>
-                            <Marker position={center} />
+                        {travelList?.map((travel) => (
+                            <Marker 
+                                key={travel.id} 
+                                position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
+                                onClick={() => console.log('click')} 
+                            />
+                        ))}
                         </Map>}
                     </div>
                 </LayoutMain>

@@ -1,11 +1,11 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 
 const navigation = [
-  { name: 'Home', href: '/', current: true },
+  { name: 'Home', href: '/', current: false },
   { name: 'Trips', href: '/trips/all', current: false },
   { name: 'Wallet', href: '#', current: false },
   { name: 'Social', href: '#', current: false },
@@ -19,6 +19,17 @@ function classNames(...classes: string[]) {
 export default function Nav() {
   const { data: session } = useSession();
   
+  useEffect(() => {
+    navigation.map((item) => {
+      if (window.location.pathname === item.href) {
+        item.current = true;
+      } else {
+        item.current = false;
+      }
+    })
+  }
+  , [navigation])
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
     {({ open }: { open: boolean }) => (
@@ -42,13 +53,13 @@ export default function Nav() {
                   <img
                     className="h-8 w-auto"
                     src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    alt="Your Company"
+                    alt="CarHeh"
                   />
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4 absolute">
                     {navigation.map((item) => (
-                      <a
+                      <a 
                         key={item.name}
                         href={item.href}
                         className={classNames(
