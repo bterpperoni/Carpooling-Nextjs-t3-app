@@ -42,7 +42,11 @@ const All: React.FC = () => {
                         <div className=" flex flex-row items-center justify-between mt-4 mx-4">
                             <Slider check={handleCheck} checked={checked} classSlider='' />
                             <h1 className="md:text-6xl text-3xl font-bold mb-4 mt-4  w-[50%] text-center text-fuchsia-700">Trips</h1>
-                            <Button href="/trips/new" className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] border-2 text-white px-3 py-2 rounded-md">New Trip</Button>
+                            <Button 
+                                href="/trips/new" 
+                                className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] border-2 text-white px-3 py-2 rounded-md">
+                                    New Trip
+                            </Button>
                         </div>
                         <div className='flex flex-col items-center'>  
                                 <div className='border-b-t-2 border-0 border-white'>   

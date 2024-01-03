@@ -180,12 +180,8 @@ export default function NewTravel() {
                                 <DateTimeSelect 
                                     labelexpTime="Time Return "
                                     labelexp="Date Return"
-                                    // Disable the date and time of return when the date and time of departure are not selected
-                                    disableDate={true}
-                                    disableTime={true}
-                                    // Enable the date and time of return
-                                    {...(dateDeparture && timeDeparture && {disableDate: false})}
-                                    {...(dateDeparture && timeDeparture && {disableTime: false})}
+                                    disableDate={false}
+                                    disableTime={false}
                                     handleChangeDate={(date) => {
                                         setDateReturn(date)
                                     }}    

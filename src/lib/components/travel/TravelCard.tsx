@@ -1,7 +1,7 @@
 // travelCard.tsx
 
 
-import type { Travel, User } from "@prisma/client";
+import type { Travel } from "@prisma/client";
 
 interface TravelCardProps {
   travel: Travel;

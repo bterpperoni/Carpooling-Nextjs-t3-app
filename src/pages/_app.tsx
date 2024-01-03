@@ -8,7 +8,6 @@ import { type AppType } from "next/app";
 
 import { api } from "$/utils/api";
 
-
 const Carheh: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },

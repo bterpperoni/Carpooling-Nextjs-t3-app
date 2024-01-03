@@ -1,10 +1,9 @@
 import Head from "next/head";
 import NavBar from "$/lib/components/nav/Nav";
 
-
 export default function LayoutMain({ children }: { children: React.ReactNode }) {
 
-
+    
 
     return (
         <>

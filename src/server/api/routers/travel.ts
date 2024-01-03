@@ -34,7 +34,7 @@ export const travelRouter = createTRPCRouter({
                 destination: z.string(),
                 destinationLatitude : z.number(),
                 destinationLongitude : z.number(), 
-                returnDateTime: z.date(),
+                returnDateTime: z.date() || null,
                 status: z.number(),
                 
             }))

@@ -74,7 +74,7 @@ model Travel {
       destinationLatitude  Float
       destinationLongitude Float
       returnDateTime       DateTime?
-      maxPassengers        Int?      @default(2)
+      maxPassengers        Int?     @default(2)
       status               Int      @default(0)
       driver               User     @relation(fields: [driverId], references: [id])
       passengers           User[]   @relation("Passengers")
