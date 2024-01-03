@@ -56,4 +56,50 @@ export const travelRouter = createTRPCRouter({
                 },
             });
         }),
+
+    update: protectedProcedure
+        .input(z.object(
+            { 
+                id: z.number(),
+                driverId: z.string(),
+                departure: z.string(),
+                departureLatitude : z.number(),
+                departureLongitude : z.number(), 
+                departureDateTime: z.date(),
+                destination: z.string(),
+                destinationLatitude : z.number(),
+                destinationLongitude : z.number(), 
+                returnDateTime: z.date(),
+                status: z.number(),
+                
+            }))
+        .mutation(async ({ ctx, input }) => {
+            // simulate a slow db call
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            return ctx.db.travel.update({
+                where: { id: input.id },
+                data: {
+                    driverId: ctx.session.user.id,
+                    departure: input.departure,
+                    departureLatitude: input.departureLatitude,
+                    departureLongitude: input.departureLongitude,
+                    departureDateTime: input.departureDateTime,
+                    destination: input.destination,
+                    destinationLatitude: input.destinationLatitude,
+                    destinationLongitude: input.destinationLongitude,
+                    returnDateTime: input.returnDateTime,
+                    status: input.status,
+                },
+            });
+        }),
+
+        delete: protectedProcedure
+            .input(z.object({ id: z.number() }))
+            .mutation(async ({ ctx, input }) => {
+                // simulate a slow db call
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                return ctx.db.travel.delete({
+                    where: { id: input.id },
+                });
+            }),
 });

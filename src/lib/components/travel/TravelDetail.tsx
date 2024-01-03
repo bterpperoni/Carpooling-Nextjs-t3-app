@@ -1,12 +1,14 @@
 // travelDetails.tsx
 
 import type { Travel } from '@prisma/client';
+import React from 'react';
 
 interface TravelDetailsProps {
   travel: Travel;
+  children?: React.ReactNode;
 }
 
-const TravelDetail: React.FC<TravelDetailsProps> = ({ travel }) => {
+const TravelDetail: React.FC<TravelDetailsProps> = ({ travel, children }: TravelDetailsProps) => {
 
 
   return (
@@ -29,6 +31,8 @@ const TravelDetail: React.FC<TravelDetailsProps> = ({ travel }) => {
           {travel.returnDateTime.toLocaleDateString()}
         </div>
       )}
+
+        {children}  
 
       <style jsx>{`
         .travel-details-container {

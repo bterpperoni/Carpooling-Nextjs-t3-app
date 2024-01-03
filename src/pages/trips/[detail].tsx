@@ -3,13 +3,13 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import TravelDetail from "$/lib/components/travel/TravelDetail";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
+import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
-import { Marker } from "@react-google-maps/api";
-import { useEffect, useRef } from "react";
-import src from "node_modules/@emotion/styled/dist/declarations/src";
+import { useEffect, useState } from "react";
+import { set } from "zod";
 
 
-const Detail = () => {
+export default function Detail() {
     // Get id from url
     const router = useRouter()
     const id = parseInt(router.query.detail as string);  
@@ -28,6 +28,7 @@ const Detail = () => {
     };
     // Map options
     const zoom: number = 12;
+    const [ travelDeleted, setTravelDeleted ] = useState(false);
 
     function calculAndDisplayRoute(directionsService: google.maps.DirectionsService, directionsRenderer: google.maps.DirectionsRenderer) {
         directionsService.route(
@@ -46,32 +47,46 @@ const Detail = () => {
         );
     }
    
-
     function mapLoaded(map: google.maps.Map) {
         const directionsService = new google.maps.DirectionsService();
         const directionsRenderer = new google.maps.DirectionsRenderer(
             {map: map}
-        );
-
-        
+        );     
 
         calculAndDisplayRoute(directionsService, directionsRenderer);
     }
+
+    const { data: deletedTravel, mutate: deleteTravel } = api.travel.delete.useMutation();
+
+    const handleDelete = () => {
+        deleteTravel({id});
+        setTravelDeleted(true);
+    }
+
+    useEffect(() => {
+        if(travelDeleted) {
+            window.location.href = '/trips/all';
+        }
+    }
+    , [travelDeleted]);
 
   if(!travel) return <div>Travel not found</div>
   return (
     <>
         <LayoutMain>
-            <Map zoom={zoom} onLoad={mapLoaded}>
-                <Marker 
-                    position={departureLatLng}
-                />
-                <Marker position={destinationLatLng} />
-            </Map>
-            <TravelDetail travel={travel} />
+            <Map zoom={zoom} onLoad={mapLoaded} />
+            <TravelDetail travel={travel}>
+                <Button 
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">
+                        Modifier le trajet
+                </Button>
+                <Button
+                    onClick={handleDelete}
+                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md">
+                    Supprimer le trajet
+                </Button>
+            </TravelDetail>
         </LayoutMain>
     </>
   )
 }
-
-export default Detail;
