@@ -11,8 +11,6 @@ import { env } from "next.config";
 import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 import DateTimeSelect from "$/lib/components/form/DateTimeSelection/DateTimeSelect";
 import dayjs, { Dayjs } from "dayjs";
-import { time } from "console";
-import { set } from "zod";
 
 
 export default function Detail() {
@@ -33,7 +31,8 @@ export default function Detail() {
     const { data: deletedTravel, mutate: deleteTravel } = api.travel.delete.useMutation();
     // Used to update travel
     const { data: updatedTravel, mutate: updateTravel } = api.travel.update.useMutation();
-
+    // Set if travel can be edited
+    const canEdit = sessionData?.user?.id === travel?.driverId;
     /* ------------------------------ Form fields to update travel ------------------------------ */
     // Date of departure and destination
     const [dateDeparture, setDateDeparture] = useState<Dayjs | null>(null);
@@ -51,7 +50,8 @@ export default function Detail() {
     const [departureLongitude, setDepartureLongitude] = useState<number>(0);
     const [destinationLatitude, setDestinationLatitude] = useState<number>(0);
     const [destinationLongitude, setDestinationLongitude] = useState<number>(0);
-    // ----------------------------------------------------------------------------------------------
+
+    /* -------------------------------------------------------------------------------------------- */
 
     // Get lat & lng of departure & destination
     const departureLatLng: google.maps.LatLngLiteral = { 
@@ -64,8 +64,7 @@ export default function Detail() {
     };
     // Map options
     const zoom: number = 12;
-    // Set if travel can be edited
-    const canEdit = sessionData?.user?.id === travel?.driverId;
+    
     // Options for autocomplete
     const options = {
         componentRestrictions: { country: 'be' },
@@ -124,15 +123,19 @@ export default function Detail() {
  
     useEffect(() => {
         if(travel && dateDeparture) {
+            // if the user has selected a time for the departure date
             if(timeDeparture) {
+                // set the date of departure with the time selected
                 setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
             }else{
+                // else set the date of departure with the time of the travel
                 setDateDeparture(   
                                 dayjs(dateDeparture)
                                 .set('hour', travel?.departureDateTime?.getHours())
                                 .set('minute', travel?.departureDateTime?.getMinutes())
                             );
             }
+            // finally set the date of departure in the travel object
             travel.departureDateTime = dateDeparture.toDate();
         }
         
@@ -149,35 +152,43 @@ export default function Detail() {
                                 .set('minute', travel?.returnDateTime?.getMinutes() ?? 0)
                             );
             }
+            // finally set the date of return in the travel object
             travel.returnDateTime = dateReturn.toDate();
         }
-        
-        if(travelDeleted) {
-            window.location.href = '/trips/all';
-        }
     }
-    , [travelDeleted, dateDeparture, timeDeparture, dateReturn, timeReturn]);
-
+    , [dateDeparture, timeDeparture, dateReturn, timeReturn]);
    
 
   if(!travel) return <div>Travel not found</div>
   return (
     <>
-        <LayoutMain>
+        <LayoutMain>   
                 {!isEditing ? (
                     <>
                         <Map zoom={zoom} onLoad={mapLoaded} />
                         <TravelDetail travel={travel}>
-                            <Button 
-                            onClick={handleEditClick}
-                            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">
-                                Modifier le trajet
-                            </Button>
-                            <Button
-                                onClick={handleDelete}
-                                className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md">
-                                Supprimer le trajet
-                            </Button>
+                                    {canEdit ? (
+                                        <>
+                                            <Button 
+                                                onClick={handleEditClick}
+                                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">
+                                                Modifier le trajet
+                                            </Button>
+                                            <Button
+                                                onClick={handleDelete}
+                                                className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md">
+                                                Supprimer le trajet
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Button
+                                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md"
+                                                onClick={() => alert('not implemented')}>
+                                                Réserver
+                                            </Button>
+                                        </>
+                                    )}
                         </TravelDetail>
                     </>
                 ) : (
@@ -189,11 +200,12 @@ export default function Detail() {
                                             mb-4 mt-4  
                                             w-[fit-content]
                                             text-center 
-                                            text-fuchsia-700
+                                            text-white
                                             border-2
-                                            border-white
-                                            p-2">
-                                                Modifier votre trajet
+                                            border-fuchsia-700
+                                            p-4
+                                            rounded-[12.5%]">
+                                Modifier votre trajet
                             </h2>
                             <form className="flex flex-col w-auto m-auto justify-center items-center bg-[var(--purple-g3)]">
                                 {/* Departure */}
