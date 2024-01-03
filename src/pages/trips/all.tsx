@@ -20,6 +20,14 @@ const All: React.FC = () => {
             { enabled: sessionData?.user !== undefined }  
         );
 
+        const customMarker = {
+            // path refer to https://developers.google.com/maps/documentation/javascript/examples/marker-symbol-custom
+            path: 'M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z',
+            fillOpacity: 1,
+            scale: 2,
+            strokeWeight: 2
+        };
+    
         // Used to display the list of trips or the map
         const [checked, setChecked] = useState(false);
         
@@ -48,10 +56,6 @@ const All: React.FC = () => {
                         {/* ------------------------------------- display list --------------------------------------------- */}
                         {checked && (
                             <>   
-                                <p className="text-4xl text-white font-bold m-7">Display list of trips </p>
-                                {/* 
-                                    TODO : Component ListTrips & ListTripsItem
-                                */}
                                 <div className='m-6 h-box w-auto bg-white border-fuchsia-700 text-fuchsia-700'>
                                     {travelList?.map((travel) => (
                                         <TravelCard  key={travel.id} travel={travel} driver={travel.driverId} goToTravel={() => window.location.href = `/trips/${travel.id}`} />
@@ -66,7 +70,8 @@ const All: React.FC = () => {
                             <Marker 
                                 key={travel.id} 
                                 position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
-                                onClick={() => window.location.href = `/trips/${travel.id}`} 
+                                onClick={() => window.location.href = `/trips/${travel.id}`}
+                                icon={customMarker}
                             />
                         ))}
                         </Map>}

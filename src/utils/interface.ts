@@ -30,8 +30,8 @@ export enum userRole{
 /* --------------------------------------------- INTERFACES -------------------------------------------------- */
 
 export type MapProps = {
-    center: google.maps.LatLngLiteral;
+    center?: google.maps.LatLngLiteral;
     zoom: number;
-    children: React.ReactNode | undefined;
+    children?: React.ReactNode | undefined;
     onLoad?: (map: google.maps.Map) => void;
   }
