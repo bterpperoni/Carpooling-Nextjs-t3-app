@@ -1,11 +1,11 @@
 import React, { Children, useEffect, useRef, useState } from 'react';
 import { MapProps } from '$/utils/interface';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import { env } from 'next.config';
 
 
 
-const Map: React.FC<MapProps> = ({ center, zoom, children}: { center: google.maps.LatLngLiteral, zoom: number, children: React.ReactNode | undefined}) => {
+const Map: React.FC<MapProps> = ({ center, zoom, children, onLoad}: MapProps) => {
   const mapContainerStyle = {
     width: '100%',
     height: '25rem',
@@ -20,7 +20,7 @@ const Map: React.FC<MapProps> = ({ center, zoom, children}: { center: google.map
   // Used to set the map options
   useEffect(() => {
     if (mapRef.current) {
-      mapRef.current.setOptions({ gestureHandling: 'greedy' });
+      console.log('mapRef.current', mapRef.current);
     }
   }, [isMapLoaded]);
 
@@ -35,12 +35,8 @@ const Map: React.FC<MapProps> = ({ center, zoom, children}: { center: google.map
             center={center} 
             zoom={zoom} 
             mapContainerStyle={mapContainerStyle}
-            onLoad={(map) =>{
-                mapRef.current = map;
-                setIsMapLoaded(true);
-            }}
+            onLoad={onLoad}
             onUnmount={() => setIsMapLoaded(false)}>
-           {isMapLoaded}
            {children}
         </GoogleMap>
       </LoadScript>
