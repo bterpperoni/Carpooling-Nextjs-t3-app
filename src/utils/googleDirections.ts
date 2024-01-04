@@ -1,4 +1,3 @@
-import { GoogleDirectionsResponse } from "./interface";
 import axios from 'axios';
 
 const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
