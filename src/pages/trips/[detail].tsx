@@ -28,7 +28,7 @@ export default function Detail() {
     // Get travel by id
     const {data: travel} = api.travel.travelById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
     // Used to delete travel
-    const { data: deletedTravel, mutate: deleteTravel } = api.travel.delete.useMutation();
+    const { mutate: deleteTravel } = api.travel.delete.useMutation();
     // Used to update travel
     const { data: updatedTravel, mutate: updateTravel } = api.travel.update.useMutation();
     // Set if travel can be edited
@@ -162,7 +162,8 @@ export default function Detail() {
   if(!travel) return <div>Travel not found</div>
   return (
     <>
-        <LayoutMain>   
+        <LayoutMain>
+            {/* ------------------------------------Card with travel details--------------------------------------------------- */}  
                 {!isEditing ? (
                     <>
                         <Map zoom={zoom} onLoad={mapLoaded} />
@@ -193,6 +194,7 @@ export default function Detail() {
                     </>
                 ) : (
                     <>
+            {/* ------------------------------------Form to update the travel--------------------------------------------------- */}
                         <div className="flex flex-col items-center">
                             <h2 className=" md:text-4xl 
                                             text-2xl 

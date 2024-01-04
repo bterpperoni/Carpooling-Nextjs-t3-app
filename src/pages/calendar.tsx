@@ -11,14 +11,7 @@ export default function Calendar() {
                 <div className="max-w-5xl mx-auto mt-8 bg-white p-8 rounded shadow-md">
                     <h1 className="text-2xl font-bold mb-4">Rides</h1>
                     <div className="flex justify-between items-center mb-4">
-                        <div className="flex items-center">
-                            <span className="text-gray-700 text-sm mr-2">Filter</span>
-                            <select className="border rounded-md px-3 py-2">
-                                <option value="all">All</option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
+                        
                         <Button href="/trips/new" className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">New Trip</Button>
                     </div>
                     <table className="w-full">
