@@ -35,14 +35,3 @@ export enum userRole{
 }
 
 /* --------------------------------------------- INTERFACES -------------------------------------------------- */
-
-export interface GoogleDirectionsResponse {
-    routes: {
-      legs: {
-        steps: {
-          travel_mode: string;
-          polyline: { points: string };
-        }[];
-      }[];
-    }[];
-  }
