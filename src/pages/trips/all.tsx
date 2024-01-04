@@ -44,19 +44,29 @@ const All: React.FC = () => {
                             <h1 className="md:text-6xl text-3xl font-bold mb-4 mt-4  w-[50%] text-center text-fuchsia-700">Trips</h1>
                             <Button 
                                 href="/trips/new" 
-                                className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] border-2 text-white px-3 py-2 rounded-md">
+                                className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                           border-2 text-white px-3 py-2 rounded-md">
                                     New Trip
                             </Button>
                         </div>
                         <div className='flex flex-col items-center'>  
                                 <div className='border-b-t-2 border-0 border-white'>   
-                                    <div className='md:text-4xl text-2xl mx-12 bg-[var(--purple-g3)] text-center rounded-[10%] p-4 mb-4 text-fuchsia-700 border-fuchsia-700 border-2 '>                    
+                                    <div className='md:text-4xl text-2xl mx-12 bg-[var(--purple-g3)] text-center 
+                                                    rounded-[10%] p-4 mb-4 text-fuchsia-700 border-fuchsia-700 border-2 '>                    
                                         <p>Find the best trip</p>
                                     </div>
                                 </div>
                         </div>
                     </div>
                     <div>
+                        <div className="flex items-center ml-4 my-4">
+                            <span className="text-fuchsia-700 text-xl text-sm mr-2">Filter</span>
+                            <select className="border rounded-md px-3 py-2">
+                                <option value="all">All</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
                         {/* ------------------------------------- display list --------------------------------------------- */}
                         {checked && (
                             <>   
@@ -68,17 +78,21 @@ const All: React.FC = () => {
                             </>
                         )}
                         {/* -------------------------------------- display map ---------------------------------------------- */}
-                        {!checked && 
-                        <Map center={center} zoom={zoom}>
-                        {travelList?.map((travel) => (
-                            <Marker 
-                                key={travel.id} 
-                                position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
-                                onClick={() => window.location.href = `/trips/${travel.id}`}
-                                icon={customMarker}
-                            />
-                        ))}
-                        </Map>}
+                        {!checked &&
+                        
+                        <> 
+                            <Map center={center} zoom={zoom}>
+                            {travelList?.map((travel) => (
+                                <Marker 
+                                    key={travel.id} 
+                                    position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
+                                    onClick={() => window.location.href = `/trips/${travel.id}`}
+                                    icon={customMarker}
+                                />
+                            ))}
+                            </Map>
+                        </>
+                        }
                     </div>
                 </LayoutMain>
             </>

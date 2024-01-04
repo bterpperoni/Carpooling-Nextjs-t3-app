@@ -13,8 +13,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
@@ -33,6 +31,7 @@
     "@trpc/server": "^10.43.6",
     "@types/google.maps": "^3.54.10",
     "@types/googlemaps": "^3.43.3",
+    "axios": "^1.6.4",
     "cors": "^2.8.5",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
@@ -40,7 +39,6 @@
     "next": "^14.0.3",
     "next-auth": "^4.24.5",
     "react": "^18.2.0",
-    "react-datetime-picker": "^5.6.0",
     "react-dom": "^18.2.0",
     "react-google-autocomplete": "^2.7.3",
     "react-icon": "^1.0.0",
