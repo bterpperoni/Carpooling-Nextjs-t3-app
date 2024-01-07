@@ -4,7 +4,7 @@ import DateTimeSelect from '../../lib/components/form/DateTimeSelection/DateTime
 import { Button } from '@mui/material';
 import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 import { useEffect, useState } from 'react';
-import { env } from 'next.config';
+import { env } from 'next.config.js';
 import dayjs, { Dayjs } from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';

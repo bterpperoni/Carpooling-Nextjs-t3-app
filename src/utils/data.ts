@@ -13,7 +13,8 @@ export const data ={
             "location": {
               "lat": 50.4500581, 
               "lng": 3.9508188
-            }
+            },
+            "placeId": "ChIJF4IruwFQwkcRY5dzZ7Q5k8I"
           },
           {
             "campus_ref": "2",
@@ -22,7 +23,8 @@ export const data ={
             "location": {
               "lat" :50.4636144,
               "lng": 3.9524697
-            }
+            },
+            "placeId": "ChIJ37hOXB5QwkcRS_SXlEZpYYI"
           }
         ]
       },
@@ -37,9 +39,10 @@ export const data ={
             "campus_name": "Campus Plaine de Nimy",
             "address": "Chaussée de Binche 159, 7000 Mons",
             "location": {
-              "lat": 50.4461607,
-              "lng": 3.9398933
-            }
+              "lat": 50.4522652,
+              "lng": 3.9858377
+            },
+            "placeId": "ChIJIzf8o45PwkcRtmxtGLkVJu4"
           },
           {
             "campus_ref": "2",
@@ -48,7 +51,8 @@ export const data ={
             "location": {
               "lat": 50.4587408,
               "lng": 3.952212899999999
-            }
+            },
+            "placeId": "ChIJQekUEB1QwkcRcD19sM8F49g"
           },
           {
             "campus_ref": "3",
@@ -57,7 +61,8 @@ export const data ={
             "location": {
               "lat": 50.4588238,
               "lng": 3.9501664
-            }
+            },
+            "placeId": "ChIJwexj7hxQwkcRKQBAxNiT3Ig"
           }
         ]
       },
@@ -74,34 +79,28 @@ export const data ={
             "location": {
               "lat": 50.4481852,
               "lng": 3.9536186
-            }
+            },
+            "placeId": "ChIJXYmpxP9PwkcRJtDy0EkLoNU"
           },
           {
             "campus_ref": "2",
-            "campus_name": "Département des sciences économique",
+            "campus_name": "Département des sciences et technologies",
             "address": "Avenue Victor Maistriau, 8a, 7000 Mons",
             "location": {
               "lat": 50.4621466,
               "lng": 3.9572177
-            }
+            },
+            "placeId": "ChIJIwkpgeFPwkcRE14Mlo9wgi0"
           },
           {
             "campus_ref": "3",
-            "campus_name": "Département des sciences et technologies",
+            "campus_name": "Département des sciences sociales",
             "address": "Avenue V. Maistriau 13, 7000 Mons",
             "location": {
               "lat": 50.4637089,
               "lng": 3.956881
-            }
-          },
-          {
-            "campus_ref": "4",
-            "campus_name": "Département des sciences sociales",
-            "address": "Rue de l'Abattoir 12, 7000 Mons",
-            "location": {
-              "lat": 50.43681660000001,
-              "lng": 3.8234233
-            }
+            },
+            "placeId": "ChIJwWT3uOFPwkcRutOZ-EhKick"
           }
         ]
       }

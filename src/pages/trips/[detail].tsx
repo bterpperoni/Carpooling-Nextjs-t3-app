@@ -7,7 +7,7 @@ import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
 import { useEffect, useState } from "react";
 import Autocomplete from "react-google-autocomplete";
-import { env } from "next.config";
+import { env } from "next.config.js";
 import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 import DateTimeSelect from "$/lib/components/form/DateTimeSelection/DateTimeSelect";
 import dayjs, { Dayjs } from "dayjs";

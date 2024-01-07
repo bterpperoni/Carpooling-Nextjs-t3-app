@@ -5,15 +5,12 @@ import { data } from '$/utils/data';
 
 export default function Calendar() {
 
-    // console.log(encodeURIComponent('Place Warocqué 17, 7000 Mons'));
-    // geocode('Place Warocqué 17, 7000 Mons').then((res) => console.log(res));
-    let count = 0;
-    data.school.forEach((school) => {
-        school.campus.forEach((campus) => {
-            count++;
-            geocode(campus.address).then((res) => console.log(res));
-        });
-    });
+
+    // data.school.forEach((school) => {
+    //     school.campus.forEach((campus) => {
+    //         geocode(campus.address).then((res) => console.log(res));
+    //     });
+    // });
 
     return (
          <>

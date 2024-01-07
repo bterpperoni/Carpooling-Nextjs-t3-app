@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import type { Travel } from '@prisma/client';
 import React, { useState } from 'react';
 import Autocomplete from "react-google-autocomplete";
-import { env } from 'next.config';
+import { env } from 'next.config.js';
 import dayjs from 'dayjs';
 
 interface TravelDetailsProps {

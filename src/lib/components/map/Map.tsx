@@ -1,7 +1,7 @@
 import React, { Children, useEffect, useRef, useState } from 'react';
 import { MapProps } from '$/utils/interface';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import { env } from 'next.config';
+import { env } from 'next.config.js';
 
 
 
