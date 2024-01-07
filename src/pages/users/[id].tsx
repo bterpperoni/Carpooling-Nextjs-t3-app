@@ -5,42 +5,29 @@ import { api } from "$/utils/api";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, use, useEffect, useState } from "react";
 import Dropdown from '../../lib/components/dropdown/Dropdown';
 import { data } from "$/utils/data";
 import Button from "$/lib/components/button/Button";
+import { set } from "zod";
+import { Campus, School } from '../../utils/interface';
 
 
 export default function User() {
-
-  // a Hook is a function that lets you tap into a React feature like state or lifecycle methods
+  // Get user id from url 
+  const { query } = useRouter();
+  const id = query.id as string;
+  // Session recovery
+  const { data: sessionData } = useSession();
+  // Get user by id
+  const {data: user} = api.user.userById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
+  /* -------------------------------- User's data & handler -------------------------------- */
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState<string>('');
   const [editedEmail, setEditedEmail] = useState<string>('');
-  // School & campus
-  const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
-  const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
-  const [isEditingSchool, setIsEditingSchool] = useState<boolean>(false);
-  // Handle dropdown change to get selected school & campus
-  const handleDropdownChange = (school: string | null, campus: string | null) => {
-    setSelectedSchool(school);
-    setSelectedCampus(campus);
-  };
-
-  const { query, reload } = useRouter();
-  const id = query.id as string;
-
-
-  // Session recovery
-  const { data: sessionData } = useSession();
-
-  // Get user by id
-  const {data: user} = api.user.userById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
-
-  // Update user
+  // Update user state
   const { data: updatedUser, mutate: updateUser } = api.user.update.useMutation();
-
-  // Enable edit mode & set user data in form fields 
+  // Enable edit mode & set user data from form fields 
   const handleEditClick = () => {
     setIsEditing(true);
     if(user?.name && user?.email) {
@@ -48,33 +35,61 @@ export default function User() {
       setEditedEmail(user.email);
     }
   };
-
- // Reload page when user is updated 
- useEffect(() => {
-    if (updatedUser) {
-      reload();
-    }
-  }, [updatedUser, reload]);
-
   // Save user data & disable edit mode
   const handleSaveClick = () => {
     updateUser({
       id: id,
       name: editedName,
       email: editedEmail,
+      campus: user?.campus ?? null,
     });
     setIsEditing(false);
   };
-
-  // Enable edit mode for school & campus
+  /* -------------------------------- User's school data & handler -------------------------------- */
+  // School & campus state
+  const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
+  const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
+  const [isEditingSchool, setIsEditingSchool] = useState<boolean>(false);
+  const ref = user?.campus?.split('-', 2);
+  const schoolName: School | undefined = data.school.find((school) => school.reference === (ref ?? [])[0]);
+  // Update user's school & campus 
+  const { data: school, mutate: setSchool } = api.user.update.useMutation();
+  // Enable edit mode for school & campus & set user's school & campus from dropdown
   const handleEditClickSchool = () => {
     setIsEditingSchool(true);
+    if(ref) {
+      
+      setSelectedSchool(ref[0] || '');
+      setSelectedCampus(ref[1] || '');
+      console.log(ref);
+    }
   };
-
   // Save school & campus
   const handleSaveClickSchool = () => {
+    const tmpStr = selectedSchool+'-'+selectedCampus;
+    setSchool({
+      id: id,
+      name: user?.name ?? '',
+      email: user?.email ?? '',
+      campus: tmpStr,
+    });
     setIsEditingSchool(false);
   };
+
+  // Alert when user is updated 
+  useEffect(() => {
+    if (updatedUser) {
+      alert("Vos informations ont bien été modifiées !");
+    }
+    
+    if(school) {
+      alert("Votre établissement par défaut a bien été modifié !");
+    }
+  }, [updatedUser, school]);
+
+
+
+
 
   if (sessionData?.user){
     if(user) {
@@ -90,11 +105,15 @@ export default function User() {
                       <>
                         <div className="mt-4 flex flex-col md:flex-row items-center">
                           <label htmlFor="username" className="w-full text-center border-b-2 text-xl md:text-2xl text-black">Username :</label>
-                          <div id="username" className="mt-1">{user.name}</div>
+                          <div id="username" className="mt-1">
+                            {editedName ? editedName : user.name}
+                          </div>
                         </div>
                         <div className="mt-4 flex flex-col md:flex-row items-center">
                           <label htmlFor="email" className="w-full text-center border-b-2 text-xl md:text-2xl text-black">Email :</label>
-                          <div id="email" className="mt-1">{user.email}</div>
+                          <div id="email" className="mt-1">
+                            {editedEmail ? editedEmail : user.email}
+                          </div>
                         </div>
                       </>
                     ) : (
@@ -140,22 +159,25 @@ export default function User() {
 
               <div className="mt-8 mb-4">
                   {isEditingSchool ? (
-                     <Dropdown data={data} onChange={handleDropdownChange} />
+                     <Dropdown 
+                        data={data} 
+                        onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
+                          setSelectedSchool(sc.target.value);
+                          setSelectedCampus(ca.target.value);
+                        }} 
+                     />
                   ) : (
                     <div className="text-center max-w-md mx-auto mt-4 p-4 border rounded-md shadow-md bg-white">
                       <div className="mb-4">
                         <p className="border-b-2 font-medium text-gray-600 text-xl md:text-2xl">Etablissement :</p>
                         <p className="text-base">
-                          {data.school.find((school) => school.reference === selectedSchool)?.name}
+                          {schoolName?.name || ''}
                         </p>
                       </div>
                       <div>
                         <p className="border-b-2 font-medium text-gray-600 text-lg md:text-xl">Campus :</p>
                         <p className="text-base">
-                          {data.school
-                            .find((school) => school.reference === selectedSchool)
-                            ?.campus.find((campus) => campus.campus_ref === selectedCampus)
-                            ?.campus_name}
+                          {schoolName?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name || (ref?.[1] ?? '')}
                         </p>
                       </div>
                     </div>
@@ -183,7 +205,7 @@ export default function User() {
                   {selectedSchool && selectedCampus && (
                     <div className="mt-4">
                       <p className="text-gray-600">
-                        Ecole : {selectedSchool} - Campus : {selectedCampus}
+                        Ecole : {selectedSchool}-{selectedCampus}
                       </p>
 
                       

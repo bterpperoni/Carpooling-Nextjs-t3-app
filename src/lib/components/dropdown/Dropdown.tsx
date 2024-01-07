@@ -12,13 +12,19 @@ const Dropdown: React.FC<DropdownProps> = ({ data, onChange }) => {
     const selectedSchoolReference = event.target.value;
     setSelectedSchool(selectedSchoolReference);
     setSelectedCampus(null); // Reset selected campus when school changes
-    onChange(selectedSchoolReference, null);
+    onChange(
+        { target: { value: selectedSchoolReference } } as React.ChangeEvent<HTMLSelectElement>,
+        { target: { value: selectedCampus } } as React.ChangeEvent<HTMLSelectElement>
+    );
   };
 
   const handleCampusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCampusName = event.target.value;
     setSelectedCampus(selectedCampusName);
-    onChange(selectedSchool, selectedCampusName);
+    onChange(
+        { target: { value: selectedSchool } } as React.ChangeEvent<HTMLSelectElement>,
+        { target: { value: selectedCampusName } } as React.ChangeEvent<HTMLSelectElement>
+    );
   };
 
   return (

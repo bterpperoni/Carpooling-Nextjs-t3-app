@@ -52,5 +52,5 @@ export interface School {
   
 export interface DropdownProps {
     data: { school: School[] };
-    onChange: (selectedSchool: string | null, selectedCampus: string | null) => void;
+    onChange: (selectedSchool: ChangeEvent<HTMLSelectElement>, selectedCampus:  ChangeEvent<HTMLSelectElement> ) => void;
   }
