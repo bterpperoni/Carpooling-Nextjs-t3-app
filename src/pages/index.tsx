@@ -24,7 +24,6 @@ export default function Home() {
                       <>
                         <h1>Logged in as {session.user.name}</h1>
                         <h2>Session expires in {session.expires}</h2>
-                        <Button className="mt-4 rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20" onClick={() => window.location.href="/trips/directions"}>Go to directions</Button>
                       </>
                     )}
                 </div>

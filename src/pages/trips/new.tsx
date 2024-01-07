@@ -65,7 +65,7 @@ export default function NewTravel() {
     // Redirect to the travels page when the travel is created
     useEffect(() => {
         if(isSuccess) {
-            r.reload();
+            window.location.href = '/trips/all';
         }
     }, [isSuccess, r]);
 

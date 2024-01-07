@@ -12,7 +12,6 @@ import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 import DateTimeSelect from "$/lib/components/form/DateTimeSelection/DateTimeSelect";
 import dayjs, { Dayjs } from "dayjs";
 
-
 export default function Detail() {
     // Used to switch between display & edit mode
     const [isEditing, setIsEditing] = useState(false);
@@ -48,8 +47,8 @@ export default function Detail() {
     // Latitude and longitude of departure and destination
     const [departureLatitude, setDepartureLatitude] = useState<number>(0);
     const [departureLongitude, setDepartureLongitude] = useState<number>(0);
-    const [destinationLatitude, setDestinationLatitude] = useState<number>(0);
-    const [destinationLongitude, setDestinationLongitude] = useState<number>(0);
+    const [destinationLatitude, setDestinationLatitude] = useState<number>(travel?.destinationLatitude as number);
+    const [destinationLongitude, setDestinationLongitude] = useState<number>(travel?.departureLongitude as number);
 
     /* -------------------------------------------------------------------------------------------- */
 
@@ -107,56 +106,80 @@ export default function Detail() {
     // Save travel data & disable edit mode
     const handleSaveClick = () => {
         // window.location.href = `/trips/${id}`;
-        if(travel && travel.departure && departure){
-            travel.departure = departure;
-            travel.departureLatitude = departureLatitude;
-            travel.departureLongitude = departureLongitude;
+        if(travel && travel.returnDateTime) {
+            const newTravel = {id : travel.id,
+                driverId: travel.driverId,
+                departure: departure ?? travel.departure,
+                departureLatitude: departureLatitude ?? travel.departureLatitude,
+                departureLongitude: departureLongitude ?? travel.departureLongitude,
+                departureDateTime: travel.departureDateTime,
+                destination: destination ?? travel.destination,
+                destinationLatitude: destinationLatitude ?? travel.destinationLatitude,
+                destinationLongitude: destinationLongitude ?? travel.destinationLongitude,
+                returnDateTime: travel.returnDateTime,
+                status: 0
+            };
+            updateTravel(newTravel);
         }
-        console.log(travel);
+        
+        
     };
 
     // Delete travel
     const handleDelete = () => {
         deleteTravel({id});
         setTravelDeleted(true);
+        window.location.href = '/trips/all';
     }
  
     useEffect(() => {
-        if(travel && dateDeparture) {
-            // if the user has selected a time for the departure date
-            if(timeDeparture) {
-                // set the date of departure with the time selected
-                setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
-            }else{
-                // else set the date of departure with the time of the travel
-                setDateDeparture(   
-                                dayjs(dateDeparture)
-                                .set('hour', travel?.departureDateTime?.getHours())
-                                .set('minute', travel?.departureDateTime?.getMinutes())
-                            );
+        if(travel) {
+            if(dateDeparture) {
+                // if the user has selected a time for the departure date
+                if(timeDeparture) {
+                    // set the date of departure with the time selected
+                    setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
+                }else{
+                    // else set the date of departure with the time of the travel
+                    setDateDeparture(   
+                                    dayjs(dateDeparture)
+                                    .set('hour', travel?.departureDateTime?.getHours())
+                                    .set('minute', travel?.departureDateTime?.getMinutes())
+                                );
+                }
+                // finally set the date of departure in the travel object
+                travel.departureDateTime = dateDeparture.toDate();
             }
-            // finally set the date of departure in the travel object
-            travel.departureDateTime = dateDeparture.toDate();
+            
+            if(dateReturn) {
+                // if the user has selected a time for the return date
+                if (timeReturn) {
+                    // set the date of return with the time selected
+                    setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute()));
+                }else{
+                    // else set the date of return with the time of the travel
+                    setDateReturn(   
+                                    dayjs(dateReturn)
+                                    .set('hour', travel?.returnDateTime?.getHours() ?? 0)
+                                    .set('minute', travel?.returnDateTime?.getMinutes() ?? 0)
+                                );
+                }
+                // finally set the date of return in the travel object
+                travel.returnDateTime = dateReturn.toDate();
+            }
+
+            if(departure){
+                travel.departure = departure;
+                travel.departureLatitude = departureLatitude;
+                travel.departureLongitude = departureLongitude;
+            }
         }
-        
-        if(travel && dateReturn) {
-            // if the user has selected a time for the return date
-            if (timeReturn) {
-                // set the date of return with the time selected
-                setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute()));
-            }else{
-                // else set the date of return with the time of the travel
-                setDateReturn(   
-                                dayjs(dateReturn)
-                                .set('hour', travel?.returnDateTime?.getHours() ?? 0)
-                                .set('minute', travel?.returnDateTime?.getMinutes() ?? 0)
-                            );
-            }
-            // finally set the date of return in the travel object
-            travel.returnDateTime = dateReturn.toDate();
+
+        if(updatedTravel) {
+            window.location.href = `/trips/${id}`;
         }
     }
-    , [dateDeparture, timeDeparture, dateReturn, timeReturn]);
+    , [dateDeparture, timeDeparture, dateReturn, timeReturn, departure, updatedTravel]);
    
 
   if(!travel) return <div>Travel not found</div>
@@ -293,7 +316,6 @@ export default function Detail() {
                                             disableTime={false}
                                             handleChangeDate={(date) => {
                                                 setDateReturn(date)
-                                                
                                             }}    
                                             handleChangeTime={(time) => {
                                                 setTimeReturn(time)
@@ -302,7 +324,7 @@ export default function Detail() {
                                     </div>
                                 </div>
                                 {/* Submit */}
-                                
+                              
                                 <Button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md"> Annuler </Button>
                             </form>
                             <Button className={MuiStyle.MuiButtonText} onClick={handleSaveClick}> Enregistrer les modifications </Button>
