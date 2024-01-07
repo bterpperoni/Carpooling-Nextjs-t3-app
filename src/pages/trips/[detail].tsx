@@ -7,10 +7,11 @@ import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
 import { useEffect, useState } from "react";
 import Autocomplete from "react-google-autocomplete";
-import { env } from "next.config.js";
+import { env } from "process";
 import MuiStyle from '$/lib/styles/MuiStyle.module.css';
-import DateTimeSelect from "$/lib/components/form/DateTimeSelection/DateTimeSelect";
-import dayjs, { Dayjs } from "dayjs";
+import DateTimeSelect from "$/lib/components/form/DateTimeSelect";
+import dayjs from "dayjs";
+import type { Dayjs } from "dayjs";
 
 export default function Detail() {
     // Used to switch between display & edit mode
@@ -45,10 +46,10 @@ export default function Detail() {
     const [departure, setDeparture] = useState<string>();
     const [destination, setDestination] = useState<string>();
     // Latitude and longitude of departure and destination
-    const [departureLatitude, setDepartureLatitude] = useState<number>(travel?.departureLatitude as number);
-    const [departureLongitude, setDepartureLongitude] = useState<number>(travel?.departureLongitude as number);
-    const [destinationLatitude, setDestinationLatitude] = useState<number>(travel?.destinationLatitude as number);
-    const [destinationLongitude, setDestinationLongitude] = useState<number>(travel?.departureLongitude as number);
+    const [departureLatitude, setDepartureLatitude] = useState<number>(travel?.departureLatitude as number || 0);
+    const [departureLongitude, setDepartureLongitude] = useState<number>(travel?.departureLongitude as number || 0);
+    const [destinationLatitude, setDestinationLatitude] = useState<number>(travel?.destinationLatitude as number || 0);
+    const [destinationLongitude, setDestinationLongitude] = useState<number>(travel?.departureLongitude as number || 0);
 
     /* -------------------------------------------------------------------------------------------- */
 
@@ -62,7 +63,7 @@ export default function Detail() {
         lng: travel?.destinationLongitude as number
     };
     // Map options
-    const zoom: number = 12;
+    const zoom = 12;
     
     // Options for autocomplete
     const options = {
@@ -79,14 +80,16 @@ export default function Detail() {
                 destination: destinationLatLng,
                 travelMode: google.maps.TravelMode.DRIVING,
             },
-            (response, status) => {
+            (response: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
                 if (status === "OK") {
                     directionsRenderer.setDirections(response);
                 } else {
                     window.alert("Directions request failed due to " + status);
                 }
             }
-        );
+        ).catch((err) => {
+            console.log(err);
+        });
     }
    
     // Display map with line between departure & destination after map is loaded
@@ -102,10 +105,9 @@ export default function Detail() {
       const handleEditClick = () => {
         setIsEditing(true);
     };
-
+    
     // Save travel data & disable edit mode
     const handleSaveClick = () => {
-        // window.location.href = `/trips/${id}`;
         if(travel && travel.returnDateTime) {
             const newTravel = {id : travel.id,
                 driverId: travel.driverId,
@@ -120,9 +122,8 @@ export default function Detail() {
                 status: 0
             };
             updateTravel(newTravel);
-        }
-        
-        
+            alert("Votre trajet a bien été modifié!");
+        } 
     };
 
     // Delete travel
@@ -176,7 +177,7 @@ export default function Detail() {
         }
 
         if(updatedTravel) {
-            window.location.href = `/trips/${id}`;
+            setIsEditing(false);
         }
     }
     , [dateDeparture, timeDeparture, dateReturn, timeReturn, departure, updatedTravel]);

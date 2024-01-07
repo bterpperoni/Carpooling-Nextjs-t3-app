@@ -9,7 +9,7 @@ import GOOGLEProvider from "next-auth/providers/GOOGLE";
 
 import { env } from "$/env";
 import { db } from "$/server/db";
-import { userRole } from "$/utils/interface";
+import type { userRole } from "$/utils/interface";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`

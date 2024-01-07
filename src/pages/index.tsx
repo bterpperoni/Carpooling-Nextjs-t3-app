@@ -7,6 +7,7 @@ export default function Home() {
 
   // Session recovery
   const { data: session } = useSession();
+  
 
   return (
     <>

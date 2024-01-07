@@ -1,12 +1,6 @@
 // travelDetails.tsx
-
-import Button from '@mui/material/Button';
-import EditIcon from '@mui/icons-material/Edit';
 import type { Travel } from '@prisma/client';
-import React, { useState } from 'react';
-import Autocomplete from "react-google-autocomplete";
-import { env } from 'next.config.js';
-import dayjs from 'dayjs';
+import React from 'react';
 
 interface TravelDetailsProps {
   travel: Travel;

@@ -1,24 +1,30 @@
 import Autocomplete  from 'react-google-autocomplete';
 import LayoutMain from '../../lib/components/layout/LayoutMain';
-import DateTimeSelect from '../../lib/components/form/DateTimeSelection/DateTimeSelect';
+import DateTimeSelect from '../../lib/components/form/DateTimeSelect';
 import { Button } from '@mui/material';
 import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 import { useEffect, useState } from 'react';
-import { env } from 'next.config.js';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import { useRouter } from 'next/dist/client/router';
+import type { GetStaticProps, InferGetServerSidePropsType } from 'next/types';
 
-export default function NewTravel() {
 
+export const getStaticProps: GetStaticProps = (async () => {
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+    return {
+      props: { apiKey }
+    };
+  }) as GetStaticProps<{ apiKey: string }>;
+
+export default function NewTravel( { apiKey }: InferGetServerSidePropsType<typeof getStaticProps>)  {
     /* ------------ States ------------------ */
-
-    // Session recovery
     const { data: sessionData } = useSession();
 
     // Address of departure and destination from google autocomplete
-    let address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
+    const address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
     const [departure, setDeparture] = useState<string>();
     const [destination, setDestination] = useState<string>();
 
@@ -35,8 +41,6 @@ export default function NewTravel() {
     const [departureLongitude, setDepartureLongitude] = useState<number>(0);
     const [destinationLatitude, setDestinationLatitude] = useState<number>(0);
     const [destinationLongitude, setDestinationLongitude] = useState<number>(0);
-
-    const apiKey = env.GOOGLE_MAPS_API_KEY as string;
 
     const r = useRouter();
 

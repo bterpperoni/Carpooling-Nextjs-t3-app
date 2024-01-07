@@ -1,13 +1,30 @@
+
 // @ts-nocheck
-
-
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
 // next.config.js
+await import("./src/env.js");
 
-export const env = {
-        GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
+/** @type {import("next").NextConfig} */
+const config = {
+  reactStrictMode: true,
+  images: {
+        domains: [
+                "lh3.googleusercontent.com",
+                "tailwindui.com"
+        ],
+   },
+  /**
+   * If you are using `appDir` then you must comment the below `i18n` config out.
+   *
+   * @see https://github.com/vercel/next.js/issues/41980
+   */
+  i18n: {
+    locales: ["en"],
+    defaultLocale: "en",
+  },
 };
 
+export default config;

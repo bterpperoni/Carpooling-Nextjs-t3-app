@@ -1,7 +1,7 @@
-import React, { Children, useEffect, useRef, useState } from 'react';
-import { MapProps } from '$/utils/interface';
+import React, { useEffect, useRef, useState } from 'react';
+import type { MapProps } from '$/utils/interface';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import { env } from 'next.config.js';
+import { env } from 'process';
 
 
 
@@ -11,8 +11,8 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onLoad}: MapProps) =>
     height: '25rem',
   };
 
-  const apiKey = env.GOOGLE_MAPS_API_KEY as string;
-
+  if(!env.GOOGLE_MAPS_API_KEY) return <div>Google maps api key is missing</div>
+  const apiKey = env.GOOGLE_MAPS_API_KEY;
   // Used to access the map object
   const mapRef = useRef<google.maps.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -24,10 +24,6 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onLoad}: MapProps) =>
     }
   }, [isMapLoaded]);
 
-
-
-
-  if(!apiKey) return <div>Google maps api key is missing</div>
   return (
     <>
       <LoadScript googleMapsApiKey={apiKey}>

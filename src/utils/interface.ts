@@ -1,4 +1,4 @@
-import { AnchorHTMLAttributes, ButtonHTMLAttributes, ChangeEvent } from "react";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ChangeEvent } from "react";
 
 /* --------------------------------------------- TYPES ---------------------------------------------------- */
 

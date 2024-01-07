@@ -1,7 +1,7 @@
 import Button from '$/lib/components/button/Button';
 import LayoutMain from '$/lib/components/layout/LayoutMain';
-import { geocode } from '$/utils/geocoding';
-import { data } from '$/utils/data';
+// import { geocode } from '$/utils/geocoding';
+// import { data } from '$/utils/data';
 
 export default function Calendar() {
 

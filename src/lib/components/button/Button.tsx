@@ -1,5 +1,5 @@
 
-import { ButtonProps } from "$/utils/interface";
+import type { ButtonProps } from "$/utils/interface";
 
 
 function Button({href, onClick, children, ...props }: ButtonProps) {

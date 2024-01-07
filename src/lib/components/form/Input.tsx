@@ -1,6 +1,6 @@
 // Input.tsx
 
-import { InputProps } from '$/utils/interface';
+import type { InputProps } from '$/utils/interface';
 import React from 'react';
 
 

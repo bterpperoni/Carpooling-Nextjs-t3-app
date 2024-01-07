@@ -1,7 +1,8 @@
-import { DatePicker, DateTimePicker, PickersActionBar, TimePicker } from '@mui/x-date-pickers';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
 import {  useState } from 'react';
 import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 
@@ -18,11 +19,11 @@ export default function DateSelect({labelexp, labelexpTime, disableDate, disable
 }) {
     
     // Get actual date & Set the date to just allow the user to select a date in the next 7 days in DatePicker component
-    let maxDate = new Date();
+    const maxDate = new Date();
     maxDate.setDate(maxDate.getDate() + 7);
 
-    const [date, setDate] = useState<Dayjs | null>();
-    const [time, setTime] = useState<Dayjs | null>();
+    const [date] = useState<Dayjs | null>();
+    const [time] = useState<Dayjs | null>();
 
 
     return (

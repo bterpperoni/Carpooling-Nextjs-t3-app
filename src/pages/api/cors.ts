@@ -12,10 +12,10 @@ const cors = Cors({
 function runMiddleware(
   req: NextApiRequest,
   res: NextApiResponse,
-  fn: Function
+  fn: (arg0: NextApiRequest, arg1: NextApiResponse, arg2: (result: NextApiResponse) => void) => void
 ) {
   return new Promise((resolve, reject) => {
-    fn(req, res, (result: any) => {
+    fn(req, res, (result: NextApiResponse) => {
       if (result instanceof Error) {
         return reject(result)
       }

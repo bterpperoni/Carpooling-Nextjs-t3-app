@@ -1,6 +1,6 @@
 
 // Dropdown.tsx
-import { DropdownProps } from "$/utils/interface";
+import type { DropdownProps } from "$/utils/interface";
 import React, { useState } from "react";
 
 
@@ -33,7 +33,7 @@ const Dropdown: React.FC<DropdownProps> = ({ data, onChange }) => {
       <select
         className="border p-2 w-full rounded-md"
         onChange={handleSchoolChange}
-        value={selectedSchool || ""}
+        value={selectedSchool ?? ""}
       >
         <option value="" disabled>
           Select a school
@@ -51,7 +51,7 @@ const Dropdown: React.FC<DropdownProps> = ({ data, onChange }) => {
           <select
             className="border p-2 w-full rounded-md"
             onChange={handleCampusChange}
-            value={selectedCampus || ""}
+            value={selectedCampus ?? ""}
           >
             <option value="" disabled>
               Select a campus

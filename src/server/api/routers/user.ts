@@ -52,8 +52,7 @@ export const userRouter = createTRPCRouter({
       { 
         id: z.string(), 
         name: z.string(), 
-        email: z.string().email().nullable(),
-        campus : z.string().nullable(),        
+        email: z.string().email().nullable(),     
       }))
     .mutation(async ({ ctx, input }) => {
       // simulate a slow db call
@@ -64,11 +63,27 @@ export const userRouter = createTRPCRouter({
         data: {
           name: input.name,
           email: input.email,
-          campus: input.campus,
         },
       });
     }),
 
+    updateSchool: protectedProcedure
+    .input(z.object(
+      { 
+        id: z.string(),
+        campus : z.string().nullable(),        
+      }))
+    .mutation(async ({ ctx, input }) => {
+      // simulate a slow db call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      return ctx.db.user.update({
+        where: { id: input.id },
+        data: {
+          campus: input.campus,
+        },
+      });
+    }),
    
     getSecretMessage: protectedProcedure.query(() => {
       return "you can now see this secret message!";

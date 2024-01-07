@@ -1,11 +1,13 @@
 'use client';
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
+import Image from "next/image";
 import { api } from "$/utils/api";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import type { ChangeEvent } from "react";
 import Dropdown from '../../lib/components/dropdown/Dropdown';
 import { data } from "$/utils/data";
 import Button from "$/lib/components/button/Button";
@@ -38,8 +40,7 @@ export default function User() {
     updateUser({
       id: id,
       name: editedName,
-      email: editedEmail,
-      campus: user?.campus ?? null,
+      email: editedEmail
     });
     setIsEditing(false);
   };
@@ -51,13 +52,13 @@ export default function User() {
   // Get separated user's school & campus from user's campus field
   const ref = user?.campus?.split('-', 2);
   // Update user's school & campus 
-  const { data: updatedSchool, mutate: updateSchool } = api.user.update.useMutation();
+  const { data: updatedSchool, mutate: updateSchool } = api.user.updateSchool.useMutation();
   // Enable edit mode for school & campus & set user's school & campus from dropdown
   const handleEditClickSchool = () => {
     setIsEditingSchool(true);
     if(ref) { 
-      setSelectedSchool(ref[0] || '');
-      setSelectedCampus(ref[1] || '');
+      setSelectedSchool(ref[0] ?? '');
+      setSelectedCampus(ref[1] ?? '');
     }
   };
   // Save school & campus
@@ -65,8 +66,6 @@ export default function User() {
     const tmpStr = selectedSchool+'-'+selectedCampus;
     updateSchool({
       id: id,
-      name: user?.name ?? '',
-      email: user?.email ?? '',
       campus: tmpStr,
     });
     setIsEditingSchool(false);
@@ -74,10 +73,13 @@ export default function User() {
 
   // Alert when user is updated 
   useEffect(() => {
-    if (updatedUser || updatedSchool) {
-      alert("Vos informations ont bien été modifiées !");
+    if (!updatedUser && updatedSchool) {
+      alert("Votre établissement par défaut a bien été modifié!");
+    }else if (updatedUser && !updatedSchool) {
+      alert("Vos informations ont bien été modifiées!");
     }
-  }, [updatedUser, updatedSchool]);
+    
+  }, [ updatedSchool, updatedUser]);
 
   if (sessionData?.user){
     if(user) {
@@ -86,7 +88,7 @@ export default function User() {
           <LayoutMain>
             <div className="w-[90vw] h-auto mx-auto mt-8 bg-white p-8 rounded shadow-md ">
               <div className="flex flex-col items-center">
-                <img className="w-18 h-18 rounded-full" src={sessionData?.user.image} alt="Profile" />
+                <Image className="w-18 h-18 rounded-full" src={sessionData?.user.image} alt="Profile" />
                   <div className="text-left overflow-hidden">
                   <div className="max-w-md overflow-hidden mx-auto mt-4 p-4 border rounded-md shadow-md bg-white">
                     {!isEditing ? (
@@ -160,7 +162,7 @@ export default function User() {
                         <p className="border-b-2 font-medium text-gray-600 text-xl md:text-2xl">Etablissement :</p>
                         <p className="text-base">
                           {
-                            data.school.find((school) => school.reference === (ref ?? [])[0])?.name || (ref?.[0] ?? '')
+                            data.school.find((school) => school.reference === (ref ?? [])[0])?.name ?? (ref?.[0] ?? '')
                           }
                         </p>
                       </div>
@@ -169,7 +171,7 @@ export default function User() {
                         <p className="text-base">
                           {
                             data.school.find((school) => school.reference === (ref ?? [])[0])
-                            ?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name || (ref?.[1] ?? '')
+                            ?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name ?? (ref?.[1] ?? '')
                           }
                         </p>
                       </div>
