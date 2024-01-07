@@ -5,12 +5,10 @@ import { api } from "$/utils/api";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
-import { ChangeEvent, use, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Dropdown from '../../lib/components/dropdown/Dropdown';
 import { data } from "$/utils/data";
 import Button from "$/lib/components/button/Button";
-import { set } from "zod";
-import { Campus, School } from '../../utils/interface';
 
 
 export default function User() {
@@ -50,24 +48,22 @@ export default function User() {
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
   const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
   const [isEditingSchool, setIsEditingSchool] = useState<boolean>(false);
+  // Get separated user's school & campus from user's campus field
   const ref = user?.campus?.split('-', 2);
-  const schoolName: School | undefined = data.school.find((school) => school.reference === (ref ?? [])[0]);
   // Update user's school & campus 
-  const { data: school, mutate: setSchool } = api.user.update.useMutation();
+  const { data: updatedSchool, mutate: updateSchool } = api.user.update.useMutation();
   // Enable edit mode for school & campus & set user's school & campus from dropdown
   const handleEditClickSchool = () => {
     setIsEditingSchool(true);
-    if(ref) {
-      
+    if(ref) { 
       setSelectedSchool(ref[0] || '');
       setSelectedCampus(ref[1] || '');
-      console.log(ref);
     }
   };
   // Save school & campus
   const handleSaveClickSchool = () => {
     const tmpStr = selectedSchool+'-'+selectedCampus;
-    setSchool({
+    updateSchool({
       id: id,
       name: user?.name ?? '',
       email: user?.email ?? '',
@@ -82,14 +78,10 @@ export default function User() {
       alert("Vos informations ont bien été modifiées !");
     }
     
-    if(school) {
+    if(updatedSchool) {
       alert("Votre établissement par défaut a bien été modifié !");
     }
-  }, [updatedUser, school]);
-
-
-
-
+  }, [updatedUser, updatedSchool]);
 
   if (sessionData?.user){
     if(user) {
@@ -171,13 +163,13 @@ export default function User() {
                       <div className="mb-4">
                         <p className="border-b-2 font-medium text-gray-600 text-xl md:text-2xl">Etablissement :</p>
                         <p className="text-base">
-                          {schoolName?.name || ''}
+                          {data.school.find((school) => school.reference === (ref ?? [])[0])?.name || (ref?.[0] ?? '')}
                         </p>
                       </div>
                       <div>
                         <p className="border-b-2 font-medium text-gray-600 text-lg md:text-xl">Campus :</p>
                         <p className="text-base">
-                          {schoolName?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name || (ref?.[1] ?? '')}
+                          {data.school.find((school) => school.reference === (ref ?? [])[0])?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name || (ref?.[1] ?? '')}
                         </p>
                       </div>
                     </div>
@@ -199,19 +191,6 @@ export default function User() {
                       </Button>
                     )}
                   </div>
-                 
-
-
-                  {selectedSchool && selectedCampus && (
-                    <div className="mt-4">
-                      <p className="text-gray-600">
-                        Ecole : {selectedSchool}-{selectedCampus}
-                      </p>
-
-                      
-                    </div>
-                    )}
-              
               </div>
             </div>
           </LayoutMain> 
