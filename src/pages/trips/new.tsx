@@ -8,7 +8,7 @@ import { env } from 'next.config';
 import dayjs, { Dayjs } from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
-import { set } from 'zod';
+import { useRouter } from 'next/dist/client/router';
 
 export default function NewTravel() {
 
@@ -38,14 +38,17 @@ export default function NewTravel() {
 
     const apiKey = env.GOOGLE_MAPS_API_KEY as string;
 
-    const { data: travel, mutate: createTravel } = api.travel.create.useMutation();
+    const r = useRouter();
+
+    // Create a new travel
+    const { data: travelCreated, isSuccess, mutate: createTravel } = api.travel.create.useMutation();
+
     // Options for autocomplete
     const options = {
         componentRestrictions: { country: 'be' },
         strictBounds: false,
         types: ['address']
         };
-    
 
     /* ------------ Behaviors ------------------ */
     // Merge the date of [departure | return] with the time of [departure | return] to juste keep one field
@@ -56,9 +59,18 @@ export default function NewTravel() {
         if (dateReturn && timeReturn) {
             setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute())); 
         }
+        
     }, [dateDeparture, timeDeparture, dateReturn, timeReturn]);
-    
-    // HSubmit a new travel
+
+    // Redirect to the travels page when the travel is created
+    useEffect(() => {
+        if(isSuccess) {
+            r.reload();
+        }
+    }, [isSuccess, r]);
+
+
+    // Submit a new travel
     function handleClick() { 
         if(sessionData) {
             // Check if the departure and destination are selected
@@ -81,8 +93,13 @@ export default function NewTravel() {
                         status:0
                     });
                     console.log('Travel created');
+                }else{
+                    alert('Please select a date of return and departure');
                 }
+            }else{
+                alert('Please select a departure and destination');
             }
+            
         }
     }
 
@@ -100,6 +117,7 @@ export default function NewTravel() {
                         <h1 className='mt-6 text-3xl text-white'>
                             Ajouter nombre de passager maximum +
                             <p className='mt-6'> Choix d'école pour destination</p>
+                            <p> + Faire en sorte de rendre le fomulaire dynamique qui s'affichera étape par étape</p>
                         </h1>
                     
                         {/* Departure */}
@@ -162,12 +180,8 @@ export default function NewTravel() {
                                 <DateTimeSelect 
                                     labelexpTime="Time Return "
                                     labelexp="Date Return"
-                                    // Disable the date and time of return when the date and time of departure are not selected
-                                    disableDate={true}
-                                    disableTime={true}
-                                    // Enable the date and time of return
-                                    {...(dateDeparture && timeDeparture && {disableDate: false})}
-                                    {...(dateDeparture && timeDeparture && {disableTime: false})}
+                                    disableDate={false}
+                                    disableTime={false}
                                     handleChangeDate={(date) => {
                                         setDateReturn(date)
                                     }}    

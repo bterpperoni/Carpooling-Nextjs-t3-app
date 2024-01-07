@@ -1,17 +1,17 @@
-
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Children, useEffect, useRef, useState } from 'react';
 import { MapProps } from '$/utils/interface';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import { env } from 'next.config';
 
 
 
-const Map: React.FC<MapProps> = ({ center, zoom, markerPosition }) => {
+const Map: React.FC<MapProps> = ({ center, zoom, children, onLoad}: MapProps) => {
   const mapContainerStyle = {
     width: '100%',
     height: '25rem',
   };
 
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY as string;
+  const apiKey = env.GOOGLE_MAPS_API_KEY as string;
 
   // Used to access the map object
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -20,7 +20,7 @@ const Map: React.FC<MapProps> = ({ center, zoom, markerPosition }) => {
   // Used to set the map options
   useEffect(() => {
     if (mapRef.current) {
-      mapRef.current.setOptions({ gestureHandling: 'greedy' });
+      console.log('mapRef.current', mapRef.current);
     }
   }, [isMapLoaded]);
 
@@ -35,13 +35,9 @@ const Map: React.FC<MapProps> = ({ center, zoom, markerPosition }) => {
             center={center} 
             zoom={zoom} 
             mapContainerStyle={mapContainerStyle}
-            onLoad={(map) =>{
-                mapRef.current = map;
-                setIsMapLoaded(true);
-            }}
-            onUnmount={() => setIsMapLoaded(false)}
-        >
-           {isMapLoaded && <Marker position={markerPosition} /> }
+            onLoad={onLoad}
+            onUnmount={() => setIsMapLoaded(false)}>
+           {children}
         </GoogleMap>
       </LoadScript>
     </>

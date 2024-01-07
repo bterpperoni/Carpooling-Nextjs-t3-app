@@ -20,6 +20,13 @@ export type InputProps = {
         classInput?: string;
 }
 
+export type MapProps = {
+    center?: google.maps.LatLngLiteral;
+    zoom: number;
+    children?: React.ReactNode | undefined;
+    onLoad?: (map: google.maps.Map) => void;
+  }
+
 /* --------------------------------------------- ENUM -------------------------------------------------------- */
 export enum userRole{
     ADMIN = 'admin',
@@ -28,9 +35,3 @@ export enum userRole{
 }
 
 /* --------------------------------------------- INTERFACES -------------------------------------------------- */
-
-export interface MapProps {
-    center: google.maps.LatLngLiteral;
-    zoom: number;
-    markerPosition: google.maps.LatLngLiteral;
-  }
