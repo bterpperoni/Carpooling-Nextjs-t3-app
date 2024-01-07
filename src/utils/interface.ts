@@ -35,3 +35,22 @@ export enum userRole{
 }
 
 /* --------------------------------------------- INTERFACES -------------------------------------------------- */
+
+export interface Campus {
+    campus_ref: string;
+    campus_name: string;
+    address: string;
+  }
+  
+export interface School {
+    reference: string;
+    name: string;
+    city: string;
+    pays: string;
+    campus: Campus[];
+  }
+  
+export interface DropdownProps {
+    data: { school: School[] };
+    onChange: (selectedSchool: string | null, selectedCampus: string | null) => void;
+  }

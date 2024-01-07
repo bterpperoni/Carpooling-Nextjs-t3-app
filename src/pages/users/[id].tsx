@@ -6,6 +6,9 @@ import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { ChangeEvent, useEffect, useState } from "react";
+import Dropdown from '../../lib/components/dropdown/Dropdown';
+import { data } from "$/utils/data";
+import Button from "$/lib/components/button/Button";
 
 
 export default function User() {
@@ -14,6 +17,15 @@ export default function User() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState<string>('');
   const [editedEmail, setEditedEmail] = useState<string>('');
+  // School & campus
+  const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
+  const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
+  const [isEditingSchool, setIsEditingSchool] = useState<boolean>(false);
+  // Handle dropdown change to get selected school & campus
+  const handleDropdownChange = (school: string | null, campus: string | null) => {
+    setSelectedSchool(school);
+    setSelectedCampus(campus);
+  };
 
   const { query, reload } = useRouter();
   const id = query.id as string;
@@ -54,69 +66,130 @@ export default function User() {
     setIsEditing(false);
   };
 
+  // Enable edit mode for school & campus
+  const handleEditClickSchool = () => {
+    setIsEditingSchool(true);
+  };
+
+  // Save school & campus
+  const handleSaveClickSchool = () => {
+    setIsEditingSchool(false);
+  };
+
   if (sessionData?.user){
     if(user) {
         return (
         <>
           <LayoutMain>
             <div className="w-[90vw] h-auto mx-auto mt-8 bg-white p-8 rounded shadow-md ">
-              <div className="flex flex-col items-center md:flex-row ">
-                <img className="w-18 h-18 rounded-full mr-6" src={sessionData?.user.image} alt="Profile" />
-                  <div className="text-2xl text-gray-600 md:text-4xl lg:text-5xl text-left">
+              <div className="flex flex-col items-center">
+                <img className="w-18 h-18 rounded-full" src={sessionData?.user.image} alt="Profile" />
+                  <div className="text-left overflow-hidden">
+                  <div className="max-w-md overflow-hidden mx-auto mt-4 p-4 border rounded-md shadow-md bg-white">
                     {!isEditing ? (
                       <>
-                        <div className="ml-2 mt-4">{user.name}</div>
-                        <div className="ml-2 mt-4">{user.email}</div>
+                        <div className="mt-4 flex flex-col md:flex-row items-center">
+                          <label htmlFor="username" className="w-full text-center border-b-2 text-xl md:text-2xl text-black">Username :</label>
+                          <div id="username" className="mt-1">{user.name}</div>
+                        </div>
+                        <div className="mt-4 flex flex-col md:flex-row items-center">
+                          <label htmlFor="email" className="w-full text-center border-b-2 text-xl md:text-2xl text-black">Email :</label>
+                          <div id="email" className="mt-1">{user.email}</div>
+                        </div>
                       </>
                     ) : (
                       <>
                         <Input
-                          label=""
+                          label="Username :"
                           type="text"
                           value={editedName}
                           onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedName(e.target.value)}
                           placeholder="Votre nom"
-                          classInput="ml-2 mt-4"
+                          classInput="mt-2"
                         />
                         <Input
-                          label=""
+                          label="Email :"
                           type="email"
                           value={editedEmail}
                           onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedEmail(e.target.value)}
                           placeholder="Votre email"
-                          classInput="ml-2 mt-4"
+                          classInput="mt-2"
                         />
                       </>
                     )}
+                    </div>
                   </div>
               </div>
-              <div className="mt-4">
+              <div className="mt-4 flex justify-center">
                 {isEditing ? (
-                  <button
+                  <Button
                     className="bg-blue-500 text-white px-4 py-2 rounded"
                     onClick={handleSaveClick}
                   >
                     Enregistrer
-                  </button>
+                  </Button>
                 ) : (
-                  <button
+                  <Button
                     className="bg-blue-500 text-white px-4 py-2 rounded"
                     onClick={handleEditClick}
                   >
-                    Modifier
-                  </button>
+                    Modifier mes informations
+                  </Button>
                 )}
               </div>
 
-              <div className="mt-8">
-                <div className="mb-4">
-                  <h2 className="text-2xl font-semibold mb-2 text-gray-800">Stat -- styles à modifier </h2>
-                  <p className="border-t-2 border-b-0 border-l-0 border-r-0 border-black">Nombre de trajets : 0</p>
-                  <p className="border-t-2 border-b-0 border-l-0 border-r-0 border-black">Montant du portefeuille : 0</p>
-                  <p className="border-t-2 border-b-0 border-l-0 border-r-0 border-black">Note moyenne : 0/5</p>
-              </div>
+              <div className="mt-8 mb-4">
+                  {isEditingSchool ? (
+                     <Dropdown data={data} onChange={handleDropdownChange} />
+                  ) : (
+                    <div className="text-center max-w-md mx-auto mt-4 p-4 border rounded-md shadow-md bg-white">
+                      <div className="mb-4">
+                        <p className="border-b-2 font-medium text-gray-600 text-xl md:text-2xl">Etablissement :</p>
+                        <p className="text-base">
+                          {data.school.find((school) => school.reference === selectedSchool)?.name}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="border-b-2 font-medium text-gray-600 text-lg md:text-xl">Campus :</p>
+                        <p className="text-base">
+                          {data.school
+                            .find((school) => school.reference === selectedSchool)
+                            ?.campus.find((campus) => campus.campus_ref === selectedCampus)
+                            ?.campus_name}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex justify-center">
+                    {isEditingSchool ? (
+                      <Button 
+                        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                        onClick={handleSaveClickSchool}
+                      >
+                      Enregistrer
+                      </Button>
+                    ) : (
+                      <Button 
+                        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                        onClick={handleEditClickSchool}  
+                      >
+                      Changer mon établissement par défaut
+                      </Button>
+                    )}
+                  </div>
+                 
 
-                {/* Other sections */}
+
+                  {selectedSchool && selectedCampus && (
+                    <div className="mt-4">
+                      <p className="text-gray-600">
+                        Ecole : {selectedSchool} - Campus : {selectedCampus}
+                      </p>
+
+                      
+                    </div>
+                    )}
+              
               </div>
             </div>
           </LayoutMain> 

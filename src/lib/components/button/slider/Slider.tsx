@@ -10,14 +10,14 @@ const SlideButton: React.FC<{ check: () => void; checked: boolean; classSlider: 
 
   return (
     <>
-    <label className={`switch ${classSlider}`}>
-      <input
-        type="checkbox"
-        id="slider"
-        checked={isChecked}
-        onChange={handleChange}/>
-    <span className="slider round" />
-    </label>
+      <label className={`switch ${classSlider}`}>
+        <input
+          type="checkbox"
+          id="slider"
+          checked={isChecked}
+          onChange={handleChange}/>
+      <span className="slider round" />
+      </label>
     </>
     
   );

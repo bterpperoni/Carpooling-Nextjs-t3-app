@@ -45,8 +45,8 @@ export default function Detail() {
     const [departure, setDeparture] = useState<string>();
     const [destination, setDestination] = useState<string>();
     // Latitude and longitude of departure and destination
-    const [departureLatitude, setDepartureLatitude] = useState<number>(0);
-    const [departureLongitude, setDepartureLongitude] = useState<number>(0);
+    const [departureLatitude, setDepartureLatitude] = useState<number>(travel?.departureLatitude as number);
+    const [departureLongitude, setDepartureLongitude] = useState<number>(travel?.departureLongitude as number);
     const [destinationLatitude, setDestinationLatitude] = useState<number>(travel?.destinationLatitude as number);
     const [destinationLongitude, setDestinationLongitude] = useState<number>(travel?.departureLongitude as number);
 
@@ -324,10 +324,9 @@ export default function Detail() {
                                     </div>
                                 </div>
                                 {/* Submit */}
-                              
+                                <Button className={MuiStyle.MuiButtonText} onClick={handleSaveClick}> Enregistrer les modifications </Button>
                                 <Button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md"> Annuler </Button>
                             </form>
-                            <Button className={MuiStyle.MuiButtonText} onClick={handleSaveClick}> Enregistrer les modifications </Button>
                         </div>
                     </>
                 )}
