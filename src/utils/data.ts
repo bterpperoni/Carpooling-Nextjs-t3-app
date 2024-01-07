@@ -9,12 +9,20 @@ export const data ={
           {
             "campus_ref": "1",
             "campus_name": "Campus des Arts et Métiers",
-            "address": "Rue des Soeurs Noires 1, 7000 Mons"
+            "address": "Rue des Soeurs Noires 1, 7000 Mons",
+            "location": {
+              "lat": 50.4500581, 
+              "lng": 3.9508188
+            }
           },
           {
             "campus_ref": "2",
             "campus_name": "Campus des Sciences de la Santé",
-            "address": "Avenue Nerviens 9, 7000 Mons"
+            "address": "Chemin du Champ de Mars, 13 & 15B-7000 Mons",
+            "location": {
+              "lat" :50.4636144,
+              "lng": 3.9524697
+            }
           }
         ]
       },
@@ -27,17 +35,29 @@ export const data ={
           {
             "campus_ref": "1",
             "campus_name": "Campus Plaine de Nimy",
-            "address": "Chaussée de Binche 159, 7000 Mons"
+            "address": "Chaussée de Binche 159, 7000 Mons",
+            "location": {
+              "lat": 50.4461607,
+              "lng": 3.9398933
+            }
           },
           {
             "campus_ref": "2",
             "campus_name": "Campus Polytech",
-            "address": "Place du Parc 20, 7000 Mons"
+            "address": "Place du Parc 20, 7000 Mons",
+            "location": {
+              "lat": 50.4587408,
+              "lng": 3.952212899999999
+            }
           },
           {
             "campus_ref": "3",
             "campus_name": "Campus Warocqué",
-            "address": "Place Warocqué 17, 7000 Mons"
+            "address": "Place Warocqué 17, 7000 Mons",
+            "location": {
+              "lat": 50.4588238,
+              "lng": 3.9501664
+            }
           }
         ]
       },
@@ -50,22 +70,38 @@ export const data ={
           {
             "campus_ref": "1",
             "campus_name": "Département pédagogique",
-            "address": "Boulevard Albert-Elisabeth 2, 7000 Mons"
+            "address": "Boulevard Albert-Elisabeth 2, 7000 Mons",
+            "location": {
+              "lat": 50.4481852,
+              "lng": 3.9536186
+            }
           },
           {
             "campus_ref": "2",
             "campus_name": "Département des sciences économique",
-            "address": "Avenue Victor Maistriau, 8a, 7000 Mons"
+            "address": "Avenue Victor Maistriau, 8a, 7000 Mons",
+            "location": {
+              "lat": 50.4621466,
+              "lng": 3.9572177
+            }
           },
           {
             "campus_ref": "3",
             "campus_name": "Département des sciences et technologies",
-            "address": "Avenue V. Maistriau 13, 7000 Mons"
+            "address": "Avenue V. Maistriau 13, 7000 Mons",
+            "location": {
+              "lat": 50.4637089,
+              "lng": 3.956881
+            }
           },
           {
             "campus_ref": "4",
             "campus_name": "Département des sciences sociales",
-            "address": "address du département des sciences sociales à Mons"
+            "address": "Rue de l'Abattoir 12, 7000 Mons",
+            "location": {
+              "lat": 50.43681660000001,
+              "lng": 3.8234233
+            }
           }
         ]
       }

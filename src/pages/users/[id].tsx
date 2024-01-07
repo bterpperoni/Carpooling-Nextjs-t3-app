@@ -74,12 +74,8 @@ export default function User() {
 
   // Alert when user is updated 
   useEffect(() => {
-    if (updatedUser) {
+    if (updatedUser || updatedSchool) {
       alert("Vos informations ont bien été modifiées !");
-    }
-    
-    if(updatedSchool) {
-      alert("Votre établissement par défaut a bien été modifié !");
     }
   }, [updatedUser, updatedSchool]);
 
@@ -163,13 +159,18 @@ export default function User() {
                       <div className="mb-4">
                         <p className="border-b-2 font-medium text-gray-600 text-xl md:text-2xl">Etablissement :</p>
                         <p className="text-base">
-                          {data.school.find((school) => school.reference === (ref ?? [])[0])?.name || (ref?.[0] ?? '')}
+                          {
+                            data.school.find((school) => school.reference === (ref ?? [])[0])?.name || (ref?.[0] ?? '')
+                          }
                         </p>
                       </div>
                       <div>
                         <p className="border-b-2 font-medium text-gray-600 text-lg md:text-xl">Campus :</p>
                         <p className="text-base">
-                          {data.school.find((school) => school.reference === (ref ?? [])[0])?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name || (ref?.[1] ?? '')}
+                          {
+                            data.school.find((school) => school.reference === (ref ?? [])[0])
+                            ?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name || (ref?.[1] ?? '')
+                          }
                         </p>
                       </div>
                     </div>

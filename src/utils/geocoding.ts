@@ -1,8 +1,14 @@
 import axios from 'axios';
+import { env } from 'next.config';
 
-const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
 
-export const geocode = async (address: string): Promise<string> => {
+
+export const geocode = async (address: string): Promise<{}> => {
+
+      const apiKey = env.GOOGLE_MAPS_API_KEY;
+      if (!apiKey) {
+        throw new Error('No Google API key found in the environment');
+      }
       try {
         const response = await axios.get(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`
@@ -15,12 +21,14 @@ export const geocode = async (address: string): Promise<string> => {
         }
   
         const location = results[0].geometry?.location;
+        const formattedAddress = results[0].formatted_address;
+        const placeId = results[0].place_id;
   
         if (!location) {
           throw new Error(`Location not found in the geocoding response for the address: ${address}`);
         }
   
-        return `${location.lat},${location.lng}`;
+        return { formattedAddress, location, placeId };
       } catch (error) {
         console.error('Error geocoding address:', error);
         throw error;

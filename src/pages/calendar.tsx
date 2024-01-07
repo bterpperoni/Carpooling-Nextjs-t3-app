@@ -1,9 +1,19 @@
 import Button from '$/lib/components/button/Button';
 import LayoutMain from '$/lib/components/layout/LayoutMain';
-
+import { geocode } from '$/utils/geocoding';
+import { data } from '$/utils/data';
 
 export default function Calendar() {
 
+    // console.log(encodeURIComponent('Place Warocqué 17, 7000 Mons'));
+    // geocode('Place Warocqué 17, 7000 Mons').then((res) => console.log(res));
+    let count = 0;
+    data.school.forEach((school) => {
+        school.campus.forEach((campus) => {
+            count++;
+            geocode(campus.address).then((res) => console.log(res));
+        });
+    });
 
     return (
          <>
