@@ -1,7 +1,6 @@
 'use client';
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
-import Image from "next/image";
 import { api } from "$/utils/api";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
@@ -88,12 +87,10 @@ export default function User() {
           <LayoutMain>
             <div className="w-[90vw] h-auto mx-auto mt-8 bg-white p-8 rounded shadow-md ">
               <div className="flex flex-col items-center">
-                <Image 
-                  className="rounded-full" 
+                <img
+                  className="w-18 h-18 rounded-full" 
                   src={sessionData?.user.image} 
-                  alt="Profile" 
-                  width={80}
-                  height={80}
+                  alt="Profile"
                 />
                   <div className="text-left overflow-hidden">
                   <div className="max-w-md overflow-hidden mx-auto mt-4 p-4 border rounded-md shadow-md bg-white">
