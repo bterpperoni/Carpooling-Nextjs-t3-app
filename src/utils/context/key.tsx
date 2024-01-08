@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
-import config from 'next.config';
+import { env } from 'next.config';
 
 
 type ApiKeyType = string|undefined;
@@ -13,8 +13,8 @@ interface ApiKeyProviderProps {
 }
 
 const ApiKeyProvider: React.FC<ApiKeyProviderProps> = ({ children }) => {
-    // Remplacez 'VOTRE_CLE_API' par la vraie clé API ou utilisez process.env.GOOGLE_MAPS_API_KEY
-    const apiKey: ApiKeyType = config.env?.GOOGLE_MAPS_API_KEY;
+
+    const apiKey: ApiKeyType = env.GOOGLE_MAPS_API_KEY;
 
     return <ApiKeyContext.Provider value={apiKey}>{children}</ApiKeyContext.Provider>;
 };

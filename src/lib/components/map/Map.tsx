@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import type { MapProps } from '$/utils/interface';
+import React, { use, useEffect, useRef, useState } from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import config  from 'next.config';
-
+import { MapProps } from '$/utils/interface';
+import { useApiKey } from '$/utils/context/key';
 
 function Map({ center, zoom, children, onLoad }: MapProps) {
 
-  const apiKey = config.env?.GOOGLE_MAPS_API_KEY;
-  
+  const apiKey = useApiKey();
+
   // Set the map container style
   const mapContainerStyle = {
     width: '100%',
@@ -29,18 +28,13 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
   return (
     <>
     {/* LoadScript  */}
-      <LoadScript googleMapsApiKey={apiKey}>
+      <LoadScript googleMapsApiKey={`${apiKey}`}>
         <GoogleMap 
             center={center} 
             zoom={zoom} 
             mapContainerStyle={mapContainerStyle}
             onLoad={onLoad}
             onUnmount={() => setIsMapLoaded(false)}>
-            {isMapLoaded &&
-              <div>
-                
-              </div>
-            }
             {children}
         </GoogleMap>
       </LoadScript>

@@ -1,7 +1,4 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ChangeEvent } from "react";
-import { InferGetServerSidePropsType } from "next";
-import { getStaticProps } from "./static";
-
 /* --------------------------------------------- TYPES ---------------------------------------------------- */
 
 export type Children = {

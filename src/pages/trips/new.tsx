@@ -3,26 +3,22 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import DateTimeSelect from '../../lib/components/form/DateTimeSelect';
 import { Button } from '@mui/material';
 import MuiStyle from '$/lib/styles/MuiStyle.module.css';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import { useRouter } from 'next/dist/client/router';
-import type { GetStaticProps, InferGetServerSidePropsType } from 'next/types';
+
+import { useApiKey } from '$/utils/context/key';
  
-// Get the google maps api key from the environment variables 
-export const getStaticProps = (async () => {
-    const apiKey = process.env.GOOGLE_MAPS_API_KEY ;
-        
-    return { props: { apiKey } }
-    }) as GetStaticProps<{ apiKey: string }>;
+
 /* --------------------------------------------------------- */
 
-export default function NewTravel( { apiKey }: InferGetServerSidePropsType<typeof getStaticProps>)  {
+export default function NewTravel()  {
     /* ------------ States ------------------ */
     const { data: sessionData } = useSession();
-
+    const apiKey = useApiKey();
     // Address of departure and destination from google autocomplete
     const address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
     const [departure, setDeparture] = useState<string>();

@@ -9,11 +9,13 @@ import { api } from '$/utils/api';
 import { Marker } from '@react-google-maps/api';
 import TravelCard from '$/lib/components/travel/TravelCard';
 import { useRouter } from 'next/router';
+import { useApiKey, ApiKeyProvider } from '$/utils/context/key';
 
 const All: React.FC = () => {
         const center: google.maps.LatLngLiteral =  { lat: 50.463727, lng: 3.938247 };
         const zoom = 12;
 
+        const apiKey = useApiKey();
         const { data : sessionData } = useSession();
 
         const router = useRouter();
@@ -79,16 +81,15 @@ const All: React.FC = () => {
                             <>   
                                 <div className='m-6 h-box w-auto bg-white border-fuchsia-700 text-fuchsia-700'>
                                     {travelList?.map((travel) => (
-                                        <TravelCard  key={travel.id} travel={travel} driver={travel.driverId} goToTravel={() => window.location.href = `/trips/${travel.id}`} />
+                                        <TravelCard  key={travel.id} travel={travel} driver={travel.driverId} goToTravel={() => handleMarkerClick(travel.id)} />
                                     ))}            
                                 </div>
                             </>
                         )}
                         {/* -------------------------------------- display map ---------------------------------------------- */}
                         {!checked &&
-                        
                         <> 
-                            <Map center={center} zoom={zoom}>
+                        <Map center={center} zoom={zoom}>
                             {travelList?.map((travel) => (
                                 <Marker 
                                     key={travel.id} 
@@ -97,7 +98,7 @@ const All: React.FC = () => {
                                     icon={customMarker}
                                 />
                             ))}
-                            </Map>
+                        </Map>
                         </>
                         }
                     </div>

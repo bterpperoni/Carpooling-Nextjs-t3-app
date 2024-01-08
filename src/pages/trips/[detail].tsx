@@ -11,44 +11,12 @@ import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 import DateTimeSelect from "$/lib/components/form/DateTimeSelect";
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
-import { GetStaticPaths, GetStaticProps, InferGetServerSidePropsType } from "next";
-import { Travel } from "@prisma/client";
+import { useApiKey } from "$/utils/context/key";
 
-const getTravelList = async () => {
-    const {data: response} = api.travel.travelList.useQuery(); ;
-    
-    if(!response) return [];
-    // Return a list of paths objects with the params key
-    const paths = response.map((travel) => ({
-      params: { detail: travel.id.toString() },
-    }));
-    
-    return paths;
-  };
-  
-// This function gets called at build time on server-side. It may be called again, on a serverless function, if
-// revalidation is enabled and a new request comes in
-export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await getTravelList();
-    // { fallback: false } means other routes should 404.
-    return { paths, fallback: false };
-};
 
-// This also gets called at build time on server-side.
-export const getStaticProps = (async ({ params } ) => {
-    // params contains the travel `id`.
-    const travelId = params?.detail;
-    const apiKey = process.env.GOOGLE_MAPS_API_KEY ;
-
-    const { data: travelData } = api.travel.travelById.useQuery(
-        {id: parseInt(travelId as string)}, 
-        {enabled : travelId !== undefined });
-    // Pass post data to the page via props
-    return { props: { apiKey, travelData } }
-    }) as GetStaticProps<{ apiKey: string, travelData: Travel }>;
-
-export default function Detail({ apiKey, travelData }: InferGetServerSidePropsType<typeof getStaticProps>) {
-    // etc.
+export default function Detail() {
+    // Google maps api key
+    const apiKey = useApiKey();
     // Used to switch between display & edit mode
     const [isEditing, setIsEditing] = useState(false);
     // Used to redirect after delete
@@ -145,12 +113,12 @@ export default function Detail({ apiKey, travelData }: InferGetServerSidePropsTy
             const newTravel = {id : travel.id,
                 driverId: travel.driverId,
                 departure: departure ?? travel.departure,
-                departureLatitude: departureLatitude ?? travel.departureLatitude,
-                departureLongitude: departureLongitude ?? travel.departureLongitude,
+                departureLatitude: departureLatLng.lat ?? travel.departureLatitude,
+                departureLongitude: departureLatLng.lng ?? travel.departureLongitude,
                 departureDateTime: travel.departureDateTime,
                 destination: destination ?? travel.destination,
-                destinationLatitude: destinationLatitude ?? travel.destinationLatitude,
-                destinationLongitude: destinationLongitude ?? travel.destinationLongitude,
+                destinationLatitude: destinationLatLng.lat ?? travel.destinationLatitude,
+                destinationLongitude: destinationLatLng.lng ?? travel.destinationLongitude,
                 returnDateTime: travel.returnDateTime,
                 status: 0
             };
@@ -225,7 +193,7 @@ export default function Detail({ apiKey, travelData }: InferGetServerSidePropsTy
             {/* ------------------------------------Card with travel details--------------------------------------------------- */}  
                 {!isEditing ? (
                     <>
-                        <Map zoom={zoom} onLoad={mapLoaded} />
+                        <Map zoom={zoom} onLoad={mapLoaded}/>
                         <TravelDetail travel={travel}>
                                     {canEdit ? (
                                         <>
@@ -363,6 +331,7 @@ export default function Detail({ apiKey, travelData }: InferGetServerSidePropsTy
                                 <Button className={MuiStyle.MuiButtonText} onClick={handleSaveClick}> Enregistrer les modifications </Button>
                                 <Button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md"> Annuler </Button>
                             </form>
+                            
                         </div>
                     </>
                 )}
