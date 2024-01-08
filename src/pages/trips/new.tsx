@@ -10,14 +10,14 @@ import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import { useRouter } from 'next/dist/client/router';
 import type { GetStaticProps, InferGetServerSidePropsType } from 'next/types';
-
-
-export const getStaticProps: GetStaticProps = (async () => {
-    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-    return {
-      props: { apiKey }
-    };
-  }) as GetStaticProps<{ apiKey: string }>;
+ 
+// Get the google maps api key from the environment variables 
+export const getStaticProps = (async () => {
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY ;
+        
+    return { props: { apiKey } }
+    }) as GetStaticProps<{ apiKey: string }>;
+/* --------------------------------------------------------- */
 
 export default function NewTravel( { apiKey }: InferGetServerSidePropsType<typeof getStaticProps>)  {
     /* ------------ States ------------------ */
@@ -107,9 +107,8 @@ export default function NewTravel( { apiKey }: InferGetServerSidePropsType<typeo
         }
     }
 
-
-
     /* ------------ Render ------------------ */
+    if(!apiKey) return <div>Google maps api key is missing</div>
     if(sessionData) {
     return (
          <>
@@ -207,6 +206,11 @@ export default function NewTravel( { apiKey }: InferGetServerSidePropsType<typeo
         <>     
             <LayoutMain>
                 <h1>Not Connected, <p>Please Sign in</p></h1> 
+                <p>
+                    modal qui proposera de se connecter à implémenterbr
+                <br />
+                    ou rediriger vers la page de connexion
+                </p>
             </LayoutMain> 
         </>
     );

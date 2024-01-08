@@ -7,19 +7,52 @@ import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
 import { useEffect, useState } from "react";
 import Autocomplete from "react-google-autocomplete";
-import { env } from "process";
 import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 import DateTimeSelect from "$/lib/components/form/DateTimeSelect";
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
+import { GetStaticPaths, GetStaticProps, InferGetServerSidePropsType } from "next";
+import { Travel } from "@prisma/client";
 
-export default function Detail() {
+const getTravelList = async () => {
+    const {data: response} = api.travel.travelList.useQuery(); ;
+    
+    if(!response) return [];
+    // Return a list of paths objects with the params key
+    const paths = response.map((travel) => ({
+      params: { detail: travel.id.toString() },
+    }));
+    
+    return paths;
+  };
+  
+// This function gets called at build time on server-side. It may be called again, on a serverless function, if
+// revalidation is enabled and a new request comes in
+export const getStaticPaths: GetStaticPaths = async () => {
+    const paths = await getTravelList();
+    // { fallback: false } means other routes should 404.
+    return { paths, fallback: false };
+};
+
+// This also gets called at build time on server-side.
+export const getStaticProps = (async ({ params } ) => {
+    // params contains the travel `id`.
+    const travelId = params?.detail;
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY ;
+
+    const { data: travelData } = api.travel.travelById.useQuery(
+        {id: parseInt(travelId as string)}, 
+        {enabled : travelId !== undefined });
+    // Pass post data to the page via props
+    return { props: { apiKey, travelData } }
+    }) as GetStaticProps<{ apiKey: string, travelData: Travel }>;
+
+export default function Detail({ apiKey, travelData }: InferGetServerSidePropsType<typeof getStaticProps>) {
+    // etc.
     // Used to switch between display & edit mode
     const [isEditing, setIsEditing] = useState(false);
     // Used to redirect after delete
     const [ travelDeleted, setTravelDeleted ] = useState(false);
-    // Google maps api key
-    const apiKey = env.GOOGLE_MAPS_API_KEY as string;
     // Get id from url
     const router = useRouter()
     const id = parseInt(router.query.detail as string);  
@@ -130,7 +163,9 @@ export default function Detail() {
     const handleDelete = () => {
         deleteTravel({id});
         setTravelDeleted(true);
-        window.location.href = '/trips/all';
+        if(travelDeleted) {
+            window.location.href = '/trips/all';
+        }
     }
  
     useEffect(() => {

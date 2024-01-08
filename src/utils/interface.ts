@@ -1,4 +1,6 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ChangeEvent } from "react";
+import { InferGetServerSidePropsType } from "next";
+import { getStaticProps } from "./static";
 
 /* --------------------------------------------- TYPES ---------------------------------------------------- */
 
@@ -21,11 +23,11 @@ export type InputProps = {
 }
 
 export type MapProps = {
-    center?: google.maps.LatLngLiteral;
-    zoom: number;
-    children?: React.ReactNode | undefined;
-    onLoad?: (map: google.maps.Map) => void;
-  }
+  center?: google.maps.LatLngLiteral;
+  zoom: number;
+  children?: React.ReactNode | undefined;
+  onLoad?: (map: google.maps.Map) => void;
+};
 
 /* --------------------------------------------- ENUM -------------------------------------------------------- */
 export enum userRole{

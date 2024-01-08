@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import { Marker } from '@react-google-maps/api';
 import TravelCard from '$/lib/components/travel/TravelCard';
+import { useRouter } from 'next/router';
 
 const All: React.FC = () => {
         const center: google.maps.LatLngLiteral =  { lat: 50.463727, lng: 3.938247 };
@@ -15,11 +16,16 @@ const All: React.FC = () => {
 
         const { data : sessionData } = useSession();
 
+        const router = useRouter();
+
+        const handleMarkerClick = (id: number) => {
+            router.push(`/trips/${id}`);
+        }
+
+
         const { data: travelList } = api.travel.travelList.useQuery(undefined,
             { enabled: sessionData?.user !== undefined }  
         );
-
-        
 
         const customMarker = {
             // Refer to https://developers.google.com/maps/documentation/javascript/examples/marker-symbol-custom
@@ -87,7 +93,7 @@ const All: React.FC = () => {
                                 <Marker 
                                     key={travel.id} 
                                     position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
-                                    onClick={() => window.location.href = `/trips/${travel.id}`}
+                                    onClick={() => handleMarkerClick(travel.id)}
                                     icon={customMarker}
                                 />
                             ))}
