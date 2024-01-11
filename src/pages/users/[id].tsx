@@ -8,7 +8,7 @@ import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import Dropdown from '../../lib/components/dropdown/Dropdown';
-import { data } from "$/utils/data";
+import { data } from "$/lib/data/data";
 import Button from "$/lib/components/button/Button";
 
 
@@ -62,10 +62,10 @@ export default function User() {
   };
   // Save school & campus
   const handleSaveClickSchool = () => {
-    const tmpStr = selectedSchool+'-'+selectedCampus;
+    const tmpStrCampus = selectedSchool+'-'+selectedCampus;
     updateSchool({
       id: id,
-      campus: tmpStr,
+      campus: tmpStrCampus,
     });
     setIsEditingSchool(false);
   };

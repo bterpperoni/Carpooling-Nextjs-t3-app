@@ -7,7 +7,7 @@ import Dropdown from "$/lib/components/dropdown/Dropdown";
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
-import { data } from "$/utils/data";
+import { data } from "$/lib/data/data";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
@@ -15,7 +15,7 @@ import type { ChangeEvent } from "react";
 
 export default function Groups() {
     // -------------------------------State------------------------------------------------------
-    // Create group state
+    // Create group editing state
     const [isCreating, setIsCreating] = useState(false);
     // School & campus state
     const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
@@ -31,18 +31,38 @@ export default function Groups() {
         enabled: sessionData?.user !== undefined
     });
     // Create group
-    const { mutate: createGroup } = api.group.create.useMutation();
+    const { data: createdGroup, mutate: createGroup } = api.group.create.useMutation();
 
     // ------------------------------- Handlers ------------------------------------------------------
     useEffect(() => {
-        console.log('selectedSchool', selectedSchool,selectedCampus);
-    }, [selectedCampus, selectedSchool])
+        if(createdGroup){
+            setTimeout(() => {
+                alert('Groupe créé !');
+            }, 1000)
+        }
+    }, [createdGroup])
 
     // Check if the group is public or private
     const handleCheck = () => {
         setisPrivate(!isPrivate);
     }
 
+    // Save group
+    function handleSaveGroup(){
+        if(sessionData){
+            if (selectedSchool && selectedCampus && groupName) {
+                const tmpStrCampus = selectedSchool+'-'+selectedCampus;
+                const group = {
+                    name: groupName,
+                    campus: tmpStrCampus,
+                    createdBy: sessionData.user.id,
+                    visibility: isPrivate
+                }
+                createGroup(group);
+                setIsCreating(false);
+            }
+        }
+    }
     // ------------------------------- Render ------------------------------------------------------
     if (sessionData) {
         return (
@@ -64,20 +84,20 @@ export default function Groups() {
                     </div>
                     {/* ---------------------------------- Group Card ----------------------------------------- */}
                     <div className="bg-white w-[85vw] h-[80vh] rounded-[2%]">
-                        <table className="bg-[var(--purple-g3)] border-2">
-                            <thead className="">
-                                <tr className="text-white ">
-                                    <th className="w-[20%] border-r-2 py-2">Nom du groupe</th>
-                                    <th className="w-[20%] border-r-2 py-2">Campus</th>
-                                    <th className="w-[20%] py-2">Administrateur</th>
+                        <table className="bg-[var(--purple-g3)] w-full">
+                            <thead className="border-y-2">
+                                <tr className="text-[var(--pink-g1)] ">
+                                    <th className="w-[25%] py-2">Nom du groupe</th>
+                                    <th className="w-[25%] py-2">Campus</th>
+                                    <th className="w-[25%] py-2">Administrateur</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {groupsData?.map((group) => (
-                                    <tr key={group.id} className="text-center">
-                                        <td className="py-2">{group.name}</td>
-                                        <td className="py-2">{group.campus}</td>
-                                        <td className="py-2">{group.createdBy}</td>
+                                    <tr key={group.id} className="text-center cursor-pointer text-white">
+                                        <td className="py-2 border-b-2">{group.name}</td>
+                                        <td className="py-2 border-b-2">{group.campus}</td>
+                                        <td className="py-2 border-b-2">{sessionData.user.name}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -130,6 +150,7 @@ export default function Groups() {
                                     </Button>
                                     <Button
                                         type="submit"
+                                        onClick={handleSaveGroup}
                                         className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                                     border-2 text-white px-3 py-2 rounded-md">
                                         Créer un groupe

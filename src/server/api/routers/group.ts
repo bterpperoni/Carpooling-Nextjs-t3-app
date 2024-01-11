@@ -40,7 +40,7 @@ export const groupRouter = createTRPCRouter({
                 data: {
                     name: input.name,
                     campus: input.campus,
-                    createdBy: input.createdBy,
+                    createdBy: ctx.session.user.name,
                     visibility: input.visibility
                 },
             });
