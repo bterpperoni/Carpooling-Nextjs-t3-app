@@ -34,6 +34,8 @@ export default function Groups() {
     const { data: createdGroup, mutate: createGroup } = api.group.create.useMutation();
 
     // ------------------------------- Handlers ------------------------------------------------------
+    // Get separated user's school & campus from user's campus field
+
     useEffect(() => {
         if(createdGroup){
             setTimeout(() => {
@@ -45,6 +47,15 @@ export default function Groups() {
     // Check if the group is public or private
     const handleCheck = () => {
         setisPrivate(!isPrivate);
+    }
+
+    // Get campus from school
+    const getCampus = (str: string) => {
+        const ref = str.split('-', 2);
+        const school = data.school.find((school) => school.reference === (ref ?? [])[0])?.name ?? (ref?.[0] ?? '');
+        const campus = data.school.find((school) => school.reference === (ref ?? [])[0])
+                       ?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name ?? (ref?.[1] ?? '');
+        return school + ' - ' + campus;
     }
 
     // Save group
@@ -83,8 +94,8 @@ export default function Groups() {
                         </Button>
                     </div>
                     {/* ---------------------------------- Group Card ----------------------------------------- */}
-                    <div className="bg-white w-[85vw] h-[80vh] rounded-[2%]">
-                        <table className="bg-[var(--purple-g3)] w-full">
+                    <div className="bg-[var(--purple-g3)] w-[85vw] h-[80vh] rounded-[2%]">
+                        <table className=" w-full">
                             <thead className="border-y-2">
                                 <tr className="text-[var(--pink-g1)] ">
                                     <th className="w-[25%] py-2">Nom du groupe</th>
@@ -96,7 +107,7 @@ export default function Groups() {
                                 {groupsData?.map((group) => (
                                     <tr key={group.id} className="text-center cursor-pointer text-white">
                                         <td className="py-2 border-b-2">{group.name}</td>
-                                        <td className="py-2 border-b-2">{group.campus}</td>
+                                        <td className="py-2 border-b-2">{getCampus(group.campus)}</td>
                                         <td className="py-2 border-b-2">{sessionData.user.name}</td>
                                     </tr>
                                 ))}
