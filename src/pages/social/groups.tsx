@@ -11,6 +11,7 @@ import { data } from "$/lib/data/data";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
+import { getCampus } from "$/lib/data/handler";
 
 
 export default function Groups() {
@@ -49,14 +50,7 @@ export default function Groups() {
         setisPrivate(!isPrivate);
     }
 
-    // Get campus from school
-    const getCampus = (str: string) => {
-        const ref = str.split('-', 2);
-        const school = data.school.find((school) => school.reference === (ref ?? [])[0])?.name ?? (ref?.[0] ?? '');
-        const campus = data.school.find((school) => school.reference === (ref ?? [])[0])
-                       ?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name ?? (ref?.[1] ?? '');
-        return school + ' - ' + campus;
-    }
+
 
     // Save group
     function handleSaveGroup(){
