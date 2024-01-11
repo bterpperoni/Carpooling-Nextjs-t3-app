@@ -17,6 +17,7 @@ export type InputProps = {
         onChange: (e: ChangeEvent<HTMLInputElement>) => void;
         placeholder?: string;
         classInput?: string;
+        classLabel?: string;
 }
 
 export type MapProps = {

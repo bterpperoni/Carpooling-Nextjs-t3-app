@@ -3,12 +3,10 @@
 import type { InputProps } from '$/utils/interface';
 import React from 'react';
 
-
-
-const Input: React.FC<InputProps> = ({ label, classInput, type, value, onChange, placeholder }) => {
+const Input: React.FC<InputProps> = ({ label, classInput, type, value, onChange, placeholder, classLabel }) => {
   return (
     <div className="mt-4 flex flex-col items-center">
-      <label className="w-full text-center border-b-2 text-xl md:text-2xl text-black text-left" htmlFor={label}>
+      <label className={`w-full text-center border-b-2 text-xl md:text-2xl text-black text-left ${classLabel}`} htmlFor={label}>
         {label}
       </label>
       <input

@@ -104,7 +104,7 @@ model Group {
       name        String
       campus      String
       createdBy   String
-      visibility  Int      @default(0)
+      visibility  Boolean  @default(false)
       travels     Travel[]      @relation("GroupTravels")
       creator     User          @relation( "GroupCreatedBy", fields: [createdBy], references: [id])
       members     GroupMember[] @relation("GroupMember")

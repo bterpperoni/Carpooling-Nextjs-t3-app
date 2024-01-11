@@ -30,7 +30,7 @@ export const groupRouter = createTRPCRouter({
                 name: z.string(),
                 campus: z.string(),
                 createdBy: z.string(),
-                visibility: z.number()
+                visibility: z.boolean(),
                 
             }))
         .mutation(async ({ ctx, input }) => {

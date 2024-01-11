@@ -19,11 +19,11 @@ const Dropdown: React.FC<DropdownProps> = ({ data, onChange }) => {
   };
 
   const handleCampusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCampusName = event.target.value;
-    setSelectedCampus(selectedCampusName);
+    const selectedCampusRef = event.target.value;
+    setSelectedCampus(selectedCampusRef);
     onChange(
         { target: { value: selectedSchool } } as React.ChangeEvent<HTMLSelectElement>,
-        { target: { value: selectedCampusName } } as React.ChangeEvent<HTMLSelectElement>
+        { target: { value: selectedCampusRef } } as React.ChangeEvent<HTMLSelectElement>
     );
   };
 

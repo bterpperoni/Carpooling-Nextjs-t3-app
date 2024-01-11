@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SlideButton: React.FC<{ check: () => void; checked: boolean; classSlider: string }> = ({ check, checked, classSlider }) => {
+const SlideButton: React.FC<{ check: () => void; checked: boolean; }> = ({ check, checked }) => {
   const [isChecked, setIsChecked] = useState(checked);
 
   const handleChange = () => {
@@ -10,7 +10,7 @@ const SlideButton: React.FC<{ check: () => void; checked: boolean; classSlider: 
 
   return (
     <>
-      <label className={`switch ${classSlider}`}>
+      <label className="switch">
         <input
           type="checkbox"
           id="slider"
