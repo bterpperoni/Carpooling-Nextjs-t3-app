@@ -1,5 +1,5 @@
-
-import { env } from 'next.config'; 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { getApiKey } from '$/server/key';
 import React, { createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
 
@@ -15,7 +15,7 @@ interface ApiKeyProviderProps {
 
 const ApiKeyProvider: React.FC<ApiKeyProviderProps> = ({ children }) => {
 
-    const apiKey: ApiKeyType = env.GOOGLE_MAPS_API_KEY;
+    const apiKey: ApiKeyType = getApiKey();
 
     return <ApiKeyContext.Provider value={apiKey}>{children}</ApiKeyContext.Provider>;
 };

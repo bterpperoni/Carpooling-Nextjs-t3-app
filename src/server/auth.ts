@@ -10,6 +10,7 @@ import GOOGLEProvider from "next-auth/providers/GOOGLE";
 import { env } from "$/env";
 import { db } from "$/server/db";
 import type { userRole } from "$/utils/interface";
+import { getApiKey } from './key';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -80,3 +81,4 @@ export const getServerAuthSession = (ctx: {
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
+

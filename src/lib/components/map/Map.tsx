@@ -1,7 +1,7 @@
-import React, { use, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import { MapProps } from '$/utils/interface';
-import { useApiKey } from '$/utils/context/key';
+import type { MapProps } from '$/utils/interface';
+import { useApiKey } from '$/context/key';
 
 function Map({ center, zoom, children, onLoad }: MapProps) {
 

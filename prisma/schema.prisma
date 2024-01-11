@@ -44,7 +44,7 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
-// -------------------------------------USER------------------------------------------------------
+// -------------------------------------USER & FRIEND------------------------------------------------------
 
 model User {
     id            String    @id @default(cuid())
@@ -59,11 +59,12 @@ model User {
     role          String?   @default("user")
     accounts           Account[]
     sessions           Session[]
-    travelsAsDriver    Travel[] @relation( "Driver")
-    travelsAsPassenger Passenger[] @relation( "UserPassenger")
-    groupCreated       Group[] @relation("GroupCreatedBy")
+    travelsAsDriver    Travel[]       @relation( "Driver")
+    travelsAsPassenger Passenger[]    @relation( "UserPassenger")
+    groupCreated       Group[]        @relation("GroupCreatedBy")
     groupMembers       GroupMember[]  @relation("UserGroupMember")
 }
+
 
 // -------------------------------------------TRAVEL & PASSENGER------------------------------------------------
 model Travel {
@@ -114,5 +115,5 @@ model GroupMember {
       groupId     Int
       userId      String
       group       Group    @relation( "GroupMember" ,fields: [groupId], references: [id])
-      user        User     @relation( "UserGroupMember" ,fields: [userId], references: [id])
+      userMember  User     @relation( "UserGroupMember" ,fields: [userId], references: [id])
 }
