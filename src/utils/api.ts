@@ -10,6 +10,8 @@ import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
 
 import { type AppRouter } from "$/server/api/root";
+import { ApiKeyProvider } from '$/context/process';
+import { env } from '$/env';
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url
@@ -27,6 +29,8 @@ export const api = createTRPCNext<AppRouter>({
        * @see https://trpc.io/docs/data-transformers
        */
       transformer: superjson,
+      ApiKeyProvider: ApiKeyProvider,
+      
 
       /**
        * Links used to determine request flow from client to server.
@@ -50,7 +54,7 @@ export const api = createTRPCNext<AppRouter>({
    *
    * @see https://trpc.io/docs/nextjs#ssr-boolean-default-false
    */
-  ssr: false,
+  ssr: false
 });
 
 /**

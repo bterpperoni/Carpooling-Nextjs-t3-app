@@ -14,7 +14,7 @@ import type { ChangeEvent } from "react";
 
 
 export default function Groups() {
-    // State
+    // -------------------------------State------------------------------------------------------
     // Create group state
     const [isCreating, setIsCreating] = useState(false);
     // School & campus state
@@ -30,8 +30,10 @@ export default function Groups() {
     const { data: groupsData } = api.group.groupList.useQuery(undefined, {
         enabled: sessionData?.user !== undefined
     });
+    // Create group
+    const { mutate: createGroup } = api.group.create.useMutation();
 
-    // Handlers
+    // ------------------------------- Handlers ------------------------------------------------------
     useEffect(() => {
         console.log('selectedSchool', selectedSchool,selectedCampus);
     }, [selectedCampus, selectedSchool])
@@ -39,10 +41,9 @@ export default function Groups() {
     // Check if the group is public or private
     const handleCheck = () => {
         setisPrivate(!isPrivate);
-        console.log('isPrivate', isPrivate);
-    };
+    }
 
-    // Render
+    // ------------------------------- Render ------------------------------------------------------
     if (sessionData) {
         return (
             <LayoutMain>        
@@ -53,7 +54,7 @@ export default function Groups() {
                             <p>Gestion des groupes</p>
                         </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mb-4">
                         <Button 
                                 onClick={() => setIsCreating(true)}
                                 className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
@@ -61,15 +62,38 @@ export default function Groups() {
                                 Créer un groupe
                         </Button>
                     </div>
+                    {/* ---------------------------------- Group Card ----------------------------------------- */}
+                    <div className="bg-white w-[85vw] h-[80vh] rounded-[2%]">
+                        <table className="bg-[var(--purple-g3)] border-2">
+                            <thead className="">
+                                <tr className="text-white ">
+                                    <th className="w-[20%] border-r-2 py-2">Nom du groupe</th>
+                                    <th className="w-[20%] border-r-2 py-2">Campus</th>
+                                    <th className="w-[20%] py-2">Administrateur</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {groupsData?.map((group) => (
+                                    <tr key={group.id} className="text-center">
+                                        <td className="py-2">{group.name}</td>
+                                        <td className="py-2">{group.campus}</td>
+                                        <td className="py-2">{group.createdBy}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                
+
+                {/* --------------------------------------- Form to create à new group ------------------------------------------- */}
                 {isCreating && (
                     <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
                         <div className="bg-white rounded-md px-4 py-2">
-                            {/* <h2 className="text-2xl mb-0 text-black border-2">Créer un groupe</h2> */}
                             <form>
                                 <div className="flex flex-col mb-2">
                                     <Input 
-                                        label="Nom :" 
+                                        label="Nom du groupe :" 
                                         type="text"
                                         onChange={(e: ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)}
                                         value={groupName}
@@ -77,7 +101,7 @@ export default function Groups() {
                                         classInput="mt-2 p-2 w-full"
                                     />
                                 </div>
-                                <div className="flex flex-col mb-4">
+                                <div className="flex flex-col mb-4 overflow-hidden">
                                     <Dropdown 
                                         data={data} 
                                         onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
@@ -87,11 +111,11 @@ export default function Groups() {
                                     />
                                 </div>
                                 <div className="flex flex-row mb-4 justify-center items-center">
-                                    <label className="text-black text-left">
+                                    <label className="text-black text-left mr-2">
                                         Privé
                                     </label>
                                     <Slider check={handleCheck} checked={isPrivate} />
-                                    <label className="text-black text-left">
+                                    <label className="text-black text-left ml-2">
                                         Public
                                     </label>
                                 </div>
@@ -115,7 +139,6 @@ export default function Groups() {
                         </div>
                     </div>
                 )}
-                
             </LayoutMain>
         );
     }

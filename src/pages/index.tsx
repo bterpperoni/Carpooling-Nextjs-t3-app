@@ -7,7 +7,6 @@ export default function Home() {
 
   // Session recovery
   const { data: session } = useSession();
-  
 
   return (
     <>
@@ -15,11 +14,9 @@ export default function Home() {
          <section className="flex flex-col min-h-screen items-center justify-center">
           <h1 className="text-6xl text-white">CARHEH</h1>
               <h2 className="text-2xl text-white">Carpooling for students from Mons</h2>
-                <div className="flex flex-col items-center">
-                  
+                <div className="flex flex-col items-center">  
                   {/* No session */}
                     {!session && <Button className="mt-4 rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20" onClick={() => void signIn()}>Sign in</Button>}
-                  
                   {/* Session */}
                     {session && (
                       <>

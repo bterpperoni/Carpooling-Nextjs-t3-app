@@ -1,6 +1,6 @@
 
 // Dropdown.tsx
-import type { DropdownProps } from "$/utils/interface";
+import type { DropdownProps } from "$/lib/types/interfaces";
 import React, { useState } from "react";
 
 

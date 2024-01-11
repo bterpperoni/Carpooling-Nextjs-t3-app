@@ -13,7 +13,7 @@ import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 import DateTimeSelect from "$/lib/components/form/DateTimeSelect";
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
-import { useApiKey } from "$/context/key";
+import { useApiKey } from "$/context/process";
 
 
 export default function Detail() {

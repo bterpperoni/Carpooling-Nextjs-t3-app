@@ -31,17 +31,7 @@ h2{
     font-weight: bold;
 }
 
-
-/* ------------------------------------ */
-
-label {
-    color: white;
-    margin:0 10px;
-}
-
-/* ----------------------------------------------------- */
-
-#departure, #destination {
+/* #departure, #destination {
     font-size: 1.5rem;
     color: var(--pink-g1);
     background-color: var(--purple-g3);
@@ -52,8 +42,8 @@ label {
     color: white !important;
     background-color: var(--purple-g3);
     border: 1px solid var(--pink-g1) !important;
-    padding: 10px; /* Ajustez la valeur de rembourrage selon vos préférences */
-}
+    padding: 10px; /* Ajustez la valeur de rembourrage selon vos préférences
+} */
 
 
 

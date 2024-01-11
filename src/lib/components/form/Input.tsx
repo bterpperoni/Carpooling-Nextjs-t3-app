@@ -1,6 +1,6 @@
 // Input.tsx
 
-import type { InputProps } from '$/utils/interface';
+import type { InputProps } from '$/lib/types/types';
 import React from 'react';
 
 const Input: React.FC<InputProps> = ({ label, classInput, type, value, onChange, placeholder, classLabel }) => {

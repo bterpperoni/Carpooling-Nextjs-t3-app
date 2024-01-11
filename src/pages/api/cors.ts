@@ -32,5 +32,5 @@ export default async function handler(
   await runMiddleware(req, res, cors)
 
   // Rest of the API logic
-  res.json({ message: 'cors ok' })
+  res.json({ message: 'Cors policies ok' })
 }
