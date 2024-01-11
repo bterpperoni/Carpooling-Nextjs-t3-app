@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { Fragment, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
@@ -8,7 +9,7 @@ const navigation = [
   { name: 'Home', href: '/', current: false },
   { name: 'Trips', href: '/trips/all', current: false },
   { name: 'Wallet', href: '#', current: false },
-  { name: 'Social', href: '#', current: false },
+  { name: 'Social', href: '/social/groups', current: false },
   { name: 'Calendar', href: '/calendar/user', current: false },
 ]
 
@@ -54,8 +55,6 @@ export default function Nav() {
                     className="h-8 w-auto"
                     src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
                     alt="CarHeh"
-                    width={32}
-                    height={32}
                   />
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
@@ -98,8 +97,6 @@ export default function Nav() {
                         className="h-8 w-8 rounded-full"
                         src={session?.user.image}
                         alt="img of user"
-                        width={32}
-                        height={32}
                       />
                     </Menu.Button>
                   </div>
@@ -122,12 +119,12 @@ export default function Nav() {
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <a
+                          <Link 
                             href="#"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
                             Settings
-                          </a>
+                          </Link>
                         )}
                       </Menu.Item>
                       <Menu.Item>

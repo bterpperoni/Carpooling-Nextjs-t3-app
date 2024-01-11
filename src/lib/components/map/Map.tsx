@@ -28,14 +28,14 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
   return (
     <>
     {/* LoadScript  */}
-      <LoadScript googleMapsApiKey={`${apiKey}`}>
+      <LoadScript googleMapsApiKey={apiKey}>
         <GoogleMap 
             center={center} 
             zoom={zoom} 
             mapContainerStyle={mapContainerStyle}
-            onLoad={onLoad}
+            onLoad={onLoad ? onLoad : () => setIsMapLoaded(true)}
             onUnmount={() => setIsMapLoaded(false)}>
-            {children}
+            {isMapLoaded && children}
         </GoogleMap>
       </LoadScript>
     </>

@@ -9,19 +9,17 @@ import { api } from '$/utils/api';
 import { Marker } from '@react-google-maps/api';
 import TravelCard from '$/lib/components/travel/TravelCard';
 import { useRouter } from 'next/router';
-import { useApiKey, ApiKeyProvider } from '$/utils/context/key';
 
 const All: React.FC = () => {
         const center: google.maps.LatLngLiteral =  { lat: 50.463727, lng: 3.938247 };
         const zoom = 12;
 
-        const apiKey = useApiKey();
         const { data : sessionData } = useSession();
 
         const router = useRouter();
 
         const handleMarkerClick = (id: number) => {
-            router.push(`/trips/${id}`);
+            void router.push(`/trips/${id}`);
         }
 
 

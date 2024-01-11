@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @import url("theme.css");
-@import url('../components/button/slider/Slider.css');
+/* @import url('../components/button/slider/Slider.css'); */
 
 html {
     background: var(--purple-g3);

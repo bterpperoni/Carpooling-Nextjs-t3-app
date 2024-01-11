@@ -1,4 +1,4 @@
-'use client';
+/* eslint-disable @next/next/no-img-element */
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
@@ -85,7 +85,7 @@ export default function User() {
         return (
         <>
           <LayoutMain>
-            <div className="w-[90vw] h-auto mx-auto mt-8 bg-white p-8 rounded shadow-md ">
+            <div className="w-[90vw] h-auto mx-auto mt-8 bg-white p-8 rounded shadow-md">
               <div className="flex flex-col items-center">
                 <img
                   className="w-18 h-18 rounded-full" 

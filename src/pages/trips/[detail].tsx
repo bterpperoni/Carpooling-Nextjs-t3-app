@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { useRouter } from "next/dist/client/router";
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 import TravelDetail from "$/lib/components/travel/TravelDetail";
@@ -43,25 +45,25 @@ export default function Detail() {
     const [timeReturn, setTimeReturn] = useState<Dayjs | null>();
 
     // Address of departure and destination from google autocomplete
-    let address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
+    const address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
     const [departure, setDeparture] = useState<string>();
     const [destination, setDestination] = useState<string>();
     // Latitude and longitude of departure and destination
-    const [departureLatitude, setDepartureLatitude] = useState<number>(travel?.departureLatitude as number || 0);
-    const [departureLongitude, setDepartureLongitude] = useState<number>(travel?.departureLongitude as number || 0);
-    const [destinationLatitude, setDestinationLatitude] = useState<number>(travel?.destinationLatitude as number || 0);
-    const [destinationLongitude, setDestinationLongitude] = useState<number>(travel?.departureLongitude as number || 0);
+    const [departureLatitude, setDepartureLatitude] = useState<number>(travel?.departureLatitude! || 0);
+    const [departureLongitude, setDepartureLongitude] = useState<number>(travel?.departureLongitude! || 0);
+    const [destinationLatitude, setDestinationLatitude] = useState<number>(travel?.destinationLatitude! || 0);
+    const [destinationLongitude, setDestinationLongitude] = useState<number>(travel?.departureLongitude! || 0);
 
     /* -------------------------------------------------------------------------------------------- */
 
     // Get lat & lng of departure & destination
     const departureLatLng: google.maps.LatLngLiteral = { 
-        lat: travel?.departureLatitude as number, 
-        lng: travel?.departureLongitude as number 
+        lat: travel?.departureLatitude!, 
+        lng: travel?.departureLongitude! 
     };
     const destinationLatLng: google.maps.LatLngLiteral = { 
-        lat: travel?.destinationLatitude as number, 
-        lng: travel?.destinationLongitude as number
+        lat: travel?.destinationLatitude!, 
+        lng: travel?.destinationLongitude!
     };
     // Map options
     const zoom = 12;
@@ -109,12 +111,13 @@ export default function Detail() {
     
     // Save travel data & disable edit mode
     const handleSaveClick = () => {
-        if(travel && travel.returnDateTime) {
-            const newTravel = {id : travel.id,
+        if(travel?.returnDateTime) {
+            const newTravel = {
+                id : travel.id,
                 driverId: travel.driverId,
                 departure: departure ?? travel.departure,
-                departureLatitude: departureLatLng.lat ?? travel.departureLatitude,
-                departureLongitude: departureLatLng.lng ?? travel.departureLongitude,
+                departureLatitude: travel.departureLatitude,
+                departureLongitude: travel.departureLongitude,
                 departureDateTime: travel.departureDateTime,
                 destination: destination ?? travel.destination,
                 destinationLatitude: destinationLatLng.lat ?? travel.destinationLatitude,
@@ -123,7 +126,6 @@ export default function Detail() {
                 status: 0
             };
             updateTravel(newTravel);
-            alert("Votre trajet a bien été modifié!");
         } 
     };
 
@@ -180,7 +182,11 @@ export default function Detail() {
         }
 
         if(updatedTravel) {
-            setIsEditing(false);
+            setTimeout(() => {
+                alert('Travel updated');
+                window.location.href = `/trips/${id}`;
+            }, 500);
+            
         }
     }
     , [dateDeparture, timeDeparture, dateReturn, timeReturn, departure, updatedTravel]);
@@ -327,11 +333,10 @@ export default function Detail() {
                                         />
                                     </div>
                                 </div>
-                                {/* Submit */}
-                                <Button className={MuiStyle.MuiButtonText} onClick={handleSaveClick}> Enregistrer les modifications </Button>
-                                <Button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md"> Annuler </Button>
                             </form>
-                            
+                            {/* Submit */}                            
+                            <Button className={MuiStyle.MuiButtonText} onClick={handleSaveClick}> Enregistrer les modifications</Button>
+                            <Button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md" onClick={() => window.location.href=`/trips/${id}`}> Annuler </Button>
                         </div>
                     </>
                 )}

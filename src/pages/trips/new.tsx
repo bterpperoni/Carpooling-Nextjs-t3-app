@@ -3,7 +3,7 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import DateTimeSelect from '../../lib/components/form/DateTimeSelect';
 import { Button } from '@mui/material';
 import MuiStyle from '$/lib/styles/MuiStyle.module.css';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import { useSession } from 'next-auth/react';
@@ -203,7 +203,7 @@ export default function NewTravel()  {
             <LayoutMain>
                 <h1>Not Connected, <p>Please Sign in</p></h1> 
                 <p>
-                    modal qui proposera de se connecter à implémenterbr
+                    modal qui proposera de se connecter à implémenter
                 <br />
                     ou rediriger vers la page de connexion
                 </p>
