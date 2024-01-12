@@ -11,7 +11,6 @@ import superjson from "superjson";
 
 import { type AppRouter } from "$/server/api/root";
 import { ApiKeyProvider } from '$/context/process';
-import { env } from '$/env';
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url

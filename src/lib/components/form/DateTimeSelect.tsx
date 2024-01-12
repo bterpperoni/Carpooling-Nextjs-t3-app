@@ -4,7 +4,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import {  useState } from 'react';
-import MuiStyle from '$/lib/styles/MuiStyle.module.css';
+import MuiStyle from '$/styles/MuiStyle.module.css';
 
 
 export default function DateSelect({labelexp, labelexpTime, disableDate, disableTime, handleChangeDate, handleChangeTime, defaultDate, defaultTime}: {

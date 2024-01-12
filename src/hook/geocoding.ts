@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { getApiKey } from '$/server/process';
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
 import { env } from 'process';
-
-
 
 export const geocode = async (address: string): Promise<{location: google.maps.LatLng|null, formattedAddress: string, placeId: string}> => {
 
   if (!env.GOOGLE_MAPS_API_KEY) {
     throw new Error('Google Maps API Key not found!');
   }
-  const apiKey = env.GOOGLE_MAPS_API_KEY;
+  const apiKey = getApiKey();
   try {
     const response: AxiosResponse<any, any> = await axios.get(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`

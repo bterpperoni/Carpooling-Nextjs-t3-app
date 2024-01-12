@@ -8,7 +8,7 @@ import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import Dropdown from '../../lib/components/dropdown/Dropdown';
-import { data } from "$/lib/data/data";
+import { data } from "$/utils/data";
 import Button from "$/lib/components/button/Button";
 
 

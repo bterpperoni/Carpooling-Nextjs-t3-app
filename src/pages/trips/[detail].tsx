@@ -1,19 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { useRouter } from "next/dist/client/router";
-import LayoutMain from '../../lib/components/layout/LayoutMain';
-import TravelDetail from "$/lib/components/travel/TravelDetail";
+import { useApiKey } from "$/context/process";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
-import { useEffect, useState } from "react";
 import Autocomplete from "react-google-autocomplete";
-import MuiStyle from '$/lib/styles/MuiStyle.module.css';
 import DateTimeSelect from "$/lib/components/form/DateTimeSelect";
+import LayoutMain from '../../lib/components/layout/LayoutMain';
+import TravelDetail from "$/lib/components/travel/TravelDetail";
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
-import { useApiKey } from "$/context/process";
+
+import MuiStyle from '$/styles/MuiStyle.module.css';
 
 
 export default function Detail() {
@@ -246,7 +247,7 @@ export default function Detail() {
                                 {/* Departure */}
                                 <div className='my-16'>
                                     <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
-                                        <label htmlFor="departure" className='text-xl md:text-3xl text-white mb-1'>Departure : </label>
+                                        <label htmlFor="departure" className='text-xl md:text-3xl text-white mb-1 mr-4'>Departure : </label>
                                         <Autocomplete
                                             defaultValue={travel.departure}
                                             apiKey={apiKey}
@@ -260,7 +261,13 @@ export default function Detail() {
                                                     }
                                                 }
                                             }
-                                            className="w-[75%] my-2 md:w-[75%]"
+                                            className=" w-[75%] 
+                                                        my-2 
+                                                        md:w-[75%]
+                                                        text-xl md:text-2xl
+                                                        text-[var(--pink-g1)]
+                                                        bg-[var(--purple-g3)] 
+                                                        p-2 "
                                             id="departure"
                                         />
                                     </div>
@@ -290,7 +297,7 @@ export default function Detail() {
                                 {/* Destination */}
                                 <div>
                                     <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
-                                        <label htmlFor="destination" className='text-xl md:text-3xl text-white mb-1'>Destination : </label>
+                                        <label htmlFor="destination" className='text-xl md:text-3xl text-white mb-1 mr-4'>Destination : </label>
 
                                         <Autocomplete
                                             defaultValue={travel.destination}
@@ -305,7 +312,13 @@ export default function Detail() {
                                                     }
                                                 }
                                             }
-                                            className="w-[75%] my-2 md:w-[75%]"
+                                            className=" w-[75%] 
+                                                        my-2 
+                                                        md:w-[75%]
+                                                        text-xl md:text-2xl
+                                                        text-[var(--pink-g1)]
+                                                        bg-[var(--purple-g3)] 
+                                                        p-2 "
                                             id="destination"
                                             disabled
                                         />

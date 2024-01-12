@@ -7,11 +7,10 @@ import Dropdown from "$/lib/components/dropdown/Dropdown";
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
-import { data } from "$/lib/data/data";
+import { data, getCampus } from "$/utils/data";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
-import { getCampus } from "$/lib/data/handler";
 
 
 export default function Groups() {
