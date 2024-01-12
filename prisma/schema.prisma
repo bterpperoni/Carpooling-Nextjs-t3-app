@@ -105,15 +105,15 @@ model Group {
       campus      String
       createdBy   String
       visibility  Boolean  @default(false)
-      travels     Travel[]      @relation("GroupTravels")
+      travels     Travel[]      @relation( "GroupTravels" )
       creator     User          @relation( "GroupCreatedBy", fields: [createdBy], references: [id])
-      members     GroupMember[] @relation("GroupMember")
+      members     GroupMember[] @relation( "GroupMember" )
 }
 
 model GroupMember {
       id          Int      @id @default(autoincrement())
       groupId     Int
       userId      String
-      group       Group    @relation( "GroupMember" ,fields: [groupId], references: [id])
-      userMember  User     @relation( "UserGroupMember" ,fields: [userId], references: [id])
+      group       Group    @relation( "GroupMember" , fields: [groupId], references: [id])
+      userMember  User     @relation( "UserGroupMember" , fields: [userId], references: [id])
 }
