@@ -96,13 +96,13 @@ export default function User() {
                   <div className="max-w-md overflow-hidden mx-auto mt-4 p-4 border rounded-md shadow-md bg-white">
                     {!isEditing ? (
                       <>
-                        <div className="mt-4 flex flex-col md:flex-row items-center">
+                        <div className="mt-4 flex flex-col items-center">
                           <label htmlFor="username" className="w-full text-center border-b-2 text-xl md:text-2xl text-black">Username :</label>
                           <div id="username" className="mt-1">
                             {editedName ? editedName : user.name}
                           </div>
                         </div>
-                        <div className="mt-4 flex flex-col md:flex-row items-center">
+                        <div className="mt-4 flex flex-col items-center">
                           <label htmlFor="email" className="w-full text-center border-b-2 text-xl md:text-2xl text-black">Email :</label>
                           <div id="email" className="mt-1">
                             {editedEmail ? editedEmail : user.email}
