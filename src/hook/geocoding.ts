@@ -4,25 +4,27 @@
 import { getApiKey } from '$/server/process';
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
-import { env } from 'process';
 
 export const geocode = async (address: string): Promise<{location: google.maps.LatLng|null, formattedAddress: string, placeId: string}> => {
 
-  if (!env.GOOGLE_MAPS_API_KEY) {
+  const apiKey = getApiKey();
+  if (!apiKey) {
     throw new Error('Google Maps API Key not found!');
   }
-  const apiKey = getApiKey();
+
   try {
+    // Geocode an address..
     const response: AxiosResponse<any, any> = await axios.get(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`
     );
-
+    // Store results from geocoding response. 
     const results: google.maps.GeocoderResult[] = response.data.results;
 
     if (!results || results.length === 0) {
       throw new Error(`No results found for the address: ${address}`);
     }
     if (results[0]) {
+      // Set the data to return from the geocoding response
       const location: google.maps.LatLng = results[0].geometry.location;
       const formattedAddress: string = results[0].formatted_address;
       const placeId: string = results[0].place_id;
@@ -30,6 +32,7 @@ export const geocode = async (address: string): Promise<{location: google.maps.L
       if (!location) {
         throw new Error(`Location not found in the geocoding response for the address: ${address}`);
       }
+      // Return the data from the geocoding response in an object
       return { formattedAddress, location, placeId } as { location: google.maps.LatLng, formattedAddress: string, placeId: string };
     }else{
       throw new Error(`No results found for the address: ${address}`);

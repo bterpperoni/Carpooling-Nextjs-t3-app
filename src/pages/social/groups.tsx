@@ -7,7 +7,7 @@ import Dropdown from "$/lib/components/dropdown/Dropdown";
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
-import { data, getCampus } from "$/utils/data";
+import { data, getCampusAbbr, getCampusFullName  } from "$/utils/data";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
@@ -37,11 +37,11 @@ export default function Groups() {
     // Get separated user's school & campus from user's campus field
 
     useEffect(() => {
-        if(createdGroup){
-            setTimeout(() => {
-                alert('Groupe créé !');
-            }, 1000)
-        }
+        // if(createdGroup){
+        //     setTimeout(() => {
+        //         alert('Groupe créé !');
+        //     }, 1000)
+        // }
     }, [createdGroup])
 
     // Check if the group is public or private
@@ -55,10 +55,10 @@ export default function Groups() {
     function handleSaveGroup(){
         if(sessionData){
             if (selectedSchool && selectedCampus && groupName) {
-                const tmpStrCampus = selectedSchool+'-'+selectedCampus;
+                const tmpSdivCampus = selectedSchool+'-'+selectedCampus;
                 const group = {
                     name: groupName,
-                    campus: tmpStrCampus,
+                    campus: tmpSdivCampus,
                     createdBy: sessionData.user.id,
                     visibility: isPrivate
                 }
@@ -88,24 +88,57 @@ export default function Groups() {
                     </div>
                     {/* ---------------------------------- Group Card ----------------------------------------- */}
                     <div className="bg-[var(--purple-g3)] w-[85vw] h-[80vh] rounded-[2%]">
-                        <table className=" w-full">
-                            <thead className="border-y-2">
-                                <tr className="text-[var(--pink-g1)] ">
-                                    <th className="w-[25%] py-2">Nom du groupe</th>
-                                    <th className="w-[25%] py-2">Campus</th>
-                                    <th className="w-[25%] py-2">Administrateur</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <div className="">
+                            <div className="border-y-2 mb-4">
+                                <div className="text-[var(--pink-g0)] flex flex-row justify-center">
+                                    <div className="m-6 text-2xl bold">
+                                        Trouves des étudiants qui se rendent au même établissement que toi !
+                                        <p className="text-xl text-center">Crée un groupe ou rejoinds en un et commences à covoiturer. </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-white border-2 border-indigo-500">
                                 {groupsData?.map((group) => (
-                                    <tr key={group.id} className="text-center cursor-pointer text-white">
-                                        <td className="py-2 border-b-2">{group.name}</td>
-                                        <td className="py-2 border-b-2">{getCampus(group.campus)}</td>
-                                        <td className="py-2 border-b-2">{sessionData.user.name}</td>
-                                    </tr>
+                                    <div key={group.id} className="border-y-2 text-[var(--pink-g1)] cursor-pointer hover:bg-[var(--pink-g1)] hover:text-white p-6">
+                                        <div className="flex flex-row">
+                                            <div className="flex flex-col w-[50%]">
+                                                <div className="mb-4">
+                                                    <label htmlFor="groupName" className="mr-2 font-bold text-[18px] text-left">
+                                                        Nom du groupe : 
+                                                    </label>
+                                                    {group.name}
+                                                </div>
+                                                <div>
+                                                    <label htmlFor="groupPrivacy" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
+                                                        Visibilité
+                                                    </label>
+                                                    {group.visibility ? (
+                                                        <div>Privé</div>
+                                                    ) : (  
+                                                        <div>Public</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col w-[50%]">
+                                                <div className="mb-4">
+                                                    <label htmlFor="groupCampus" className="mr-2 font-bold text-[18px] text-left">
+                                                        Destination : 
+                                                    </label>
+                                                    {/* {getCampusFullName(group.campus)}</div> */}
+                                                    {getCampusAbbr(group.campus)}</div>
+                                                <div className="flex-col flex">
+                                                    <label htmlFor="groupCreatedBy" className="w-max my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
+                                                        Groupe créé par
+                                                    </label>
+                                                    {sessionData.user.name}</div>
+                                            </div>
+                                        </div>
+
+                                        
+                                    </div>
                                 ))}
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 

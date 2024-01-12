@@ -11,7 +11,8 @@
     --dark-gray : #333333;
     --light-gray : #F2F2F2;
 
-    --pink-g1 : #a749bf;
+    --pink-g0 : #a749bf;
+    --pink-g1 : rgb(162 28 175);
     /*  --dark-orange : #F29F05; */
     --light-orange : #F2C94C;
     --red : rgb(175, 40, 17);
