@@ -11,17 +11,21 @@ import TravelCard from '$/lib/components/travel/TravelCard';
 import { useRouter } from 'next/router';
 
 const All: React.FC = () => {
+        // Map settings
         const center: google.maps.LatLngLiteral =  { lat: 50.463727, lng: 3.938247 };
         const zoom = 12;
 
+        // Session recovery
         const { data : sessionData } = useSession();
-
+        // Router
         const router = useRouter();
 
+        // Redirect to travel page when clicking on a marker
         const handleMarkerClick = (id: number) => {
             void router.push(`/trips/${id}`);
         }
 
+        // Get all travels
         const { data: travelList } = api.travel.travelList.useQuery(undefined,
             { enabled: sessionData?.user !== undefined }  
         );
@@ -47,12 +51,12 @@ const All: React.FC = () => {
                     <div className="bg-[var(--purple-g3)]">
                         <div className=" flex flex-row items-center justify-between mt-4 mx-4">
                             <Slider check={handleCheck} checked={checked} />
-                            <h1 className="md:text-6xl text-3xl font-bold mb-4 mt-4  w-[50%] text-center text-fuchsia-700">Trips</h1>
+                            <h1 className="md:text-6xl text-3xl font-bold mb-4 mt-4  w-[50%] text-center text-fuchsia-700">Trajets</h1>
                             <Button 
                                 href="/trips/new" 
                                 className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-md">
-                                    New Trip
+                                    Publier un trajet
                             </Button>
                         </div>
                         <div className='flex flex-col items-center'>  

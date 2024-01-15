@@ -7,8 +7,9 @@ import Dropdown from "$/lib/components/dropdown/Dropdown";
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
-import { data, getCampusAbbr, getCampusFullName  } from "$/utils/data";
+import { data, getCampusAbbr  } from "$/utils/data";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 
@@ -32,7 +33,8 @@ export default function Groups() {
     });
     // Create group
     const { data: createdGroup, mutate: createGroup } = api.group.create.useMutation();
-
+    // Get router
+    const router = useRouter();
     // ------------------------------- Handlers ------------------------------------------------------
     // Get separated user's school & campus from user's campus field
 
@@ -86,27 +88,33 @@ export default function Groups() {
                                 Créer un groupe
                         </Button>
                     </div>
-                    {/* ---------------------------------- Group Card ----------------------------------------- */}
+                    
                     <div className="bg-[var(--purple-g3)] w-[85vw] h-[80vh] rounded-[2%]">
                         <div className="">
                             <div className="border-y-2 mb-4">
                                 <div className="text-[var(--pink-g0)] flex flex-row justify-center">
-                                    <div className="m-6 text-2xl bold">
-                                        Trouves des étudiants qui se rendent au même établissement que toi !
-                                        <p className="text-xl text-center">Crée un groupe ou rejoinds en un et commences à covoiturer. </p>
+                                    <div className="m-6 text-2xl bold text-center">
+                                        Trouves des étudiants qui se rendent au même établissement.
+                                        <p className="text-xl text-center">Crée un groupe ou rejoind en un et commences à covoiturer. </p>
                                     </div>
                                 </div>
                             </div>
                             <div className="bg-white border-2 border-indigo-500">
+                            {/* ---------------------------------- Group Card ----------------------------------------- */}
                                 {groupsData?.map((group) => (
-                                    <div key={group.id} className="border-y-2 text-[var(--pink-g1)] cursor-pointer hover:bg-[var(--pink-g1)] hover:text-white p-6">
+                                    <div key={group.id} className=" border-y-2 
+                                                                    text-[var(--pink-g1)] 
+                                                                    cursor-pointer 
+                                                                    hover:bg-[var(--pink-g1)] 
+                                                                    hover:text-white p-6"
+                                                        onClick={() => router.push(`/social/${group.id}`)}>
                                         <div className="flex flex-row">
                                             <div className="flex flex-col w-[50%]">
                                                 <div className="mb-4">
                                                     <label htmlFor="groupName" className="mr-2 font-bold text-[18px] text-left">
-                                                        Nom du groupe : 
+                                                        Nom du groupe 
                                                     </label>
-                                                    {group.name}
+                                                    <div id="groupName">{group.name}</div>
                                                 </div>
                                                 <div>
                                                     <label htmlFor="groupPrivacy" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
@@ -122,21 +130,21 @@ export default function Groups() {
                                             <div className="flex flex-col w-[50%]">
                                                 <div className="mb-4">
                                                     <label htmlFor="groupCampus" className="mr-2 font-bold text-[18px] text-left">
-                                                        Destination : 
+                                                        Destination
                                                     </label>
-                                                    {/* {getCampusFullName(group.campus)}</div> */}
-                                                    {getCampusAbbr(group.campus)}</div>
+                                                    <div>{getCampusAbbr(group.campus)}</div>
+                                                </div>
                                                 <div className="flex-col flex">
                                                     <label htmlFor="groupCreatedBy" className="w-max my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
                                                         Groupe créé par
                                                     </label>
-                                                    {sessionData.user.name}</div>
+                                                    <div>{group.createdBy}</div>
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        
+                                        </div>   
                                     </div>
                                 ))}
+                            {/* ---------------------------------- /Group Card ----------------------------------------- */}
                             </div>
                         </div>
                     </div>
@@ -181,14 +189,14 @@ export default function Groups() {
                                     <Button
                                         type="button"
                                         onClick={() => setIsCreating(false)}
-                                        className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                        className="bg-[var(--purple-g2)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                                     border-2 text-white px-3 py-2 rounded-md">
                                         Annuler
                                     </Button>
                                     <Button
                                         type="submit"
                                         onClick={handleSaveGroup}
-                                        className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                        className="bg-[var(--purple-g2)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                                     border-2 text-white px-3 py-2 rounded-md">
                                         Créer un groupe
                                     </Button>
