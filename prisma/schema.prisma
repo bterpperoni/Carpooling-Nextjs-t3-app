@@ -12,108 +12,109 @@ datasource db {
 
 // Necessary for Next auth
 model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? // @db.Text
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? // @db.Text
+  access_token      String? // @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? // @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
 }
+
 // -------------------------------------USER & FRIEND------------------------------------------------------
 
 model User {
-    id            String    @id @default(cuid())
-    name          String    
-    email         String?   @unique
-    image         String?
-    birthDate     DateTime?
-    address       String?
-    locality      String?
-    zip           Int?
-    campus        String?
-    role          String?   @default("user")
-    accounts           Account[]
-    sessions           Session[]
-    travelsAsDriver    Travel[]       @relation( "Driver")
-    travelsAsPassenger Passenger[]    @relation( "UserPassenger")
-    groupCreated       Group[]        @relation("GroupCreatedBy")
-    groupMembers       GroupMember[]  @relation("UserGroupMember")
+  id                 String        @id @default(cuid())
+  name               String        @unique
+  email              String?       @unique
+  emailVerified      DateTime?
+  image              String?
+  birthDate          DateTime?
+  address            String?
+  locality           String?
+  zip                Int?
+  campus             String?
+  role               String?       @default("user")
+  accounts           Account[]
+  sessions           Session[]
+  travelsAsDriver    Travel[]      @relation("Driver")
+  travelsAsPassenger Passenger[]   @relation("UserPassenger")
+  groupCreated       Group[]       @relation("GroupCreatedBy")
+  groupMembers       GroupMember[] @relation("UserGroupMember")
 }
-
 
 // -------------------------------------------TRAVEL & PASSENGER------------------------------------------------
 model Travel {
-      id                   Int      @id @default(autoincrement())
-      isForGroup           Boolean  @default(false)
-      groupId              Int?
-      driverId             String
-      departure            String
-      departureLatitude    Float
-      departureLongitude   Float
-      departureDateTime    DateTime
-      destination          String
-      destinationLatitude  Float
-      destinationLongitude Float
-      returnDateTime       DateTime?
-      maxPassengers        Int?     @default(2)
-      status               Int      @default(0)
-      group                Group?        @relation( "GroupTravels",fields: [groupId], references: [id])
-      driver               User          @relation( "Driver",fields: [driverId], references: [id])
-      passengers           Passenger[]   @relation("Passengers")
+  id                   Int         @id @default(autoincrement())
+  isForGroup           Boolean     @default(false)
+  groupId              Int?
+  driverId             String
+  departure            String
+  departureLatitude    Float
+  departureLongitude   Float
+  departureDateTime    DateTime
+  destination          String
+  destinationLatitude  Float
+  destinationLongitude Float
+  returnDateTime       DateTime?
+  maxPassengers        Int?        @default(2)
+  status               Int         @default(0)
+  group                Group?      @relation("GroupTravels", fields: [groupId], references: [id])
+  driver               User        @relation("Driver", fields: [driverId], references: [id])
+  passengers           Passenger[] @relation("Passengers")
 
-      @@index([departureLatitude, departureLongitude], name: "departure")
-      @@index([destinationLatitude, destinationLongitude], name: "destination")
+  @@index([departureLatitude, departureLongitude], name: "departure")
+  @@index([destinationLatitude, destinationLongitude], name: "destination")
 }
 
 model Passenger {
-      id          Int      @id @default(autoincrement())
-      travelId    Int
-      userId      String
-      travel      Travel   @relation( "Passengers" ,fields: [travelId], references: [id])
-      user        User     @relation( "UserPassenger" ,fields: [userId], references: [id])
+  id       Int    @id @default(autoincrement())
+  travelId Int
+  userId   String
+  travel   Travel @relation("Passengers", fields: [travelId], references: [id])
+  user     User   @relation("UserPassenger", fields: [userId], references: [id])
 }
 
 // -------------------------------------------GROUP & GROUPMEMBER------------------------------------------------
 model Group {
-      id          Int      @id @default(autoincrement())
-      name        String
-      campus      String
-      createdBy   String
-      visibility  Boolean  @default(false)
-      travels     Travel[]      @relation( "GroupTravels" )
-      creator     User          @relation( "GroupCreatedBy", fields: [createdBy], references: [id])
-      members     GroupMember[] @relation( "GroupMember" )
+  id         Int           @id @default(autoincrement())
+  name       String
+  campus     String
+  createdBy  String
+  visibility Boolean       @default(false)
+  travels    Travel[]      @relation("GroupTravels")
+  creator    User          @relation("GroupCreatedBy", fields: [createdBy], references: [name])
+  members    GroupMember[] @relation("GroupMember")
 }
 
 model GroupMember {
-      id          Int      @id @default(autoincrement())
-      groupId     Int
-      userId      String
-      group       Group    @relation( "GroupMember" , fields: [groupId], references: [id])
-      userMember  User     @relation( "UserGroupMember" , fields: [userId], references: [id])
+  id         Int    @id @default(autoincrement())
+  groupId    Int
+  userId     String
+  group      Group  @relation("GroupMember", fields: [groupId], references: [id])
+  userMember User   @relation("UserGroupMember", fields: [userId], references: [id])
 }
