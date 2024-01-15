@@ -8,7 +8,7 @@ import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 import TravelDetail from "$/lib/components/travel/TravelDetail";
-import NewTripForm from "$/lib/components/form/NewTripForm";
+import UpdateTripForm from "$/lib/components/form/TripForm";
 
 
 export default function Detail() {
@@ -138,8 +138,7 @@ export default function Detail() {
                                             rounded-[12.5%]">
                                 Modifier votre trajet
                             </h2>
-                            <NewTripForm travel={travel} />                       
-                           
+                            <UpdateTripForm travel={travel} />                       
                         </div>
                     </>
                 )}
