@@ -15,8 +15,7 @@ export default function Group() {
     const id = parseInt(query.group as string);
     // Get group by id
     const {data: group} = api.group.groupById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
-    // Get group creator
-    const {data: creator} = api.user.userById.useQuery({id: group?.createdBy ?? ''}, {enabled: sessionData?.user !== undefined});
+    
 // Handlers
 
 

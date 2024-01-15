@@ -59,7 +59,7 @@ export default function Groups() {
                 const group = {
                     name: groupName,
                     campus: tmpDivCampus,
-                    createdBy: sessionData.user.id,
+                    createdBy: sessionData.user.name,
                     visibility: isPrivate
                 }
                 createGroup(group);
