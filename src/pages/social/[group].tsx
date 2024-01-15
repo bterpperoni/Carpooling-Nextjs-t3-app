@@ -38,6 +38,9 @@ if(sessionData)
                                 <p className="text-black text-xl">
                                     Ici la liste des trajets du groupe
                                 </p>
+                                <p className="text-black text-xl">
+                                    Ajouter bouton infos pour liste membres du groupe
+                                </p>
                             </div>
                             <Button 
                                 href="/trips/new" 
