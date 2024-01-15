@@ -42,7 +42,7 @@ if(sessionData)
                                 </p>
                             </div>
                             <Button 
-                                href="/trips/new" 
+                                onClick={() => alert('Publier un trajet pour ce groupe')}
                                 className="bg-[var(--purple-g2)] hover:bg-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-md">
                                     Publier un trajet pour ce groupe

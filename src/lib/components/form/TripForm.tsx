@@ -68,7 +68,6 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
                                 .set('minute', travel?.departureDateTime?.getMinutes() ?? 0)
                             );
             }
-            
             // finally set the date of departure in the travel object
             if(travel) travel.departureDateTime = dateDeparture.toDate();
         }

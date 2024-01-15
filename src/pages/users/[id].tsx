@@ -72,12 +72,9 @@ export default function User() {
 
   // Alert when user is updated 
   useEffect(() => {
-    if (!updatedUser && updatedSchool) {
-      alert("Votre établissement par défaut a bien été modifié!");
-    }else if (updatedUser && !updatedSchool) {
-      alert("Vos informations ont bien été modifiées!");
+    if (updatedUser && updatedSchool) {
+      alert("Vos informations ont bien été modifiés!");
     }
-    
   }, [ updatedSchool, updatedUser]);
 
   if (sessionData?.user){
