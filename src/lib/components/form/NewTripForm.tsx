@@ -1,18 +1,22 @@
 import Autocomplete  from 'react-google-autocomplete';
-import LayoutMain from '../layout/LayoutMain';
 import DateTimeSelect from './DateTimeSelect';
-import dayjs from 'dayjs';
 import {Button} from '@mui/material';
 import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/dist/client/router';
 import { useApiKey } from '$/context/process';
 import MuiStyle from '$/styles/MuiStyle.module.css';
+import type { Travel } from '@prisma/client';
 
 
-export default function NewTripForm() {
+export default function NewTripForm({ travel, isForGroup, groupId }: 
+    {
+        travel?: Travel,
+        isForGroup?: boolean,
+        groupId?: number
+    }) {
     const { data: sessionData } = useSession();
     const apiKey = useApiKey();
     // Address of departure and destination from google autocomplete
@@ -41,8 +45,24 @@ export default function NewTripForm() {
         types: ['address']
         };
 
-        // Create a new travel
-    const { data: travelCreated, isSuccess, mutate: createTravel } = api.travel.create.useMutation();
+    // Create a new travel
+    const { data: travelCreated, mutate: createTravel } = api.travel.create.useMutation();
+    // Used to update travel
+    const { data: updatedTravel, mutate: updateTravel } = api.travel.update.useMutation();
+
+    useEffect(() => {
+
+        if (dateDeparture && timeDeparture) {
+            setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));    
+        }
+        if (dateReturn && timeReturn) {
+            setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute())); 
+        }
+
+        if(travelCreated) {
+            window.location.href = `/trips/${travelCreated.id}`;
+        }
+    }, [travelCreated, dateDeparture, timeDeparture, dateReturn, timeReturn]);
 
     // Submit a new travel
     function handleClick() { 
@@ -73,10 +93,8 @@ export default function NewTripForm() {
             }else{
                 alert('Please select a departure and destination');
             }
-            
         }
     }
-
 
     return (
         <>

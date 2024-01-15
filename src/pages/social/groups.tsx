@@ -39,11 +39,11 @@ export default function Groups() {
     // Get separated user's school & campus from user's campus field
 
     useEffect(() => {
-        // if(createdGroup){
-        //     setTimeout(() => {
-        //         alert('Groupe créé !');
-        //     }, 1000)
-        // }
+        if(createdGroup){
+            setTimeout(() => {
+                alert('Groupe créé !');
+            }, 1000)
+        }
     }, [createdGroup])
 
     // Check if the group is public or private
@@ -51,16 +51,14 @@ export default function Groups() {
         setisPrivate(!isPrivate);
     }
 
-
-
     // Save group
     function handleSaveGroup(){
         if(sessionData){
             if (selectedSchool && selectedCampus && groupName) {
-                const tmpSdivCampus = selectedSchool+'-'+selectedCampus;
+                const tmpDivCampus = selectedSchool+'-'+selectedCampus;
                 const group = {
                     name: groupName,
-                    campus: tmpSdivCampus,
+                    campus: tmpDivCampus,
                     createdBy: sessionData.user.id,
                     visibility: isPrivate
                 }

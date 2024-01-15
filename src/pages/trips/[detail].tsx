@@ -184,7 +184,6 @@ export default function Detail() {
 
         if(updatedTravel) {
             setTimeout(() => {
-                alert('Travel updated');
                 window.location.href = `/trips/${id}`;
             }, 500);
             
