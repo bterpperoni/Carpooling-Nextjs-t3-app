@@ -1,3 +1,5 @@
+import React from 'react'; // Import the React module
+
 import Button from '$/lib/components/button/Button';
 import LayoutMain from '$/lib/components/layout/LayoutMain';
 // import { geocode } from '$/utils/geocoding';

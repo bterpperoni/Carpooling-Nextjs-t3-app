@@ -1,25 +1,17 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { useRouter } from "next/dist/client/router";
-import { useApiKey } from "$/context/process";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
-import Autocomplete from "react-google-autocomplete";
-import DateTimeSelect from "$/lib/components/form/DateTimeSelect";
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 import TravelDetail from "$/lib/components/travel/TravelDetail";
-import dayjs from "dayjs";
-import type { Dayjs } from "dayjs";
-
-import MuiStyle from '$/styles/MuiStyle.module.css';
+import NewTripForm from "$/lib/components/form/NewTripForm";
 
 
 export default function Detail() {
-    // Google maps api key
-    const apiKey = useApiKey();
     // Used to switch between display & edit mode
     const [isEditing, setIsEditing] = useState(false);
     // Used to redirect after delete
@@ -33,27 +25,8 @@ export default function Detail() {
     const {data: travel} = api.travel.travelById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
     // Used to delete travel
     const { mutate: deleteTravel } = api.travel.delete.useMutation();
-    // Used to update travel
-    const { data: updatedTravel, mutate: updateTravel } = api.travel.update.useMutation();
     // Set if travel can be edited
     const canEdit = sessionData?.user?.id === travel?.driverId;
-    /* ------------------------------ Form fields to update travel ------------------------------ */
-    // Date of departure and destination
-    const [dateDeparture, setDateDeparture] = useState<Dayjs | null>(null);
-    const [dateReturn, setDateReturn] = useState<Dayjs | null>(null); 
-    // Time of departure and destination
-    const [timeDeparture, setTimeDeparture] = useState<Dayjs | null>();
-    const [timeReturn, setTimeReturn] = useState<Dayjs | null>();
-
-    // Address of departure and destination from google autocomplete
-    const address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
-    const [departure, setDeparture] = useState<string>();
-    const [destination, setDestination] = useState<string>();
-    // Latitude and longitude of departure and destination
-    const [departureLatitude, setDepartureLatitude] = useState<number>(travel?.departureLatitude! || 0);
-    const [departureLongitude, setDepartureLongitude] = useState<number>(travel?.departureLongitude! || 0);
-    const [destinationLatitude, setDestinationLatitude] = useState<number>(travel?.destinationLatitude! || 0);
-    const [destinationLongitude, setDestinationLongitude] = useState<number>(travel?.departureLongitude! || 0);
 
     /* -------------------------------------------------------------------------------------------- */
 
@@ -68,13 +41,6 @@ export default function Detail() {
     };
     // Map options
     const zoom = 12;
-    
-    // Options for autocomplete
-    const options = {
-        componentRestrictions: { country: 'be' },
-        strictBounds: false,
-        types: ['address']
-        };
     
     // Function to display line between departure & destination
     function calculAndDisplayRoute(directionsService: google.maps.DirectionsService, directionsRenderer: google.maps.DirectionsRenderer) {
@@ -110,25 +76,7 @@ export default function Detail() {
         setIsEditing(true);
     };
     
-    // Save travel data & disable edit mode
-    const handleSaveClick = () => {
-        if(travel?.returnDateTime) {
-            const newTravel = {
-                id : travel.id,
-                driverId: travel.driverId,
-                departure: departure ?? travel.departure,
-                departureLatitude: travel.departureLatitude,
-                departureLongitude: travel.departureLongitude,
-                departureDateTime: travel.departureDateTime,
-                destination: destination ?? travel.destination,
-                destinationLatitude: destinationLatLng.lat ?? travel.destinationLatitude,
-                destinationLongitude: destinationLatLng.lng ?? travel.destinationLongitude,
-                returnDateTime: travel.returnDateTime,
-                status: 0
-            };
-            updateTravel(newTravel);
-        } 
-    };
+    
 
     // Delete travel
     const handleDelete = () => {
@@ -138,58 +86,6 @@ export default function Detail() {
             window.location.href = '/trips/all';
         }
     }
- 
-    useEffect(() => {
-        if(travel) {
-            if(dateDeparture) {
-                // if the user has selected a time for the departure date
-                if(timeDeparture) {
-                    // set the date of departure with the time selected
-                    setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
-                }else{
-                    // else set the date of departure with the time of the travel
-                    setDateDeparture(   
-                                    dayjs(dateDeparture)
-                                    .set('hour', travel?.departureDateTime?.getHours())
-                                    .set('minute', travel?.departureDateTime?.getMinutes())
-                                );
-                }
-                // finally set the date of departure in the travel object
-                travel.departureDateTime = dateDeparture.toDate();
-            }
-            
-            if(dateReturn) {
-                // if the user has selected a time for the return date
-                if (timeReturn) {
-                    // set the date of return with the time selected
-                    setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute()));
-                }else{
-                    // else set the date of return with the time of the travel
-                    setDateReturn(   
-                                    dayjs(dateReturn)
-                                    .set('hour', travel?.returnDateTime?.getHours() ?? 0)
-                                    .set('minute', travel?.returnDateTime?.getMinutes() ?? 0)
-                                );
-                }
-                // finally set the date of return in the travel object
-                travel.returnDateTime = dateReturn.toDate();
-            }
-
-            if(departure){
-                travel.departure = departure;
-                travel.departureLatitude = departureLatitude;
-                travel.departureLongitude = departureLongitude;
-            }
-        }
-
-        if(updatedTravel) {
-            setTimeout(() => {
-                window.location.href = `/trips/${id}`;
-            }, 500);
-            
-        }
-    }
-    , [dateDeparture, timeDeparture, dateReturn, timeReturn, departure, updatedTravel]);
    
 
   if(!travel) return <div>Travel not found</div>
@@ -242,113 +138,8 @@ export default function Detail() {
                                             rounded-[12.5%]">
                                 Modifier votre trajet
                             </h2>
-                            <form className="flex flex-col w-auto m-auto justify-center items-center bg-[var(--purple-g3)]">
-                                {/* Departure */}
-                                <div className='my-16'>
-                                    <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
-                                        <label htmlFor="departure" className='text-xl md:text-3xl text-white mb-1 mr-4'>Departure : </label>
-                                        <Autocomplete
-                                            defaultValue={travel.departure}
-                                            apiKey={apiKey}
-                                            options={options}
-                                            onPlaceSelected={(place) => {
-                                                    address.departure = place;
-                                                    setDeparture(address.departure.formatted_address);
-                                                    if(address.departure.geometry?.location?.lat() && address.departure.geometry?.location?.lng()) {
-                                                        setDepartureLatitude(address.departure.geometry.location.lat());
-                                                        setDepartureLongitude(address.departure.geometry.location.lng()); 
-                                                    }
-                                                }
-                                            }
-                                            className=" w-[75%] 
-                                                        my-2 
-                                                        md:w-[75%]
-                                                        text-xl md:text-2xl
-                                                        text-[var(--pink-g1)]
-                                                        bg-[var(--purple-g3)] 
-                                                        p-2 "
-                                            id="departure"
-                                        />
-                                    </div>
-                                    <div className='p-4'>
-                                        <DateTimeSelect
-                                            defaultDate={travel.departureDateTime?.toDateString() ? dayjs(travel.departureDateTime?.toDateString()) : null}
-                                            defaultTime={travel.departureDateTime?.toDateString() ?
-                                                            dayjs(travel?.departureDateTime)
-                                                            .set('hour' , travel?.departureDateTime?.getHours())
-                                                            .set('minute', travel?.departureDateTime?.getMinutes()) 
-                                                            : 
-                                                            dayjs(timeDeparture?.hour(travel?.departureDateTime?.getHours()).minute(travel?.departureDateTime?.getMinutes()) )      
-                                                        }
-                                            labelexpTime='Time Departure' 
-                                            labelexp="Date Departure"
-                                            disableDate={false}
-                                            disableTime={false}
-                                            handleChangeDate={(date) => {
-                                                setDateDeparture(date)   
-                                            }}    
-                                            handleChangeTime={(time) => {
-                                                setTimeDeparture(time)
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                                {/* Destination */}
-                                <div>
-                                    <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
-                                        <label htmlFor="destination" className='text-xl md:text-3xl text-white mb-1 mr-4'>Destination : </label>
-
-                                        <Autocomplete
-                                            defaultValue={travel.destination}
-                                            apiKey={apiKey}
-                                            options={options}
-                                            onPlaceSelected={(place) => {
-                                                    address.destination = place;
-                                                    setDestination(address.destination.formatted_address);
-                                                    if(address.destination.geometry?.location?.lat() && address.destination.geometry?.location?.lng()) {
-                                                        setDestinationLatitude(address.destination.geometry.location.lat());
-                                                        setDestinationLongitude(address.destination.geometry.location.lng()); 
-                                                    }
-                                                }
-                                            }
-                                            className=" w-[75%] 
-                                                        my-2 
-                                                        md:w-[75%]
-                                                        text-xl md:text-2xl
-                                                        text-[var(--pink-g1)]
-                                                        bg-[var(--purple-g3)] 
-                                                        p-2 "
-                                            id="destination"
-                                            disabled
-                                        />
-                                    </div>
-                                    <div className='p-4'>
-                                        <DateTimeSelect
-                                            defaultDate={travel.returnDateTime?.toDateString() ? dayjs(travel.returnDateTime?.toDateString()) : null}
-                                            defaultTime={travel.returnDateTime?.toDateString() ? 
-                                                            dayjs(travel?.returnDateTime)
-                                                            .set('hour' , travel?.returnDateTime?.getHours())
-                                                            .set('minute', travel?.returnDateTime?.getMinutes()) 
-                                                            : 
-                                                            timeReturn
-                                                        }
-                                            labelexpTime="Time Return"
-                                            labelexp="Date Return"
-                                            disableDate={false}
-                                            disableTime={false}
-                                            handleChangeDate={(date) => {
-                                                setDateReturn(date)
-                                            }}    
-                                            handleChangeTime={(time) => {
-                                                setTimeReturn(time)
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </form>
-                            {/* Submit */}                            
-                            <Button className={MuiStyle.MuiButtonText} onClick={handleSaveClick}> Enregistrer les modifications</Button>
-                            <Button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md" onClick={() => window.location.href=`/trips/${id}`}> Annuler </Button>
+                            <NewTripForm travel={travel} />                       
+                           
                         </div>
                     </>
                 )}
