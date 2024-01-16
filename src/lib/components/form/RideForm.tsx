@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Autocomplete  from 'react-google-autocomplete';
@@ -11,16 +13,15 @@ import { useEffect, useState } from 'react';
 import { useApiKey } from '$/context/process';
 import MuiStyle from '$/styles/MuiStyle.module.css';
 import type { Travel } from '@prisma/client';
-import { useRouter } from 'next/dist/client/router';
 
 
-export default function NewTripForm({ travel, isForGroup, groupId }: 
+export default function RideForm({ travel, isForGroup, groupId }: 
     {
         travel?: Travel,
         isForGroup?: boolean,
         groupId?: number
     }) {
-
+        
     const { data: sessionData } = useSession();
     const apiKey = useApiKey();
     // Address of departure and destination from google autocomplete
@@ -48,9 +49,6 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
         strictBounds: false,
         types: ['address']
     };
-
-    // Used to redirect after create or update
-    const router = useRouter();
 
     // Create a new travel
     const { data: travelCreated, mutate: createTravel } = api.travel.create.useMutation();
@@ -93,12 +91,12 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
             // if(travel) travel.returnDateTime = dateReturn.toDate();
         }
     
-        if(travelCreated)  window.location.href = `/trips/${travelCreated.id}`;
+        if(travelCreated)  {
+            window.location.href = `/rides/${travelCreated.id}`;
+        }
             
         if(updatedTravel) {
-            setTimeout(() => {
-                void router.push(`/trips/${updatedTravel.id}`);
-            }, 1500);
+            window.location.href = `/rides/${updatedTravel.id}`;
         }
         
     }, [travelCreated, updatedTravel, dateDeparture, timeDeparture, dateReturn, timeReturn, travel, departure, departureLatitude, departureLongitude]);
@@ -139,7 +137,6 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
             }
             // ------------------- Update travel -------------------
             if(travel){
-                if(departure && destination) {
                     if(dateReturn?.isBefore(dateDeparture)) {
                         alert('Return date must be after departure date'); 
                         return;
@@ -158,11 +155,7 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
                             status: 0
                         });
                     }  
-                }else{
-                    alert('Please select a departure and destination');
-                    return;
-                } 
-            }
+                }
         }
     }
 
@@ -173,7 +166,7 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
                         <div className='my-16'>
                             <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
                                 <label htmlFor="departure" className='text-xl md:text-3xl text-white mb-1 mr-4'>Departure : </label>
-                                <Autocomplete
+                                    <Autocomplete
                                     defaultValue={travel?.departure ?? ''}
                                     apiKey={apiKey}
                                     options={options}
@@ -194,7 +187,7 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
                                                 bg-[var(--purple-g3)]
                                                 p-2 "
                                     id="departure"
-                                />
+                                    />
                             </div>
                             <div className='p-4'>
                                 <DateTimeSelect
@@ -228,7 +221,7 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
                         <div>
                             <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
                                 <label htmlFor="destination" className='text-xl md:text-3xl text-white mb-1 mr-4'>Destination : </label>
-                                <Autocomplete
+                                    <Autocomplete
                                     defaultValue={travel?.destination ?? ''}
                                     disabled = {travel ? true : false}
                                     apiKey={apiKey}
@@ -250,7 +243,7 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
                                                 bg-[var(--purple-g3)] 
                                                 p-2 "
                                     id="destination"
-                                />
+                                    />
                             </div>
                             <div className='p-4'>
                                 <DateTimeSelect

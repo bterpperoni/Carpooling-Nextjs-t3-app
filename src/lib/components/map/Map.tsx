@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import React, { useEffect, useRef, useState } from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import type { MapProps } from '$/lib/types/types';
@@ -27,7 +28,6 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
   if(!apiKey) return <div>Google maps api key is missing</div>
   return (
     <>
-    {/* LoadScript  */}
       <LoadScript googleMapsApiKey={apiKey}>
         <GoogleMap 
             center={center} 

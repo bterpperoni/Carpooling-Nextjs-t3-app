@@ -1,6 +1,6 @@
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 import { signIn, useSession } from 'next-auth/react';
-import NewTripForm from '../../lib/components/form/TripForm';
+import NewTripForm from '../../lib/components/form/RideForm';
 import Button from '$/lib/components/button/Button';
 
 /* --------------------------------------------------------- */

@@ -9,6 +9,7 @@ import { api } from '$/utils/api';
 import { Marker } from '@react-google-maps/api';
 import TravelCard from '$/lib/components/travel/TravelCard';
 import { useRouter } from 'next/router';
+import Button from '$/lib/components/button/Button';
 
 const All: React.FC = () => {
         // Map settings
@@ -50,32 +51,41 @@ const All: React.FC = () => {
                 <LayoutMain>
                     <div className="bg-[var(--purple-g3)]">
                         <div className=" flex flex-row items-center justify-between mt-4 mx-4">
-                            <Slider check={handleCheck} checked={checked} />
-                            <h1 className="md:text-6xl text-3xl font-bold mb-4 mt-4  w-[50%] text-center text-fuchsia-700">Trajets</h1>
-                            <Link 
-                                href="/rides/new" 
-                                className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
-                                           border-2 text-white px-3 py-2 rounded-md">
-                                    Publier un trajet
-                            </Link>
+                            
                         </div>
                         <div className='flex flex-col items-center'>  
                                 <div className='border-b-t-2 border-0 border-white'>   
                                     <div className='md:text-2xl text-xl mx-12 bg-[var(--purple-g3)] text-center 
                                                     rounded-[5%] p-4 mb-4 text-fuchsia-700 border-fuchsia-700 border-y-2'>                    
-                                        <p>Find the best trip</p>
+                                        <p>Trouves le trajet qui te correspond</p>
                                     </div>
                                 </div>
                         </div>
                     </div>
-                    <div>
-                        <div className="flex items-center ml-4 my-4">
-                            <span className="text-fuchsia-700 text-xl text-sm mr-2">Filter</span>
-                            <select className="border rounded-md px-3 py-2">
-                                <option value="all">All</option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
+                    <div className='block flex-col'>
+                        <div className="grid grid-cols-3 grid-flow-col gap-12 items-center m-2 justify-items-center">
+                            <div className='col-span-1 relative ml-6'>
+                                <span className="text-fuchsia-700 text-xl text-sm mr-2">Filter</span>
+                                <select className="border rounded-md px-3 py-2">
+                                    <option value="all">All</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <div className="col-span-1 text-center space-y-4 > *">
+                                <p className="text-white text-base m-4 border-2 border-white px-4 py-2 rounded-full">
+                                    <label htmlFor="SliderDsiplay" className="mx-2">
+                                        {checked ? 'List' : 'Map'}
+                                    </label>
+                                    <Slider check={handleCheck} checked={checked} />
+                                </p>
+                            </div>
+                            <Button 
+                                onClick={() => window.location.href='/rides/new'} 
+                                className="col-span-1 bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                           border-2 text-white px-3 py-2 rounded-full text-base w-max">
+                                    Publier
+                            </Button>
                         </div>
                         {/* ------------------------------------- display list --------------------------------------------- */}
                         {checked && (

@@ -73,9 +73,9 @@ export default function Nav() {
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4 absolute">
                     {navigation.map((item) => (
-                      <Link
+                      <a
                         key={item.name}  
-                        href={item.href} 
+                        href={item.href}
                         className={
                           classNames(
                             item.current ? 
@@ -85,7 +85,7 @@ export default function Nav() {
                             'rounded-md px-3 py-2 text-sm font-medium')}
                         aria-current={item.current ? 'page' : undefined}>
                           {item.name}
-                      </Link>
+                      </a>
                     ))}
                   </div>
                 </div>

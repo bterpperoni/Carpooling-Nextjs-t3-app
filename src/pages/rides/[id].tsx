@@ -8,7 +8,7 @@ import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 import TravelDetail from "$/lib/components/travel/TravelDetail";
-import UpdateTripForm from "$/lib/components/form/TripForm";
+import UpdateTripForm from "$/lib/components/form/RideForm";
 
 
 export default function Detail() {
@@ -17,17 +17,18 @@ export default function Detail() {
     // Used to redirect after delete
     const [ travelDeleted, setTravelDeleted ] = useState(false);
     // Get id from url
-    const router = useRouter()
-    const id = parseInt(router.query.detail as string);  
+    const { query, push } = useRouter();
+    const id = query.id;
     // Session recovery
     const { data: sessionData } = useSession();
     // Get travel by id
-    const {data: travel} = api.travel.travelById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
+    const {data: travel} = api.travel.travelById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     // Used to delete travel
     const { mutate: deleteTravel } = api.travel.delete.useMutation();
     // Set if travel can be edited
     const canEdit = sessionData?.user?.id === travel?.driverId;
-
+    
+    
     /* -------------------------------------------------------------------------------------------- */
 
     // Get lat & lng of departure & destination
@@ -78,19 +79,17 @@ export default function Detail() {
 
     // Delete travel
     const handleDelete = () => {
-        deleteTravel({id});
+        deleteTravel({id: parseInt(id as string)});
         setTravelDeleted(true);
     }
 
     // Redirect after delete
     useEffect(() => {
         if(travelDeleted) {
-            setTimeout(() => {
                 alert('Trajet supprimé');
-                void router.push('/rides/index');
-            }, 1000);
+                void push('/rides');
         }
-    }, [travelDeleted, router]);
+    }, [travelDeleted]);
    
 
   if(!travel) return <div>Travel not found</div>
