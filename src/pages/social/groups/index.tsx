@@ -105,7 +105,7 @@ export default function Groups() {
                                                                     cursor-pointer 
                                                                     hover:bg-[var(--pink-g1)] 
                                                                     hover:text-white p-6"
-                                                        onClick={() => self.location.href = `/social/groups/${group.id}`}>
+                                                        onClick={() => router.push(`/social/groups/${group.id}`)}>
                                         <div className="flex flex-row">
                                             <div className="flex flex-col w-[50%]">
                                                 <div className="mb-4 cursor-pointer">
