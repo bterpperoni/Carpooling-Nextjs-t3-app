@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { useRouter } from "next/dist/client/router";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
@@ -75,17 +75,22 @@ export default function Detail() {
       const handleEditClick = () => {
         setIsEditing(true);
     };
-    
-    
 
     // Delete travel
     const handleDelete = () => {
         deleteTravel({id});
         setTravelDeleted(true);
-        if(travelDeleted) {
-            window.location.href = '/trips/all';
-        }
     }
+
+    // Redirect after delete
+    useEffect(() => {
+        if(travelDeleted) {
+            setTimeout(() => {
+                alert('Trajet supprimé');
+                void router.push('/rides/index');
+            }, 1000);
+        }
+    }, [travelDeleted, router]);
    
 
   if(!travel) return <div>Travel not found</div>
@@ -99,16 +104,18 @@ export default function Detail() {
                         <TravelDetail travel={travel}>
                                     {canEdit ? (
                                         <>
-                                            <Button 
-                                                onClick={handleEditClick}
-                                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">
-                                                Modifier le trajet
-                                            </Button>
-                                            <Button
-                                                onClick={handleDelete}
-                                                className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md">
-                                                Supprimer le trajet
-                                            </Button>
+                                            <div className="flex justify-between">
+                                                <Button 
+                                                    onClick={handleEditClick}
+                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">
+                                                    Modifier le trajet
+                                                </Button>
+                                                <Button
+                                                    onClick={handleDelete}
+                                                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md">
+                                                    Supprimer le trajet
+                                                </Button>
+                                            </div>
                                         </>
                                     ) : (
                                         <>

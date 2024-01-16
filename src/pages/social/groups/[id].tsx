@@ -1,9 +1,9 @@
 import { useSession } from "next-auth/react";
-import LayoutMain from '../../lib/components/layout/LayoutMain';
 import { useRouter } from "next/dist/client/router";
 import { api } from "$/utils/api";
-import { getCampusFullName } from '../../utils/data';
+import { getCampusFullName } from '$/utils/data';
 import Button from "$/lib/components/button/Button";
+import LayoutMain from '$/lib/components/layout/LayoutMain';
 
 
 export default function Group() {
@@ -12,13 +12,11 @@ export default function Group() {
     const { data: sessionData } = useSession();
     // Get group id from url 
     const { query } = useRouter();
-    const id = parseInt(query.group as string);
+    const id = query.id;
     // Get group by id
-    const {data: group} = api.group.groupById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
+    const {data: group} = api.group.groupById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     
 // Handlers
-
-
 
 // Render
 if(sessionData)

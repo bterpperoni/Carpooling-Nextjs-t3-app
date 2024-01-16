@@ -105,16 +105,16 @@ export default function Groups() {
                                                                     cursor-pointer 
                                                                     hover:bg-[var(--pink-g1)] 
                                                                     hover:text-white p-6"
-                                                        onClick={() => router.push(`/social/${group.id}`)}>
+                                                        onClick={() => self.location.href = `/social/groups/${group.id}`}>
                                         <div className="flex flex-row">
                                             <div className="flex flex-col w-[50%]">
-                                                <div className="mb-4">
+                                                <div className="mb-4 cursor-pointer">
                                                     <label htmlFor="groupName" className="mr-2 font-bold text-[18px] text-left">
                                                         Nom du groupe 
                                                     </label>
                                                     <div id="groupName">{group.name}</div>
                                                 </div>
-                                                <div>
+                                                <div className="">
                                                     <label htmlFor="groupPrivacy" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
                                                         Visibilité
                                                     </label>

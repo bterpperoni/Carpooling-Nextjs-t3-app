@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { useApiKey } from '$/context/process';
 import MuiStyle from '$/styles/MuiStyle.module.css';
 import type { Travel } from '@prisma/client';
+import { useRouter } from 'next/dist/client/router';
 
 
 export default function NewTripForm({ travel, isForGroup, groupId }: 
@@ -48,6 +49,9 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
         types: ['address']
     };
 
+    // Used to redirect after create or update
+    const router = useRouter();
+
     // Create a new travel
     const { data: travelCreated, mutate: createTravel } = api.travel.create.useMutation();
     // Used to update travel
@@ -69,7 +73,7 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
                             );
             }
             // finally set the date of departure in the travel object
-            if(travel) travel.departureDateTime = dateDeparture.toDate();
+            // if(travel) travel.departureDateTime = dateDeparture.toDate();
         }
 
         if(dateReturn) {
@@ -86,19 +90,17 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
                             );
             }
             // finally set the date of return in the travel object
-            if(travel) travel.returnDateTime = dateReturn.toDate();
+            // if(travel) travel.returnDateTime = dateReturn.toDate();
         }
     
-        if(travelCreated) {
-            setTimeout(() => {
-                window.location.href = `/trips/${travelCreated.id}`;
-            }, 500);
-        }
+        if(travelCreated)  window.location.href = `/trips/${travelCreated.id}`;
+            
         if(updatedTravel) {
             setTimeout(() => {
-                window.location.href = `/trips/${updatedTravel.id}`;
-            }, 500);
+                void router.push(`/trips/${updatedTravel.id}`);
+            }, 1500);
         }
+        
     }, [travelCreated, updatedTravel, dateDeparture, timeDeparture, dateReturn, timeReturn, travel, departure, departureLatitude, departureLongitude]);
 
     // Submit a new travel or update an existing travel
@@ -137,22 +139,32 @@ export default function NewTripForm({ travel, isForGroup, groupId }:
             }
             // ------------------- Update travel -------------------
             if(travel){
-                    updateTravel({
-                        id : travel.id,
-                        driverId: travel.driverId,
-                        departure: departure ?? travel.departure,
-                        departureLatitude: departureLatitude ?? travel.departureLatitude,
-                        departureLongitude: departureLongitude ?? travel.departureLongitude,
-                        departureDateTime: travel.departureDateTime,
-                        destination: destination ?? travel.destination,
-                        destinationLatitude: destinationLatitude ?? travel.destinationLatitude,
-                        destinationLongitude: destinationLongitude ?? travel.destinationLongitude,
-                        returnDateTime: travel.returnDateTime,
-                        status: 0
-                    });
+                if(departure && destination) {
+                    if(dateReturn?.isBefore(dateDeparture)) {
+                        alert('Return date must be after departure date'); 
+                        return;
+                    }else{
+                        updateTravel({
+                            id : travel.id,
+                            driverId: travel.driverId,
+                            departure: departure ?? travel.departure,
+                            departureLatitude: departureLatitude ?? travel.departureLatitude,
+                            departureLongitude: departureLongitude ?? travel.departureLongitude,
+                            departureDateTime: dateDeparture?.toDate() ?? travel.departureDateTime,
+                            destination: destination ?? travel.destination,
+                            destinationLatitude: destinationLatitude ?? travel.destinationLatitude,
+                            destinationLongitude: destinationLongitude ?? travel.destinationLongitude,
+                            returnDateTime: dateReturn?.toDate() ?? travel.returnDateTime,
+                            status: 0
+                        });
+                    }  
+                }else{
+                    alert('Please select a departure and destination');
+                    return;
                 } 
             }
         }
+    }
 
         return (
                 <>

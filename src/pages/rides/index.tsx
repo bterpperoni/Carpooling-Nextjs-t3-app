@@ -22,7 +22,7 @@ const All: React.FC = () => {
 
         // Redirect to travel page when clicking on a marker
         const handleMarkerClick = (id: number) => {
-            void router.push(`/trips/${id}`);
+            void router.push(`/rides/${id}`);
         }
 
         // Get all travels
@@ -38,7 +38,7 @@ const All: React.FC = () => {
             strokeWeight: 2
         };
     
-        // Used to display the list of trips or the map
+        // Used to display the list of rides or the map
         const [checked, setChecked] = useState(false);
         
         const handleCheck = () => {
@@ -53,7 +53,7 @@ const All: React.FC = () => {
                             <Slider check={handleCheck} checked={checked} />
                             <h1 className="md:text-6xl text-3xl font-bold mb-4 mt-4  w-[50%] text-center text-fuchsia-700">Trajets</h1>
                             <Button 
-                                href="/trips/new" 
+                                href="/rides/new" 
                                 className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-md">
                                     Publier un trajet

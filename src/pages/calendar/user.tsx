@@ -21,7 +21,7 @@ export default function Calendar() {
                     <h1 className="text-2xl font-bold mb-4">Rides</h1>
                     <div className="flex justify-between items-center mb-4">
                         
-                        <Button href="/trips/new" className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">New Trip</Button>
+                        <Button href="/rides/new" className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">New Trip</Button>
                     </div>
                     <table className="w-full">
                         <thead>
