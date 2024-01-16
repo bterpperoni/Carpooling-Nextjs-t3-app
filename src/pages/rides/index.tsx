@@ -3,7 +3,7 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import  Map  from '$/lib/components/map/Map'; 
 import Slider from '$/lib/components/button/Slider';
 import { useState } from 'react';
-import Button from '$/lib/components/button/Button';
+import Link from 'next/link'
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import { Marker } from '@react-google-maps/api';
@@ -52,12 +52,12 @@ const All: React.FC = () => {
                         <div className=" flex flex-row items-center justify-between mt-4 mx-4">
                             <Slider check={handleCheck} checked={checked} />
                             <h1 className="md:text-6xl text-3xl font-bold mb-4 mt-4  w-[50%] text-center text-fuchsia-700">Trajets</h1>
-                            <Button 
+                            <Link 
                                 href="/rides/new" 
                                 className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-md">
                                     Publier un trajet
-                            </Button>
+                            </Link>
                         </div>
                         <div className='flex flex-col items-center'>  
                                 <div className='border-b-t-2 border-0 border-white'>   
