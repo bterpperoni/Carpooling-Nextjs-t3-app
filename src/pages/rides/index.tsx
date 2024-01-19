@@ -68,8 +68,8 @@ const All: React.FC = () => {
                                 <span className="text-fuchsia-700 text-xl text-sm mr-2">Filter</span>
                                 <select className="border rounded-md px-3 py-2">
                                     <option value="all">All</option>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
+                                    <option value="active">Destinations</option>
+                                    <option value="inactive">Autres</option>
                                 </select>
                             </div>
                             <div className="col-span-1 text-center space-y-4 > *">

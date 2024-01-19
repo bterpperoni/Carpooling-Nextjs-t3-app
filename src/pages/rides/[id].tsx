@@ -92,7 +92,7 @@ export default function Detail() {
     }, [travelDeleted]);
    
 
-  if(!travel) return <div>Travel not found</div>
+  if(!travel) return <div className="text-white m-6 text-3xl">Travel not found</div>
   return (
     <>
         <LayoutMain>
@@ -138,7 +138,7 @@ export default function Detail() {
                                             w-[fit-content]
                                             text-center 
                                             text-white
-                                            border-2
+                                            border-y-2
                                             border-fuchsia-700
                                             p-4
                                             rounded-[12.5%]">

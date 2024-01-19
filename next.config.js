@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
@@ -16,6 +18,18 @@ const config = {
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
+  },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.svg$/,
+      issuer: {
+        test: /\.(js|ts)x?$/,
+       // for webpack 5 use
+       // { and: [/\.(js|ts)x?$/] }
+      },
+      
+      use: ['@svgr/webpack'],
+    })
   }
 };
 

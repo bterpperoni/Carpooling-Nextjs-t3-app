@@ -16,6 +16,15 @@ export const groupRouter = createTRPCRouter({
         return groupList;
     }),
 
+    groupListByUser: protectedProcedure
+        .input(z.object({ name: z.string() }))
+        .query(async ({ ctx }) => {
+            const groupList =  ctx.db.group.findMany({
+                where: { createdBy: ctx.session.user.name },
+            });
+            return groupList;
+        }),
+
     groupById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(async ({ ctx, input }) => {

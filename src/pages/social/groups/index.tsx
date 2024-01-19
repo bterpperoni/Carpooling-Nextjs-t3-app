@@ -75,15 +75,21 @@ export default function Groups() {
                     <div className='border-0 m-4'>   
                         <div className='md:text-2xl text-xl mx-12 bg-[var(--purple-g3)] text-center 
                                         rounded-[5%] p-4 text-fuchsia-700 border-fuchsia-700 border-y-2'>                    
-                            <p>Gestion des groupes</p>
+                            <p>Trouver un groupe</p>
                         </div>
                     </div>
-                    <div className="mb-4">
+                    <div className="mb-4 flex flex-row justify-between w-[90%]">
                         <Button 
                                 onClick={() => setIsCreating(true)}
                                 className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-md">
                                 Créer un groupe
+                        </Button>
+                        <Button 
+                                onClick={() => router.push(`/social/groups/users/${sessionData.user.id}`)}
+                                className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                           border-2 text-white px-3 py-2 rounded-md">
+                                Mes groupes
                         </Button>
                     </div>
                     

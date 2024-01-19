@@ -10,7 +10,11 @@ import {
 export const travelRouter = createTRPCRouter({
 
     travelList: protectedProcedure.query(async ({ ctx }) => {
-        const travelList =  ctx.db.travel.findMany();
+        const travelList =  ctx.db.travel.findMany({
+            where: {
+                isForGroup: false
+            }
+        });
         return travelList;
     }),
 
@@ -34,6 +38,8 @@ export const travelRouter = createTRPCRouter({
                 destinationLatitude : z.number(),
                 destinationLongitude : z.number(), 
                 returnDateTime: z.date() || null,
+                isForGroup: z.boolean().default(false),
+                groupId: z.number().nullable(),
                 status: z.number(),
                 
             }))
@@ -51,6 +57,8 @@ export const travelRouter = createTRPCRouter({
                     destinationLatitude: input.destinationLatitude,
                     destinationLongitude: input.destinationLongitude,
                     returnDateTime: input.returnDateTime,
+                    isForGroup: input.isForGroup,
+                    groupId: input.groupId,
                     status: input.status,
                 },
             });

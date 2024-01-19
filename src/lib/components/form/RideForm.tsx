@@ -70,8 +70,6 @@ export default function RideForm({ travel, isForGroup, groupId }:
                                 .set('minute', travel?.departureDateTime?.getMinutes() ?? 0)
                             );
             }
-            // finally set the date of departure in the travel object
-            // if(travel) travel.departureDateTime = dateDeparture.toDate();
         }
 
         if(dateReturn) {
@@ -87,8 +85,6 @@ export default function RideForm({ travel, isForGroup, groupId }:
                                 .set('minute', travel?.returnDateTime?.getMinutes() ?? 0)
                             );
             }
-            // finally set the date of return in the travel object
-            // if(travel) travel.returnDateTime = dateReturn.toDate();
         }
     
         if(travelCreated)  {
@@ -113,19 +109,21 @@ export default function RideForm({ travel, isForGroup, groupId }:
                             alert('Return date must be after departure date'); 
                             return;
                         }else{
-                            createTravel({
-                                driverId: sessionData.user.id,
-                                departure: departure,
-                                departureLatitude: departureLatitude ?? 0,
-                                departureLongitude: departureLongitude ?? 0,
-                                departureDateTime: dateDeparture.toDate(),
-                                destination: destination,
-                                destinationLatitude: destinationLatitude ?? 0,
-                                destinationLongitude: destinationLongitude ?? 0,
-                                returnDateTime: dateReturn.toDate(),
-                                status:0
-                            });  
-                        }
+                                createTravel({
+                                    driverId: sessionData.user.id,
+                                    departure: departure,
+                                    departureLatitude: departureLatitude ?? 0,
+                                    departureLongitude: departureLongitude ?? 0,
+                                    departureDateTime: dateDeparture.toDate(),
+                                    destination: destination,
+                                    destinationLatitude: destinationLatitude ?? 0,
+                                    destinationLongitude: destinationLongitude ?? 0,
+                                    returnDateTime: dateReturn.toDate(),
+                                    isForGroup: isForGroup ?? false,
+                                    groupId: groupId ?? null,
+                                    status:0
+                                });  
+                            } 
                     }else{
                         alert("Please select a date for departure and return");
                         return;
@@ -288,3 +286,4 @@ export default function RideForm({ travel, isForGroup, groupId }:
                 </>
         );
     }
+
