@@ -55,6 +55,29 @@ export const groupRouter = createTRPCRouter({
             });
         }),
 
+    update: protectedProcedure
+        .input(z.object(
+            { 
+                id: z.number(),
+                name: z.string(),
+                campus: z.string(),
+                createdBy: z.string(),
+                visibility: z.boolean(),
+            }))
+        .mutation(async ({ ctx, input }) => {
+            // simulate a slow db call
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            return ctx.db.group.update({
+                where: { id: input.id },
+                data: {
+                    name: input.name,
+                    campus: input.campus,
+                    createdBy: ctx.session.user.name,
+                    visibility: input.visibility
+                },
+            });
+        }),
+
     delete: protectedProcedure
         .input(z.object({ id: z.number() }))
         .mutation(async ({ ctx, input }) => {

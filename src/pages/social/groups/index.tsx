@@ -36,8 +36,6 @@ export default function Groups() {
     // Get router
     const router = useRouter();
     // ------------------------------- Handlers ------------------------------------------------------
-    // Get separated user's school & campus from user's campus field
-
     useEffect(() => {
         if(createdGroup){
             setTimeout(() => {
@@ -86,7 +84,7 @@ export default function Groups() {
                                 Créer un groupe
                         </Button>
                         <Button 
-                                onClick={() => router.push(`/social/groups/users/${sessionData.user.id}`)}
+                                onClick={() => router.push(`/social/groups/users/${sessionData.user.name}`)}
                                 className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-md">
                                 Mes groupes
@@ -122,10 +120,10 @@ export default function Groups() {
                                                 </div>
                                                 <div className="">
                                                     <label htmlFor="groupPrivacy" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
-                                                        Visibilité
+                                                        Accessibilité
                                                     </label>
                                                     {group.visibility ? (
-                                                        <div>Privé</div>
+                                                        <div>Sur invitation</div>
                                                     ) : (  
                                                         <div>Public</div>
                                                     )}
@@ -215,7 +213,7 @@ export default function Groups() {
     return (   
         <LayoutMain>
             <h1>Groups</h1>
-            <p>You must be signed in to view this page</p>
+            <p className="text-white">You must be signed in to view this page</p>
         </LayoutMain>
     );
 }
