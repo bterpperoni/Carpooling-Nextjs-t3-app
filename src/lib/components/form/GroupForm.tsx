@@ -13,16 +13,17 @@ import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 
 
-export default function GroupForm({ group }: 
+export default function GroupForm({ group, cancelButtonHandler }: 
     { 
-        group?: Group
+        group?: Group,
+        cancelButtonHandler: () => void
     }) { 
     
     // School & campus state
     const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
     const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
     // Group name state
-    const [groupName, setGroupName] = useState<string>(group?.name ?? "E.g. : Les copains de la route");
+    const [groupName, setGroupName] = useState<string>(group?.name ?? '');
     // Slider state (public/private group)
     const [isPrivate, setisPrivate] = useState<boolean>(group?.visibility ?? false);
     // Session recovery
@@ -31,11 +32,12 @@ export default function GroupForm({ group }:
     const { data: createdGroup, mutate: createGroup } = api.group.create.useMutation();
     // Update group
     const { data: updatedGroup, mutate: updateGroup } = api.group.update.useMutation();
+    // Join group
+    const { mutate: createMemberGroup } = api.groupMember.create.useMutation();
     // Check if the group is public or private
     const handleCheck = () => {
         setisPrivate(!isPrivate);
     }
-
     // Save group
     function handleSaveGroup(){
         if(sessionData){
@@ -64,6 +66,14 @@ export default function GroupForm({ group }:
 
     useEffect(() => {
         if(createdGroup){
+            if(sessionData){
+                const groupMember = {
+                    userId: sessionData.user.id,
+                    groupId: createdGroup.id,
+                    validated: true
+                }
+                createMemberGroup(groupMember);
+            }
             setTimeout(() => {
                 alert('Groupe créé !');
             }, 1000)
@@ -87,7 +97,7 @@ export default function GroupForm({ group }:
                                         type="text"
                                         onChange={(e: ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)}
                                         value={group?.name ?? groupName}
-                                        placeholder={groupName}
+                                        placeholder='E.g. : Les copains de la route'
                                         classInput="mt-2 p-2 w-full"
                                     />
                                 </div>
@@ -113,7 +123,7 @@ export default function GroupForm({ group }:
                                 <div className="flex flex-row justify-between">
                                     <Button
                                         type="button"
-                                        onClick={() => self.location.reload()}
+                                        onClick={cancelButtonHandler}
                                         className="bg-[var(--purple-g2)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                                     border-2 text-white px-3 py-2 rounded-md">
                                         Annuler

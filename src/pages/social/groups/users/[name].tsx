@@ -2,15 +2,18 @@
 /* eslint-disable @next/next/no-img-element */
 import Button from '$/lib/components/button/Button';
 import LayoutMain from '$/lib/components/layout/LayoutMain';
+import GroupForm from '$/lib/components/form/GroupForm';
 import { api } from '$/utils/api';
 import { getCampusAbbr } from '$/utils/data';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { set } from 'zod';
+import { useState } from 'react';
+
   
 
 export default function UserGroup() {
-
+    // Create group editing state
+    const [isCreating, setIsCreating] = useState(false);
 
     // Recovery of the session 
     const { data: sessionData } = useSession();
@@ -31,11 +34,23 @@ export default function UserGroup() {
     return (
         <>
             <LayoutMain>
-                            <div className='m-4'>
+                            <div className='m-4 flex items-center flex-col w-screen'>
                                 <div className='md:text-2xl text-xl mx-12 bg-[var(--purple-g3)] text-center 
                                                     rounded-[5%] p-4 text-fuchsia-700 border-fuchsia-700 border-y-2'>                    
                                         <p>Mes groupes</p>
-                                    </div>
+                                </div>
+                                <Button 
+                                    onClick={() => setIsCreating(true)}
+                                    className=" bg-[var(--purple-g3)] 
+                                                hover:bg-[var(--pink-g1)] 
+                                                border-[var(--pink-g1)] 
+                                                border-2 
+                                                text-white 
+                                                px-3 py-2 
+                                                m-4
+                                                rounded-md">
+                                Créer un groupe
+                                </Button>
                             </div>
                             <div>
                                 {userGroups?.map((group) => (
@@ -49,25 +64,25 @@ export default function UserGroup() {
                                                     <label htmlFor="groupName" className="mr-2 font-bold text-[18px] text-left">
                                                         Nom du groupe 
                                                     </label>
-                                                    <div id="groupName">{group.name}</div>
+                                                    <div id="groupName" className="text-white">{group.name}</div>
                                                 </div>
                                                 <div className="">
                                                     <label htmlFor="groupPrivacy" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
                                                         Accessibilité
                                                     </label>
                                                     {group.visibility ? (
-                                                        <div>Sur invitation</div>
+                                                        <div className="text-white">Public</div>
                                                     ) : (  
-                                                        <div>Public</div>
+                                                        <div className="text-white">Sur invitation</div>
                                                     )}
                                                 </div>
                                             </div>
                                             <div className="flex flex-col w-[50%]">
-                                                <div className="mb-4">
+                                                <div className="mb-4 ml-4">
                                                     <label htmlFor="groupCampus" className="mr-2 font-bold text-[18px] text-left">
                                                         Destination
                                                     </label>
-                                                    <div>{getCampusAbbr(group.campus)}</div>
+                                                    <div className="text-white">{getCampusAbbr(group.campus)}</div>
                                                 </div>
                                                 <div className='flex flex-col w-max'>
                                                     {/* <Button 
@@ -98,6 +113,9 @@ export default function UserGroup() {
                                         </div>   
                                     </div>
                                 ))}
+                                {isCreating && (
+                                    <GroupForm cancelButtonHandler={() => {setIsCreating(false)}}/>
+                                )}
                             </div>
             </LayoutMain>
 

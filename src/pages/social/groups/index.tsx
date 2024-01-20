@@ -2,39 +2,27 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Button from "$/lib/components/button/Button";
-import Slider from "$/lib/components/button/Slider";
-import Dropdown from "$/lib/components/dropdown/Dropdown";
-import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
-import { data, getCampusAbbr  } from "$/utils/data";
-import { Group } from "@prisma/client";
+import { getCampusAbbr  } from "$/utils/data";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
-import { useEffect, useState } from "react";
-import type { ChangeEvent } from "react";
-import UserGroup from "./users/[name]";
+import { useState } from "react";
+import type { Group } from "@prisma/client";
+import GroupForm from "$/lib/components/form/GroupForm";
 
 
 export default function Groups() {
-    // -------------------------------State------------------------------------------------------
     // Create group editing state
     const [isCreating, setIsCreating] = useState(false);
-    // School & campus state
-    const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
-    const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
-    // Group name state
-    const [groupName, setGroupName] = useState<string>('');
-    // Slider state (public/private group)
-    const [isPrivate, setisPrivate] = useState<boolean>(false);
+
     // Session recovery
     const { data: sessionData } = useSession();
     // Get groups
     const { data: groupsData } = api.group.groupList.useQuery(undefined, {
         enabled: sessionData?.user !== undefined
     });
-    // Create group
-    const { data: createdGroup, mutate: createGroup } = api.group.create.useMutation();
+
     // Group list by user
     const { data: userGroups } = api.groupMember.groupMemberListByUser.useQuery({userId: sessionData?.user.id ?? '', validated: true}, {enabled: sessionData?.user !== undefined});
     // Join group
@@ -42,50 +30,13 @@ export default function Groups() {
 
     // Get router
     const router = useRouter();
+    
     // ------------------------------- Handlers ------------------------------------------------------
-    useEffect(() => {
-        if(createdGroup){
-            if(sessionData){
-                const groupMember = {
-                    userId: sessionData.user.id,
-                    groupId: createdGroup.id,
-                    validated: true
-                }
-                createMemberGroup(groupMember);
-            }
-            setTimeout(() => {
-                alert('Groupe créé !');
-            }, 1000)
-        }
-    }, [createdGroup])
-
-    // Check if the group is public or private
-    const handleCheck = () => {
-        if(isPrivate) setisPrivate(!isPrivate);
-        else setisPrivate(!isPrivate);
-    }
-
-    // Save group
-    function handleSaveGroup(){
-        if(sessionData){
-            if (selectedSchool && selectedCampus && groupName) {
-                const tmpDivCampus = selectedSchool+'-'+selectedCampus;
-                const group = {
-                    name: groupName,
-                    campus: tmpDivCampus,
-                    createdBy: sessionData.user.name,
-                    visibility: isPrivate
-                }
-                createGroup(group);
-                setIsCreating(false);
-            }
-        }
-    }
 
     // Join group
     function joinGroup(gr: Group){
         if(sessionData){
-            if(!gr.visibility){
+            if(gr.visibility){
                 const groupMember = {
                     userId: sessionData.user.id,
                     groupId: gr.id,
@@ -155,7 +106,7 @@ export default function Groups() {
                                                                     hover:text-white p-6">
                                         <div className="flex flex-row">
                                             <div className="flex flex-col w-[50%]">
-                                                <div className="mb-4 cursor-pointer">
+                                                <div className="mb-4">
                                                     <label htmlFor="groupName" className="mr-2 font-bold text-[18px] text-left">
                                                         Nom du groupe 
                                                     </label>
@@ -165,7 +116,7 @@ export default function Groups() {
                                                     <label htmlFor="groupPrivacy" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
                                                         Accessibilité
                                                     </label>
-                                                    {group.visibility ? (
+                                                    {!group.visibility ? (
                                                         <div className="text-white">Sur invitation</div>
                                                     ) : (  
                                                         <div className="text-white">Public</div>
@@ -182,7 +133,8 @@ export default function Groups() {
                                                 <div className="flex-col flex">
                                                     {userGroups?.find((userGroup) => userGroup.groupId === group.id) ? (
                                                         <div className="flex flex-col">
-                                                            <Button 
+                                                            {userGroups.find((userGroup) => userGroup.groupId === group.id)?.validated === false ? (
+                                                                <Button 
                                                                 onClick={() => router.push(`/social/groups/${group.id}`)}
                                                                 className=" bg-[var(--purple-g3)] 
                                                                             hover:bg-white 
@@ -194,27 +146,35 @@ export default function Groups() {
                                                                             rounded-md">
                                                                 Voir le groupe
                                                             </Button>
+                                                            ) : (
+                                                             <p className=" text-white
+                                                                            px-3 py-2
+                                                                            rounded-md
+                                                                            border-2
+                                                                            border-[var(--pink-g1)]
+                                                                            bg-[var(--purple-g3)]
+                                                                            text-center">
+                                                                Demande en attente..
+                                                            </p>   
+                                                            )}
                                                         </div>
                                                     ) : (
                                                         <div className="flex flex-col">
                                                                 <Button 
                                                                     onClick={() => joinGroup(group)}
                                                                     className=" bg-[var(--purple-g3)] 
-                                                                            hover:bg-white 
-                                                                            hover:text-[var(--pink-g1)] 
-                                                                            border-[var(--pink-g1)] 
-                                                                            border-2    
-                                                                            text-white 
-                                                                            px-3 py-2 
-                                                                            rounded-md"
-                                                                >
+                                                                                hover:bg-white 
+                                                                                hover:text-[var(--pink-g1)] 
+                                                                                border-[var(--pink-g1)] 
+                                                                                border-2    
+                                                                                text-white 
+                                                                                px-3 py-2 
+                                                                                rounded-md">
                                                                 Rejoindre le groupe
                                                             </Button>
                                                         </div>
                                                     )}
-                                                </div>
-                                                
-                                                
+                                                </div>    
                                             </div>
                                         </div>   
                                     </div>
@@ -228,57 +188,7 @@ export default function Groups() {
 
                 {/* --------------------------------------- Form to create à new group ------------------------------------------- */}
                 {isCreating && (
-                    <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
-                        <div className="bg-white rounded-md px-4 py-2">
-                            <form>
-                                <div className="flex flex-col mb-2">
-                                    <Input 
-                                        label="Nom du groupe :" 
-                                        type="text"
-                                        onChange={(e: ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)}
-                                        value={groupName}
-                                        placeholder="Eg. Les copains de la route"
-                                        classInput="mt-2 p-2 w-full"
-                                    />
-                                </div>
-                                <div className="flex flex-col mb-4 overflow-hidden">
-                                    <Dropdown 
-                                        data={data} 
-                                        onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
-                                        setSelectedSchool(sc.target.value);
-                                        if(sc) setSelectedCampus(ca.target.value);
-                                        }} 
-                                    />
-                                </div>
-                                <div className="flex flex-row mb-4 justify-center items-center">
-                                    <label className="text-black text-left mr-2">
-                                        Privé
-                                    </label>
-                                    <Slider check={handleCheck} checked={isPrivate} />
-                                    <label className="text-black text-left ml-2">
-                                        Public
-                                    </label>
-                                </div>
-                                {/* ------------------------------ BUTTON FORM ---------------------------------------------------- */}
-                                <div className="flex flex-row justify-between">
-                                    <Button
-                                        type="button"
-                                        onClick={() => setIsCreating(false)}
-                                        className="bg-[var(--purple-g2)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
-                                                    border-2 text-white px-3 py-2 rounded-md">
-                                        Annuler
-                                    </Button>
-                                    <Button
-                                        type="submit"
-                                        onClick={handleSaveGroup}
-                                        className="bg-[var(--purple-g2)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
-                                                    border-2 text-white px-3 py-2 rounded-md">
-                                        Créer un groupe
-                                    </Button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                    <GroupForm cancelButtonHandler={() => {setIsCreating(false)}}/>
                 )}
             </LayoutMain>
         );
