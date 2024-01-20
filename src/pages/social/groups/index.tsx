@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
+import UserGroup from "./users/[name]";
 
 
 export default function Groups() {
@@ -196,16 +197,17 @@ export default function Groups() {
                                                         </div>
                                                     ) : (
                                                         <div className="flex flex-col">
-                                                            <Button 
-                                                                onClick={() => joinGroup(group)}
-                                                                className=" bg-[var(--purple-g3)] 
+                                                                <Button 
+                                                                    onClick={() => joinGroup(group)}
+                                                                    className=" bg-[var(--purple-g3)] 
                                                                             hover:bg-white 
                                                                             hover:text-[var(--pink-g1)] 
                                                                             border-[var(--pink-g1)] 
                                                                             border-2    
                                                                             text-white 
                                                                             px-3 py-2 
-                                                                            rounded-md">
+                                                                            rounded-md"
+                                                                >
                                                                 Rejoindre le groupe
                                                             </Button>
                                                         </div>
