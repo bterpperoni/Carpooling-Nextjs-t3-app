@@ -45,14 +45,14 @@ export default function Groups() {
     // ------------------------------- Handlers ------------------------------------------------------
     useEffect(() => {
         if(createdGroup){
-            setTimeout(() => {
-                if(sessionData){
-                    const groupMember = {
-                        userId: sessionData.user.id,
-                        groupId: createdGroup.id
-                    }
-                    createMemberGroup(groupMember);
+            if(sessionData){
+                const groupMember = {
+                    userId: sessionData.user.id,
+                    groupId: createdGroup.id
                 }
+                createMemberGroup(groupMember);
+            }
+            setTimeout(() => {
                 alert('Groupe créé !');
             }, 1000)
         }
@@ -88,7 +88,8 @@ export default function Groups() {
                 groupId: id
             }
             createMemberGroup(groupMember);
-            refetch;
+            alert("Groupe rejoind avec succès !")
+            router.reload();
         }
     }
     // ------------------------------- Render ------------------------------------------------------
@@ -161,22 +162,39 @@ export default function Groups() {
                                                     <div>{getCampusAbbr(group.campus)}</div>
                                                 </div>
                                                 <div className="flex-col flex">
-                                                    <label htmlFor="groupCreatedBy" className="w-max my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
-                                                        Groupe créé par
-                                                    </label>
-                                                    <div>{group.createdBy}</div>
+                                                    {userGroups?.find((userGroup) => userGroup.groupId === group.id) ? (
+                                                        <div className="flex flex-col">
+                                                            <Button 
+                                                                onClick={() => router.push(`/social/groups/${group.id}`)}
+                                                                className=" bg-[var(--purple-g3)] 
+                                                                            hover:bg-white 
+                                                                            hover:text-[var(--pink-g1)] 
+                                                                            border-[var(--pink-g1)] 
+                                                                            border-2    
+                                                                            text-white 
+                                                                            px-3 py-2 
+                                                                            rounded-md">
+                                                                Voir le groupe
+                                                            </Button>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex flex-col">
+                                                            <Button 
+                                                                onClick={() => joinGroup(group.id)}
+                                                                className=" bg-[var(--purple-g3)] 
+                                                                            hover:bg-white 
+                                                                            hover:text-[var(--pink-g1)] 
+                                                                            border-[var(--pink-g1)] 
+                                                                            border-2    
+                                                                            text-white 
+                                                                            px-3 py-2 
+                                                                            rounded-md">
+                                                                Rejoindre le groupe
+                                                            </Button>
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                {userGroups?.find((userGroup) => userGroup.groupId === group.id) && (
-                                                    <div className="flex flex-col">
-                                                        <Button 
-                                                            onClick={() => joinGroup(group.id)}
-                                                            className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
-                                                            border-2 text-white px-3 py-2 rounded-md">
-                                                            Voir le groupe
-                                                        </Button>
-                                                    </div>
                                                 
-                                                )}
                                                 
                                             </div>
                                         </div>   

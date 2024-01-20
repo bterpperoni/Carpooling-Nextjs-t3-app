@@ -70,8 +70,7 @@ export const groupMemberRouter = createTRPCRouter({
                     where: { id: input.id },
                     data: {
                         groupId: input.groupId,
-                        userId: input.userId,
-
+                        userId: input.userId
                     },
                 });
             }),
