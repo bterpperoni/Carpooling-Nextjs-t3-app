@@ -10,7 +10,9 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
   
-
+/* ------------------------------------------------------------------------------------------------------------------------
+------------------------- Page to display all groups of a user ------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------ */
 export default function UserGroup() {
     // Create group editing state
     const [isCreating, setIsCreating] = useState(false);

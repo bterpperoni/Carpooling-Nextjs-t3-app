@@ -6,7 +6,9 @@ import Button from "$/lib/components/button/Button";
 import LayoutMain from '$/lib/components/layout/LayoutMain';
 import TravelCard from "$/lib/components/travel/TravelCard";
 
-
+/* ------------------------------------------------------------------------------------------------------------------------
+------------------------- Page to display a specifig group and its travels ------------------------------------------------  
+------------------------------------------------------------------------------------------------------------------------ */
 export default function Group() {
 // State
     // Session recovery
@@ -52,38 +54,7 @@ if(sessionData)
                                     {travels?.map((travel) => (
                                         <TravelCard travel={travel} driver={group?.createdBy} key={travel.id} goToTravel={() => push(`/rides/${travel.id}`)} />
 
-                                        // <div key={travel.id} className="border-b-2">
-                                        //     <div className="flex flex-row">
-                                        //         <div className="flex flex-col w-[50%]">
-                                        //             <div className="mb-4 cursor-pointer">
-                                        //                 <label htmlFor="travelName" className="mr-2 font-bold text-[18px] text-left">
-                                        //                    Départ
-                                        //                 </label>
-                                        //                 <div id="travelName">{travel.departure}</div>
-                                        //             </div>
-                                        //             <div className="">
-                                        //                 <label htmlFor="travelDate" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
-                                        //                     Date
-                                        //                 </label>
-                                        //                 <div id="travelDate">{travel.destination}</div>
-                                        //             </div>
-                                        //         </div>
-                                        //         <div className="flex flex-col w-[50%]">
-                                        //             <div className="mb-4">
-                                        //                 <label htmlFor="travelCampus" className="mr-2 font-bold text-[18px] text-left">
-                                        //                     Destination
-                                        //                 </label>
-                                        //                 <div id="travelCampus"></div>
-                                        //             </div>
-                                        //             <div className="">
-                                        //                 <label htmlFor="travelCampus" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
-                                        //                     Conducteur
-                                        //                 </label>
-                                        //                 <div id="travelCampus">{travel.driverId}</div>
-                                        //             </div>
-                                        //         </div>
-                                        //     </div>
-                                        // </div>
+                                        
                                     ))}
                             </div>
                             <Button 

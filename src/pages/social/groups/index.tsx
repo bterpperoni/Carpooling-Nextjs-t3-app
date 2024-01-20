@@ -11,7 +11,9 @@ import { useState } from "react";
 import type { Group } from "@prisma/client";
 import GroupForm from "$/lib/components/form/GroupForm";
 
-
+/* ------------------------------------------------------------------------------------------------------------------------
+------------------------- Page to display all groups and search for a specific group --------------------------------------
+------------------------------------------------------------------------------------------------------------------------ */
 export default function Groups() {
     // Create group editing state
     const [isCreating, setIsCreating] = useState(false);
@@ -96,7 +98,9 @@ export default function Groups() {
                                 <div className="text-[var(--pink-g0)] flex flex-row justify-center">
                                     <div className="m-6 text-2xl bold text-center">
                                         Trouves des étudiants qui se rendent au même établissement.
-                                        <p className="text-xl text-center">Crée un groupe ou rejoind en un et commences à covoiturer. </p>
+                                        <p className="text-xl text-center">
+                                            Crée un groupe ou rejoind en un et commences à covoiturer. 
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -157,7 +161,8 @@ export default function Groups() {
                                                                             border-2
                                                                             border-[var(--pink-g1)]
                                                                             bg-[var(--purple-g3)]
-                                                                            text-center">
+                                                                            text-center
+                                                                            cursor-not-allowed">
                                                                 Demande en attente..
                                                             </p>   
                                                             )}
@@ -188,8 +193,6 @@ export default function Groups() {
                         </div>
                     </div>
                 </div>
-                
-
                 {/* --------------------------------------- Form to create à new group ------------------------------------------- */}
                 {isCreating && (
                     <GroupForm cancelButtonHandler={() => {setIsCreating(false)}} />
