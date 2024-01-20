@@ -101,20 +101,22 @@ model Passenger {
 
 // -------------------------------------------GROUP & GROUPMEMBER------------------------------------------------
 model Group {
-  id         Int           @id @default(autoincrement())
-  name       String
-  campus     String
-  createdBy  String
-  visibility Boolean       @default(false)
-  travels    Travel[]      @relation("GroupTravels")
-  creator    User          @relation("GroupCreatedBy", fields: [createdBy], references: [name])
-  members    GroupMember[] @relation("GroupMember")
+  id               Int           @id @default(autoincrement())
+  name             String
+  campus           String
+  createdBy        String
+  visibility       Boolean       @default(false)
+  acceptInvitation Boolean?      @default(false)
+  travels          Travel[]      @relation("GroupTravels")
+  creator          User          @relation("GroupCreatedBy", fields: [createdBy], references: [name])
+  members          GroupMember[] @relation("GroupMember")
 }
 
 model GroupMember {
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   groupId    Int
   userId     String
-  group      Group  @relation("GroupMember", fields: [groupId], references: [id])
-  userMember User   @relation("UserGroupMember", fields: [userId], references: [id])
+  validated  Boolean @default(true)
+  group      Group   @relation("GroupMember", fields: [groupId], references: [id])
+  userMember User    @relation("UserGroupMember", fields: [userId], references: [id])
 }

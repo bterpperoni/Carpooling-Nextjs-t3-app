@@ -22,10 +22,12 @@ export const groupMemberRouter = createTRPCRouter({
             }),
     
         groupMemberListByUser: protectedProcedure
-            .input(z.object({ userId: z.string() }))
+            .input(z.object({ userId: z.string(), validated: z.boolean() }))
             .query(async ({ ctx, input }) => {
                 const groupMemberList =  ctx.db.groupMember.findMany({
-                    where: { userId: input.userId },
+                    where: { userId: input.userId,
+                             validated: true 
+                            },
                 });
                 return groupMemberList;
             }),
@@ -42,7 +44,8 @@ export const groupMemberRouter = createTRPCRouter({
             .input(z.object(
                 { 
                     groupId: z.number(),
-                    userId: z.string()
+                    userId: z.string(),
+                    validated: z.boolean()  
                     
                 }))
             .mutation(async ({ ctx, input }) => {
@@ -51,7 +54,8 @@ export const groupMemberRouter = createTRPCRouter({
                 return ctx.db.groupMember.create({
                     data: {
                         groupId: input.groupId,
-                        userId: input.userId
+                        userId: input.userId,
+                        validated: input.validated
                     },
                 });
             }),
@@ -61,7 +65,8 @@ export const groupMemberRouter = createTRPCRouter({
                 { 
                     id: z.number(),
                     groupId: z.number(),
-                    userId: z.string()                    
+                    userId: z.string(),
+                    validated: z.boolean()                    
                 }))
             .mutation(async ({ ctx, input }) => {
                 // simulate a slow db call
@@ -70,7 +75,8 @@ export const groupMemberRouter = createTRPCRouter({
                     where: { id: input.id },
                     data: {
                         groupId: input.groupId,
-                        userId: input.userId
+                        userId: input.userId,
+                        validated: input.validated
                     },
                 });
             }),

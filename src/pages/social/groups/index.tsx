@@ -8,6 +8,7 @@ import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
 import { data, getCampusAbbr  } from "$/utils/data";
+import { Group } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
@@ -25,8 +26,6 @@ export default function Groups() {
     const [groupName, setGroupName] = useState<string>('');
     // Slider state (public/private group)
     const [isPrivate, setisPrivate] = useState<boolean>(false);
-    // Is user Member of a group
-    const [isMember, setIsMember] = useState<boolean>(false);
     // Session recovery
     const { data: sessionData } = useSession();
     // Get groups
@@ -36,7 +35,7 @@ export default function Groups() {
     // Create group
     const { data: createdGroup, mutate: createGroup } = api.group.create.useMutation();
     // Group list by user
-    const { data: userGroups, refetch } = api.groupMember.groupMemberListByUser.useQuery({userId: sessionData?.user.id ?? ''}, {enabled: sessionData?.user !== undefined});
+    const { data: userGroups } = api.groupMember.groupMemberListByUser.useQuery({userId: sessionData?.user.id ?? '', validated: true}, {enabled: sessionData?.user !== undefined});
     // Join group
     const { mutate: createMemberGroup } = api.groupMember.create.useMutation();
 
@@ -48,7 +47,8 @@ export default function Groups() {
             if(sessionData){
                 const groupMember = {
                     userId: sessionData.user.id,
-                    groupId: createdGroup.id
+                    groupId: createdGroup.id,
+                    validated: true
                 }
                 createMemberGroup(groupMember);
             }
@@ -60,7 +60,8 @@ export default function Groups() {
 
     // Check if the group is public or private
     const handleCheck = () => {
-        setisPrivate(!isPrivate);
+        if(isPrivate) setisPrivate(!isPrivate);
+        else setisPrivate(!isPrivate);
     }
 
     // Save group
@@ -81,15 +82,31 @@ export default function Groups() {
     }
 
     // Join group
-    function joinGroup(id: number){
+    function joinGroup(gr: Group){
         if(sessionData){
-            const groupMember = {
-                userId: sessionData.user.id,
-                groupId: id
+            if(!gr.visibility){
+                const groupMember = {
+                    userId: sessionData.user.id,
+                    groupId: gr.id,
+                    validated: true
+                }
+                createMemberGroup(groupMember);
+                setTimeout(() => {
+                    alert("Groupe rejoind avec succès !")
+                    router.reload();
+                }, 1000)
+            }else{
+                const groupMember = {
+                    userId: sessionData.user.id,
+                    groupId: gr.id,
+                    validated: false
+                }
+                createMemberGroup(groupMember);
+                setTimeout(() => {
+                    alert("Demande pour rejoindre le groupe envoyé avec succès !")
+                    router.reload();
+                }, 1000)
             }
-            createMemberGroup(groupMember);
-            alert("Groupe rejoind avec succès !")
-            router.reload();
         }
     }
     // ------------------------------- Render ------------------------------------------------------
@@ -128,11 +145,11 @@ export default function Groups() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-white border-2 border-indigo-500">
+                            <div className="border-2 border-indigo-500">
                             {/* ---------------------------------- Group Card ----------------------------------------- */}
                                 {groupsData?.map((group) => (
                                     <div key={group.id} className=" border-y-2 
-                                                                    text-[var(--pink-g1)] 
+                                                                    text-[var(--pink-g1)]
                                                                     hover:bg-[var(--pink-g1)] 
                                                                     hover:text-white p-6">
                                         <div className="flex flex-row">
@@ -141,16 +158,16 @@ export default function Groups() {
                                                     <label htmlFor="groupName" className="mr-2 font-bold text-[18px] text-left">
                                                         Nom du groupe 
                                                     </label>
-                                                    <div id="groupName">{group.name}</div>
+                                                    <div id="groupName" className="text-white">{group.name}</div>
                                                 </div>
                                                 <div className="">
                                                     <label htmlFor="groupPrivacy" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
                                                         Accessibilité
                                                     </label>
                                                     {group.visibility ? (
-                                                        <div>Sur invitation</div>
+                                                        <div className="text-white">Sur invitation</div>
                                                     ) : (  
-                                                        <div>Public</div>
+                                                        <div className="text-white">Public</div>
                                                     )}
                                                 </div>
                                             </div>
@@ -159,7 +176,7 @@ export default function Groups() {
                                                     <label htmlFor="groupCampus" className="mr-2 font-bold text-[18px] text-left">
                                                         Destination
                                                     </label>
-                                                    <div>{getCampusAbbr(group.campus)}</div>
+                                                    <div className="text-white">{getCampusAbbr(group.campus)}</div>
                                                 </div>
                                                 <div className="flex-col flex">
                                                     {userGroups?.find((userGroup) => userGroup.groupId === group.id) ? (
@@ -180,7 +197,7 @@ export default function Groups() {
                                                     ) : (
                                                         <div className="flex flex-col">
                                                             <Button 
-                                                                onClick={() => joinGroup(group.id)}
+                                                                onClick={() => joinGroup(group)}
                                                                 className=" bg-[var(--purple-g3)] 
                                                                             hover:bg-white 
                                                                             hover:text-[var(--pink-g1)] 

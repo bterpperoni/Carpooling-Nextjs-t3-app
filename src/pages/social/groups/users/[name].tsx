@@ -6,6 +6,7 @@ import { api } from '$/utils/api';
 import { getCampusAbbr } from '$/utils/data';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { set } from 'zod';
   
 
 export default function UserGroup() {
@@ -19,7 +20,12 @@ export default function UserGroup() {
     // Get user groups 
     const { data: userGroups } = api.group.groupListByUser.useQuery({name: name}, {enabled: sessionData?.user !== undefined});
     // Delete group
-    const { mutate: deleteGroup } = api.group.delete.useMutation();
+    // const { mutate: deleteGroup } = api.group.delete.useMutation();
+
+    // Handlers
+    // const handleDelete = (id: number) => {
+    //     deleteGroup({id: id});
+    // }
 
     if(sessionData) 
     return (
@@ -64,14 +70,8 @@ export default function UserGroup() {
                                                     <div>{getCampusAbbr(group.campus)}</div>
                                                 </div>
                                                 <div className='flex flex-col w-max'>
-                                                    <Button 
-                                                        onClick={() => {
-                                                            deleteGroup({
-                                                                id: group.id
-                                                            });
-                                                            alert('Le groupe a bien été supprimé');
-                                                            window.location.reload();
-                                                        }}
+                                                    {/* <Button 
+                                                        onClick={() => handleDelete(group.id)}
                                                         className=" bg-[var(--purple-g2)] 
                                                                     hover:bg-white
                                                                     hover:text-[var(--purple-g2)] 
@@ -81,7 +81,7 @@ export default function UserGroup() {
                                                                     mb-2
                                                                     rounded-md">
                                                             Supprimer le groupe
-                                                    </Button>
+                                                    </Button> */}
                                                     <Button 
                                                         onClick={() => window.location.href = `/social/groups/${group.id}`}
                                                         className=" bg-[var(--purple-g2)] 
