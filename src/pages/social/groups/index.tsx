@@ -24,7 +24,10 @@ export default function Groups() {
     });
 
     // Group list by user
-    const { data: userGroups } = api.groupMember.groupMemberListByUser.useQuery({userId: sessionData?.user.id ?? '', validated: true}, {enabled: sessionData?.user !== undefined});
+    const { data: userGroups } = api.groupMember.groupMemberListByUser.useQuery(
+        { userId: sessionData?.user.id ?? '' },
+        { enabled: sessionData?.user !== undefined }
+    );
     // Join group
     const { mutate: createMemberGroup } = api.groupMember.create.useMutation();
 
@@ -133,7 +136,8 @@ export default function Groups() {
                                                 <div className="flex-col flex">
                                                     {userGroups?.find((userGroup) => userGroup.groupId === group.id) ? (
                                                         <div className="flex flex-col">
-                                                            {userGroups.find((userGroup) => userGroup.groupId === group.id)?.validated === false ? (
+                                                            {userGroups.find((userGroup) => userGroup.groupId === group.id && userGroup.validated
+                                                            ) ? (
                                                                 <Button 
                                                                 onClick={() => router.push(`/social/groups/${group.id}`)}
                                                                 className=" bg-[var(--purple-g3)] 
@@ -188,7 +192,7 @@ export default function Groups() {
 
                 {/* --------------------------------------- Form to create à new group ------------------------------------------- */}
                 {isCreating && (
-                    <GroupForm cancelButtonHandler={() => {setIsCreating(false)}}/>
+                    <GroupForm cancelButtonHandler={() => {setIsCreating(false)}} />
                 )}
             </LayoutMain>
         );

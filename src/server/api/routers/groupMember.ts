@@ -22,12 +22,10 @@ export const groupMemberRouter = createTRPCRouter({
             }),
     
         groupMemberListByUser: protectedProcedure
-            .input(z.object({ userId: z.string(), validated: z.boolean() }))
+            .input(z.object({ userId: z.string()}))
             .query(async ({ ctx, input }) => {
                 const groupMemberList =  ctx.db.groupMember.findMany({
-                    where: { userId: input.userId,
-                             validated: true 
-                            },
+                    where: { userId: input.userId}
                 });
                 return groupMemberList;
             }),

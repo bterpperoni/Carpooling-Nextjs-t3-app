@@ -118,7 +118,6 @@ export default function UserGroup() {
                                 )}
                             </div>
             </LayoutMain>
-
         </>
     );
 }

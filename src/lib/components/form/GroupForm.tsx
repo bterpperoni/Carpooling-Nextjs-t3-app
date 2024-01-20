@@ -76,12 +76,14 @@ export default function GroupForm({ group, cancelButtonHandler }:
             }
             setTimeout(() => {
                 alert('Groupe créé !');
+                window.location.reload();
             }, 1000)
         }
 
         if(updatedGroup){
             setTimeout(() => {
                 alert('Groupe modifié !');
+                window.location.reload();
             }, 1000)
         }
     }, [createdGroup, updatedGroup])
@@ -119,8 +121,9 @@ export default function GroupForm({ group, cancelButtonHandler }:
                                         Public
                                     </label>
                                 </div>
-                                {/* ------------------------------ BUTTON FORM ---------------------------------------------------- */}
-                                <div className="flex flex-row justify-between">
+                            </form>
+                            {/* ------------------------------ BUTTON FORM ---------------------------------------------------- */}
+                            <div className="flex flex-row justify-between">
                                     <Button
                                         type="button"
                                         onClick={cancelButtonHandler}
@@ -135,8 +138,7 @@ export default function GroupForm({ group, cancelButtonHandler }:
                                                     border-2 text-white px-3 py-2 rounded-md">
                                         {group ? "Modifier" : "Créer"}
                                     </Button>
-                                </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </>
