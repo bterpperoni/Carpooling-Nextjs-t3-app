@@ -83,10 +83,6 @@ h2{
     color: white!important;
 }
 
-label{
-    cursor: pointer;
-}
-
 @media screen and (max-width: 768px) {
 
     h1{

@@ -53,17 +53,25 @@ const All: React.FC = () => {
                         <div className=" flex flex-row items-center justify-between mt-4 mx-4">
                             
                         </div>
-                        <div className='flex flex-col items-center'>  
+                            <div className='flex flex-col items-center'>  
                                 <div className='border-b-t-2 border-0 border-white'>   
                                     <div className='md:text-2xl text-xl mx-12 bg-[var(--purple-g3)] text-center 
                                                     rounded-[5%] p-4 mb-4 text-fuchsia-700 border-fuchsia-700 border-y-2'>                    
                                         <p>Trouves le trajet qui te correspond</p>
                                     </div>
+                                    <div className="col-span-1 flex justify-center items-center">
+                                        <p className="text-white text-base m-4 border-2 border-white px-4 py-2 rounded-full">
+                                        <label htmlFor="SliderDsiplay" className="mx-2 relative top-1">
+                                            Type d'affichage : {checked ? 'List' : 'Map'}
+                                        </label>
+                                        <Slider check={handleCheck} checked={checked} />
+                                    </p>
+                                    </div>
                                 </div>
-                        </div>
+                            </div>
                     </div>
                     <div className='block flex-col'>
-                        <div className="grid grid-cols-3 grid-flow-col gap-12 items-center m-2 justify-items-center">
+                        <div className="grid grid-cols-2 grid-flow-col gap-12 items-center m-2 justify-items-center">
                             <div className='col-span-1 relative ml-6'>
                                 <span className="text-fuchsia-700 text-xl text-sm mr-2">Filter</span>
                                 <select className="border rounded-md px-3 py-2">
@@ -71,14 +79,6 @@ const All: React.FC = () => {
                                     <option value="active">Destinations</option>
                                     <option value="inactive">Autres</option>
                                 </select>
-                            </div>
-                            <div className="col-span-1 text-center space-y-4 > *">
-                                <p className="text-white text-base m-4 border-2 border-white px-4 py-2 rounded-full">
-                                    <label htmlFor="SliderDsiplay" className="mx-2">
-                                        {checked ? 'List' : 'Map'}
-                                    </label>
-                                    <Slider check={handleCheck} checked={checked} />
-                                </p>
                             </div>
                             <Button 
                                 onClick={() => window.location.href='/rides/new'} 

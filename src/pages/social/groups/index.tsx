@@ -131,7 +131,7 @@ export default function Groups() {
                                                 </div>
                                             </div>
                                             <div className="flex flex-col w-[50%]">
-                                                <div className="mb-4">
+                                                <div className="mb-4 ml-2">
                                                     <label htmlFor="groupCampus" className="mr-2 font-bold text-[18px] text-left">
                                                         Destination
                                                     </label>
@@ -143,8 +143,8 @@ export default function Groups() {
                                                             {userGroups.find((userGroup) => userGroup.groupId === group.id && userGroup.validated
                                                             ) ? (
                                                                 <Button 
-                                                                onClick={() => router.push(`/social/groups/${group.id}`)}
-                                                                className=" bg-[var(--purple-g3)] 
+                                                                    onClick={() => router.push(`/social/groups/${group.id}`)}
+                                                                    className=" bg-[var(--purple-g3)] 
                                                                             hover:bg-white 
                                                                             hover:text-[var(--pink-g1)] 
                                                                             border-[var(--pink-g1)] 
@@ -153,7 +153,7 @@ export default function Groups() {
                                                                             px-3 py-2 
                                                                             rounded-md">
                                                                 Voir le groupe
-                                                            </Button>
+                                                                </Button>
                                                             ) : (
                                                              <p className=" text-white
                                                                             px-3 py-2
