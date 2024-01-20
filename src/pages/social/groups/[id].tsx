@@ -1,13 +1,11 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { api } from "$/utils/api";
-import { getCampusFullName } from '$/utils/data';
 import Button from "$/lib/components/button/Button";
 import LayoutMain from '$/lib/components/layout/LayoutMain';
-import TravelCard from "$/lib/components/travel/TravelCard";
 
 /* ------------------------------------------------------------------------------------------------------------------------
-------------------------- Page to display a specifig group and its travels ------------------------------------------------  
+------------------------- Page to display a specifig group ----------------------------------------------------------------  
 ------------------------------------------------------------------------------------------------------------------------ */
 export default function Group() {
 // State
@@ -47,14 +45,45 @@ if(sessionData)
                                 </div>
                             </div>
                             <div className="border-[var(--purple-g2)] border-2 w-[90%] h-[90vh]">
-                                <label htmlFor="campusName" className="border-b-2">Destination </label>
-                                    <div id="campusName">
-                                        {getCampusFullName(group?.campus ?? '')}
-                                    </div>
+                                {/* <label htmlFor="campusName" className="border-b-2">Destination </label>
+                                <div id="campusName">
+                                    {getCampusFullName(group?.campus ?? '')}
+                                </div> */}
                                     {travels?.map((travel) => (
-                                        <TravelCard travel={travel} driver={group?.createdBy} key={travel.id} goToTravel={() => push(`/rides/${travel.id}`)} />
+                                        // <TravelCard travel={travel} driver={group?.createdBy} key={travel.id} goToTravel={() => push(`/rides/${travel.id}`)} />
 
-                                        
+                                        <div key={travel.id} className="border-b-2">
+                                            <div className="flex flex-row">
+                                                <div className="flex flex-col w-[50%]">
+                                                    <div className="mb-4 cursor-pointer">
+                                                        <label htmlFor="travelName" className="mr-2 font-bold text-[18px] text-left">
+                                                           Départ
+                                                        </label>
+                                                        <div id="travelName">{travel.departure}</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-col w-[50%]">
+                                                    <div className="mb-4">
+                                                        <label htmlFor="travelCampus" className="mr-2 font-bold text-[18px] text-left">
+                                                            Participants
+                                                        </label>
+                                                        <div id="travelCampus">(en dur) 2 taken on 3 places</div>
+                                                    </div>
+                                                    <div className="">
+                                                        <label htmlFor="travelCampus" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
+                                                            Conducteur
+                                                        </label>
+                                                        <div id="travelCampus">{travel.driverId}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="">
+                                                        <label htmlFor="travelDate" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
+                                                            Date
+                                                        </label>
+                                                        <div id="travelDate">{travel.departureDateTime.toLocaleDateString()} à {travel.departureDateTime.toLocaleTimeString()}</div>
+                                            </div>
+                                        </div>
                                     ))}
                             </div>
                             <Button 

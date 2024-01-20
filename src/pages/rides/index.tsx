@@ -84,7 +84,7 @@ const All: React.FC = () => {
                                 onClick={() => window.location.href='/rides/new'} 
                                 className="col-span-1 bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-full text-base w-max">
-                                    Publier
+                                    Proposer un trajet
                             </Button>
                         </div>
                         {/* ------------------------------------- display list --------------------------------------------- */}

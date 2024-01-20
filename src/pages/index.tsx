@@ -21,8 +21,10 @@ export default function Home() {
                   {/* Session */}
                     {session && (
                       <>
+                      <div className='border-2 border-white m-4 flex flex-col items-center tet-center'>
                         <h1>Logged in as {session.user.name}</h1>
                         <h2>Session expires in {session.expires}</h2>
+                      </div>
                       </>
                     )}
                 </div>

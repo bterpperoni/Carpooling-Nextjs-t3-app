@@ -59,7 +59,7 @@ export const travelRouter = createTRPCRouter({
             await new Promise((resolve) => setTimeout(resolve, 1000));
             return ctx.db.travel.create({
                 data: {
-                    driverId: ctx.session.user.id,
+                    driverId: input.driverId,
                     departure: input.departure,
                     departureLatitude: input.departureLatitude,
                     departureLongitude: input.departureLongitude,
@@ -97,7 +97,7 @@ export const travelRouter = createTRPCRouter({
             return ctx.db.travel.update({
                 where: { id: input.id },
                 data: {
-                    driverId: ctx.session.user.id,
+                    driverId: input.driverId,
                     departure: input.departure,
                     departureLatitude: input.departureLatitude,
                     departureLongitude: input.departureLongitude,

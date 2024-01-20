@@ -26,7 +26,7 @@ export default function Detail() {
     // Used to delete travel
     const { mutate: deleteTravel } = api.travel.delete.useMutation();
     // Set if travel can be edited
-    const canEdit = sessionData?.user?.id === travel?.driverId;
+    const canEdit = sessionData?.user?.name === travel?.driverId;
     
     
     /* -------------------------------------------------------------------------------------------- */
@@ -92,7 +92,7 @@ export default function Detail() {
     }, [travelDeleted]);
    
 
-  if(!travel) return <div className="text-white m-6 text-3xl">Travel not found</div>
+  if(!travel) return <div className="text-white m-6 text-3xl m-4 w-screen text-center">Travel not found</div>
   return (
     <>
         <LayoutMain>

@@ -110,7 +110,7 @@ export default function RideForm({ travel, isForGroup, groupId }:
                             return;
                         }else{
                                 createTravel({
-                                    driverId: sessionData.user.id,
+                                    driverId: sessionData.user.name,
                                     departure: departure,
                                     departureLatitude: departureLatitude ?? 0,
                                     departureLongitude: departureLongitude ?? 0,
