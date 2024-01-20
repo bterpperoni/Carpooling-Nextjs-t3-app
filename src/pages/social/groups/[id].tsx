@@ -4,6 +4,7 @@ import { api } from "$/utils/api";
 import { getCampusFullName } from '$/utils/data';
 import Button from "$/lib/components/button/Button";
 import LayoutMain from '$/lib/components/layout/LayoutMain';
+import TravelCard from "$/lib/components/travel/TravelCard";
 
 
 export default function Group() {
@@ -15,7 +16,8 @@ export default function Group() {
     const id = query.id;
     // Get group by id
     const {data: group} = api.group.groupById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
-    
+    // Get trips by group id
+    const {data: travels} = api.travel.travelByGroup.useQuery({groupId: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
 // Handlers
 
 // Render
@@ -23,15 +25,11 @@ if(sessionData)
     return (
         <>
             <LayoutMain>
-                    <h1 className="text-[var(--pink-g0)] flex flex-row justify-center">{group?.name}</h1>
                     <div className="flex justify-center">                    
                         <div className="bg-white w-[90%] h-[85vh] flex flex-col items-center">
                             <div className=" flex flex-row items-center">
                                 <div className="border-2 text-white p-3 bg-[var(--purple-g2)] my-2 mx-4">
-                                    <label htmlFor="campusName" className="border-b-2">Destination </label>
-                                    <div id="campusName">
-                                        {getCampusFullName(group?.campus ?? '')}
-                                    </div>
+                                    <h1 className="text-[var(--pink-g0)] flex flex-row justify-center">{group?.name}</h1>
                                 </div>
                                 <div className="cursor-pointer mx-4">
                                     <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -46,13 +44,47 @@ if(sessionData)
                                     </svg>
                                 </div>
                             </div>
-                            <div className="border-[var(--purple-g2)] border-2 w-[90%] h-[100vh]">
-                                <p className="text-black text-xl">
-                                    Aucun trajet prévu pour ce groupe
-                                </p>
-                                <p className="text-black text-xl">
-                                    Sois le premier à proposer un trajet
-                                </p>
+                            <div className="border-[var(--purple-g2)] border-2 w-[90%] h-[90vh]">
+                                <label htmlFor="campusName" className="border-b-2">Destination </label>
+                                    <div id="campusName">
+                                        {getCampusFullName(group?.campus ?? '')}
+                                    </div>
+                                    {travels?.map((travel) => (
+                                        <TravelCard travel={travel} driver={group?.createdBy} key={travel.id} goToTravel={() => push(`/rides/${travel.id}`)} />
+
+                                        // <div key={travel.id} className="border-b-2">
+                                        //     <div className="flex flex-row">
+                                        //         <div className="flex flex-col w-[50%]">
+                                        //             <div className="mb-4 cursor-pointer">
+                                        //                 <label htmlFor="travelName" className="mr-2 font-bold text-[18px] text-left">
+                                        //                    Départ
+                                        //                 </label>
+                                        //                 <div id="travelName">{travel.departure}</div>
+                                        //             </div>
+                                        //             <div className="">
+                                        //                 <label htmlFor="travelDate" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
+                                        //                     Date
+                                        //                 </label>
+                                        //                 <div id="travelDate">{travel.destination}</div>
+                                        //             </div>
+                                        //         </div>
+                                        //         <div className="flex flex-col w-[50%]">
+                                        //             <div className="mb-4">
+                                        //                 <label htmlFor="travelCampus" className="mr-2 font-bold text-[18px] text-left">
+                                        //                     Destination
+                                        //                 </label>
+                                        //                 <div id="travelCampus"></div>
+                                        //             </div>
+                                        //             <div className="">
+                                        //                 <label htmlFor="travelCampus" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
+                                        //                     Conducteur
+                                        //                 </label>
+                                        //                 <div id="travelCampus">{travel.driverId}</div>
+                                        //             </div>
+                                        //         </div>
+                                        //     </div>
+                                        // </div>
+                                    ))}
                             </div>
                             <Button 
                                 onClick={() => push(`/social/groups/rides/${id as string}`)}

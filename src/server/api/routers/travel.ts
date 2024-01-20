@@ -18,6 +18,17 @@ export const travelRouter = createTRPCRouter({
         return travelList;
     }),
 
+    travelByGroup: protectedProcedure
+        .input(z.object({ groupId: z.number() }))
+        .query(async ({ ctx, input }) => {
+            return ctx.db.travel.findMany({
+                where: {
+                    groupId: input.groupId,
+                    isForGroup: true
+                }
+            });
+        }),
+
     travelById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(async ({ ctx, input }) => {

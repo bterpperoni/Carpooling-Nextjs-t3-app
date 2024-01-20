@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @next/next/no-img-element */
 import Button from '$/lib/components/button/Button';
 import LayoutMain from '$/lib/components/layout/LayoutMain';
@@ -9,6 +10,7 @@ import { useRouter } from 'next/router';
 
 export default function UserGroup() {
 
+
     // Recovery of the session 
     const { data: sessionData } = useSession();
     // Get user name from url
@@ -16,6 +18,8 @@ export default function UserGroup() {
     const name = query.name as string;
     // Get user groups 
     const { data: userGroups } = api.group.groupListByUser.useQuery({name: name}, {enabled: sessionData?.user !== undefined});
+    // Delete group
+    const { mutate: deleteGroup } = api.group.delete.useMutation();
 
     if(sessionData) 
     return (
@@ -61,7 +65,13 @@ export default function UserGroup() {
                                                 </div>
                                                 <div className='flex flex-col w-max'>
                                                     <Button 
-                                                        onClick={() => alert('Modify user group - Not implemented yet')}
+                                                        onClick={() => {
+                                                            deleteGroup({
+                                                                id: group.id
+                                                            });
+                                                            alert('Le groupe a bien été supprimé');
+                                                            window.location.reload();
+                                                        }}
                                                         className=" bg-[var(--purple-g2)] 
                                                                     hover:bg-white
                                                                     hover:text-[var(--purple-g2)] 
@@ -70,7 +80,7 @@ export default function UserGroup() {
                                                                     px-3 py-2
                                                                     mb-2
                                                                     rounded-md">
-                                                            Modifier le groupe
+                                                            Supprimer le groupe
                                                     </Button>
                                                     <Button 
                                                         onClick={() => window.location.href = `/social/groups/${group.id}`}
@@ -89,7 +99,6 @@ export default function UserGroup() {
                                     </div>
                                 ))}
                             </div>
-                            {/* -------------------- Update group form --------------------------- */}
             </LayoutMain>
 
         </>
