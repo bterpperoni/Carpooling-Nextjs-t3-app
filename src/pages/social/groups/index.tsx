@@ -25,6 +25,8 @@ export default function Groups() {
     const [groupName, setGroupName] = useState<string>('');
     // Slider state (public/private group)
     const [isPrivate, setisPrivate] = useState<boolean>(false);
+    // Is user Member of a group
+    const [isMember, setIsMember] = useState<boolean>(false);
     // Session recovery
     const { data: sessionData } = useSession();
     // Get groups
@@ -33,12 +35,24 @@ export default function Groups() {
     });
     // Create group
     const { data: createdGroup, mutate: createGroup } = api.group.create.useMutation();
+    // Group list by user
+    const { data: userGroups, refetch } = api.groupMember.groupMemberListByUser.useQuery({userId: sessionData?.user.id ?? ''}, {enabled: sessionData?.user !== undefined});
+    // Join group
+    const { mutate: createMemberGroup } = api.groupMember.create.useMutation();
+
     // Get router
     const router = useRouter();
     // ------------------------------- Handlers ------------------------------------------------------
     useEffect(() => {
         if(createdGroup){
             setTimeout(() => {
+                if(sessionData){
+                    const groupMember = {
+                        userId: sessionData.user.id,
+                        groupId: createdGroup.id
+                    }
+                    createMemberGroup(groupMember);
+                }
                 alert('Groupe créé !');
             }, 1000)
         }
@@ -63,6 +77,18 @@ export default function Groups() {
                 createGroup(group);
                 setIsCreating(false);
             }
+        }
+    }
+
+    // Join group
+    function joinGroup(id: number){
+        if(sessionData){
+            const groupMember = {
+                userId: sessionData.user.id,
+                groupId: id
+            }
+            createMemberGroup(groupMember);
+            refetch;
         }
     }
     // ------------------------------- Render ------------------------------------------------------
@@ -106,10 +132,8 @@ export default function Groups() {
                                 {groupsData?.map((group) => (
                                     <div key={group.id} className=" border-y-2 
                                                                     text-[var(--pink-g1)] 
-                                                                    cursor-pointer 
                                                                     hover:bg-[var(--pink-g1)] 
-                                                                    hover:text-white p-6"
-                                                        onClick={() => router.push(`/social/groups/${group.id}`)}>
+                                                                    hover:text-white p-6">
                                         <div className="flex flex-row">
                                             <div className="flex flex-col w-[50%]">
                                                 <div className="mb-4 cursor-pointer">
@@ -142,6 +166,18 @@ export default function Groups() {
                                                     </label>
                                                     <div>{group.createdBy}</div>
                                                 </div>
+                                                {userGroups?.find((userGroup) => userGroup.groupId === group.id) && (
+                                                    <div className="flex flex-col">
+                                                        <Button 
+                                                            onClick={() => joinGroup(group.id)}
+                                                            className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                                            border-2 text-white px-3 py-2 rounded-md">
+                                                            Voir le groupe
+                                                        </Button>
+                                                    </div>
+                                                
+                                                )}
+                                                
                                             </div>
                                         </div>   
                                     </div>
