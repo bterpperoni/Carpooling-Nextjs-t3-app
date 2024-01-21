@@ -2,11 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("theme.css");
-/* @import url('../components/button/slider/Slider.css'); */
+@import url("colors.css");
 
 html {
-    background: var(--purple-g3);
+    background: var(--purple-g3)!important;
     font-family: 'Open Sans', sans-serif;
     position: static;
 }

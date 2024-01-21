@@ -8,13 +8,13 @@ export default function LayoutMain({ children }: { children: React.ReactNode }) 
     return (
         <>
             <Head>
-                <title>CARHEH</title>
-                <meta name="description" content="CARHEH Carpooling for students from Mons" />
+                <title>Carheh</title>
+                <meta name="description" content="Carheh Carpooling for students from Mons" />
                 <meta name="viewport" content="initial-scale=1, width=device-width" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <NavBar />
-            <main className="flex flex-col">
+            <main className="flex flex-col bg-[var(--purple-g3)]">
                 {children}
             </main>
             {/* After : add footer /!\ */}
