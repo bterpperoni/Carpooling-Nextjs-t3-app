@@ -79,7 +79,7 @@ export const groupRouter = createTRPCRouter({
         }),
 
     delete: protectedProcedure
-        .input(z.object({ id: z.number() }))
+        .input(z.object({ id: z.number()}))
         .mutation(async ({ ctx, input }) => {
             // simulate a slow db call
             await new Promise((resolve) => setTimeout(resolve, 1000));

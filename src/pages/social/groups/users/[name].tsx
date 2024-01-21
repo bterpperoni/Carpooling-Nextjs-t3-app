@@ -8,6 +8,7 @@ import { getCampusAbbr } from '$/utils/data';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import type { Group } from '@prisma/client';
 
   
 /* ------------------------------------------------------------------------------------------------------------------------
@@ -25,13 +26,17 @@ export default function UserGroup() {
     // Get user groups 
     const { data: userGroups } = api.group.groupListByUser.useQuery({name: name}, {enabled: sessionData?.user !== undefined});
     // Delete group
-    // const { mutate: deleteGroup } = api.group.delete.useMutation();
+    const { mutate: deleteGroup } = api.group.delete.useMutation();
 
     // Handlers
-    // const handleDelete = (id: number) => {
-    //     deleteGroup({id: id});
-    // }
+    const handleDelete = (gr: Group) => {
+        deleteGroup({id: gr.id});
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    }
 
+    // Render
     if(sessionData) 
     return (
         <>
@@ -87,28 +92,30 @@ export default function UserGroup() {
                                                     <div className="text-white">{getCampusAbbr(group.campus)}</div>
                                                 </div>
                                                 <div className='flex flex-col w-max'>
-                                                    {/* <Button 
-                                                        onClick={() => handleDelete(group.id)}
-                                                        className=" bg-[var(--purple-g2)] 
-                                                                    hover:bg-white
-                                                                    hover:text-[var(--purple-g2)] 
-                                                                    border-2 
-                                                                    text-white 
-                                                                    px-3 py-2
-                                                                    mb-2
-                                                                    rounded-md">
-                                                            Supprimer le groupe
-                                                    </Button> */}
                                                     <Button 
                                                         onClick={() => window.location.href = `/social/groups/${group.id}`}
-                                                        className=" bg-[var(--purple-g2)] 
+                                                        className=" bg-[var(--purple-g3)] 
                                                                     hover:bg-white
-                                                                    hover:text-[var(--purple-g2)] 
+                                                                    hover:text-[var(--pink-g1)]
+                                                                    border-[var(--pink-g1)]  
                                                                     border-2 
                                                                     text-white 
                                                                     px-3 py-2
                                                                     rounded-md">
                                                             Voir le groupe
+                                                    </Button>
+                                                    <Button 
+                                                        onClick={() => handleDelete(group)}
+                                                        className=" bg-[var(--purple-g3)] 
+                                                                    hover:bg-white
+                                                                    hover:text-[var(--pink-g1)]
+                                                                    border-[var(--pink-g1)]  
+                                                                    border-2 
+                                                                    text-white 
+                                                                    px-3 py-2
+                                                                    mt-2
+                                                                    rounded-md">
+                                                            Supprimer le groupe
                                                     </Button>
                                                 </div>
                                             </div>

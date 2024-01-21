@@ -64,7 +64,7 @@ model User {
   travelsAsDriver    Travel[]      @relation("Driver")
   travelsAsPassenger Passenger[]   @relation("UserPassenger")
   groupCreated       Group[]       @relation("GroupCreatedBy")
-  groupMembers       GroupMember[] @relation("UserGroupMember")
+  groupMembers       GroupMember[] 
 }
 
 // -------------------------------------------TRAVEL & PASSENGER------------------------------------------------
@@ -72,7 +72,7 @@ model Travel {
   id                   Int         @id @default(autoincrement())
   isForGroup           Boolean     @default(false)
   groupId              Int?
-  driverId           String
+  driverId             String
   departure            String
   departureLatitude    Float
   departureLongitude   Float
@@ -109,7 +109,7 @@ model Group {
   acceptInvitation Boolean?      @default(false)
   travels          Travel[]      @relation("GroupTravels")
   creator          User          @relation("GroupCreatedBy", fields: [createdBy], references: [name])
-  members          GroupMember[] @relation("GroupMember")
+  members          GroupMember[]
 }
 
 model GroupMember {
@@ -117,6 +117,6 @@ model GroupMember {
   groupId    Int
   userId     String
   validated  Boolean @default(true)
-  group      Group   @relation("GroupMember", fields: [groupId], references: [id])
-  userMember User    @relation("UserGroupMember", fields: [userId], references: [id])
+  group      Group   @relation(fields: [groupId], references: [id])
+  userDetail User    @relation(fields: [userId], references: [id])
 }

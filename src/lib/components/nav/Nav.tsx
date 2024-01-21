@@ -66,7 +66,7 @@ export default function Nav() {
                 <div className="flex flex-shrink-0 items-center">
                   <img
                     className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                    src="/public/car.png"
                     alt="CarHeh"
                   />
                 </div>
@@ -93,8 +93,10 @@ export default function Nav() {
 
                 {session && (
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                   
+                    {/* DaisyUI notifications icon + floating icon for number of */}
                   <div className="ds-indicator mr-1 cursor-pointer">
-                    <span className="ds-indicator-item ds-badge ds-badge-secondary relative left-7 top-[2px]">5</span> 
+                    <span className="ds-indicator-item ds-badge ds-badge-secondary relative left-7 top-[2px]">??</span> 
                     <button
                       type="button"
                       className=" ds-join-item relative 
@@ -113,6 +115,8 @@ export default function Nav() {
                       <BellIcon className="h-7 w-7" aria-hidden="true" />
                     </button>
                   </div>
+                  {/* ----------------------------------------------------------------------------- */}
+                  {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
                   <div>
                     {/* Profile dropdown */}
