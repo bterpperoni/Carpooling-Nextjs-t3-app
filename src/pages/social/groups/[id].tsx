@@ -3,6 +3,8 @@ import { useRouter } from "next/dist/client/router";
 import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
 import LayoutMain from '$/lib/components/layout/LayoutMain';
+import { useState } from "react";
+import { Travel } from "@prisma/client";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display a specifig group ----------------------------------------------------------------  
@@ -18,8 +20,29 @@ export default function Group() {
     const {data: group} = api.group.groupById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     // Get trips by group id
     const {data: travels} = api.travel.travelByGroup.useQuery({groupId: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
+    
+    // Handlers
+    // Departure abbreviation state
+    const departureAbbrList = useState<string[] | string | undefined>([]);
 
-// Handlers
+    const departureAbbrReducer = (state: { id: number; isForGroup: boolean; groupId: number | null; driverId: string; departure: string; departureLatitude: number; departureLongitude: number; departureDateTime: Date; destination: string; destinationLatitude: number; destinationLongitude: number; returnDateTime: Date | null; maxPassengers: number | null; status: number; }[], action: { type: string; }) => {
+        switch (action.type) {
+            case 'ABBREVIATE':
+                return state.map((travelDeparture: Travel) => {
+                    return 
+                });
+            default:
+                return state;
+        }
+    }
+
+    travels?.forEach((travel) => {
+        const stringDep = travel.departure.split(',');
+        console.log(stringDep[1]);
+        departureAbbrList.push(stringDep[1]);
+    });
+    console.log([...departureAbbrList])
+
 
 // Render
 if(sessionData)
@@ -57,7 +80,12 @@ if(sessionData)
                                     </Button>
                                 </div>
                             </div>
-                            <div className="border-[var(--purple-g2)] border-2 w-[75vw] h-[75vh] overflow-y-scroll">
+                            <div className="border-[var(--purple-g2)] 
+                                            border-2 
+                                            w-[75vw] 
+                                            h-[75vh] 
+                                            text-[var(--purple-g2)]
+                                            overflow-y-scroll">
                                     {travels?.map((travel) => (
                                         <div key={travel.id} className="border-b-2">
                                             <div className="flex flex-row">
@@ -66,7 +94,7 @@ if(sessionData)
                                                         <label htmlFor="travelName" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
                                                            Départ
                                                         </label>
-                                                        <div id="travelName">{travel.departure}</div>
+                                                        <div id="travelName">{travel.departure.split(',')[1]}</div>
                                                     </div>
                                                     <div className="m-2">
                                                         <label htmlFor="travelCampus" className="border-b-[1px] border-[var(--purple-g3)] my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
@@ -82,7 +110,19 @@ if(sessionData)
                                                         </label>
                                                         <div id="travelCampus">(en dur) 2 taken on 3 places</div>
                                                     </div>
-                                                    
+                                                    <Button 
+                                                        onClick={() => push(`/rides/${travel.id}`)}
+                                                        className=" bg-[var(--purple-g2)] 
+                                                                hover:bg-white 
+                                                                hover:text-[var(--pink-g1)] 
+                                                                border-[var(--pink-g1)] 
+                                                                border-2    
+                                                                text-white 
+                                                                px-3 py-2
+                                                                m-2 
+                                                                rounded-md">
+                                                        Voir le trajet
+                                                    </Button>
                                                 </div>
                                             </div>
                                             <div className="flex flex-row justify-between">
@@ -92,19 +132,6 @@ if(sessionData)
                                                         </label>
                                                     <div id="travelDate">{travel.departureDateTime.toLocaleDateString()} à {travel.departureDateTime.toLocaleTimeString()}</div>
                                                 </div>
-                                                <Button 
-                                                    onClick={() => push(`/rides/${travel.id}`)}
-                                                    className=" bg-[var(--purple-g2)] 
-                                                                hover:bg-white 
-                                                                hover:text-[var(--pink-g1)] 
-                                                                border-[var(--pink-g1)] 
-                                                                border-2    
-                                                                text-white 
-                                                                px-3 py-2
-                                                                m-2 
-                                                                rounded-md">
-                                                    Voir le trajet
-                                                </Button>
                                             </div>
                                         </div>
                                     ))}
