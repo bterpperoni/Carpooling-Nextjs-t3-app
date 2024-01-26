@@ -139,12 +139,12 @@ if(sessionData)
                                                         <label htmlFor="travelName" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
                                                            Nom
                                                         </label>
-                                                        <div id="travelName">{member.userId}</div>
+                                                        <div id="travelName">{member.userName}</div>
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-row w-[50%]">
                                                     <Button 
-                                                        onClick={() => push(`/users/${member.userId}`)}
+                                                        onClick={() => push(`/users/${member.userName}`)}
                                                         className=" bg-[var(--purple-g2)] 
                                                                     hover:bg-white 
                                                                     hover:text-[var(--pink-g1)] 

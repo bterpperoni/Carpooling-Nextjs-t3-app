@@ -27,7 +27,7 @@ export default function Groups() {
 
     // Group list by user
     const { data: userGroups } = api.groupMember.groupMemberListByUser.useQuery(
-        { userId: sessionData?.user.id ?? '' },
+        { userName: sessionData?.user.name ?? '' },
         { enabled: sessionData?.user !== undefined }
     );
     // Join group
@@ -43,7 +43,7 @@ export default function Groups() {
         if(sessionData){
             if(gr.visibility){
                 const groupMember = {
-                    userId: sessionData.user.id,
+                    userName: sessionData.user.name,
                     groupId: gr.id,
                     validated: true
                 }
@@ -54,7 +54,7 @@ export default function Groups() {
                 }, 1000)
             }else{
                 const groupMember = {
-                    userId: sessionData.user.id,
+                    userName: sessionData.user.name,
                     groupId: gr.id,
                     validated: false
                 }

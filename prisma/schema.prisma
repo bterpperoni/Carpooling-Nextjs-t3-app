@@ -94,9 +94,9 @@ model Travel {
 model Passenger {
   id       Int    @id @default(autoincrement())
   travelId Int
-  userId   String
+  userName   String
   travel   Travel @relation("Passengers", fields: [travelId], references: [id])
-  user     User   @relation("UserPassenger", fields: [userId], references: [id])
+  user     User   @relation("UserPassenger", fields: [userName], references: [name])
 }
 
 // -------------------------------------------GROUP & GROUPMEMBER------------------------------------------------
@@ -115,8 +115,8 @@ model Group {
 model GroupMember {
   id         Int     @id @default(autoincrement())
   groupId    Int
-  userId     String
+  userName   String
   validated  Boolean @default(true)
   group      Group   @relation(fields: [groupId], references: [id])
-  userDetail User    @relation(fields: [userId], references: [id])
+  userDetail User    @relation(fields: [userName], references: [name])
 }

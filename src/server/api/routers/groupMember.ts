@@ -22,10 +22,10 @@ export const groupMemberRouter = createTRPCRouter({
             }),
     
         groupMemberListByUser: protectedProcedure
-            .input(z.object({ userId: z.string()}))
+            .input(z.object({ userName: z.string()}))
             .query(async ({ ctx, input }) => {
                 const groupMemberList =  ctx.db.groupMember.findMany({
-                    where: { userId: input.userId}
+                    where: { userName: input.userName}
                 });
                 return groupMemberList;
             }),
@@ -42,7 +42,7 @@ export const groupMemberRouter = createTRPCRouter({
             .input(z.object(
                 { 
                     groupId: z.number(),
-                    userId: z.string(),
+                    userName: z.string(),
                     validated: z.boolean()  
                     
                 }))
@@ -52,7 +52,7 @@ export const groupMemberRouter = createTRPCRouter({
                 return ctx.db.groupMember.create({
                     data: {
                         groupId: input.groupId,
-                        userId: input.userId,
+                        userName: input.userName,
                         validated: input.validated
                     },
                 });
@@ -63,7 +63,7 @@ export const groupMemberRouter = createTRPCRouter({
                 { 
                     id: z.number(),
                     groupId: z.number(),
-                    userId: z.string(),
+                    userName: z.string(),
                     validated: z.boolean()                    
                 }))
             .mutation(async ({ ctx, input }) => {
@@ -73,7 +73,7 @@ export const groupMemberRouter = createTRPCRouter({
                     where: { id: input.id },
                     data: {
                         groupId: input.groupId,
-                        userId: input.userId,
+                        userName: input.userName,
                         validated: input.validated
                     },
                 });

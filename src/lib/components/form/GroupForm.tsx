@@ -68,7 +68,7 @@ export default function GroupForm({ group, cancelButtonHandler }:
         if(createdGroup){
             if(sessionData){
                 const groupMember = {
-                    userId: sessionData.user.id,
+                    userName: sessionData.user.name,
                     groupId: createdGroup.id,
                     validated: true
                 }
