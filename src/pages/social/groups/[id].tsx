@@ -3,6 +3,7 @@ import { useRouter } from "next/dist/client/router";
 import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
 import LayoutMain from '$/lib/components/layout/LayoutMain';
+import { useState } from "react";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display a specifig group ----------------------------------------------------------------  
@@ -18,7 +19,10 @@ export default function Group() {
     const {data: group} = api.group.groupById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     // Get trips by group id
     const {data: travels} = api.travel.travelByGroup.useQuery({groupId: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
-    
+    // State to display informations about the group
+    const [isInfos, setIsInfos] = useState(false);
+    // Get group members
+    const {data: members} = api.groupMember.groupMemberListByGroup.useQuery({groupId: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
 // Render
 if(sessionData)
     return (
@@ -27,7 +31,8 @@ if(sessionData)
                     <div className="flex justify-center">                    
                         <div className="bg-white w-[90vw] h-max pb-8 flex flex-col items-center">
                             <div className=" flex flex-row items-center">
-                                <div className="cursor-pointer mx-4">
+                                <div    className="cursor-pointer mx-4 rounded-full border-2 border-black p-2 hover:border-[var(--pink-g1)]"
+                                        onClick={() => setIsInfos(true)}>
                                 {/* ---------------------------------------------- Icon infos ----------------------------------------------------- */}
                                     <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                                     width="40px" height="40px" viewBox="0 0 416.979 416.979">
@@ -114,6 +119,53 @@ if(sessionData)
                             </div> 
                         </div>
                     </div>
+                    {isInfos && (
+                        <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
+                            <div className="bg-white rounded-md px-4 py-2 w-[90vw] h-[90vh] flex items-center flex-col">
+                                <Button
+                                    type="button"
+                                    onClick={() => setIsInfos(false)}
+                                    className="bg-[var(--purple-g2)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                                border-2 text-white px-3 py-2 rounded-md">
+                                    Retour
+                                </Button>
+                                <div className="w-[80vw] h-[80vh] border-2 border-black mt-2">
+                                    <h2 className='text-black border-y-2 border-black w-max m-2'>Membres du groupe</h2>
+                                    {members?.map((member) => (    
+                                        <div key={member.id} className="border-b-2">
+                                            <div className="flex flex-row">
+                                                <div className="flex flex-col w-[50%]">
+                                                    <div className="m-2">
+                                                        <label htmlFor="travelName" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
+                                                           Nom
+                                                        </label>
+                                                        <div id="travelName">{member.userId}</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-row w-[50%]">
+                                                    <Button 
+                                                        onClick={() => push(`/users/${member.userId}`)}
+                                                        className=" bg-[var(--purple-g2)] 
+                                                                    hover:bg-white 
+                                                                    hover:text-[var(--pink-g1)] 
+                                                                    border-[var(--pink-g1)] 
+                                                                    border-2    
+                                                                    text-white 
+                                                                    px-3 py-2
+                                                                    m-2 
+                                                                    rounded-md">
+                                                        Voir le profil
+                                                    </Button>
+                                                    {}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>   
+                    )}                    
+                    
             </LayoutMain>
         </>
     )

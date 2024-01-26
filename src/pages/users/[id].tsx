@@ -86,7 +86,7 @@ export default function User() {
               <div className="flex flex-col items-center">
                 <img
                   className="w-18 h-18 rounded-full" 
-                  src={sessionData?.user.image} 
+                  src={user?.image ?? '/images/default-profile.png'} 
                   alt="Profile"
                 />
                   <div className="text-left overflow-hidden">
@@ -130,21 +130,24 @@ export default function User() {
                   </div>
               </div>
               <div className="mt-4 flex justify-center">
-                {isEditing ? (
-                  <Button
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                    onClick={handleSaveClick}
-                  >
-                    Enregistrer
-                  </Button>
-                ) : (
-                  <Button
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                    onClick={handleEditClick}
-                  >
-                    Modifier mes informations
-                  </Button>
-                )}
+                {sessionData.user.id === user.id ? (
+                  <>
+                    {isEditing ? (
+                      <Button
+                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                        onClick={handleSaveClick}>
+                        Enregistrer
+                      </Button>
+                    ) : (
+                      <Button
+                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                        onClick={handleEditClick}>
+                        Modifier mes informations
+                      </Button>
+                    )}
+                  </>
+                  ) : null
+                }
               </div>
 
               <div className="mt-8 mb-4">
@@ -178,21 +181,26 @@ export default function User() {
                     </div>
                   )}
                   <div className="flex justify-center">
-                    {isEditingSchool ? (
-                      <Button 
-                        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-                        onClick={handleSaveClickSchool}
-                      >
-                      Enregistrer
-                      </Button>
-                    ) : (
-                      <Button 
-                        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-                        onClick={handleEditClickSchool}  
-                      >
-                      Changer mon établissement par défaut
-                      </Button>
-                    )}
+                    {sessionData.user.id === user.id ? (
+                      <>
+                        {isEditingSchool ? (
+                          <Button 
+                            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                            onClick={handleSaveClickSchool}
+                          >
+                          Enregistrer
+                          </Button>
+                      ) : (
+                          <Button 
+                            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                            onClick={handleEditClickSchool}  
+                          >
+                          Changer mon établissement par défaut
+                          </Button>
+                      )}
+                    </>
+                    ) : null
+                  }
                   </div>
               </div>
             </div>
