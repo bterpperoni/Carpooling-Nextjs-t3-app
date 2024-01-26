@@ -23,6 +23,26 @@ export default function Group() {
     const [isInfos, setIsInfos] = useState(false);
     // Get group members
     const {data: members} = api.groupMember.groupMemberListByGroup.useQuery({groupId: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
+    // Quit group or exclude group member 
+    const { mutate: deleteMemberGroup } = api.groupMember.delete.useMutation();
+
+    // Handlers
+    const handleDelete = (id: number) => {
+        deleteMemberGroup({id: id});
+        setTimeout(() => {
+            alert('Vous avez quitté le groupe');
+            void push('/social/groups');
+        }, 1000);
+    }
+
+    const handleExclude = (id: number) => {
+        deleteMemberGroup({id: id});
+        setTimeout(() => {
+            alert('Membre exclu du groupe');
+            void push('/social/groups');
+        }, 1000);
+    }
+
 // Render
 if(sessionData)
     return (
@@ -159,7 +179,7 @@ if(sessionData)
                                                     </Button>
                                                     {member.userName === sessionData.user.name ? (
                                                         <Button
-                                                            onClick={() => alert("Quitter le groupe")}
+                                                            onClick={() => handleDelete(member.id)}
                                                             className=" bg-[var(--purple-g2)] 
                                                                         hover:bg-white 
                                                                         hover:text-[var(--pink-g1)] 
@@ -173,21 +193,21 @@ if(sessionData)
                                                         </Button>
                                                     ) : (
                                                         <>
-                                                        {group?.createdBy === sessionData.user.name ? (
-                                                            <Button
-                                                                onClick={() => alert('Exclure')}
-                                                                className=" bg-[var(--purple-g2)] 
-                                                                            hover:bg-white 
-                                                                            hover:text-[var(--pink-g1)] 
-                                                                            border-[var(--pink-g1)] 
-                                                                            border-2    
-                                                                            text-white 
-                                                                            px-3 py-2
-                                                                            m-2 
-                                                                            rounded-md">
-                                                                Exclure
-                                                            </Button>    
-                                                        ) : null}
+                                                            {group?.createdBy === sessionData.user.name ? (
+                                                                <Button
+                                                                    onClick={() => handleExclude(member.id)}
+                                                                    className=" bg-[var(--purple-g2)] 
+                                                                                hover:bg-white 
+                                                                                hover:text-[var(--pink-g1)] 
+                                                                                border-[var(--pink-g1)] 
+                                                                                border-2    
+                                                                                text-white 
+                                                                                px-3 py-2
+                                                                                m-2 
+                                                                                rounded-md">
+                                                                    Exclure du groupe
+                                                                </Button>    
+                                                            ) : null}
                                                         </>
                                                     )}
                                                 </div>
