@@ -15,11 +15,11 @@ import Button from "$/lib/components/button/Button";
 export default function User() {
   // Get user id from url 
   const { query } = useRouter();
-  const id = query.id as string;
+  const name = query.name as string;
   // Session recovery
   const { data: sessionData } = useSession();
   // Get user by id
-  const {data: user} = api.user.userById.useQuery({id: id}, {enabled: sessionData?.user !== undefined});
+  const {data: user} = api.user.userByName.useQuery({name: name}, {enabled: sessionData?.user !== undefined});
   /* -------------------------------- User's data & handler -------------------------------- */
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState<string>('');
@@ -37,7 +37,7 @@ export default function User() {
   // Save user data & disable edit mode
   const handleSaveClick = () => {
     updateUser({
-      id: id,
+      id: user?.id ?? '',
       name: editedName,
       email: editedEmail
     });
@@ -64,7 +64,7 @@ export default function User() {
   const handleSaveClickSchool = () => {
     const tmpStrCampus = selectedSchool+'-'+selectedCampus;
     updateSchool({
-      id: id,
+      id: user?.id ?? '',
       campus: tmpStrCampus,
     });
     setIsEditingSchool(false);
@@ -130,7 +130,7 @@ export default function User() {
                   </div>
               </div>
               <div className="mt-4 flex justify-center">
-                {sessionData.user.id === user.id ? (
+                {sessionData.user.name === user.name ? (
                   <>
                     {isEditing ? (
                       <Button

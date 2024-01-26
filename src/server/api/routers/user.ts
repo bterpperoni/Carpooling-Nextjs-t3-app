@@ -30,6 +30,14 @@ export const userRouter = createTRPCRouter({
           where: { id: input.id },
         });
       }),
+
+  userByName: protectedProcedure
+    .input(z.object({ name: z.string() }))
+    .query(async ({ ctx, input }) => {
+        return ctx.db.user.findUnique({
+          where: { name: input.name },
+        });
+      }),
   
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))

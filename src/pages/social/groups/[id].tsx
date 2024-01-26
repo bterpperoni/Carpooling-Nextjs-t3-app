@@ -119,6 +119,7 @@ if(sessionData)
                             </div> 
                         </div>
                     </div>
+                    {/* ------------------------ Display informations -------------------------------------------------------------------- */}
                     {isInfos && (
                         <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
                             <div className="bg-white rounded-md px-4 py-2 w-[90vw] h-[90vh] flex items-center flex-col">
@@ -156,7 +157,39 @@ if(sessionData)
                                                                     rounded-md">
                                                         Voir le profil
                                                     </Button>
-                                                    {}
+                                                    {member.userName === sessionData.user.name ? (
+                                                        <Button
+                                                            onClick={() => alert("Quitter le groupe")}
+                                                            className=" bg-[var(--purple-g2)] 
+                                                                        hover:bg-white 
+                                                                        hover:text-[var(--pink-g1)] 
+                                                                        border-[var(--pink-g1)] 
+                                                                        border-2    
+                                                                        text-white 
+                                                                        px-3 py-2
+                                                                        m-2 
+                                                                        rounded-md">
+                                                            Quitter le groupe
+                                                        </Button>
+                                                    ) : (
+                                                        <>
+                                                        {group?.createdBy === sessionData.user.name ? (
+                                                            <Button
+                                                                onClick={() => alert('Exclure')}
+                                                                className=" bg-[var(--purple-g2)] 
+                                                                            hover:bg-white 
+                                                                            hover:text-[var(--pink-g1)] 
+                                                                            border-[var(--pink-g1)] 
+                                                                            border-2    
+                                                                            text-white 
+                                                                            px-3 py-2
+                                                                            m-2 
+                                                                            rounded-md">
+                                                                Exclure
+                                                            </Button>    
+                                                        ) : null}
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
