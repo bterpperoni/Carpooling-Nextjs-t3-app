@@ -55,7 +55,7 @@ if(sessionData)
                                         onClick={() => setIsInfos(true)}>
                                 {/* ---------------------------------------------- Icon infos ----------------------------------------------------- */}
                                     <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
-                                    width="40px" height="40px" viewBox="0 0 416.979 416.979">
+                                    width="30px" height="30px" viewBox="0 0 416.979 416.979">
                                         <g>
                                             <path d="M356.004,61.156c-81.37-81.47-213.377-81.551-294.848-0.182c-81.47,81.371-81.552,213.379-0.181,294.85
                                             c81.369,81.47,213.378,81.551,294.849,0.181C437.293,274.636,437.375,142.626,356.004,61.156z M237.6,340.786
@@ -141,7 +141,7 @@ if(sessionData)
                     </div>
                     {/* ------------------------ Display informations -------------------------------------------------------------------- */}
                     {isInfos && (
-                        <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
+                        <div className="text-black fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
                             <div className="bg-white rounded-md px-4 py-2 w-[90vw] h-[90vh] flex items-center flex-col">
                                 <Button
                                     type="button"
@@ -150,36 +150,85 @@ if(sessionData)
                                                 border-2 text-white px-3 py-2 rounded-md">
                                     Retour
                                 </Button>
-                                <div className="w-[80vw] h-[80vh] border-2 border-black mt-2">
-                                    <h2 className='text-black border-y-2 border-black w-max m-2'>Membres du groupe</h2>
-                                    {members?.map((member) => (    
-                                        <div key={member.id} className="border-b-2">
-                                            <div className="flex flex-row">
-                                                <div className="flex flex-col w-[50%]">
-                                                    <div className="m-2">
-                                                        <label htmlFor="travelName" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
-                                                           Nom
-                                                        </label>
-                                                        <div id="travelName">{member.userName}</div>
+                                <div className="w-[80vw] h-[80vh] mt-2">
+                                    <div>
+                                        <h2 className="text-black border-y-2 border-black w-full m-4">Informations</h2>
+                                        <div className="flex justify-around">
+                                            <div className="">
+                                                <label htmlFor="adminName" className="  border-b-[1px] 
+                                                                                        border-[var(--purple-g3)] 
+                                                                                        mr-2 
+                                                                                        font-bold 
+                                                                                        text-[14px]
+                                                                                        sm:text-base 
+                                                                                        text-left">
+                                                Administrateur
+                                                </label>
+                                                <div id="memberName">{group?.createdBy}</div>
+                                            </div>
+                                            <div className="">
+                                                <label htmlFor="groupName" className="  border-b-[1px] 
+                                                                                        border-[var(--purple-g3)]  
+                                                                                        mr-2 
+                                                                                        font-bold 
+                                                                                        text-[14px] 
+                                                                                        sm:text-base
+                                                                                        text-left
+                                                                                        shrink">
+                                                Nom du groupe
+                                                </label>
+                                                <div id="groupName">{group?.name}</div>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-around relative right-3 sm:right-0 mt-4">
+                                            <div>
+                                                <label htmlFor="groupPrivacy" className="   mr-2
+                                                                                            font-bold 
+                                                                                            text-left 
+                                                                                            border-b-[1px] 
+                                                                                            text-[14px]
+                                                                                            sm:text-base
+                                                                                            relative
+                                                                                            sm:right-1 
+                                                                                            border-[var(--purple-g3)]">
+                                                    Accessibilité
+                                                </label>
+                                                {group?.visibility ? (
+                                                    <div className="" id="groupPrivacy">Public</div>
+                                                ) : (  
+                                                    <div className="" id="groupPrivacy">Sur invitation</div>
+                                                )}
+                                            </div>
+                                            <div className="">
+                                                <label htmlFor="groupMemberCount" className="   border-b-[1px] 
+                                                                                                border-[var(--purple-g3)] 
+                                                                                                mr-2 
+                                                                                                font-bold 
+                                                                                                text-[14px] 
+                                                                                                sm:text-base 
+                                                                                                text-left">
+                                                    Nombre de membres
+                                                </label>
+                                                <div id="groupMemberCount">{members?.length}</div>
+                                            </div>
+                                        </div>
+                                    </div>    
+                                    <div>
+                                        <h2 className='text-black border-y-2 border-black w-full m-2'>Membres</h2>
+                                        {members?.map((member) => (    
+                                            <div key={member.id} className="border-b-2">
+                                                <div className="flex flex-row">
+                                                    <div className="flex flex-col w-[50%]">
+                                                        <div className="m-2">
+                                                            <label htmlFor="memberName" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
+                                                            Nom
+                                                            </label>
+                                                            <div id="memberName">{member.userName}</div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="flex flex-row w-[50%]">
-                                                    <Button 
-                                                        onClick={() => push(`/users/${member.userName}`)}
-                                                        className=" bg-[var(--purple-g2)] 
-                                                                    hover:bg-white 
-                                                                    hover:text-[var(--pink-g1)] 
-                                                                    border-[var(--pink-g1)] 
-                                                                    border-2    
-                                                                    text-white 
-                                                                    px-3 py-2
-                                                                    m-2 
-                                                                    rounded-md">
-                                                        Voir le profil
-                                                    </Button>
-                                                    {member.userName === sessionData.user.name ? (
-                                                        <Button
-                                                            onClick={() => handleDelete(member.id)}
+                                                    <div className="flex flex-row w-[50%]">
+                                                        <Button 
+                                                            onClick={() => push(`/users/${member.userName}`)}
                                                             className=" bg-[var(--purple-g2)] 
                                                                         hover:bg-white 
                                                                         hover:text-[var(--pink-g1)] 
@@ -187,38 +236,61 @@ if(sessionData)
                                                                         border-2    
                                                                         text-white 
                                                                         px-3 py-2
+                                                                        text-[12px]
+                                                                        sm:text-xl 
                                                                         m-2 
+                                                                        h-max
                                                                         rounded-md">
-                                                            Quitter le groupe
+                                                            Profil
                                                         </Button>
-                                                    ) : (
-                                                        <>
-                                                            {group?.createdBy === sessionData.user.name ? (
-                                                                <Button
-                                                                    onClick={() => handleExclude(member.id)}
-                                                                    className=" bg-[var(--purple-g2)] 
-                                                                                hover:bg-white 
-                                                                                hover:text-[var(--pink-g1)] 
-                                                                                border-[var(--pink-g1)] 
-                                                                                border-2    
-                                                                                text-white 
-                                                                                px-3 py-2
-                                                                                m-2 
-                                                                                rounded-md">
-                                                                    Exclure du groupe
-                                                                </Button>    
-                                                            ) : null}
-                                                        </>
-                                                    )}
+                                                        {member.userName === sessionData.user.name ? (
+                                                            <Button
+                                                                onClick={() => handleDelete(member.id)}
+                                                                className=" bg-[var(--purple-g2)] 
+                                                                            hover:bg-white 
+                                                                            hover:text-[var(--pink-g1)] 
+                                                                            border-[var(--pink-g1)] 
+                                                                            border-2    
+                                                                            text-white 
+                                                                            px-3 py-2
+                                                                            m-2 
+                                                                            h-max
+                                                                            rounded-md
+                                                                            text-[12px]
+                                                                            sm:text-xl">
+                                                                Quitter
+                                                            </Button>
+                                                        ) : (
+                                                            <>
+                                                                {group?.createdBy === sessionData.user.name ? (
+                                                                    <Button
+                                                                        onClick={() => handleExclude(member.id)}
+                                                                        className=" bg-[var(--purple-g2)] 
+                                                                                    hover:bg-white 
+                                                                                    hover:text-[var(--pink-g1)] 
+                                                                                    border-[var(--pink-g1)] 
+                                                                                    border-2
+                                                                                    text-[12px]
+                                                                                    sm:text-xl    
+                                                                                    text-white 
+                                                                                    px-3 py-2
+                                                                                    m-2
+                                                                                    h-max
+                                                                                    rounded-md">
+                                                                        Exclure
+                                                                    </Button>    
+                                                                ) : null}
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}             
+                                    </div>
                                 </div>
                             </div>
                         </div>   
                     )}                    
-                    
             </LayoutMain>
         </>
     )
