@@ -4,6 +4,7 @@ import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
 import LayoutMain from '$/lib/components/layout/LayoutMain';
 import { useState } from "react";
+import GroupForm from "$/lib/components/form/GroupForm";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display a specifig group ----------------------------------------------------------------  
@@ -25,6 +26,8 @@ export default function Group() {
     const {data: members} = api.groupMember.groupMemberListByGroup.useQuery({groupId: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     // Quit group or exclude group member 
     const { mutate: deleteMemberGroup } = api.groupMember.delete.useMutation();
+    // State to display form to update the group
+    const [isEditing, setIsEditing] = useState(false);
 
     // Handlers
     const handleDelete = (id: number) => {
@@ -143,17 +146,27 @@ if(sessionData)
                     {isInfos && (
                         <div className="text-black fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
                             <div className="bg-white rounded-md px-4 py-2 w-[90vw] h-[90vh] flex items-center flex-col">
-                                <Button
-                                    type="button"
-                                    onClick={() => setIsInfos(false)}
-                                    className="bg-[var(--purple-g2)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
-                                                border-2 text-white px-3 py-2 rounded-md">
-                                    Retour
-                                </Button>
+                                <div className="flex flex-row justify-between w-full">
+                                    <Button
+                                        type="button"
+                                        onClick={() => setIsInfos(false)}
+                                        className="bg-[var(--purple-g2)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                                    border-2 text-white px-3 py-2 rounded-md">
+                                        Retour
+                                    </Button>
+                                    {group?.createdBy === sessionData.user.name ? (
+                                        <Button
+                                            onClick={() => setIsEditing(true)}
+                                            className="bg-[var(--purple-g2)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                                        border-2 text-white px-3 py-2 rounded-md">
+                                            Modifier
+                                        </Button>
+                                    ) : null}
+                                </div>
                                 <div className="w-[80vw] h-[80vh] mt-2">
                                     <div>
                                         <h2 className="text-black border-y-2 border-black w-full m-4">Informations</h2>
-                                        <div className="flex justify-around">
+                                        <div className="flex items-center justify-around">
                                             <div className="">
                                                 <label htmlFor="adminName" className="  border-b-[1px] 
                                                                                         border-[var(--purple-g3)] 
@@ -180,7 +193,7 @@ if(sessionData)
                                                 <div id="groupName">{group?.name}</div>
                                             </div>
                                         </div>
-                                        <div className="flex justify-around relative right-3 sm:right-0 mt-4">
+                                        <div className="flex items-center mt-4 justify-around">
                                             <div>
                                                 <label htmlFor="groupPrivacy" className="   mr-2
                                                                                             font-bold 
@@ -214,7 +227,7 @@ if(sessionData)
                                         </div>
                                     </div>    
                                     <div>
-                                        <h2 className='text-black border-y-2 border-black w-full m-2'>Membres</h2>
+                                        <h2 className='text-black border-y-2 border-black w-full mx-2 mt-5 mb-3'>Membres</h2>
                                         {members?.map((member) => (    
                                             <div key={member.id} className="border-b-2">
                                                 <div className="flex flex-row">
@@ -289,7 +302,11 @@ if(sessionData)
                                     </div>
                                 </div>
                             </div>
-                        </div>   
+                        </div>
+                    )}
+                    {/* ------------------------ Display form to update group ---------------------------------------------------------- */}
+                    {isEditing && group && (
+                        <GroupForm cancelButtonHandler={() => setIsEditing(false)} group={group} />
                     )}                    
             </LayoutMain>
         </>

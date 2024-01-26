@@ -98,8 +98,8 @@ export default function GroupForm({ group, cancelButtonHandler }:
                                         label="Nom du groupe :" 
                                         type="text"
                                         onChange={(e: ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)}
-                                        value={group?.name ?? groupName}
-                                        placeholder='E.g. : Les copains de la route'
+                                        value={groupName}
+                                        placeholder={group?.name ?? 'E.g. : Les copains de la route'}
                                         classInput="mt-2 p-2 w-full"
                                     />
                                 </div>
