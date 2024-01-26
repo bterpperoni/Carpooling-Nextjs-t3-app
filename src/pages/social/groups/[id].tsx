@@ -5,6 +5,7 @@ import Button from "$/lib/components/button/Button";
 import LayoutMain from '$/lib/components/layout/LayoutMain';
 import { useState } from "react";
 import GroupForm from "$/lib/components/form/GroupForm";
+import { getCampusAbbr } from "$/utils/data";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display a specifig group ----------------------------------------------------------------  
@@ -109,9 +110,9 @@ if(sessionData)
                                                 <div className="flex flex-col w-[50%]">
                                                     <div className="m-2">
                                                         <label htmlFor="travelCampus" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
-                                                            Participants
+                                                            Max. passagers
                                                         </label>
-                                                        <div id="travelCampus"> + Status : fonctionnalité de participation                    
+                                                        <div id="travelCampus">{travel.maxPassengers}                   
                                                         </div>
                                                     </div>
                                                     <Button 
@@ -200,9 +201,7 @@ if(sessionData)
                                                                                             text-left 
                                                                                             border-b-[1px] 
                                                                                             text-[14px]
-                                                                                            sm:text-base
-                                                                                            relative
-                                                                                            sm:right-1 
+                                                                                            sm:text-base 
                                                                                             border-[var(--purple-g3)]">
                                                     Accessibilité
                                                 </label>
@@ -220,9 +219,9 @@ if(sessionData)
                                                                                                 text-[14px] 
                                                                                                 sm:text-base 
                                                                                                 text-left">
-                                                    Nombre de membres
+                                                    Destination
                                                 </label>
-                                                <div id="groupMemberCount">{members?.length}</div>
+                                                <div id="groupMemberCount">{getCampusAbbr(group?.campus ?? '')}</div>
                                             </div>
                                         </div>
                                     </div>    
@@ -233,9 +232,6 @@ if(sessionData)
                                                 <div className="flex flex-row">
                                                     <div className="flex flex-col w-[50%]">
                                                         <div className="m-2">
-                                                            <label htmlFor="memberName" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
-                                                            Nom
-                                                            </label>
                                                             <div id="memberName">{member.userName}</div>
                                                         </div>
                                                     </div>
@@ -307,7 +303,7 @@ if(sessionData)
                     {/* ------------------------ Display form to update group ---------------------------------------------------------- */}
                     {isEditing && group && (
                         <GroupForm cancelButtonHandler={() => setIsEditing(false)} group={group} />
-                    )}                    
+                    )}           
             </LayoutMain>
         </>
     )
