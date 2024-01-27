@@ -167,61 +167,62 @@ if(sessionData)
                                 <div className="w-[80vw] h-[80vh] mt-2">
                                     <div>
                                         <h2 className="text-black border-y-2 border-black w-full m-4">Informations</h2>
-                                        <div className="flex items-center justify-around">
-                                            <div className="">
-                                                <label htmlFor="adminName" className="  border-b-[1px] 
-                                                                                        border-[var(--purple-g3)] 
-                                                                                        mr-2 
-                                                                                        font-bold 
-                                                                                        text-[14px]
-                                                                                        sm:text-base 
-                                                                                        text-left">
-                                                Administrateur
-                                                </label>
-                                                <div id="memberName">{group?.createdBy}</div>
-                                            </div>
-                                            <div className="">
-                                                <label htmlFor="groupName" className="  border-b-[1px] 
-                                                                                        border-[var(--purple-g3)]  
-                                                                                        mr-2 
-                                                                                        font-bold 
-                                                                                        text-[14px] 
-                                                                                        sm:text-base
-                                                                                        text-left
-                                                                                        shrink">
-                                                Nom du groupe
-                                                </label>
-                                                <div id="groupName">{group?.name}</div>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center mt-4 justify-around">
-                                            <div>
-                                                <label htmlFor="groupPrivacy" className="   mr-2
+                                        <div className="divParent">
+                                            <div className="grid grid-cols-2 grid-flow-col">
+                                                <div className="">
+                                                    <label htmlFor="adminName" className="  border-b-[1px] 
+                                                                                            border-[var(--purple-g3)] 
+                                                                                            mr-2 
                                                                                             font-bold 
-                                                                                            text-left 
-                                                                                            border-b-[1px] 
                                                                                             text-[14px]
                                                                                             sm:text-base 
-                                                                                            border-[var(--purple-g3)]">
-                                                    Accessibilité
-                                                </label>
-                                                {group?.visibility ? (
-                                                    <div className="" id="groupPrivacy">Public</div>
-                                                ) : (  
-                                                    <div className="" id="groupPrivacy">Sur invitation</div>
-                                                )}
+                                                                                            text-left">
+                                                    Administrateur
+                                                    </label>
+                                                    <div id="memberName">{group?.createdBy}</div>
+                                                </div>
+                                                <div className="">
+                                                    <label htmlFor="groupName" className="  border-b-[1px] 
+                                                                                            border-[var(--purple-g3)]  
+                                                                                            mr-2 
+                                                                                            font-bold 
+                                                                                            text-[14px] 
+                                                                                            sm:text-base
+                                                                                            text-left">
+                                                    Nom du groupe
+                                                    </label>
+                                                    <div id="groupName">{group?.name}</div>
+                                                </div>
                                             </div>
-                                            <div className="">
-                                                <label htmlFor="groupMemberCount" className="   border-b-[1px] 
-                                                                                                border-[var(--purple-g3)] 
-                                                                                                mr-2 
+                                            <div className="grid grid-cols-2 grid-flow-col">
+                                                <div>
+                                                    <label htmlFor="groupPrivacy" className="   mr-2
                                                                                                 font-bold 
-                                                                                                text-[14px] 
+                                                                                                text-left 
+                                                                                                border-b-[1px] 
+                                                                                                text-[14px]
                                                                                                 sm:text-base 
-                                                                                                text-left">
-                                                    Destination
-                                                </label>
-                                                <div id="groupMemberCount">{getCampusAbbr(group?.campus ?? '')}</div>
+                                                                                                border-[var(--purple-g3)]">
+                                                        Accessibilité
+                                                    </label>
+                                                    {group?.visibility ? (
+                                                        <div className="" id="groupPrivacy">Public</div>
+                                                    ) : (  
+                                                        <div className="" id="groupPrivacy">Sur invitation</div>
+                                                    )}
+                                                </div>
+                                                <div className="">
+                                                    <label htmlFor="groupMemberCount" className="   border-b-[1px] 
+                                                                                                    border-[var(--purple-g3)] 
+                                                                                                    mr-2 
+                                                                                                    font-bold 
+                                                                                                    text-[14px] 
+                                                                                                    sm:text-base 
+                                                                                                    text-left">
+                                                        Destination
+                                                    </label>
+                                                    <div id="groupMemberCount">{getCampusAbbr(group?.campus ?? '')}</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>    

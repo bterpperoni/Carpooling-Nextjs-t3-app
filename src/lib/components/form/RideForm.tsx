@@ -163,7 +163,7 @@ export default function RideForm({ travel, isForGroup, groupId }:
                         {/* Departure */}
                         <div className='my-16'>
                             <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
-                                <label htmlFor="departure" className='text-xl md:text-3xl text-white mb-1 mr-4'>Departure </label>
+                                <label htmlFor="departure" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>Departure </label>
                                     <Autocomplete
                                     defaultValue={travel?.departure ?? ''}
                                     apiKey={apiKey}
@@ -181,7 +181,7 @@ export default function RideForm({ travel, isForGroup, groupId }:
                                                 my-2 
                                                 md:w-[75%]
                                                 text-xl md:text-2xl
-                                                text-[var(--pink-g1)]
+                                                text-white
                                                 bg-[var(--purple-g3)]
                                                 p-2 "
                                     id="departure"
@@ -218,7 +218,7 @@ export default function RideForm({ travel, isForGroup, groupId }:
                         {/* Destination */}
                         <div>
                             <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
-                                <label htmlFor="destination" className='text-xl md:text-3xl text-white mb-1 mr-4'>Destination </label>
+                                <label htmlFor="destination" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>Destination </label>
                                     <Autocomplete
                                     defaultValue={travel?.destination ?? ''}
                                     disabled = {travel ? true : false}
@@ -237,7 +237,7 @@ export default function RideForm({ travel, isForGroup, groupId }:
                                                 my-2 
                                                 md:w-[75%]
                                                 text-xl md:text-2xl
-                                                text-[var(--pink-g1)]
+                                                text-white
                                                 bg-[var(--purple-g3)] 
                                                 p-2 "
                                     id="destination"
