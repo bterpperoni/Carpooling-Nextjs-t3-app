@@ -1,12 +1,10 @@
-import "$/lib/styles/globals.css";
-
+import "$/styles/globals.css";
 
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
-
-
 import { api } from "$/utils/api";
+import { ApiKeyProvider } from "$/context/process";
 
 const Carheh: AppType<{ session: Session | null }> = ({
   Component,
@@ -14,7 +12,9 @@ const Carheh: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <ApiKeyProvider>
+        <Component {...pageProps} />
+      </ApiKeyProvider>
     </SessionProvider>
   );
 };

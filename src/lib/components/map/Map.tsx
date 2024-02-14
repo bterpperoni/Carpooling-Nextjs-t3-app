@@ -1,31 +1,29 @@
-import React, { Children, useEffect, useRef, useState } from 'react';
-import { MapProps } from '$/utils/interface';
+/* eslint-disable @typescript-eslint/no-floating-promises */
+import React, { useEffect, useRef, useState } from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import { env } from 'next.config';
+import type { MapProps } from '$/lib/types/types';
+import { useApiKey } from '$/context/process';
 
+function Map({ center, zoom, children, onLoad }: MapProps) {
 
+  const apiKey = useApiKey();
 
-const Map: React.FC<MapProps> = ({ center, zoom, children, onLoad}: MapProps) => {
+  // Set the map container style
   const mapContainerStyle = {
     width: '100%',
     height: '25rem',
   };
 
-  const apiKey = env.GOOGLE_MAPS_API_KEY as string;
-
-  // Used to access the map object
+  // Access the map object
   const mapRef = useRef<google.maps.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
-  // Used to set the map options
+  // Set the map options
   useEffect(() => {
     if (mapRef.current) {
       console.log('mapRef.current', mapRef.current);
     }
-  }, [isMapLoaded]);
-
-
-
+  }, [mapRef]);
 
   if(!apiKey) return <div>Google maps api key is missing</div>
   return (
@@ -35,9 +33,9 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onLoad}: MapProps) =>
             center={center} 
             zoom={zoom} 
             mapContainerStyle={mapContainerStyle}
-            onLoad={onLoad}
+            onLoad={onLoad ? onLoad : () => setIsMapLoaded(true)}
             onUnmount={() => setIsMapLoaded(false)}>
-           {children}
+            {isMapLoaded && children}
         </GoogleMap>
       </LoadScript>
     </>
