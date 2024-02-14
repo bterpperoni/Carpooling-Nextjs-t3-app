@@ -9,14 +9,6 @@ import {
 
 // API definition for users
 export const userRouter = createTRPCRouter({
-  // hello: publicProcedure
-  //   .input(z.object({ text: z.string() }))
-  //   .query(({ input }) => {
-  //     return {
-  //       greeting: `Hello ${input.text}`,
-  //     };
-  //   }),
-
 
   userList: protectedProcedure.query(async ({ ctx }) => {
     const userList =  ctx.db.user.findMany();
