@@ -5,12 +5,9 @@
 import client from '$/utils/paypal';
 import paypal from '@paypal/checkout-server-sdk';
 import type { NextApiRequest, NextApiResponse } from 'next'
+import type { RequestBody } from '$/lib/types/interfaces';
 
-// Typescript interface for request body
-interface RequestBody {
-  order_price: number;
-  user_id: string;
-}
+
 
 export default async function Handler(req: NextApiRequest, res:  NextApiResponse) {
 

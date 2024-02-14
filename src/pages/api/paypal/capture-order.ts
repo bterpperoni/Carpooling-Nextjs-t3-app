@@ -24,9 +24,10 @@ export default async function Handler(req : NextApiRequest, res: NextApiResponse
         return res.status(500).json({success: false, message: "Some Error Occured at backend"})
     }
 
-    // Your Custom Code to Update Order Status
+    // Custom Code to Update Order Status
     // And Other stuff that is related to that order, like wallet
-    // Here I am updating the wallet and sending it back to frontend to update it on frontend
+    
+    // Ex. Below: Updating the wallet and sending it back to frontend to update it on frontend
     const wallet = 'Updated Wallet Amount (test)'
 
     res.status(200).json({success: true, data: {wallet}})

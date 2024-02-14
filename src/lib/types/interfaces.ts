@@ -18,3 +18,9 @@ export interface DropdownProps {
     data: { school: School[] };
     onChange: (selectedSchool: ChangeEvent<HTMLSelectElement>, selectedCampus:  ChangeEvent<HTMLSelectElement> ) => void;
   }
+
+   // Typescript interface for request body
+  export interface RequestBody {
+    order_price: number;
+    user_id: string;
+  }
