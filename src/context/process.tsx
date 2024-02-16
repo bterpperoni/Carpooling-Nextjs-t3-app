@@ -7,9 +7,9 @@ import type { ReactNode } from 'react';
 
 type ApiKeyType = string|undefined;
 
+// Create a provider context
 const ApiKeyContext = createContext<ApiKeyType | undefined>(undefined);
 
-// Create a provider context
 interface ApiKeyProviderProps {
     children: ReactNode;
 }
@@ -25,7 +25,7 @@ const useApiKey = (): ApiKeyType => {
     const apiKey = useContext(ApiKeyContext);
     
     if (apiKey === undefined) {
-      throw new Error("La clé API n'est pas disponible. Assurez-vous que le fournisseur de contexte est correctement configuré.");
+      throw new Error("useApiKey must be used within a ApiKeyProvider");
     }
     return apiKey;
   };

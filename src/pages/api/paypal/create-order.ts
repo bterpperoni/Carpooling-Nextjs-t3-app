@@ -20,7 +20,7 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
   }
 
     try {
-        const PaypalClient = client();
+        const paypalClient = client();
         const request = new paypal.orders.OrdersCreateRequest();
         request.headers.Prefer = 'return=representation';
         request.requestBody({
@@ -34,7 +34,7 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
             },
           ],
         });
-        const response = await PaypalClient.execute(request);
+        const response = await paypalClient.execute(request);
         if (response.statusCode !== 201) {
           console.log("RES: ", response);
           return res.status(500).json({ success: false, message: "Some Error Occured at backend" });
