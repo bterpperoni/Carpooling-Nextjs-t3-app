@@ -11,17 +11,17 @@ export default async function Handler(req : NextApiRequest, res: NextApiResponse
   if(req.method != "POST")
     return res.status(404).json({success: false, message: "Not Found"})
 
-  if(!req.body.orderID)
+  if(!req.body.orderID){
     return res.status(400).json({success: false, message: "Please Provide Order ID"})
+  }
 
-  //Capture order to complete payment
-    const { data: orderID } = req.body.id
-    const PaypalClient = client()
+    //Capture order to complete payment
+    const { orderID } = req.body
+    console.log('Capture-order-id : ' + orderID)
+    const paypalClient = client()
     const request = new paypal.orders.OrdersCaptureRequest(orderID)
-    request.requestBody({
-      payment_source: {token : req.body }
-    })
-    const response = await PaypalClient.execute(request)
+    // request.requestBody({}) mandatory because orderID is already passed in the constructor
+    const response = await paypalClient.execute(request)
     if (!response) {
       return res.status(500).json({success: false, message: "Some Error Occured at backend"})
     }
@@ -30,7 +30,8 @@ export default async function Handler(req : NextApiRequest, res: NextApiResponse
     // And Other stuff that is related to that order, like wallet
     
     // Ex. Below: Updating the wallet and sending it back to frontend to update it on frontend
-    const wallet = 'Updated Wallet Amount (test)'
+    const wallet = 'Successfully Updated Wallet Balance'
+    const order = response.result
 
-    res.status(200).json({success: true, data: {wallet}})
+    res.status(200).json({success: true, data: {wallet, order}})
 }

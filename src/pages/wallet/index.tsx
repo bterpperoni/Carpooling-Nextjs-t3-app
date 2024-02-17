@@ -8,13 +8,12 @@ import type { Order } from "@paypal/checkout-server-sdk/lib/orders/lib";
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
 
 export default function Paypal() {
 
     const { data: session } = useSession();
 
-    const paypalCreateOrder = async (): Promise<Order | null> => {
+    const paypalCreateOrder = async () => {
             try {
                 const response = await axios.post('/api/paypal/create-order', {
                     user_id: session?.user?.id,
@@ -31,25 +30,17 @@ export default function Paypal() {
     const paypalCaptureOrder = async (orderId: string) => {
         try {
           const response = await axios.post('/api/paypal/capture-order', {
-            orderId
+            orderID: orderId
           })
           if (response.data.success) {
             // Order is successful
-            // Your custom code
-    
-            // Like showing a success toast:
-            // toast.success('Amount Added to Wallet')
-    
             // And/Or Adding Balance to Redux Wallet
             // dispatch(setWalletBalance({ balance: response.data.data.wallet.balance }))
-            console.log(response.data.data);
+            console.log("Success : " + response.data.data.order);
           }
-        } catch (err) {
+        }catch(err) {
           // Order is not successful
-          // Your custom code
-    
-          // Like showing an error toast
-          alert('Some Error Occured')
+          console.log('Error : ' + err);
         }
       }
 
@@ -69,9 +60,8 @@ export default function Paypal() {
                 <div className="flex flex-col items-center ">
                     <PayPalScriptProvider
                         options={{
-                        "clientId": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? '',
-                        currency: 'EUR',
-                        intent: 'capture'
+                        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? '',
+                        currency: 'EUR'
                         }}
                     >
                     <PayPalButtons
@@ -87,8 +77,9 @@ export default function Paypal() {
                             return order_id + ''
                         }}
                         onApprove={async (data, actions) => {
+                            console.log('Capture order with ID :', data.orderID);
                             const response = await paypalCaptureOrder(data.orderID);
-                            console.log(response);
+                            console.log('Response : ' + response);
                         }}
                     />
                     </PayPalScriptProvider>

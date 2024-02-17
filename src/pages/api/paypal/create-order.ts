@@ -23,6 +23,7 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
         const paypalClient = client();
         const request = new paypal.orders.OrdersCreateRequest();
         request.headers.Prefer = 'return=representation';
+        request.headers['Content-Type'] = 'application/json';
         request.requestBody({
           intent: 'CAPTURE',
           purchase_units: [
