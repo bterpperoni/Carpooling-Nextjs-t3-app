@@ -43,7 +43,7 @@ export default function NewRideForGroup() {
                                     transition 
                                     hover:bg-white/20" 
                         onClick={() => void signIn()}>Sign in</Button>
-                </LayoutMain>
+            </LayoutMain>
         </>
     );
 }

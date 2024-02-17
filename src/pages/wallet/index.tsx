@@ -3,10 +3,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
+import Button from "$/lib/components/button/Button";
 import LayoutMain from "$/lib/components/layout/LayoutMain"
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 import axios from "axios";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 export default function Paypal() {
 
@@ -82,9 +83,19 @@ export default function Paypal() {
     )}
     return (
         <LayoutMain>
-            <div className="max-w-5xl mx-auto mt-8 bg-white p-8 rounded shadow-md">
-                <h1 className="text-2xl font-bold mb-4 text-black">Please Sign In to Proceed</h1>
-            </div>
+                    <h1>Not Connected, Please Sign in</h1>
+                    <Button 
+                        className=" m-4 
+                                    rounded-full 
+                                    bg-white/10 
+                                    px-10 
+                                    py-3 
+                                    font-semibold 
+                                    text-white 
+                                    no-underline 
+                                    transition 
+                                    hover:bg-white/20" 
+                        onClick={() => void signIn()}>Sign in</Button>
         </LayoutMain>
     )
 }

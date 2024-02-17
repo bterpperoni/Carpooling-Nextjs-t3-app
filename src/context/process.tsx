@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { getApiKey } from '$/server/process';
+import { getApiKey } from '$/utils/process';
 import React, { createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
 

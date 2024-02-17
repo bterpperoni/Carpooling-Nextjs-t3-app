@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
@@ -312,12 +312,19 @@ else
     return (
         <>
             <LayoutMain>
-                <div>
-                    <h1>Group</h1>
-                    <div>
-                        <h1>Not logged in</h1>
-                    </div>
-                </div>
+                    <h1>Not Connected, Please Sign in</h1>
+                    <Button 
+                        className=" m-4 
+                                    rounded-full 
+                                    bg-white/10 
+                                    px-10 
+                                    py-3 
+                                    font-semibold 
+                                    text-white 
+                                    no-underline 
+                                    transition 
+                                    hover:bg-white/20" 
+                        onClick={() => void signIn()}>Sign in</Button>
             </LayoutMain>
         </>
     )
