@@ -15,13 +15,15 @@ export default async function Handler(req : NextApiRequest, res: NextApiResponse
     return res.status(400).json({success: false, message: "Please Provide Order ID"})
 
   //Capture order to complete payment
-    const { orderID } = req.body
+    const { data: orderID } = req.body.id
     const PaypalClient = client()
     const request = new paypal.orders.OrdersCaptureRequest(orderID)
-    request.requestBody({ payment_source: { token: req.body.payerID } })
+    request.requestBody({
+      payment_source: {token : req.body }
+    })
     const response = await PaypalClient.execute(request)
     if (!response) {
-        return res.status(500).json({success: false, message: "Some Error Occured at backend"})
+      return res.status(500).json({success: false, message: "Some Error Occured at backend"})
     }
 
     // Custom Code to Update Order Status

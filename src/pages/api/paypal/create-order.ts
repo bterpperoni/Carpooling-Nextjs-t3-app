@@ -28,12 +28,13 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
           purchase_units: [
             {
               amount: {
-                currency_code: 'USD',
+                currency_code: 'EUR',
                 value: `${requestBody.order_price}`,
               },
             },
           ],
         });
+        
         const response = await paypalClient.execute(request);
         if (response.statusCode !== 201) {
           console.log("RES: ", response);
@@ -41,6 +42,7 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
         }
     
         /* TODO : Save the order in the database */
+        // console.log("Order: ", response.result);
         
         res.status(200).json({ success: true, data: { order: response.result } });
         

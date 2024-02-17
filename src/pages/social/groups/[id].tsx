@@ -5,7 +5,7 @@ import Button from "$/lib/components/button/Button";
 import LayoutMain from '$/lib/components/layout/LayoutMain';
 import { useState } from "react";
 import GroupForm from "$/lib/components/form/GroupForm";
-import { getCampusAbbr } from "$/utils/data";
+import { getCampusAbbr } from "$/utils/data/school";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display a specifig group ----------------------------------------------------------------  
