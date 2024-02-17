@@ -4,7 +4,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import LayoutMain from "$/lib/components/layout/LayoutMain"
-import type { Order } from "@paypal/checkout-server-sdk/lib/orders/lib";
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -21,38 +20,30 @@ export default function Paypal() {
                 })
                 return response.data.data.order.id;
             } catch (err) {
-                // Your custom code to show an error like showing a toast:
-                // toast.error('Some Error Occured')
+                alert('Error : ' + err);
                 return null;
             }
     }
 
-    const paypalCaptureOrder = async (orderId: string) => {
+    const paypalCaptureOrder = async (orderId: string): Promise<JSON | undefined> => {
         try {
-          const response = await axios.post('/api/paypal/capture-order', {
-            orderID: orderId
-          })
-          if (response.data.success) {
-            // Order is successful
-            // And/Or Adding Balance to Redux Wallet
-            // dispatch(setWalletBalance({ balance: response.data.data.wallet.balance }))
-            console.log("Success : " + response.data.data.order);
-          }
-        }catch(err) {
-          // Order is not successful
-          console.log('Error : ' + err);
+            const response = await axios.post('/api/paypal/capture-order', {
+                orderID: orderId
+            });
+            if (response.data.success) {
+                // Order is successful
+                const statusOrder = response.data.data.order;
+                console.log("..Success : " + JSON.stringify(statusOrder));
+            }
+            return response.data;
+        } catch (err) {
+            // Order is not successful
+            console.log('Error : ' + err);
+            return undefined;
         }
-      }
-
-    if (!session) {
-        return (
-            <LayoutMain>
-                <div className="max-w-5xl mx-auto mt-8 bg-white p-8 rounded shadow-md">
-                    <h1 className="text-2xl font-bold mb-4 text-black">Please Sign In to Proceed</h1>
-                </div>
-            </LayoutMain>
-        )
     }
+
+    if (session) {
     return (
         <LayoutMain>
             <div className="mx-auto mt-8 bg-white p-8 rounded shadow-md w-full">
@@ -69,38 +60,31 @@ export default function Paypal() {
                             color: 'gold',
                             label: 'pay',
                             shape: "rect",
-                            layout: "horizontal"
+                            layout: "horizontal",
+                            height: 40,
+                            tagline: false
                         }}
-                        createOrder={async (data, actions) => {
+                        createOrder={async () => {
                             const order_id = await paypalCreateOrder();
-                            console.log("OrderId :" + order_id)
+                            console.log("Creating Order: " + order_id)
                             return order_id + ''
                         }}
-                        onApprove={async (data, actions) => {
-                            console.log('Capture order with ID :', data.orderID);
-                            const response = await paypalCaptureOrder(data.orderID);
-                            console.log('Response : ' + response);
+                        onApprove={async (data) => {
+                            console.log('Capturing Order..');
+                            await paypalCaptureOrder(data.orderID);
+                            console.log("Order Confirmed: " + JSON.stringify(data));
                         }}
                     />
                     </PayPalScriptProvider>
                 </div>
             </div>
         </LayoutMain>
+    )}
+    return (
+        <LayoutMain>
+            <div className="max-w-5xl mx-auto mt-8 bg-white p-8 rounded shadow-md">
+                <h1 className="text-2xl font-bold mb-4 text-black">Please Sign In to Proceed</h1>
+            </div>
+        </LayoutMain>
     )
 }
-
-// Paypal buttons example
-{/*                 <PayPalScriptProvider options={{ "clientId": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? '' }}>
-                        <PayPalButtons style={{ layout: "horizontal" }} createOrder={(data, actions) => {
-                            return actions.order.create({
-                                purchase_units: [
-                                    {
-                                        amount: {
-                                            value: "1",
-                                        },
-                                        description: "Donation"
-                                    },
-                                ],
-                            });
-                        }} />
-                    </PayPalScriptProvider> */}

@@ -17,7 +17,6 @@ export default async function Handler(req : NextApiRequest, res: NextApiResponse
 
     //Capture order to complete payment
     const { orderID } = req.body
-    console.log('Capture-order-id : ' + orderID)
     const paypalClient = client()
     const request = new paypal.orders.OrdersCaptureRequest(orderID)
     // request.requestBody({}) mandatory because orderID is already passed in the constructor
@@ -26,12 +25,20 @@ export default async function Handler(req : NextApiRequest, res: NextApiResponse
       return res.status(500).json({success: false, message: "Some Error Occured at backend"})
     }
 
-    // Custom Code to Update Order Status
+    // Custom Code to Update Order Status in Database
     // And Other stuff that is related to that order, like wallet
     
-    // Ex. Below: Updating the wallet and sending it back to frontend to update it on frontend
-    const wallet = 'Successfully Updated Wallet Balance'
-    const order = response.result
+    // Ex. Below: Get the order status and other details from the response
+    const order = response.result.purchase_units[0].payments.captures[0]
 
-    res.status(200).json({success: true, data: {wallet, order}})
+    res.status(200).json({
+      success: true, 
+      data: {
+        order: {
+          id: order.id, 
+          status: order.status, 
+          create_time: order.create_time 
+        }
+      }
+    })
 }
