@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -76,25 +77,26 @@ export default function Paypal() {
                             console.log("Order Confirmed: " + JSON.stringify(data));
                         }}
                     />
-                    <PayPalButtons
-                        style={{
-                            color: 'gold',
-                            label: 'pay',
-                            shape: "rect",
-                            layout: "horizontal",
-                            height: 40,
-                            tagline: false
-                        }}
-                        createOrder={async () => {
+                    <Button onClick={
+                        async () => {
+                            console.log('Payout..');
                             try {
-                                const response = await axios.post('/api/paypal/payout')
-                                return response.data.data.order.id;
-                            } catch (err) {
-                                alert('Error : ' + err);
-                                return null;
-                            }
-                        }}
-                    />
+                                const response = await fetch('/api/paypal/payout', {
+                                  method: 'POST'
+                                });
+                                const responseData = await response.json();
+                                if (response.ok) {
+                                  console.log('Fonds retirés avec succès !');
+                                } else {
+                                  console.log(`Erreur: ${responseData.error}`);
+                                }
+                              } catch (error) {
+                                console.log(`Erreur générale: ${error}`);
+                              }
+                        }
+                    }>
+                        Retirer des fonds
+                    </Button>
                     </PayPalScriptProvider>
                 </div>
             </div>

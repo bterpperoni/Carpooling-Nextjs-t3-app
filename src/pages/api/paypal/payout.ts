@@ -4,7 +4,6 @@
 
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import { useSession } from "next-auth/react";
 ;
 
 
@@ -16,16 +15,18 @@ export default async function handler(req: NextApiRequest, res:  NextApiResponse
         const requestBody = {
           sender_batch_header: {
             sender_batch_id: 'batch_' + Math.random().toString(3).substring(9),
-            email_subject: 'Payment from Business Account'
+            email_subject: 'Payment from Business Account',
+            email_message: "You have received a payout! Thanks for using our service!"
           },
           items: [
             {
-              recipient_type: 'sb-pvw8l29057890@personal.example.com',
+              recipient_type: 'EMAIL',
               amount: {
                 value: '100.00',
                 currency: 'EUR'
               },
               note: 'Whitewash Payment',
+              sender_item_id: "201403140001",
               receiver: 'sb-pvw8l29057890@personal.example.com'
             }
           ]
@@ -35,7 +36,7 @@ export default async function handler(req: NextApiRequest, res:  NextApiResponse
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.PAYPAL_ACCESS_TOKEN}`
+            'Authorization': `Bearer A21AAKIWKF9qEmFyxX8aeH4ift7p0HmilpFUYBWhTttTKHL6nJUHLEUmFT3mxyO50MuyeEb_wNyjhOCRgeqaxUCYYML984ZnA`
           },
           body: JSON.stringify(requestBody)
         });
