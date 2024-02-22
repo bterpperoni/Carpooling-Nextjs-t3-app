@@ -3,12 +3,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import checkoutNodeJssdk from '@paypal/checkout-server-sdk'
 
-  let clientId
-  let clientSecret 
-
   const configureEnvironment = function () {
-    clientId = process.env.PAYPAL_CLIENT_ID ?? ''
-    clientSecret = process.env.PAYPAL_CLIENT_SECRET ?? ''
+    const clientId = process.env.PAYPAL_CLIENT_ID ?? ''
+    const clientSecret = process.env.PAYPAL_CLIENT_SECRET ?? ''
   return process.env.NODE_ENV === 'production'
     ? new checkoutNodeJssdk.core.LiveEnvironment(clientId, clientSecret)
     : new checkoutNodeJssdk.core.SandboxEnvironment(clientId, clientSecret)
