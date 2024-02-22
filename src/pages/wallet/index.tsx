@@ -76,6 +76,25 @@ export default function Paypal() {
                             console.log("Order Confirmed: " + JSON.stringify(data));
                         }}
                     />
+                    <PayPalButtons
+                        style={{
+                            color: 'gold',
+                            label: 'pay',
+                            shape: "rect",
+                            layout: "horizontal",
+                            height: 40,
+                            tagline: false
+                        }}
+                        createOrder={async () => {
+                            try {
+                                const response = await axios.post('/api/paypal/payout')
+                                return response.data.data.order.id;
+                            } catch (err) {
+                                alert('Error : ' + err);
+                                return null;
+                            }
+                        }}
+                    />
                     </PayPalScriptProvider>
                 </div>
             </div>
