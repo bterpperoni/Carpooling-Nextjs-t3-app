@@ -65,6 +65,7 @@ model User {
   travelsAsPassenger Passenger[]   @relation("UserPassenger")
   groupCreated       Group[]       @relation("GroupCreatedBy")
   groupMembers       GroupMember[] 
+  wallet             Wallet[]         
 }
 
 // -------------------------------------------TRAVEL & PASSENGER------------------------------------------------
@@ -106,7 +107,7 @@ model Group {
   campus           String
   createdBy        String
   visibility       Boolean       @default(false)
-  acceptInvitation Boolean?      @default(false)
+  acceptInvitation Boolean?      @default(true)
   travels          Travel[]      @relation("GroupTravels")
   creator          User          @relation("GroupCreatedBy", fields: [createdBy], references: [name])
   members          GroupMember[]
@@ -120,3 +121,42 @@ model GroupMember {
   group      Group   @relation(fields: [groupId], references: [id])
   userDetail User    @relation(fields: [userName], references: [name])
 }
+
+// ------------------------------------------- WALLET & TRANSACTIONS ------------------------------------------------
+
+model Wallet {
+  id        String     @id @default(cuid())
+  userId    String
+  balance   Int     @default(0)
+  userWallet   User @relation(fields: [userId], references: [id])
+  transactions Transaction[]     
+  // withdrawals Withdrawal[]
+  // deposits    Deposit[]
+}
+
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  walletId  String
+  amount    Int
+  type      String   @default("Paypal Transaction")
+  createdAt DateTime @default(now())
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+}
+
+// model Withdrawal {
+//   id        Int      @id @default(autoincrement())
+//   walletId  String
+//   amount    Int
+//   type      String   @default("Withdrawal")
+//   createdAt DateTime @default(now())
+//   wallet    Wallet   @relation(fields: [walletId], references: [id])
+// }
+
+// model Deposit {
+//   id        Int      @id @default(autoincrement())
+//   walletId  String
+//   amount    Int
+//   type      String   @default("Deposit")
+//   createdAt DateTime @default(now())
+//   wallet    Wallet   @relation(fields: [walletId], references: [id])
+// }
