@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { getApiKey } from '$/utils/process';
 import React, { createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
 
 
 type ApiKeyType = string|undefined;
+
+const getApiKey = () => {
+    return process.env.GOOGLE_MAPS_API_KEY;
+}
 
 // Create a provider context
 const ApiKeyContext = createContext<ApiKeyType | undefined>(undefined);
@@ -14,7 +17,7 @@ interface ApiKeyProviderProps {
     children: ReactNode;
 }
 
-const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+const apiKey = getApiKey();
 
 const ApiKeyProvider: React.FC<ApiKeyProviderProps> = ({ children }) => {
 

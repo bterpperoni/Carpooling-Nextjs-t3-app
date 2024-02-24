@@ -11,11 +11,11 @@ const Carheh: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <ApiKeyProvider>
-        <Component {...pageProps} />
-      </ApiKeyProvider>
-    </SessionProvider>
+    <ApiKeyProvider>
+      <SessionProvider session={session}>
+          <Component {...pageProps} />
+      </SessionProvider>
+    </ApiKeyProvider>
   );
 };
 

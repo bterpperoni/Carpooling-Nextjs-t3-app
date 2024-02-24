@@ -10,6 +10,7 @@ import { Marker } from '@react-google-maps/api';
 import TravelCard from '$/lib/components/travel/TravelCard';
 import { useRouter } from 'next/router';
 import Button from '$/lib/components/button/Button';
+import { ApiKeyProvider } from '$/context/process';
 
 const All: React.FC = () => {
         // Map settings
@@ -99,17 +100,17 @@ const All: React.FC = () => {
                         )}
                         {/* -------------------------------------- display map ---------------------------------------------- */}
                         {!checked &&
-                        <> 
-                        <Map center={center} zoom={zoom}>
-                            {travelList?.map((travel) => (
-                                <Marker 
-                                    key={travel.id} 
-                                    position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
-                                    onClick={() => handleMarkerClick(travel.id)}
-                                    icon={customMarker}
-                                />
-                            ))}
-                        </Map>
+                        <>
+                            <Map center={center} zoom={zoom}>
+                                {travelList?.map((travel) => (
+                                    <Marker 
+                                        key={travel.id} 
+                                        position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
+                                        onClick={() => handleMarkerClick(travel.id)}
+                                        icon={customMarker}
+                                    />
+                                ))}
+                            </Map>
                         </>
                         }
                     </div>
