@@ -3,14 +3,12 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import  Map  from '$/lib/components/map/Map'; 
 import Slider from '$/lib/components/button/Slider';
 import { useState } from 'react';
-import Link from 'next/link'
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import { Marker } from '@react-google-maps/api';
 import TravelCard from '$/lib/components/travel/TravelCard';
 import { useRouter } from 'next/router';
 import Button from '$/lib/components/button/Button';
-import { ApiKeyProvider } from '$/context/process';
 
 const All: React.FC = () => {
         // Map settings
