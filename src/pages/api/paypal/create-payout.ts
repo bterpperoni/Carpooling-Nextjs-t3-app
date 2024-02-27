@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-// pages/api/payout.js
-
 import type { NextApiRequest, NextApiResponse } from "next";
-
-
 
 export default async function handler(req: NextApiRequest, res:  NextApiResponse) {
 
+  
     if (req.method === 'POST') {
       try {
+        const { accessToken } = req.body;
+
         const requestBody = {
           sender_batch_header: {
             sender_batch_id: 'batch_' + Math.random().toString(3).substring(9),
@@ -34,11 +33,13 @@ export default async function handler(req: NextApiRequest, res:  NextApiResponse
         const response = await fetch('https://api-m.paypal.com/v1/payments/payouts', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer A21AAKIWKF9qEmFyxX8aeH4ift7p0HmilpFUYBWhTttTKHL6nJUHLEUmFT3mxyO50MuyeEb_wNyjhOCRgeqaxUCYYML984ZnA`
+            "Content-Type": 'application/json',
+            Authorization: `Bearer ${accessToken}`
           },
           body: JSON.stringify(requestBody)
         });
+
+
         
         const responseData = await response.json();
   
@@ -48,7 +49,7 @@ export default async function handler(req: NextApiRequest, res:  NextApiResponse
           res.status(response.status).json({ success: false, error: responseData.error });
         }
       } catch (error) {
-        res.status(500).json({ success: false, error: error});
+        res.status(500).json({ success: false, error: res.errored });
       }
     } else {
       res.status(405).json({ success: false, error: 'Method Not Allowed' });

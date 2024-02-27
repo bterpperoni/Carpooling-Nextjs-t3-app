@@ -9,6 +9,8 @@ import LayoutMain from "$/lib/components/layout/LayoutMain"
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 import axios from "axios";
 import { signIn, useSession } from "next-auth/react";
+import getPaypalToken from "$/hook/paypalAuthorization";
+import { useEffect } from "react";
 
 export default function Paypal() {
 
@@ -44,6 +46,26 @@ export default function Paypal() {
             return undefined;
         }
     }
+ 
+    const accessToken = getPaypalToken();
+    const paypalCreatePayout = async () => {
+        try {
+            if(accessToken === '') throw new Error('Access Token not found');
+            else {
+                const response = await axios.post('/api/paypal/create-payout', {
+                    accessToken: accessToken
+                });
+                return response.data;
+            }
+        } catch (err) {
+            alert('Error : ' + err);
+            return null;
+        }
+    }
+
+    useEffect(() => {
+        if(accessToken !== '') console.log("Access Token: " + accessToken);
+    }, [accessToken]);
 
     if (session) {
     return (
@@ -80,19 +102,8 @@ export default function Paypal() {
                         <Button onClick={
                             async () => {
                                 console.log('Payout..');
-                                try {
-                                    const response = await fetch('/api/paypal/payout', {
-                                    method: 'POST'
-                                    });
-                                    const responseData = await response.json();
-                                    if (response.ok) {
-                                    console.log('Fonds retirés avec succès !');
-                                    } else {
-                                    console.log(`Erreur: ${responseData.error}`);
-                                    }
-                                } catch (error) {
-                                    console.log(`Erreur générale: ${error}`);
-                                }
+                                const paypalPayout = await paypalCreatePayout();
+                                console.log("Payout: " + JSON.stringify(paypalPayout));
                             }
                         }>
                             Retirer des fonds

@@ -23,7 +23,7 @@ export const transaction = createTRPCRouter({
     create: protectedProcedure
         .input(z.object(
             { 
-                amount: z.number().step(0),
+                amount: z.number(),
                 fromWalletId: z.string(),
                 toWalletId: z.string(),
             }))
