@@ -5,6 +5,10 @@ import { useApiKey } from '$/context/process';
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
 
+
+/* ------------------------------------------------------------------------------------------------------------------------
+------------------------- Geocode an address using the Google Maps Geocoding API --------------------------------------
+------------------------------------------------------------------------------------------------------------------------ */
 export const geocode = async (address: string): Promise<{location: google.maps.LatLng|null, formattedAddress: string, placeId: string}> => {
 
   const apiKey = useApiKey();

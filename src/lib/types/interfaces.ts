@@ -19,8 +19,12 @@ export interface DropdownProps {
     onChange: (selectedSchool: ChangeEvent<HTMLSelectElement>, selectedCampus:  ChangeEvent<HTMLSelectElement> ) => void;
   }
 
-   // Typescript interface for request body
   export interface RequestBody {
     order_price: number;
     user_id: string;
+  }
+
+  export interface PaypalTokenResponse {
+    access_token: string;
+
   }

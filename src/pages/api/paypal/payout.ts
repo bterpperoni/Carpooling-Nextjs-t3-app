@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // pages/api/payout.js
 
-
 import type { NextApiRequest, NextApiResponse } from "next";
-;
 
 
 
@@ -16,7 +15,7 @@ export default async function handler(req: NextApiRequest, res:  NextApiResponse
           sender_batch_header: {
             sender_batch_id: 'batch_' + Math.random().toString(3).substring(9),
             email_subject: 'Payment from Business Account',
-            email_message: "You have received a payout! Thanks for using our service!"
+            email_message: "Withdrawing funds from your account"
           },
           items: [
             {
@@ -25,8 +24,8 @@ export default async function handler(req: NextApiRequest, res:  NextApiResponse
                 value: '100.00',
                 currency: 'EUR'
               },
-              note: 'Whitewash Payment',
-              sender_item_id: "201403140001",
+              note: 'Withdrawal',
+              sender_item_id: 'item_' + Math.random().toString(3).substring(9),
               receiver: 'sb-pvw8l29057890@personal.example.com'
             }
           ]

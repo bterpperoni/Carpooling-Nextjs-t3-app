@@ -57,46 +57,46 @@ export default function Paypal() {
                         currency: 'EUR'
                         }}
                     >
-                    <PayPalButtons
-                        style={{
-                            color: 'gold',
-                            label: 'pay',
-                            shape: "rect",
-                            layout: "horizontal",
-                            height: 40,
-                            tagline: false
-                        }}
-                        createOrder={async () => {
-                            const order_id = await paypalCreateOrder();
-                            console.log("Creating Order: " + order_id)
-                            return order_id + ''
-                        }}
-                        onApprove={async (data) => {
-                            console.log('Capturing Order..');
-                            await paypalCaptureOrder(data.orderID);
-                            console.log("Order Confirmed: " + JSON.stringify(data));
-                        }}
-                    />
-                    <Button onClick={
-                        async () => {
-                            console.log('Payout..');
-                            try {
-                                const response = await fetch('/api/paypal/payout', {
-                                  method: 'POST'
-                                });
-                                const responseData = await response.json();
-                                if (response.ok) {
-                                  console.log('Fonds retirés avec succès !');
-                                } else {
-                                  console.log(`Erreur: ${responseData.error}`);
+                        <PayPalButtons
+                            style={{
+                                color: 'gold',
+                                label: 'pay',
+                                shape: "rect",
+                                layout: "horizontal",
+                                height: 40,
+                                tagline: false
+                            }}
+                            createOrder={async () => {
+                                const order_id = await paypalCreateOrder();
+                                console.log("Creating Order: " + order_id)
+                                return order_id + ''
+                            }}
+                            onApprove={async (data) => {
+                                console.log('Capturing Order..');
+                                await paypalCaptureOrder(data.orderID);
+                                console.log("Order Confirmed: " + JSON.stringify(data));
+                            }}
+                        />
+                        <Button onClick={
+                            async () => {
+                                console.log('Payout..');
+                                try {
+                                    const response = await fetch('/api/paypal/payout', {
+                                    method: 'POST'
+                                    });
+                                    const responseData = await response.json();
+                                    if (response.ok) {
+                                    console.log('Fonds retirés avec succès !');
+                                    } else {
+                                    console.log(`Erreur: ${responseData.error}`);
+                                    }
+                                } catch (error) {
+                                    console.log(`Erreur générale: ${error}`);
                                 }
-                              } catch (error) {
-                                console.log(`Erreur générale: ${error}`);
-                              }
-                        }
-                    }>
-                        Retirer des fonds
-                    </Button>
+                            }
+                        }>
+                            Retirer des fonds
+                        </Button>
                     </PayPalScriptProvider>
                 </div>
             </div>

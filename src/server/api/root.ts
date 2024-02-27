@@ -1,8 +1,8 @@
 import { userRouter } from "./routers/user";
 import { createTRPCRouter } from "$/server/api/trpc";
 import { travelRouter } from "./routers/travel";
-import { groupRouter } from "./routers/group";
-import { groupMemberRouter } from "./routers/groupMember";
+import { groupRouter } from "./routers/groups/group";
+import { groupMemberRouter } from "./routers/groups/groupMember";
 
 /**
  * This is the primary router for your server.
