@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -8,8 +9,8 @@ export default async function handler(req: NextApiRequest, res:  NextApiResponse
   
     if (req.method === 'POST') {
       try {
-        const { accessToken } = req.body;
-
+        const accessToken = process.env.PAYPAL_ACCESS_TOKEN ?? '';
+        console.log(accessToken);
         const requestBody = {
           sender_batch_header: {
             sender_batch_id: 'batch_' + Math.random().toString(3).substring(9),
@@ -30,23 +31,21 @@ export default async function handler(req: NextApiRequest, res:  NextApiResponse
           ]
         };
   
-        const response = await fetch('https://api-m.paypal.com/v1/payments/payouts', {
+        const response = await fetch('https://api-m.sandbox.paypal.com/v1/payments/payouts', {
           method: 'POST',
           headers: {
-            "Content-Type": 'application/json',
-            Authorization: `Bearer ${accessToken}`
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken,
           },
           body: JSON.stringify(requestBody)
         });
-
-
         
         const responseData = await response.json();
   
         if (response.ok) {
           res.status(200).json({ success: true, data: responseData });
         } else {
-          res.status(response.status).json({ success: false, error: responseData.error });
+          res.status(response.status).json({ success: false, error: responseData.error});
         }
       } catch (error) {
         res.status(500).json({ success: false, error: res.errored });
