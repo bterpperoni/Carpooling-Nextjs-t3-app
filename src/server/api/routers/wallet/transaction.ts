@@ -5,7 +5,7 @@ import {
   protectedProcedure,
 } from "$/server/api/trpc";
 
-export const transaction = createTRPCRouter({
+export const transactionRouter = createTRPCRouter({
 
     transactionList: protectedProcedure.query(async ({ ctx }) => {
         const transactionList =  ctx.db.transaction.findMany();

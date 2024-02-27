@@ -6,11 +6,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res:  NextApiResponse) {
 
-  
     if (req.method === 'POST') {
       try {
-        const accessToken = process.env.PAYPAL_ACCESS_TOKEN ?? '';
-        console.log(accessToken);
+        const accessToken = process.env.PAYPAL_ACCESS_TOKEN ?? req.body.accessToken;
         const requestBody = {
           sender_batch_header: {
             sender_batch_id: 'batch_' + Math.random().toString(3).substring(9),

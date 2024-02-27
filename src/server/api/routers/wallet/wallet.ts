@@ -5,7 +5,7 @@ import {
   protectedProcedure,
 } from "$/server/api/trpc";
 
-export const wallet = createTRPCRouter({
+export const walletRouter = createTRPCRouter({
 
     walletList: protectedProcedure.query(async ({ ctx }) => {
         const walletList =  ctx.db.wallet.findMany();
@@ -20,10 +20,19 @@ export const wallet = createTRPCRouter({
             });
         }),
 
+    walletByUserId: protectedProcedure
+        .input(z.object({ userId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const wallet = await ctx.db.wallet.findFirst({
+                where: { userId: input.userId },
+            });
+            return wallet;
+        }),
+
     create: protectedProcedure
         .input(z.object(
             { 
-                balance: z.number().step(0),
+                balance: z.number(),
             }))
         .mutation(async ({ ctx, input }) => {
             // simulate a slow db call

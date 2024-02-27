@@ -9,7 +9,7 @@ import {
   protectedProcedure,
 } from "$/server/api/trpc";
 
-export const paypal = createTRPCRouter({
+export const paypalRouter = createTRPCRouter({
 
     paypalTransactionList: protectedProcedure.query(async ({ ctx }) => {
         const paypalList = await ctx.db.paypalTransaction.findMany();
