@@ -80,6 +80,7 @@ const paypalCreatePayout = async () => {
     }
 }
 
+// ---------------------------- useEffect -----------------------------------------------
 useEffect(() => {
     if(existingWallet === null) {
         console.log("Creating Wallet..");
@@ -91,10 +92,11 @@ useEffect(() => {
 
 }, [existingWallet, createWallet]);
 
+// ------------------------------ Render the wallet page ------------------------------
 if (session) {
 return (
     <LayoutMain>
-        <div className="bg-[var(--purple-g3)]">
+        <div className="w-screen overflow-hidden bg-[var(--purple-g3)]">
             <div className='flex flex-col items-center mt-2'>  
                 <div className='border-b-t-2 border-0 border-white'>   
                     <div className='md:text-2xl text-xl mx-12 bg-[var(--purple-g3)] text-center 
@@ -113,16 +115,24 @@ return (
                             <div className="text-black text-center my-2 text-[18px] border-y-2 w-full border-black p-2">
                                 Depuis Paypal
                             </div>
-                            <div className=" mt-5 flex flex-col m-4 itmes-center">
-                                <p className="text-center text-gray-500">Montant à Ajouter</p>
+                            <div className="  mt-5 flex flex-col mb-4 w-[100%]"> 
+                                <p className="text-center text-gray-500">Montant à Ajouter : 
+                                {depositAmount!=='' ? 
+                                <>
+                                    <b> {depositAmount} €</b>
+                                </>
+                                    : 
+                                <>
+                                    <b> 50 €</b>
+                                </>}
+                                </p>
                                 <input type="range" 
-                                       min={0} max="100" 
+                                       min={10} max={100} 
                                        value={depositAmount} 
-                                       className="range range-primary"
+                                       className="ds-range ds-range-warning"
                                        onChange={function (e: ChangeEvent<HTMLInputElement>): void {
                                         setDepositAmount(e.target.value);
                                     }} />
-                                <div>{depositAmount ?? 40}</div>
                             </div>
                             <PayPalScriptProvider
                                 options={{
@@ -160,12 +170,21 @@ return (
                             <div className="text-black text-center my-2 text-[18px] border-y-2 w-full border-black p-2">
                                 Vers Paypal
                             </div>
-                            <div className="text-grey mt-5">
-                                <p className="text-center text-gray-500">Montant à Retirer</p>
+                            <div className=" mt-5 flex flex-col mb-4 w-[100%]">
+                                <p className="text-center text-gray-500">Montant à Retirer : 
+                                {withdrawAmount!=='' ? 
+                                <>
+                                    <b> {withdrawAmount} €</b>
+                                </>
+                                    : 
+                                <>
+                                    <b> 50 €</b>
+                                </>}
+                                </p>
                                 <input type="range" 
-                                       min={0} max="100" 
+                                       min={10} max={100} 
                                        value={withdrawAmount} 
-                                       className="range range-primary"
+                                       className="ds-range ds-range-info"
                                        onChange={function (e: ChangeEvent<HTMLInputElement>): void {
                                         setWithdrawAmount(e.target.value);
                                     }} />
@@ -176,7 +195,7 @@ return (
                                     const paypalPayout = await paypalCreatePayout();
                                     console.log("Payout: " + JSON.stringify(paypalPayout));
                                 }}
-                                className="mt-4 border-2 p-2 rounded-[10%]
+                                className="border-2 p-2 rounded-[15px]
                                             bg-blue-500 
                                             text-white hover:bg-white 
                                             hover:text-blue-500 hover:border-blue-500">
