@@ -4,8 +4,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import client from '$/utils/paypal';
 import paypal from '@paypal/checkout-server-sdk';
-import type { NextApiRequest, NextApiResponse } from 'next'
-import type { RequestBody } from '$/lib/types/interfaces';
+import type { NextApiRequest, NextApiResponse } from 'next';
+
 
 
 
@@ -14,8 +14,9 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
     if(req.method != "POST")
     return res.status(404).json({success: false, message: "Not Found"})
 
-    const requestBody: RequestBody = req.body;
-    if (!requestBody.order_price ?? !requestBody.user_id) {
+    const orderPrice = req.body.order_price;
+    const userId = req.body.user_id;
+    if (!orderPrice || !userId) {
     return res.status(400).json({ success: false, message: "Please Provide order_price And User ID" });
   }
 
@@ -30,7 +31,7 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
             {
               amount: {
                 currency_code: 'EUR',
-                value: requestBody.order_price,
+                value: orderPrice,
               },
             },
           ],

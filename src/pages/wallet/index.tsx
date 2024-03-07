@@ -33,6 +33,7 @@ const { mutate: createWallet } = api.wallet.create.useMutation();
 // ------------------------- Paypal Orders --------------------------------------
 const paypalCreateOrder = async (orderPrice: string): Promise<string | null> => {
         try {
+            console.log('Accessing Paypal..' + orderPrice);
             const response = await axios.post('/api/paypal/create-order', {
                 user_id: session?.user?.id,
                 order_price: orderPrice
@@ -88,7 +89,7 @@ useEffect(() => {
         // console.log("Wallet: " + JSON.stringify(existingWallet));
     }
 
-}, [existingWallet, createWallet, depositAmount]);
+}, [existingWallet, createWallet]);
 
 if (session) {
 return (
@@ -137,8 +138,9 @@ return (
                                         height: 40,
                                         tagline: false
                                     }}
+                                    forceReRender={[depositAmount]}
                                     createOrder={async () => {
-                                        const order_id = await paypalCreateOrder("10");
+                                        const order_id = await paypalCreateOrder(depositAmount);
                                         console.log("Creating Order: " + order_id)
                                         return order_id + ''
                                     }}
