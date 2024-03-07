@@ -1,11 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-base-to-string */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import Button from "$/lib/components/button/Button";
 import LayoutMain from "$/lib/components/layout/LayoutMain"
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
@@ -15,8 +7,10 @@ import getPaypalToken from "$/hook/paypalAuthorization";
 import { useEffect, useState } from "react";
 import type {ChangeEvent} from "react";
 import { api } from "$/utils/api";
-import { set } from "zod";
 
+/* ------------------------------------------------------------------------------------------------------------------------
+------------------------- Page to manage wallet & display transactions ----------------------------------------------------  
+------------------------------------------------------------------------------------------------------------------------ */
 export default function Wallet() {
 // Get session
 const { data: session } = useSession();
@@ -29,7 +23,7 @@ const { data: existingWallet } = api.wallet.walletByUserId.useQuery(
 const [ depositAmount, setDepositAmount ] = useState<string>('50');
 const [ withdrawAmount, setWithdrawAmount ] = useState<string>(existingWallet?.balance ?? '0');
 
-
+/* --------------------------------- TRPC --------------------------------- */
 // Create wallet if not exists
 const { mutate: createWallet } = api.wallet.create.useMutation();
 // Create Paypal Order
@@ -38,6 +32,12 @@ const { mutate: createPaypalOrder } = api.paypal.createOrder.useMutation();
 const { mutate: createPaypalPayout } = api.paypal.createPayout.useMutation();
 // Update Wallet
 const { mutate: updateWallet } = api.wallet.update.useMutation();
+// Get transaction list
+const { data: transactionListByUser } = api.paypal.paypalTransactionListByUser.useQuery(
+    { walletId: existingWallet?.id ?? ''},
+    { enabled: session?.user?.id !== undefined }
+);
+
 
 // ------------------------- Paypal Orders --------------------------------------
 const paypalCreateOrder = async (orderPrice: string): Promise<string | null> => {
@@ -124,6 +124,7 @@ const paypalCreatePayout = async (wthdrwl: string) => {
             }
         }
     } catch (err) {
+        // Payout is not successfull
         alert('Error : ' + err);
         return null;
     }
@@ -140,7 +141,6 @@ useEffect(() => {
     }
 
     if(existingWallet?.balance) {
-        console.log("Wallet Balance: " + existingWallet.balance);
         if(parseInt(existingWallet.balance) <= 10) {
             setWithdrawAmount(existingWallet.balance);
         }
@@ -156,15 +156,29 @@ return (
             <div className='flex flex-col items-center mt-2'>  
                 <div className='border-b-t-2 border-0 border-white'>   
                     <div className='md:text-2xl text-xl mx-12 bg-[var(--purple-g3)] text-center 
-                                    rounded-[5%] p-4 mb-4 text-fuchsia-700 border-fuchsia-700 border-y-2'>                    
+                                    rounded-[5%] p-4 mb-4 text-fuchsia-700 border-fuchsia-700 border-y-2 mt-4'>                    
                         <p>Gérer le portefeuille</p>
                     </div>
                 </div>
             </div>
         </div>
         <div className="w-screen py-8 px-6">
-            <div className="flex md:flex-row flex-col bg-white h-max max-w-[880px] rounded-[8px] my-0 mx-auto rounded-[8px]">
-                <aside className="md:w-[360px] w-[100%] bg-[#f2f2f2] h-[100%] border-tl-[8px] border-bl-[8px] p-[20px]">
+            <div className="flex md:flex-row flex-col bg-[var(--purple-g3)] max-w-[880px] rounded-[8px] my-0 mx-auto rounded-[8px] h-max-max">
+                <aside className="md:w-[360px] w-[100%] bg-[#f2f2f2] h-[100%] border-tl-[8px] border-bl-[8px] p-[20px] rounded-[15px]">
+                    <div className="flex flex-row mt-4 mb-8 justify-center items-center">
+                            <h2 className="m-0 text-gray-600 border-y-2 border-gray-400 text-xl md:text-3xl"> Solde </h2>
+                            <span className="   ml-4
+                                                relative
+                                                border-2
+                                                border-gray-400
+                                                text-gray-500
+                                                text-[32px]
+                                                h-auto
+                                                p-2
+                                                rounded-full">
+                                {existingWallet!==null ? existingWallet?.balance + ' €' : '0 €'}
+                            </span>
+                    </div>
                     <h2 className="m-0 text-[var(--purple-g3)] text-2xl mt-4">Dépôt</h2>    
                     <div className="block items-center">
                         <div className=" w-[100%] inline-block">
@@ -222,7 +236,9 @@ return (
                             <div className=" mt-5 flex flex-col mb-4 w-[100%]">
                                 <div className="text-center text-gray-500"><b>Montant à Retirer : </b> 
                                 { parseFloat(withdrawAmount) >= 10 ? 
-                                <b> {withdrawAmount} €</b> 
+                                <>
+                                    <b> {withdrawAmount} €</b> 
+                                </>
                                     : 
                                 <>
                                     <b> {existingWallet?.balance} €</b>
@@ -258,25 +274,38 @@ return (
                         </div>
                     </div>
                 </aside>
-                <div className="w-[520px] p-[50px] flex flex-row justify-center">
-                    <h2 className="m-0 text-[var(--purple-g3)] text-xl md:text-3xl"> Solde : </h2>
-                    <span className="   ml-4
-                                        relative
-                                        border-y-2
-                                        border-gray-400
-                                        text-gray-500
-                                        top-[-8px]
-                                        text-[32px]
-                                        h-[50px]">
-                        {existingWallet!==null ? existingWallet?.balance + ' €' : '0 €'}
-                    </span>
-                    
-                    <div className="transactions">
-                        <div>
-                            
-                        </div>
+                <aside className="w-max mx-auto flex flex-col items-center md:mt-0 mt-6">
+                    <div className="flex flex-row mt-4 mb-4 justify-center items-center">
+                        <h2 className="m-0 text-gray-600 p-2 border-y-2 border-gray-400 text-xl md:text-3xl"> Historique des transactions </h2>
                     </div>
-                </div>
+                    <div className="flex flex-col ">
+                        {transactionListByUser?.map((transaction) => (
+                            // --------------------- Transaction component --------------------------------------
+                            <div key={transaction.id} className="border p-4 rounded my-2 shadow bg-[var(--purple-g2)]">
+                                <h2 className="text-xl font-bold mb-2 text-gray-600">Transaction ID: <b className="text-gray-400">{transaction.id}</b></h2>
+                                <img 
+                                    src="https://imgs.search.brave.com/JiOsm1uDW3zz_PzdRxSN6DzreenqZygSuD46Pjug3bw/rs:fit:860:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy9i/L2I1L1BheVBhbC5z/dmc.svg" 
+                                    alt="Paypal icon" 
+                                    width={100}
+                                    height={100}
+                                    className="mb-3 my-2 mx-auto"
+                                />
+                                <div className="p-2 border-2 border-gray-400">
+                                    <p className="m-1"><b className="text-gray-200 ">Username:</b> {session?.user.name}</p>
+                                    <p className="m-1"><b className="text-gray-200 ">Amount:</b> {transaction.amount} €</p>
+                                    <p className="m-1"><b className="text-gray-200 ">Type:</b> {transaction.type.toUpperCase()}</p>
+                                    {transaction.orderId && <p className="m-1"><b className="text-gray-200 ">Order ID:</b> {transaction.orderId}</p>}
+                                    {transaction.payoutId && <p className="m-1"><b className="text-gray-200 ">Payout ID:</b> {transaction.payoutId}</p>}
+                                    <p className="m-1"><b className="text-gray-200 ">Date:</b> {new Date(transaction.createdAt).toLocaleDateString()}</p>
+                                </div>
+                            </div>
+                            // // --------------------- /Transaction component/ --------------------------------------
+                        ))}
+                    </div>
+                </aside>
+                
+                    
+                
             </div>
         </div>
     </LayoutMain>

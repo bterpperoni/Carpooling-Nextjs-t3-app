@@ -33,6 +33,22 @@ export const paypalRouter = createTRPCRouter({
             return paypalList;
         }),
 
+    paypalTransactionListByOrder: protectedProcedure
+        .query(async ({ ctx }) => {
+            const paypalList = await ctx.db.paypalTransaction.findMany({
+                where: { type: "deposit" },
+            });
+            return paypalList;
+        }),
+
+    paypalTransactionListByPayout: protectedProcedure
+        .query(async ({ ctx }) => {
+            const paypalList = await ctx.db.paypalTransaction.findMany({
+                where: { type: "withdraw" },
+            });
+            return paypalList;
+        }),
+
     createOrder: protectedProcedure
         .input(z.object(
             { 
