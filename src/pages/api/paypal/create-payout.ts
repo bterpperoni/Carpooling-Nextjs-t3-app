@@ -9,9 +9,12 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
     if (req.method === 'POST') {
       try {
         const accessToken = req.body.accessToken;
+        const withdrawAmount = req.body.amount;
+        const receiverEmail = req.body.email;
+
         const requestBody = {
           sender_batch_header: {
-            sender_batch_id: 'batch_' + Math.random().toString(3).substring(9),
+            sender_batch_id: 'batch_' + Math.random().toString().substring(4),
             email_subject: 'Payment from Business Account',
             email_message: "Withdrawing funds from your Carheh account"
           },
@@ -19,12 +22,12 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
             {
               recipient_type: 'EMAIL',
               amount: {
-                value: '100.00',
+                value: withdrawAmount,
                 currency: 'EUR'
               },
               note: 'Withdrawal',
-              sender_item_id: 'item_' + Math.random().toString(3).substring(9),
-              receiver: 'sb-pvw8l29057890@personal.example.com'
+              sender_item_id: 'item_' + Math.random().toString().substring(4),
+              receiver: receiverEmail
             }
           ]
         };

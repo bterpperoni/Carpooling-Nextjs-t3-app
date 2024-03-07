@@ -17,8 +17,8 @@ import { api } from "$/utils/api";
 
 export default function Wallet() {
 // Amount const fort withdraw & deposit
-const [ depositAmount, setDepositAmount ] = useState<string>('');
-const [ withdrawAmount, setWithdrawAmount ] = useState<string>('');
+const [ depositAmount, setDepositAmount ] = useState<string>('50');
+const [ withdrawAmount, setWithdrawAmount ] = useState<string>('50');
 
 // Get session
 const { data: session } = useSession();
@@ -33,7 +33,6 @@ const { mutate: createWallet } = api.wallet.create.useMutation();
 // ------------------------- Paypal Orders --------------------------------------
 const paypalCreateOrder = async (orderPrice: string): Promise<string | null> => {
         try {
-            console.log('Accessing Paypal..' + orderPrice);
             const response = await axios.post('/api/paypal/create-order', {
                 user_id: session?.user?.id,
                 order_price: orderPrice
@@ -65,12 +64,14 @@ const paypalCaptureOrder = async (orderId: string): Promise<JSON | undefined> =>
 
 // ------------------------- Paypal Payouts --------------------------------------
 const accessToken = getPaypalToken();
-const paypalCreatePayout = async () => {
+const paypalCreatePayout = async (wthdrwl: string) => {
     try {
         if(accessToken === '') throw new Error('Access Token not found');
         else {
             const response = await axios.post('/api/paypal/create-payout', {
-                accessToken: accessToken
+                accessToken: accessToken,
+                amount: wthdrwl,
+                email: 'sb-l0khw28500478@personal.example.com'
             });
             return response.data;
         }
@@ -117,14 +118,7 @@ return (
                             </div>
                             <div className="  mt-5 flex flex-col mb-4 w-[100%]"> 
                                 <p className="text-center text-gray-500">Montant à Ajouter : 
-                                {depositAmount!=='' ? 
-                                <>
-                                    <b> {depositAmount} €</b>
-                                </>
-                                    : 
-                                <>
-                                    <b> 50 €</b>
-                                </>}
+                                { depositAmount!=='' ? <b> {depositAmount} €</b> : <b> 50 €</b> }
                                 </p>
                                 <input type="range" 
                                        min={10} max={100} 
@@ -172,14 +166,7 @@ return (
                             </div>
                             <div className=" mt-5 flex flex-col mb-4 w-[100%]">
                                 <p className="text-center text-gray-500">Montant à Retirer : 
-                                {withdrawAmount!=='' ? 
-                                <>
-                                    <b> {withdrawAmount} €</b>
-                                </>
-                                    : 
-                                <>
-                                    <b> 50 €</b>
-                                </>}
+                                { withdrawAmount!=='' ? <b> {withdrawAmount} €</b> : <b> 50 €</b> }
                                 </p>
                                 <input type="range" 
                                        min={10} max={100} 
@@ -192,7 +179,7 @@ return (
                             <Button onClick={
                                 async () => {
                                     console.log('Payout..');
-                                    const paypalPayout = await paypalCreatePayout();
+                                    const paypalPayout = await paypalCreatePayout(withdrawAmount);
                                     console.log("Payout: " + JSON.stringify(paypalPayout));
                                 }}
                                 className="border-2 p-2 rounded-[15px]
@@ -217,7 +204,7 @@ return (
                     </h2>
                     <div className="transactions">
                         <div>
-                            ok
+                            
                         </div>
                     </div>
                 </div>

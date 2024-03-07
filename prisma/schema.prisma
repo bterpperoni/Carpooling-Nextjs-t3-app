@@ -148,7 +148,7 @@ model Transaction {
 
 model PaypalTransaction {
   id        Int      @id @default(autoincrement())
-  orderId   String
+  orderId   String?
   walletId  String
   amount    Int
   type      String       
