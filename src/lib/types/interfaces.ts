@@ -20,7 +20,7 @@ export interface DropdownProps {
   }
 
   export interface RequestBody {
-    order_price: number;
+    order_price: string;
     user_id: string;
   }
 

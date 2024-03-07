@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res:  NextApiResponse) {
+export default async function Handler(req: NextApiRequest, res:  NextApiResponse) {
 
     if (req.method === 'POST') {
       try {
@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res:  NextApiResponse
           sender_batch_header: {
             sender_batch_id: 'batch_' + Math.random().toString(3).substring(9),
             email_subject: 'Payment from Business Account',
-            email_message: "Withdrawing funds from your account"
+            email_message: "Withdrawing funds from your Carheh account"
           },
           items: [
             {

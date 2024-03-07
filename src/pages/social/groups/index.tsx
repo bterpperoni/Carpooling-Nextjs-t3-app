@@ -99,7 +99,7 @@ export default function Groups() {
                                     <div className="m-6 text-2xl bold text-center">
                                         Trouves des étudiants qui se rendent au même établissement.
                                         <p className="text-xl text-center">
-                                            Crée un groupe ou rejoind en un et commences à covoiturer. 
+                                            Rejoind un groupe et commences à covoiturer. 
                                         </p>
                                     </div>
                                 </div>

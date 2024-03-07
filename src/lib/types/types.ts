@@ -12,7 +12,7 @@ export type ButtonProps = {
 export type InputProps = {
         label: string;
         type: string;
-        value: string | null;
+        value: string | number | readonly string[] | undefined;
         onChange: (e: ChangeEvent<HTMLInputElement>) => void;
         placeholder?: string;
         classInput?: string;

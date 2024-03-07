@@ -15,7 +15,7 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
     return res.status(404).json({success: false, message: "Not Found"})
 
     const requestBody: RequestBody = req.body;
-    if (!requestBody.order_price || !requestBody.user_id) {
+    if (!requestBody.order_price ?? !requestBody.user_id) {
     return res.status(400).json({ success: false, message: "Please Provide order_price And User ID" });
   }
 
@@ -30,7 +30,7 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
             {
               amount: {
                 currency_code: 'EUR',
-                value: `${requestBody.order_price}`,
+                value: requestBody.order_price,
               },
             },
           ],
