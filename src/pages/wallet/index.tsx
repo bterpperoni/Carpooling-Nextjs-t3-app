@@ -15,7 +15,6 @@ import getPaypalToken from "$/hook/paypalAuthorization";
 import { useEffect, useState } from "react";
 import type {ChangeEvent} from "react";
 import { api } from "$/utils/api";
-import { data } from '../../utils/data/school';
 
 export default function Wallet() {
 // Get session
@@ -78,7 +77,6 @@ const paypalCaptureOrder = async (orderId: string): Promise<JSON | undefined> =>
                     balance: newBalance.toString()
                 });
                 console.log("..Success : " + JSON.stringify(paypalDeposit));
-
             }
         }
         return response.data;
@@ -103,12 +101,12 @@ const paypalCreatePayout = async (wthdrwl: string) => {
             if (response.data.success) {
                 // Payout is successful
                 const statusPayout = response.data.data.payout;
-                const amountWithdrawn = parseFloat(response.data.data.amount);
+                const amountWithdrawn = parseFloat(wthdrwl);
                 if(existingWallet?.id !== undefined) {
                     const paypalWithdraw = {
                         payoutId: statusPayout.batch_header.payout_batch_id,
                         walletId: existingWallet.id,
-                        amount: wthdrwl,
+                        amount: wthdrwl + '.00',
                         type: 'withdraw'
                     }
                     // Create a withdraw transaction
@@ -138,7 +136,10 @@ useEffect(() => {
     }else{
         // TODO: Delete this console.log when feature is complete
         // console.log("Wallet: " + JSON.stringify(existingWallet));
-        console.log("Wallet Exists..");
+    }
+
+    if(existingWallet?.balance) {
+        console.log("Wallet Balance: " + existingWallet.balance);
     }
 
 }, [existingWallet, createWallet]);
@@ -215,12 +216,21 @@ return (
                                 Vers Paypal
                             </div>
                             <div className=" mt-5 flex flex-col mb-4 w-[100%]">
-                                <p className="text-center text-gray-500">Montant à Retirer : 
-                                { withdrawAmount!=='' ? <b> {withdrawAmount} €</b> : <b> {existingWallet?.balance}</b> }
-                                </p>
+                                <div className="text-center text-gray-500"><b>Montant à Retirer : </b> 
+                                { withdrawAmount!=='0' ? <b> {withdrawAmount} €</b> 
+                                : 
+                                <>
+                                    <b> {existingWallet?.balance} €</b>
+                                    <div>
+                                        Minimum requis: 10 €
+                                    </div>
+                                </> 
+                                }
+                                </div>
                                 <input type="range" 
-                                       min={0} max={existingWallet?.balance ?? 0} 
-                                       value={withdrawAmount} 
+                                       min={10} max={existingWallet?.balance ?? 0} 
+                                       value={withdrawAmount}
+                                       disabled={parseInt(existingWallet?.balance ?? '0') <= 10 ? true : false} 
                                        className="ds-range ds-range-info"
                                        onChange={function (e: ChangeEvent<HTMLInputElement>): void {
                                         setWithdrawAmount(e.target.value);
@@ -232,7 +242,7 @@ return (
                                     const paypalPayout = await paypalCreatePayout(withdrawAmount);
                                     console.log("Payout: " + JSON.stringify(paypalPayout));
                                     setTimeout(() => {
-                                        window.location.reload();
+                                        console.log('Payout Confirmed');
                                     }, 500);
                                 }}
                                 className="border-2 p-2 rounded-[15px]

@@ -3,14 +3,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { NextApiRequest, NextApiResponse } from "next";
-import { data } from '../../../utils/data/school';
 
 export default async function Handler(req: NextApiRequest, res:  NextApiResponse) {
 
     if (req.method === 'POST') {
       try {
         const accessToken = req.body.accessToken;
-        const withdrawAmount = req.body.amount;
+        const withdrawAmount = parseFloat(req.body.amount);
         const receiverEmail = req.body.email;
 
         const requestBody = {
