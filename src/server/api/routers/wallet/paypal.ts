@@ -33,7 +33,7 @@ export const paypalRouter = createTRPCRouter({
             return paypalList;
         }),
 
-    create: protectedProcedure
+    createOrder: protectedProcedure
         .input(z.object(
             { 
                 orderId: z.string(),
@@ -47,6 +47,27 @@ export const paypalRouter = createTRPCRouter({
             return ctx.db.paypalTransaction.create({
                 data: {
                     orderId: input.orderId,
+                    walletId: input.walletId,
+                    amount: input.amount,
+                    type: input.type
+                },
+            });
+        }),
+
+        createPayout: protectedProcedure
+        .input(z.object(
+            { 
+                payoutId: z.string(),
+                walletId: z.string(),
+                amount: z.string(),
+                type: z.string()
+            }))
+        .mutation(async ({ ctx, input }) => {
+            // simulate a slow db call
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            return ctx.db.paypalTransaction.create({
+                data: {
+                    payoutId: input.payoutId,
                     walletId: input.walletId,
                     amount: input.amount,
                     type: input.type

@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { NextApiRequest, NextApiResponse } from "next";
+import { data } from '../../../utils/data/school';
 
 export default async function Handler(req: NextApiRequest, res:  NextApiResponse) {
 
@@ -44,7 +45,14 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
         const responseData = await response.json();
   
         if (response.ok) {
-          res.status(200).json({ success: true, data: responseData });
+          res.status(200).json({ 
+            success: true, 
+            data: {
+              message: 'Payment has been processed successfully',
+              payout: responseData,
+              amount: withdrawAmount
+            }
+          });
         } else {
           res.status(response.status).json({ success: false, error: responseData.error});
         }

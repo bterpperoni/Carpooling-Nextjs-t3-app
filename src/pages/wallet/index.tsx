@@ -15,6 +15,7 @@ import getPaypalToken from "$/hook/paypalAuthorization";
 import { useEffect, useState } from "react";
 import type {ChangeEvent} from "react";
 import { api } from "$/utils/api";
+import { data } from '../../utils/data/school';
 
 export default function Wallet() {
 // Get session
@@ -32,7 +33,9 @@ const [ withdrawAmount, setWithdrawAmount ] = useState<string>(existingWallet?.b
 // Create wallet if not exists
 const { mutate: createWallet } = api.wallet.create.useMutation();
 // Create Paypal Order
-const { mutate: createPaypalOrder } = api.paypal.create.useMutation();
+const { mutate: createPaypalOrder } = api.paypal.createOrder.useMutation();
+// Create Paypal Payout
+const { mutate: createPaypalPayout } = api.paypal.createPayout.useMutation();
 // Update Wallet
 const { mutate: updateWallet } = api.wallet.update.useMutation();
 
@@ -97,7 +100,29 @@ const paypalCreatePayout = async (wthdrwl: string) => {
                 amount: wthdrwl,
                 email: 'sb-l0khw28500478@personal.example.com'
             });
-            return response.data;
+            if (response.data.success) {
+                // Payout is successful
+                const statusPayout = response.data.data.payout;
+                const amountWithdrawn = parseFloat(response.data.data.amount);
+                if(existingWallet?.id !== undefined) {
+                    const paypalWithdraw = {
+                        payoutId: statusPayout.batch_header.payout_batch_id,
+                        walletId: existingWallet.id,
+                        amount: wthdrwl,
+                        type: 'withdraw'
+                    }
+                    // Create a withdraw transaction
+                    createPaypalPayout(paypalWithdraw);
+                    // Update the wallet balance
+                    const newBalance: number = parseInt(existingWallet.balance ?? '0') - amountWithdrawn;
+                    updateWallet({
+                        id: existingWallet.id,
+                        userId: existingWallet.userId,
+                        balance: newBalance.toString()
+                    });
+                    return response.data;
+                }
+            }
         }
     } catch (err) {
         alert('Error : ' + err);
@@ -134,7 +159,7 @@ return (
         </div>
         <div className="w-screen py-8 px-6">
             <div className="flex md:flex-row flex-col bg-white h-max max-w-[880px] rounded-[8px] my-0 mx-auto rounded-[8px]">
-                <aside className="w-[360px] bg-[#f2f2f2] h-[100%] border-tl-[8px] border-bl-[8px] p-[20px]">
+                <aside className="md:w-[360px] w-[100%] bg-[#f2f2f2] h-[100%] border-tl-[8px] border-bl-[8px] p-[20px]">
                     <h2 className="m-0 text-[var(--purple-g3)] text-2xl mt-4">Dépôt</h2>    
                     <div className="block items-center">
                         <div className=" w-[100%] inline-block">
@@ -176,7 +201,7 @@ return (
                                     onApprove={async (data) => {
                                         console.log('Capturing Order..');
                                         await paypalCaptureOrder(data.orderID);
-                                        console.log("Order Confirmed: " + JSON.stringify(data));
+                                        console.log("Order Confirmed");
                                     }}
                                 />
                             </PayPalScriptProvider>
@@ -203,9 +228,12 @@ return (
                             </div>
                             <Button onClick={
                                 async () => {
-                                    console.log('Payout..');
+                                    console.log('Create Payout..');
                                     const paypalPayout = await paypalCreatePayout(withdrawAmount);
                                     console.log("Payout: " + JSON.stringify(paypalPayout));
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 500);
                                 }}
                                 className="border-2 p-2 rounded-[15px]
                                             bg-blue-500 
@@ -216,17 +244,19 @@ return (
                         </div>
                     </div>
                 </aside>
-                <div className="w-[520px] p-[50px]">
-                    <h2 className="m-0 text-[var(--purple-g3)] text-2xl">
-                    Mon Solde
-                        <span className="inline-block 
-                                        float-right 
-                                        font-weight-600 
-                                        font-size-32px 
-                                        color-444750">
-                            {existingWallet!==undefined ? existingWallet?.balance + '€' : 'Erreur de chargement'}
-                        </span>
-                    </h2>
+                <div className="w-[520px] p-[50px] flex flex-row justify-center">
+                    <h2 className="m-0 text-[var(--purple-g3)] text-xl md:text-3xl"> Solde : </h2>
+                    <span className="   ml-4
+                                        relative
+                                        border-y-2
+                                        border-gray-400
+                                        text-gray-500
+                                        top-[-8px]
+                                        text-[32px]
+                                        h-[50px]">
+                        {existingWallet!==undefined ? existingWallet?.balance + ' €' : 'Erreur de chargement'}
+                    </span>
+                    
                     <div className="transactions">
                         <div>
                             
