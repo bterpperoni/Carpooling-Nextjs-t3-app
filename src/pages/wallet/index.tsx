@@ -15,6 +15,7 @@ import getPaypalToken from "$/hook/paypalAuthorization";
 import { useEffect, useState } from "react";
 import type {ChangeEvent} from "react";
 import { api } from "$/utils/api";
+import { set } from "zod";
 
 export default function Wallet() {
 // Get session
@@ -140,9 +141,12 @@ useEffect(() => {
 
     if(existingWallet?.balance) {
         console.log("Wallet Balance: " + existingWallet.balance);
+        if(parseInt(existingWallet.balance) <= 10) {
+            setWithdrawAmount(existingWallet.balance);
+        }
     }
 
-}, [existingWallet, createWallet]);
+}, [existingWallet, createWallet, withdrawAmount]);
 
 // ------------------------------ Render the wallet page ------------------------------
 if (session) {
@@ -217,12 +221,13 @@ return (
                             </div>
                             <div className=" mt-5 flex flex-col mb-4 w-[100%]">
                                 <div className="text-center text-gray-500"><b>Montant à Retirer : </b> 
-                                { withdrawAmount!=='0' ? <b> {withdrawAmount} €</b> 
-                                : 
+                                { parseFloat(withdrawAmount) >= 10 ? 
+                                <b> {withdrawAmount} €</b> 
+                                    : 
                                 <>
                                     <b> {existingWallet?.balance} €</b>
                                     <div>
-                                        Minimum requis: 10 €
+                                        Minimum requis (10 €)
                                     </div>
                                 </> 
                                 }
@@ -230,27 +235,26 @@ return (
                                 <input type="range" 
                                        min={10} max={existingWallet?.balance ?? 0} 
                                        value={withdrawAmount}
-                                       disabled={parseInt(existingWallet?.balance ?? '0') <= 10 ? true : false} 
+                                       disabled={parseInt(existingWallet?.balance ?? '') >= 10 ? false : true} 
                                        className="ds-range ds-range-info"
                                        onChange={function (e: ChangeEvent<HTMLInputElement>): void {
                                         setWithdrawAmount(e.target.value);
                                     }} />
                             </div>
-                            <Button onClick={
-                                async () => {
-                                    console.log('Create Payout..');
-                                    const paypalPayout = await paypalCreatePayout(withdrawAmount);
-                                    console.log("Payout: " + JSON.stringify(paypalPayout));
-                                    setTimeout(() => {
-                                        console.log('Payout Confirmed');
-                                    }, 500);
-                                }}
-                                className="border-2 p-2 rounded-[15px]
-                                            bg-blue-500 
-                                            text-white hover:bg-white 
-                                            hover:text-blue-500 hover:border-blue-500">
-                                Retirer des fonds
-                            </Button>
+                            {parseInt(existingWallet?.balance ?? '') >= 10 && 
+                                <Button onClick={
+                                    async () => {
+                                        console.log('Create Payout..');
+                                        const paypalPayout = await paypalCreatePayout(withdrawAmount === '0' ? '10' : withdrawAmount);
+                                        console.log("Payout Confirmed: " + JSON.stringify(paypalPayout));
+                                    }}
+                                    className="border-2 p-2 rounded-[15px]
+                                                bg-blue-500 
+                                                text-white hover:bg-white 
+                                                hover:text-blue-500 hover:border-blue-500 disabled">
+                                    Retirer des fonds
+                                </Button>
+                            }
                         </div>
                     </div>
                 </aside>
@@ -264,7 +268,7 @@ return (
                                         top-[-8px]
                                         text-[32px]
                                         h-[50px]">
-                        {existingWallet!==undefined ? existingWallet?.balance + ' €' : 'Erreur de chargement'}
+                        {existingWallet!==null ? existingWallet?.balance + ' €' : '0 €'}
                     </span>
                     
                     <div className="transactions">

@@ -6,7 +6,7 @@ function Button({href, onClick, children, ...props }: ButtonProps) {
   const buttonProps = {
     ...props,
     children,
-    onClick
+    onClick,
   };
 
   if (href) {
