@@ -128,7 +128,7 @@ model Wallet {
   id            String     @id @default(cuid())
   userId        String
   paypalId      String?
-  balance       Int     @default(0)
+  balance       String     @default("0")
   owner         User    @relation(fields: [userId], references: [id])
   fromWalletTransaction  Transaction[] @relation("fromWallet")
   toWalletTransaction    Transaction[] @relation("toWallet")
@@ -139,7 +139,7 @@ model Transaction {
   id            Int      @id @default(autoincrement())
   fromWalletId  String
   toWalletId    String
-  amount        Int
+  amount        String
   type          String   @default("Transaction between users")
   createdAt     DateTime @default(now())
   fromWallet    Wallet   @relation("fromWallet",fields: [fromWalletId], references: [id])
@@ -150,7 +150,7 @@ model PaypalTransaction {
   id        Int      @id @default(autoincrement())
   orderId   String?
   walletId  String
-  amount    Int
+  amount    String
   type      String       
   createdAt DateTime @default(now())
   wallet    Wallet   @relation(fields: [walletId], references: [id])

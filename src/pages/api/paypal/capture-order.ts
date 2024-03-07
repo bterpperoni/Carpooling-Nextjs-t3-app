@@ -36,7 +36,8 @@ export default async function Handler(req : NextApiRequest, res: NextApiResponse
       data: {
         order: {
           id: order.id, 
-          status: order.status, 
+          status: order.status,
+          amount: order.amount.value, 
           create_time: order.create_time 
         }
       }

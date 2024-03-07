@@ -32,15 +32,15 @@ export const walletRouter = createTRPCRouter({
     create: protectedProcedure
         .input(z.object(
             { 
-                balance: z.number(),
+                balance: z.string(),
             }))
-        .mutation(async ({ ctx, input }) => {
+        .mutation(async ({ ctx }) => {
             // simulate a slow db call
             await new Promise((resolve) => setTimeout(resolve, 1000));
             return ctx.db.wallet.create({
                 data: {
                     userId: ctx.session.user.id,
-                    balance: input.balance,
+                    balance: "0"
                 },
             });
         }),
@@ -50,7 +50,7 @@ export const walletRouter = createTRPCRouter({
             { 
                 id: z.string(),
                 userId: z.string(),
-                balance: z.number(),
+                balance: z.string(),
             }))
         .mutation(async ({ ctx, input }) => {
             return ctx.db.wallet.update({

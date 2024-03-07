@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-base-to-string */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
@@ -16,10 +17,6 @@ import type {ChangeEvent} from "react";
 import { api } from "$/utils/api";
 
 export default function Wallet() {
-// Amount const fort withdraw & deposit
-const [ depositAmount, setDepositAmount ] = useState<string>('50');
-const [ withdrawAmount, setWithdrawAmount ] = useState<string>('50');
-
 // Get session
 const { data: session } = useSession();
 // Check if the user has a wallet & create one if not
@@ -27,8 +24,17 @@ const { data: existingWallet } = api.wallet.walletByUserId.useQuery(
     { userId: session?.user?.id ?? '' },
     { enabled: session?.user?.id !== undefined }
 );
+// Amount const fort withdraw & deposit
+const [ depositAmount, setDepositAmount ] = useState<string>('50');
+const [ withdrawAmount, setWithdrawAmount ] = useState<string>(existingWallet?.balance ?? '0');
+
+
 // Create wallet if not exists
 const { mutate: createWallet } = api.wallet.create.useMutation();
+// Create Paypal Order
+const { mutate: createPaypalOrder } = api.paypal.create.useMutation();
+// Update Wallet
+const { mutate: updateWallet } = api.wallet.update.useMutation();
 
 // ------------------------- Paypal Orders --------------------------------------
 const paypalCreateOrder = async (orderPrice: string): Promise<string | null> => {
@@ -52,7 +58,25 @@ const paypalCaptureOrder = async (orderId: string): Promise<JSON | undefined> =>
         if (response.data.success) {
             // Order is successful
             const statusOrder = response.data.data.order;
-            console.log("..Success : " + JSON.stringify(statusOrder));
+            if(existingWallet?.id !== undefined) {
+                const paypalDeposit = {
+                    orderId: statusOrder.id,
+                    walletId: existingWallet.id,
+                    amount: statusOrder.amount,
+                    type: 'deposit'
+                }
+                // Create a deposit transaction
+                createPaypalOrder(paypalDeposit);
+                // Update the wallet balance
+                const newBalance: number = parseInt(existingWallet.balance ?? '0') + parseFloat(statusOrder.amount);
+                updateWallet({
+                    id: existingWallet.id,
+                    userId: existingWallet.userId,
+                    balance: newBalance.toString()
+                });
+                console.log("..Success : " + JSON.stringify(paypalDeposit));
+
+            }
         }
         return response.data;
     } catch (err) {
@@ -85,10 +109,11 @@ const paypalCreatePayout = async (wthdrwl: string) => {
 useEffect(() => {
     if(existingWallet === null) {
         console.log("Creating Wallet..");
-        createWallet({ balance: 0 });
+        createWallet({ balance: '0' });
     }else{
         // TODO: Delete this console.log when feature is complete
         // console.log("Wallet: " + JSON.stringify(existingWallet));
+        console.log("Wallet Exists..");
     }
 
 }, [existingWallet, createWallet]);
@@ -166,10 +191,10 @@ return (
                             </div>
                             <div className=" mt-5 flex flex-col mb-4 w-[100%]">
                                 <p className="text-center text-gray-500">Montant à Retirer : 
-                                { withdrawAmount!=='' ? <b> {withdrawAmount} €</b> : <b> 50 €</b> }
+                                { withdrawAmount!=='' ? <b> {withdrawAmount} €</b> : <b> {existingWallet?.balance}</b> }
                                 </p>
                                 <input type="range" 
-                                       min={10} max={100} 
+                                       min={0} max={existingWallet?.balance ?? 0} 
                                        value={withdrawAmount} 
                                        className="ds-range ds-range-info"
                                        onChange={function (e: ChangeEvent<HTMLInputElement>): void {
@@ -199,7 +224,7 @@ return (
                                         font-weight-600 
                                         font-size-32px 
                                         color-444750">
-                            {existingWallet?.balance + '$' ?? 'Erreur de chargement'}
+                            {existingWallet!==undefined ? existingWallet?.balance + '€' : 'Erreur de chargement'}
                         </span>
                     </h2>
                     <div className="transactions">
