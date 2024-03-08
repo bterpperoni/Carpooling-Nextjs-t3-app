@@ -3,6 +3,7 @@ import NewTripForGroupForm from "$/lib/components/form/RideForm";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Button from "$/lib/components/button/Button";
+import { getCampusFullName } from "$/utils/data/school";
 
 
 
@@ -20,7 +21,7 @@ export default function NewRideForGroup() {
             <>
                 <LayoutMain>
                     <div className="bg-[var(--purple-g3)] max-w-[90%] h-screen">
-                        <h1 className="text-6xl text-white mt-6">Nouveau Trajet</h1>
+                        <h1 className="text-3xl text-white mt-6">Nouveau Trajet pour le groupe {groupId}</h1>
                         <NewTripForGroupForm isForGroup groupId={parseInt(groupId as string)} />
                     </div>
                 </LayoutMain>
@@ -43,7 +44,7 @@ export default function NewRideForGroup() {
                                     transition 
                                     hover:bg-white/20" 
                         onClick={() => void signIn()}>Sign in</Button>
-                </LayoutMain>
+            </LayoutMain>
         </>
     );
 }

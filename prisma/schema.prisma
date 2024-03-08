@@ -58,13 +58,14 @@ model User {
   locality           String?
   zip                Int?
   campus             String?
-  role               String?       @default("user")
+  role               String        @default("user")
   accounts           Account[]
   sessions           Session[]
   travelsAsDriver    Travel[]      @relation("Driver")
   travelsAsPassenger Passenger[]   @relation("UserPassenger")
   groupCreated       Group[]       @relation("GroupCreatedBy")
   groupMembers       GroupMember[] 
+  wallet             Wallet[]         
 }
 
 // -------------------------------------------TRAVEL & PASSENGER------------------------------------------------
@@ -106,10 +107,10 @@ model Group {
   campus           String
   createdBy        String
   visibility       Boolean       @default(false)
-  acceptInvitation Boolean?      @default(false)
+  acceptInvitation Boolean?      @default(true)
   travels          Travel[]      @relation("GroupTravels")
   creator          User          @relation("GroupCreatedBy", fields: [createdBy], references: [name])
-  members          GroupMember[]
+  members          GroupMember[] @relation("GroupMembers")
 }
 
 model GroupMember {
@@ -117,6 +118,41 @@ model GroupMember {
   groupId    Int
   userName   String
   validated  Boolean @default(true)
-  group      Group   @relation(fields: [groupId], references: [id])
-  userDetail User    @relation(fields: [userName], references: [name])
+  group      Group   @relation("GroupMembers",fields: [groupId], references: [id], onDelete: Cascade)
+  userDetail User    @relation(fields: [userName], references: [name], onDelete: Cascade)
+}
+
+// ------------------------------------------- WALLET & TRANSACTIONS ------------------------------------------------
+
+model Wallet {
+  id            String     @id @default(cuid())
+  userId        String
+  paypalId      String?
+  balance       String     @default("0")
+  owner         User    @relation(fields: [userId], references: [id])
+  fromWalletTransaction  Transaction[] @relation("fromWallet")
+  toWalletTransaction    Transaction[] @relation("toWallet")
+  paypalTransaction      PaypalTransaction[]
+}
+
+model Transaction {
+  id            Int      @id @default(autoincrement())
+  fromWalletId  String
+  toWalletId    String
+  amount        String
+  type          String   @default("Transaction between users")
+  createdAt     DateTime @default(now())
+  fromWallet    Wallet   @relation("fromWallet",fields: [fromWalletId], references: [id])
+  toWallet      Wallet   @relation("toWallet",fields: [toWalletId], references: [id])
+}
+
+model PaypalTransaction {
+  id        Int      @id @default(autoincrement())
+  orderId   String?
+  payoutId  String?
+  walletId  String
+  amount    String
+  type      String       
+  createdAt DateTime @default(now())
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
 }

@@ -7,7 +7,7 @@ import Dropdown from '$/lib/components/dropdown/Dropdown';
 import Slider from '$/lib/components/button/Slider';
 import type { ChangeEvent } from "react";
 import type { Group } from '@prisma/client';
-import { data } from '$/utils/data';
+import { data } from '$/utils/data/school';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';

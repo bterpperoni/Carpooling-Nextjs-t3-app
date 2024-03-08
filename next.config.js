@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
@@ -8,8 +6,12 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
-  reactStrictMode: true,
-
+  reactStrictMode: false,
+  env: {
+    PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
+    PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET,
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
+  },
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
    *
@@ -18,25 +20,7 @@ const config = {
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
-  },
-  // publicRuntimeConfig: {
-  //   // Will be available on both server and client
-  //   staticFolder: "/static",
-  //   env: process.env.ENV,
-  // },
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/,
-      issuer: {
-        test: /\.(js|ts)x?$/,
-      },
-      use: ['@svgr/webpack'],
-    })
   }
 };
 
-const env = {
-  GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
-};
-
-export default {config, env};
+export default config;

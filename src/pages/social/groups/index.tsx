@@ -4,8 +4,8 @@
 import Button from "$/lib/components/button/Button";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
-import { getCampusAbbr  } from "$/utils/data";
-import { useSession } from "next-auth/react";
+import { getCampusAbbr  } from "$/utils/data/school";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 import type { Group } from "@prisma/client";
@@ -99,7 +99,7 @@ export default function Groups() {
                                     <div className="m-6 text-2xl bold text-center">
                                         Trouves des étudiants qui se rendent au même établissement.
                                         <p className="text-xl text-center">
-                                            Crée un groupe ou rejoind en un et commences à covoiturer. 
+                                            Rejoind un groupe et commences à covoiturer. 
                                         </p>
                                     </div>
                                 </div>
@@ -202,8 +202,19 @@ export default function Groups() {
     }
     return (   
         <LayoutMain>
-            <h1>Groups</h1>
-            <p className="text-white">You must be signed in to view this page</p>
+                    <h1>Not Connected, Please Sign in</h1>
+                    <Button 
+                        className=" m-4 
+                                    rounded-full 
+                                    bg-white/10 
+                                    px-10 
+                                    py-3 
+                                    font-semibold 
+                                    text-white 
+                                    no-underline 
+                                    transition 
+                                    hover:bg-white/20" 
+                        onClick={() => void signIn()}>Sign in</Button>
         </LayoutMain>
     );
 }

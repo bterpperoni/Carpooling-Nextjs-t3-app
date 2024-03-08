@@ -3,7 +3,6 @@ import LayoutMain from '../../lib/components/layout/LayoutMain';
 import  Map  from '$/lib/components/map/Map'; 
 import Slider from '$/lib/components/button/Slider';
 import { useState } from 'react';
-import Link from 'next/link'
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import { Marker } from '@react-google-maps/api';
@@ -50,14 +49,11 @@ const All: React.FC = () => {
             <>
                 <LayoutMain>
                     <div className="bg-[var(--purple-g3)]">
-                        <div className=" flex flex-row items-center justify-between mt-4 mx-4">
-                            
-                        </div>
-                            <div className='flex flex-col items-center'>  
+                            <div className='flex flex-col items-center mt-2'>  
                                 <div className='border-b-t-2 border-0 border-white'>   
                                     <div className='md:text-2xl text-xl mx-12 bg-[var(--purple-g3)] text-center 
                                                     rounded-[5%] p-4 mb-4 text-fuchsia-700 border-fuchsia-700 border-y-2'>                    
-                                        <p>Trouves le trajet qui te correspond</p>
+                                        <p>Trouver un trajet</p>
                                     </div>
                                     <div className="col-span-1 flex justify-center items-center">
                                         <p className="text-white text-base m-4 border-2 border-white px-4 py-2 rounded-full">
@@ -99,17 +95,17 @@ const All: React.FC = () => {
                         )}
                         {/* -------------------------------------- display map ---------------------------------------------- */}
                         {!checked &&
-                        <> 
-                        <Map center={center} zoom={zoom}>
-                            {travelList?.map((travel) => (
-                                <Marker 
-                                    key={travel.id} 
-                                    position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
-                                    onClick={() => handleMarkerClick(travel.id)}
-                                    icon={customMarker}
-                                />
-                            ))}
-                        </Map>
+                        <>
+                            <Map center={center} zoom={zoom}>
+                                {travelList?.map((travel) => (
+                                    <Marker 
+                                        key={travel.id} 
+                                        position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
+                                        onClick={() => handleMarkerClick(travel.id)}
+                                        icon={customMarker}
+                                    />
+                                ))}
+                            </Map>
                         </>
                         }
                     </div>

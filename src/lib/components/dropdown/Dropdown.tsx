@@ -3,7 +3,9 @@
 import type { DropdownProps } from "$/lib/types/interfaces";
 import React, { useState } from "react";
 
-
+/* ------------------------------------------------------------------------------------------------------------------------
+------------------------- Dropdown to select school -----------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------ */
 const Dropdown: React.FC<DropdownProps> = ({ data, onChange }) => {
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
   const [selectedCampus, setSelectedCampus] = useState<string | null>(null);

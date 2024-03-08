@@ -4,8 +4,8 @@ import Button from '$/lib/components/button/Button';
 import LayoutMain from '$/lib/components/layout/LayoutMain';
 import GroupForm from '$/lib/components/form/GroupForm';
 import { api } from '$/utils/api';
-import { getCampusAbbr } from '$/utils/data';
-import { useSession } from 'next-auth/react';
+import { getCampusAbbr } from '$/utils/data/school';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import type { Group } from '@prisma/client';
@@ -129,4 +129,21 @@ export default function UserGroup() {
             </LayoutMain>
         </>
     );
+    return (
+        <LayoutMain>
+                    <h1>Not Connected, Please Sign in</h1>
+                    <Button 
+                        className=" m-4 
+                                    rounded-full 
+                                    bg-white/10 
+                                    px-10 
+                                    py-3 
+                                    font-semibold 
+                                    text-white 
+                                    no-underline 
+                                    transition 
+                                    hover:bg-white/20" 
+                        onClick={() => void signIn()}>Sign in</Button>
+        </LayoutMain>
+    )
 }

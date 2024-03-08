@@ -18,3 +18,13 @@ export interface DropdownProps {
     data: { school: School[] };
     onChange: (selectedSchool: ChangeEvent<HTMLSelectElement>, selectedCampus:  ChangeEvent<HTMLSelectElement> ) => void;
   }
+
+  export interface RequestBody {
+    order_price: string;
+    user_id: string;
+  }
+
+  export interface PaypalTokenResponse {
+    access_token: string;
+
+  }
