@@ -21,21 +21,21 @@ export default function UpdateTravel() {
         <LayoutMain>
             {/* ------------------------------------Form to update the travel--------------------------------------------------- */}
             <div className="flex flex-col items-center">
-                            <h2 className=" md:text-4xl 
-                                            text-2xl 
-                                            font-bold 
-                                            mb-4 mt-4  
-                                            w-[fit-content]
-                                            text-center 
-                                            text-white
-                                            border-y-2
-                                            border-fuchsia-700
-                                            p-4
-                                            rounded-[12.5%]">
-                                Modifier votre trajet
-                            </h2>
-                            <UpdateTripForm travel={travel} />
-                        </div>
+                <h2 className=" md:text-4xl 
+                                text-2xl 
+                                font-bold 
+                                mb-4 mt-4  
+                                w-[fit-content]
+                                text-center 
+                                text-white
+                                border-y-2
+                                border-fuchsia-700
+                                p-4
+                                rounded-[12.5%]">
+                    Modifier votre trajet
+                </h2>
+                <UpdateTripForm travel={travel} />
+            </div>
         </LayoutMain>
     );
 }

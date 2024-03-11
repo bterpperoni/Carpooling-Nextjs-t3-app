@@ -42,6 +42,7 @@ export const userRouter = createTRPCRouter({
           name: input.name,
           email: ctx.session.user.email,
           image: ctx.session.user.image,
+          role: ctx.session.user.role,
           // ../utils/interface.ts
         },
       });
@@ -82,6 +83,17 @@ export const userRouter = createTRPCRouter({
         data: {
           campus: input.campus,
         },
+      });
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // simulate a slow db call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      return ctx.db.user.delete({
+        where: { id: input.id },
       });
     }),
    
