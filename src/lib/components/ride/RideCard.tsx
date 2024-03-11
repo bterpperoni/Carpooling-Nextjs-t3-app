@@ -1,36 +1,28 @@
-// travelCard.tsx
+// rideCard.tsx
+import type { RideCardProps } from "$/lib/types/interfaces";
 
-
-import type { Travel } from "@prisma/client";
-
-interface TravelCardProps {
-  travel: Travel;
-  driver?: string;
-  goToTravel: () => void;
-}
-
-const TravelCard: React.FC<TravelCardProps> = ({ travel, driver, goToTravel }) => {
+const rideCard: React.FC<RideCardProps> = ({ ride, driver, goToRide }) => {
   return (
-    <div className="travel-card-container" onClick={goToTravel}>
-      <div className="travel-info">
+    <div className="ride-card-container" onClick={goToRide}>
+      <div className="ride-info">
         <span className="label">Date:</span>
-        {travel.departureDateTime.toLocaleDateString()}
+        {ride.departureDateTime.toLocaleDateString()}
       </div>
-      <div className="travel-info">
+      <div className="ride-info">
         <span className="label">Départ:</span>
-        {travel.departure}
+        {ride.departure}
       </div>
-      <div className="travel-info">
+      <div className="ride-info">
         <span className="label">Destination:</span>
-        {travel.destination}
+        {ride.destination}
       </div>
-      <div className="travel-info">
+      <div className="ride-info">
         <span className="label">Conducteur:</span>
-        {driver ?? travel.driverId}
+        {driver ?? ride.driverId}
       </div>
 
       <style jsx>{`
-        .travel-card-container {
+        .ride-card-container {
           background-color: #f5f5f5;
           border: 1px solid #e0e0e0;
           border-radius: 8px;
@@ -40,7 +32,7 @@ const TravelCard: React.FC<TravelCardProps> = ({ travel, driver, goToTravel }) =
           cursor: pointer;
         }
 
-        .travel-info {
+        .ride-info {
           font-size: 14px;
           margin-bottom: 8px;
         }
@@ -54,4 +46,4 @@ const TravelCard: React.FC<TravelCardProps> = ({ travel, driver, goToTravel }) =
   );
 };
 
-export default TravelCard;
+export default rideCard;

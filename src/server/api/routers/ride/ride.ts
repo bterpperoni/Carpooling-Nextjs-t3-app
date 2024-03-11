@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { z } from "zod";
 
 import {
@@ -6,22 +10,22 @@ import {
 } from "$/server/api/trpc";
 
 
-// API definition for travels
-export const travelRouter = createTRPCRouter({
+// API definition for rides
+export const rideRouter = createTRPCRouter({
 
-    travelList: protectedProcedure.query(async ({ ctx }) => {
-        const travelList =  ctx.db.travel.findMany({
+    rideList: protectedProcedure.query(async ({ ctx }) => {
+        const rideList =  ctx.db.ride.findMany({
             where: {
                 isForGroup: false
             }
         });
-        return travelList;
+        return rideList;
     }),
 
-    travelByGroup: protectedProcedure
+    rideByGroup: protectedProcedure
         .input(z.object({ groupId: z.number() }))
         .query(async ({ ctx, input }) => {
-            return ctx.db.travel.findMany({
+            return ctx.db.ride.findMany({
                 where: {
                     groupId: input.groupId,
                     isForGroup: true
@@ -29,10 +33,10 @@ export const travelRouter = createTRPCRouter({
             });
         }),
 
-    travelById: protectedProcedure
+    rideById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(async ({ ctx, input }) => {
-            return ctx.db.travel.findUnique({
+            return ctx.db.ride.findUnique({
                 where: { id: input.id },
             });
         }),
@@ -57,7 +61,7 @@ export const travelRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
             // simulate a slow db call
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            return ctx.db.travel.create({
+            return ctx.db.ride.create({
                 data: {
                     driverId: input.driverId,
                     departure: input.departure,
@@ -94,7 +98,7 @@ export const travelRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
             // simulate a slow db call
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            return ctx.db.travel.update({
+            return ctx.db.ride.update({
                 where: { id: input.id },
                 data: {
                     driverId: input.driverId,
@@ -116,7 +120,7 @@ export const travelRouter = createTRPCRouter({
             .mutation(async ({ ctx, input }) => {
                 // simulate a slow db call
                 await new Promise((resolve) => setTimeout(resolve, 1000));
-                return ctx.db.travel.delete({
+                return ctx.db.ride.delete({
                     where: { id: input.id },
                 });
             }),

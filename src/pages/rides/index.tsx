@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import { Marker } from '@react-google-maps/api';
-import TravelCard from '$/lib/components/travel/TravelCard';
+import RideCard from '$/lib/components/ride/RideCard';
 import { useRouter } from 'next/router';
 import Button from '$/lib/components/button/Button';
 
@@ -20,14 +20,14 @@ const All: React.FC = () => {
         // Router
         const router = useRouter();
 
-        // Redirect to travel page when clicking on a marker
-        const handleMarkerClick = (id: number) => {
+        // Redirect to ride page when clicking on a marker or a card ride
+        const handleClick = (id: number) => {
             void router.push(`/rides/${id}`);
         }
 
-        // Get all travels
-        const { data: travelList } = api.travel.travelList.useQuery(undefined,
-            { enabled: sessionData?.user !== undefined }  
+        // Get all rides
+        const { data: rideList } = api.ride.rideList.useQuery(undefined,
+            { enabled: sessionData?.user !== undefined }
         );
 
         const customMarker = {
@@ -87,8 +87,8 @@ const All: React.FC = () => {
                         {checked && (
                             <>   
                                 <div className='m-6 h-box w-auto bg-white border-fuchsia-700 text-fuchsia-700'>
-                                    {travelList?.map((travel) => (
-                                        <TravelCard  key={travel.id} travel={travel} driver={travel.driverId} goToTravel={() => handleMarkerClick(travel.id)} />
+                                    {rideList?.map((ride) => (
+                                        <RideCard  key={ride.id} ride={ride} driver={ride.driverId} goToRide={() => handleClick(ride.id)} />
                                     ))}            
                                 </div>
                             </>
@@ -97,11 +97,11 @@ const All: React.FC = () => {
                         {!checked &&
                         <>
                             <Map center={center} zoom={zoom}>
-                                {travelList?.map((travel) => (
+                                {rideList?.map((ride) => (
                                     <Marker 
-                                        key={travel.id} 
-                                        position={{ lat: travel.departureLatitude, lng: travel.departureLongitude }}
-                                        onClick={() => handleMarkerClick(travel.id)}
+                                        key={ride.id} 
+                                        position={{ lat: ride.departureLatitude, lng: ride.departureLongitude }}
+                                        onClick={() => handleClick(ride.id)}
                                         icon={customMarker}
                                     />
                                 ))}

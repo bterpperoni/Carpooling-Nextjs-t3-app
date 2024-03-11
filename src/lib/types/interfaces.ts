@@ -1,3 +1,4 @@
+import { Ride } from "@prisma/client";
 import type { ChangeEvent } from "react";
 
 export interface Campus {
@@ -13,6 +14,18 @@ export interface School {
     pays: string;
     campus: Campus[];
   }
+
+export interface RideCardProps {
+  ride: Ride;
+  driver?: string;
+  goToRide: () => void;
+}
+
+export interface RideDetailsProps {
+  ride: Ride;
+  children?: React.ReactNode;
+  isActualUserride?: boolean;
+}
   
 export interface DropdownProps {
     data: { school: School[] };

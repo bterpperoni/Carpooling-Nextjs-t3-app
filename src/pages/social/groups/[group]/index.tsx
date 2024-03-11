@@ -20,7 +20,7 @@ export default function Group() {
     // Get group by id
     const {data: group} = api.group.groupById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     // Get trips by group id
-    const {data: travels} = api.travel.travelByGroup.useQuery({groupId: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
+    const {data: rides} = api.ride.rideByGroup.useQuery({groupId: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     // State to display informations about the group
     const [isInfos, setIsInfos] = useState(false);
     // Get group members
@@ -90,33 +90,33 @@ if(sessionData)
                                             h-[75vh] 
                                             text-[var(--purple-g2)]
                                             overflow-y-scroll">
-                                    {travels?.map((travel) => (
-                                        <div key={travel.id} className="border-b-2">
+                                    {rides?.map((ride) => (
+                                        <div key={ride.id} className="border-b-2">
                                             <div className="flex flex-row">
                                                 <div className="flex flex-col w-[50%]">
                                                     <div className="m-2">
-                                                        <label htmlFor="travelName" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
+                                                        <label htmlFor="rideName" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
                                                            Départ
                                                         </label>
-                                                        <div id="travelName">{travel.departure.split(',')[1]}</div>
+                                                        <div id="rideName">{ride.departure.split(',')[1]}</div>
                                                     </div>
                                                     <div className="m-2">
-                                                        <label htmlFor="travelCampus" className="border-b-[1px] border-[var(--purple-g3)] my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
+                                                        <label htmlFor="rideCampus" className="border-b-[1px] border-[var(--purple-g3)] my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
                                                             Conducteur
                                                         </label>
-                                                        <div id="travelCampus">{travel.driverId}</div>
+                                                        <div id="rideCampus">{ride.driverId}</div>
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-col w-[50%]">
                                                     <div className="m-2">
-                                                        <label htmlFor="travelCampus" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
+                                                        <label htmlFor="rideCampus" className="border-b-[1px] border-[var(--purple-g3)] mr-2 font-bold text-[18px] text-left">
                                                             Max. passagers
                                                         </label>
-                                                        <div id="travelCampus">{travel.maxPassengers}                   
+                                                        <div id="rideCampus">{ride.maxPassengers}                   
                                                         </div>
                                                     </div>
                                                     <Button 
-                                                        onClick={() => push(`/rides/${travel.id}`)}
+                                                        onClick={() => push(`/rides/${ride.id}`)}
                                                         className=" bg-[var(--purple-g2)] 
                                                                     hover:bg-white 
                                                                     hover:text-[var(--pink-g1)] 
@@ -132,10 +132,10 @@ if(sessionData)
                                             </div>
                                             <div className="flex flex-row justify-between">
                                                 <div className="m-2">
-                                                    <label htmlFor="travelDate" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
+                                                    <label htmlFor="rideDate" className="my-auto font-bold text-base text-left border-b-[1px] border-[var(--purple-g3)]">
                                                         Date
                                                         </label>
-                                                    <div id="travelDate">{travel.departureDateTime.toLocaleDateString()} à {travel.departureDateTime.toLocaleTimeString()}</div>
+                                                    <div id="rideDate">{ride.departureDateTime.toLocaleDateString()} à {ride.departureDateTime.toLocaleTimeString()}</div>
                                                 </div>
                                             </div>
                                         </div>

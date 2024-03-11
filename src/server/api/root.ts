@@ -1,8 +1,8 @@
 import { userRouter } from "./routers/user";
 import { createTRPCRouter } from "$/server/api/trpc";
-import { travelRouter } from "./routers/travel";
-import { groupRouter } from "./routers/groups/group";
-import { groupMemberRouter } from "./routers/groups/groupMember";
+import { rideRouter } from "./routers/ride/ride";
+import { groupRouter } from "./routers/group/group";
+import { groupMemberRouter } from "./routers/group/groupMember";
 import { walletRouter } from "./routers/wallet/wallet";
 import { transactionRouter } from "./routers/wallet/transaction";
 import { paypalRouter } from "./routers/wallet/paypal";
@@ -13,7 +13,7 @@ import { paypalRouter } from "./routers/wallet/paypal";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  travel: travelRouter,
+  ride: rideRouter,
   user: userRouter,
   group: groupRouter,
   groupMember: groupMemberRouter,

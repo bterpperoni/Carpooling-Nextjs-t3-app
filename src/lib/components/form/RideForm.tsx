@@ -12,12 +12,12 @@ import { api } from '$/utils/api';
 import { useEffect, useState } from 'react';
 import { useApiKey } from '$/context/google';
 import MuiStyle from '$/styles/MuiStyle.module.css';
-import type { Travel } from '@prisma/client';
+import type { Ride } from '@prisma/client';
 
 
-export default function RideForm({ travel, isForGroup, groupId }: 
+export default function RideForm({ ride, isForGroup, groupId }: 
     {
-        travel?: Travel,
+        ride?: Ride,
         isForGroup?: boolean,
         groupId?: number
     }) {
@@ -50,10 +50,10 @@ export default function RideForm({ travel, isForGroup, groupId }:
         types: ['address']
     };
 
-    // Create a new travel
-    const { data: travelCreated, mutate: createTravel } = api.travel.create.useMutation();
-    // Used to update travel
-    const { data: updatedTravel, mutate: updateTravel } = api.travel.update.useMutation();
+    // Create a new ride
+    const { data: rideCreated, mutate: createride } = api.ride.create.useMutation();
+    // Used to update ride
+    const { data: updatedride, mutate: updateride } = api.ride.update.useMutation();
 
     useEffect(() => {
 
@@ -63,11 +63,11 @@ export default function RideForm({ travel, isForGroup, groupId }:
                 // set the date of departure with the time selected
                 setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
             }else{
-                // else set the date of departure with the time of the travel
+                // else set the date of departure with the time of the ride
                 setDateDeparture(   
                                 dayjs(dateDeparture)
-                                .set('hour', travel?.departureDateTime?.getHours() ?? 0)
-                                .set('minute', travel?.departureDateTime?.getMinutes() ?? 0)
+                                .set('hour', ride?.departureDateTime?.getHours() ?? 0)
+                                .set('minute', ride?.departureDateTime?.getMinutes() ?? 0)
                             );
             }
         }
@@ -78,30 +78,30 @@ export default function RideForm({ travel, isForGroup, groupId }:
                 // set the date of return with the time selected
                 setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute()));
             }else {
-                // else set the date of return with the time of the travel
+                // else set the date of return with the time of the ride
                 setDateReturn(   
                                 dayjs(dateReturn)
-                                .set('hour', travel?.returnDateTime?.getHours() ?? 0)
-                                .set('minute', travel?.returnDateTime?.getMinutes() ?? 0)
+                                .set('hour', ride?.returnDateTime?.getHours() ?? 0)
+                                .set('minute', ride?.returnDateTime?.getMinutes() ?? 0)
                             );
             }
         }
     
-        if(travelCreated)  {
-            window.location.href = `/rides/${travelCreated.id}`;
+        if(rideCreated)  {
+            window.location.href = `/rides/${rideCreated.id}`;
         }
             
-        if(updatedTravel) {
-            window.location.href = `/rides/${updatedTravel.id}`;
+        if(updatedride) {
+            window.location.href = `/rides/${updatedride.id}`;
         }
         
-    }, [travelCreated, updatedTravel, dateDeparture, timeDeparture, dateReturn, timeReturn, travel, departure, departureLatitude, departureLongitude]);
+    }, [rideCreated, updatedride, dateDeparture, timeDeparture, dateReturn, timeReturn, ride, departure, departureLatitude, departureLongitude]);
 
-    // Submit a new travel or update an existing travel
+    // Submit a new ride or update an existing ride
     function handleClick() { 
         if(sessionData) {
-            // ------------------- Create travel -------------------
-            if(!travel){
+            // ------------------- Create ride -------------------
+            if(!ride){
                 if(departure && destination) {
                     // Check if the date of return is after the date of departure
                     if(dateDeparture && dateReturn) {
@@ -109,7 +109,7 @@ export default function RideForm({ travel, isForGroup, groupId }:
                             alert('Return date must be after departure date'); 
                             return;
                         }else{
-                                createTravel({
+                                createride({
                                     driverId: sessionData.user.name,
                                     departure: departure,
                                     departureLatitude: departureLatitude ?? 0,
@@ -133,23 +133,23 @@ export default function RideForm({ travel, isForGroup, groupId }:
                     return;
                 }
             }
-            // ------------------- Update travel -------------------
-            if(travel){
+            // ------------------- Update ride -------------------
+            if(ride){
                     if(dateReturn?.isBefore(dateDeparture)) {
                         alert('Return date must be after departure date'); 
                         return;
                     }else{
-                        updateTravel({
-                            id : travel.id,
-                            driverId: travel.driverId,
-                            departure: departure ?? travel.departure,
-                            departureLatitude: departureLatitude ?? travel.departureLatitude,
-                            departureLongitude: departureLongitude ?? travel.departureLongitude,
-                            departureDateTime: dateDeparture?.toDate() ?? travel.departureDateTime,
-                            destination: destination ?? travel.destination,
-                            destinationLatitude: destinationLatitude ?? travel.destinationLatitude,
-                            destinationLongitude: destinationLongitude ?? travel.destinationLongitude,
-                            returnDateTime: dateReturn?.toDate() ?? travel.returnDateTime,
+                        updateride({
+                            id : ride.id,
+                            driverId: ride.driverId,
+                            departure: departure ?? ride.departure,
+                            departureLatitude: departureLatitude ?? ride.departureLatitude,
+                            departureLongitude: departureLongitude ?? ride.departureLongitude,
+                            departureDateTime: dateDeparture?.toDate() ?? ride.departureDateTime,
+                            destination: destination ?? ride.destination,
+                            destinationLatitude: destinationLatitude ?? ride.destinationLatitude,
+                            destinationLongitude: destinationLongitude ?? ride.destinationLongitude,
+                            returnDateTime: dateReturn?.toDate() ?? ride.returnDateTime,
                             status: 0
                         });
                     }  
@@ -165,7 +165,7 @@ export default function RideForm({ travel, isForGroup, groupId }:
                             <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
                                 <label htmlFor="departure" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>Departure </label>
                                     <Autocomplete
-                                    defaultValue={travel?.departure ?? ''}
+                                    defaultValue={ride?.departure ?? ''}
                                     apiKey={apiKey}
                                     options={options}
                                     onPlaceSelected={(place) => {
@@ -189,15 +189,15 @@ export default function RideForm({ travel, isForGroup, groupId }:
                             </div>
                             <div className='p-4'>
                                 <DateTimeSelect
-                                    defaultDate={travel?.departureDateTime?.toDateString() ? 
-                                                dayjs(travel.departureDateTime?.toDateString()) 
+                                    defaultDate={ride?.departureDateTime?.toDateString() ? 
+                                                dayjs(ride.departureDateTime?.toDateString()) 
                                                 : 
                                                 dateReturn ?? null
                                             }
-                                    defaultTime={travel?.departureDateTime?.toDateString() ? 
-                                                dayjs(travel?.departureDateTime)
-                                                .set('hour' , travel?.departureDateTime?.getHours())
-                                                .set('minute', travel?.departureDateTime?.getMinutes()) 
+                                    defaultTime={ride?.departureDateTime?.toDateString() ? 
+                                                dayjs(ride?.departureDateTime)
+                                                .set('hour' , ride?.departureDateTime?.getHours())
+                                                .set('minute', ride?.departureDateTime?.getMinutes()) 
                                                 : 
                                                 timeReturn ?? null
                                             }
@@ -220,8 +220,8 @@ export default function RideForm({ travel, isForGroup, groupId }:
                             <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
                                 <label htmlFor="destination" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>Destination </label>
                                     <Autocomplete
-                                    defaultValue={travel?.destination ?? ''}
-                                    disabled = {travel ? true : false}
+                                    defaultValue={ride?.destination ?? ''}
+                                    disabled = {false}
                                     apiKey={apiKey}
                                     options={options}
                                     onPlaceSelected={(place) => {
@@ -245,15 +245,15 @@ export default function RideForm({ travel, isForGroup, groupId }:
                             </div>
                             <div className='p-4'>
                                 <DateTimeSelect
-                                    defaultDate={travel?.returnDateTime?.toDateString() ? 
-                                        dayjs(travel.returnDateTime?.toDateString()) 
+                                    defaultDate={ride?.returnDateTime?.toDateString() ? 
+                                        dayjs(ride.returnDateTime?.toDateString()) 
                                         : 
                                         dateReturn ?? null
                                     }
-                                    defaultTime={travel?.returnDateTime?.toDateString() ? 
-                                                dayjs(travel?.returnDateTime)
-                                                .set('hour' , travel?.returnDateTime?.getHours())
-                                                .set('minute', travel?.returnDateTime?.getMinutes()) 
+                                    defaultTime={ride?.returnDateTime?.toDateString() ? 
+                                                dayjs(ride?.returnDateTime)
+                                                .set('hour' , ride?.returnDateTime?.getHours())
+                                                .set('minute', ride?.returnDateTime?.getMinutes()) 
                                                 : 
                                                 timeReturn ?? null
                                             }
@@ -273,14 +273,14 @@ export default function RideForm({ travel, isForGroup, groupId }:
                     </form>
                         <div className="flex flex-col items-center">
                             {/* Submit */}
-                            {travel ? (
+                            {ride ? (
                             <Button className={`${MuiStyle.MuiButtonText} w-max`} onClick={handleClick}> Modifier </Button>
                             ) : (
                             <Button className={`${MuiStyle.MuiButtonText} w-max`} onClick={handleClick}> Submit </Button>
                             )}
                             <Button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md w-max"
-                                onClick={() => self.location.reload()}> 
-                            Annuler 
+                                onClick={() => ride ? location.assign(`/rides/${ride?.id}`) : location.assign('/rides/')}> 
+                                Annuler 
                             </Button>
                         </div>
                 </>

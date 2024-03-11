@@ -61,15 +61,15 @@ model User {
   role               String        @default("user")
   accounts           Account[]
   sessions           Session[]
-  travelsAsDriver    Travel[]      @relation("Driver")
-  travelsAsPassenger Passenger[]   @relation("UserPassenger")
+  ridesAsDriver    Ride[]      @relation("Driver")
+  ridesAsPassenger Passenger[]   @relation("UserPassenger")
   groupCreated       Group[]       @relation("GroupCreatedBy")
   groupMembers       GroupMember[] 
   wallet             Wallet[]         
 }
 
-// -------------------------------------------TRAVEL & PASSENGER------------------------------------------------
-model Travel {
+// -------------------------------------------Ride & PASSENGER------------------------------------------------
+model Ride {
   id                   Int         @id @default(autoincrement())
   isForGroup           Boolean     @default(false)
   groupId              Int?
@@ -84,7 +84,7 @@ model Travel {
   returnDateTime       DateTime?
   maxPassengers        Int?        @default(2)
   status               Int         @default(0)
-  group                Group?      @relation("GroupTravels", fields: [groupId], references: [id])
+  group                Group?      @relation("GroupRides", fields: [groupId], references: [id])
   driver               User        @relation("Driver", fields: [driverId], references: [name])
   passengers           Passenger[] @relation("Passengers")
 
@@ -94,9 +94,9 @@ model Travel {
 
 model Passenger {
   id       Int    @id @default(autoincrement())
-  travelId Int
+  RideId Int
   userName   String
-  travel   Travel @relation("Passengers", fields: [travelId], references: [id])
+  ride   Ride @relation("Passengers", fields: [RideId], references: [id])
   user     User   @relation("UserPassenger", fields: [userName], references: [name])
 }
 
@@ -108,7 +108,7 @@ model Group {
   createdBy        String
   visibility       Boolean       @default(false)
   acceptInvitation Boolean?      @default(true)
-  travels          Travel[]      @relation("GroupTravels")
+  rides          Ride[]      @relation("GroupRides")
   creator          User          @relation("GroupCreatedBy", fields: [createdBy], references: [name])
   members          GroupMember[] @relation("GroupMembers")
 }

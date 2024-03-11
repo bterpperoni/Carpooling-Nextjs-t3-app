@@ -7,36 +7,36 @@ import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
 import LayoutMain from '../../../lib/components/layout/LayoutMain';
-import TravelDetail from "$/lib/components/travel/TravelDetail";
+import RideDetail from "$/lib/components/ride/RideDetail";
 
 
 export default function Detail() {
 
     // Used to redirect after delete
-    const [ travelDeleted, setTravelDeleted ] = useState(false);
+    const [ rideDeleted, setrideDeleted ] = useState(false);
     // Get id from url
     const { query, push } = useRouter();
     const id = query.ride;
     // Session recovery
     const { data: sessionData } = useSession();
-    // Get travel by id
-    const {data: travel} = api.travel.travelById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
-    // Used to delete travel
-    const { mutate: deleteTravel } = api.travel.delete.useMutation();
-    // Set if travel can be edited
-    const canEdit = sessionData?.user?.name === travel?.driverId;
+    // Get ride by id
+    const {data: ride} = api.ride.rideById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
+    // Used to delete ride
+    const { mutate: deleteride } = api.ride.delete.useMutation();
+    // Set if ride can be edited
+    const canEdit = sessionData?.user?.name === ride?.driverId;
     
     
     /* -------------------------------------------------------------------------------------------- */
 
     // Get lat & lng of departure & destination
     const departureLatLng: google.maps.LatLngLiteral = { 
-        lat: travel?.departureLatitude!, 
-        lng: travel?.departureLongitude! 
+        lat: ride?.departureLatitude!, 
+        lng: ride?.departureLongitude! 
     };
     const destinationLatLng: google.maps.LatLngLiteral = { 
-        lat: travel?.destinationLatitude!, 
-        lng: travel?.destinationLongitude!
+        lat: ride?.destinationLatitude!, 
+        lng: ride?.destinationLongitude!
     };
     // Map options
     const zoom = 12;
@@ -70,34 +70,34 @@ export default function Detail() {
         calculAndDisplayRoute(directionsService, directionsRenderer);
     }
 
-    // Enable edit mode & set travel data in form fields
+    // Redirect to update ride page
       const handleEditClick = () => {
-        void push(`/rides/${id as string}/update`);
+        window.location.assign(`/rides/${id as string}/update`);
     };
 
-    // Delete travel
+    // Delete ride
     const handleDelete = () => {
-        deleteTravel({id: parseInt(id as string)});
-        setTravelDeleted(true);
+        deleteride({id: parseInt(id as string)});
+        setrideDeleted(true);
     }
 
     // Redirect after delete
     useEffect(() => {
-        if(travelDeleted) {
+        if(rideDeleted) {
                 alert('Trajet supprimé');
                 void push('/rides');
         }
-    }, [travelDeleted]);
+    }, [rideDeleted]);
    
 
-  if(!travel) return <div className="text-white m-6 text-3xl m-4 w-screen text-center">Travel not found</div>
+  if(!ride) return <div className="text-white m-6 text-3xl m-4 w-screen text-center">ride not found</div>
   return (
     <>
         <LayoutMain>
-            {/* ------------------------------------Card with travel details--------------------------------------------------- */}  
+            {/* ------------------------------------Card with ride details--------------------------------------------------- */}  
                     <>
                         <Map zoom={zoom} onLoad={mapLoaded}/>
-                        <TravelDetail travel={travel}>
+                        <RideDetail ride={ride}>
                                     {canEdit ? (
                                         <>
                                             <div className="flex justify-between">
@@ -118,11 +118,11 @@ export default function Detail() {
                                             <Button
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md"
                                                 onClick={() => alert('not implemented')}>
-                                                Réserver
+                                                    Réserver ce trajet
                                             </Button>
                                         </>
                                     )}
-                        </TravelDetail>
+                        </RideDetail>
                     </>
         </LayoutMain>
     </>
