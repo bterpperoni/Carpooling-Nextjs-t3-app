@@ -26,7 +26,7 @@ const TravelCard: React.FC<TravelCardProps> = ({ travel, driver, goToTravel }) =
       </div>
       <div className="travel-info">
         <span className="label">Conducteur:</span>
-        {driver}
+        {driver ?? travel.driverId}
       </div>
 
       <style jsx>{`

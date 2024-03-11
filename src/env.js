@@ -31,7 +31,9 @@ export const env = createEnv({
     // Add ` on ID and SECRET if you want to make sure they're not empty
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
-    GOOGLE_MAPS_API_KEY: z.string()
+    GOOGLE_MAPS_API_KEY: z.string(),
+    PAYPAL_CLIENT_ID: z.string(),
+    PAYPAL_CLIENT_SECRET: z.string()
   },
 
   /**
@@ -40,7 +42,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    
+    NEXT_PUBLIC_PAYPAL_CLIENT_ID: z.string()
   },
 
   /**
@@ -54,7 +56,10 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+    PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
+    PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET,
+    NEXT_PUBLIC_PAYPAL_CLIENT_ID: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
@@ -67,3 +72,4 @@ export const env = createEnv({
    */
   emptyStringAsUndefined: true,
 });
+

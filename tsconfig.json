@@ -33,6 +33,8 @@
     ".eslintrc.cjs",
     "next-env.d.ts",
     "**/*.ts",
+    "**/groups/**/*.ts",
+    "**/wallet/**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
