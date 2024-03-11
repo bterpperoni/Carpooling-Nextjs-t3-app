@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
-import Dropdown from '../../lib/components/dropdown/Dropdown';
+import Dropdown from '../../../lib/components/dropdown/Dropdown';
 import { data } from "$/utils/data/school";
 import Button from "$/lib/components/button/Button";
 
@@ -15,7 +15,7 @@ import Button from "$/lib/components/button/Button";
 export default function User() {
   // Get user id from url 
   const { query } = useRouter();
-  const name = query.name as string;
+  const name = query.user as string;
   // Session recovery
   const { data: sessionData } = useSession();
   // Get user by id
@@ -75,7 +75,7 @@ export default function User() {
   useEffect(() => {
     if (updatedUser ?? updatedSchool ) {
       alert("Vos informations ont bien été modifiés!");
-      window.location.assign(`/users/${editedName !== '' ? editedName : user?.name}`);
+      window.location.assign(`/users/${editedName !== '' ? editedName : user?.name}/profile`);
     }
   }, [ updatedSchool, updatedUser]);
 

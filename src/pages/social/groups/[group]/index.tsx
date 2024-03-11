@@ -16,7 +16,7 @@ export default function Group() {
     const { data: sessionData } = useSession();
     // Get group id from url 
     const { query, push } = useRouter();
-    const id = query.id;
+    const id = query.group;
     // Get group by id
     const {data: group} = api.group.groupById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     // Get trips by group id
@@ -75,12 +75,12 @@ if(sessionData)
                                 </div>
                                 <div>
                                     <Button 
-                                        onClick={() => push(`/social/groups/rides/${id as string}`)}
+                                        onClick={() => push(`/social/groups/${id as string}/create-ride`)}
                                         className=" bg-[var(--purple-g2)] 
                                                     hover:bg-[var(--pink-g1)] 
                                                     border-2 text-white px-3 py-2 rounded-full m-4
                                                     text-3xl">
-                                        {/* Publier un trajet pour ce groupe */} +
+                                        +
                                     </Button>
                                 </div>
                             </div>
@@ -238,7 +238,7 @@ if(sessionData)
                                                     </div>
                                                     <div className="flex flex-row w-[50%]">
                                                         <Button 
-                                                            onClick={() => push(`/users/${member.userName}`)}
+                                                            onClick={() => push(`/users/${member.userName}/profile`)}
                                                             className=" bg-[var(--purple-g2)] 
                                                                         hover:bg-white 
                                                                         hover:text-[var(--pink-g1)] 

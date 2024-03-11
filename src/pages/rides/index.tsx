@@ -77,7 +77,7 @@ const All: React.FC = () => {
                                 </select>
                             </div>
                             <Button 
-                                onClick={() => window.location.href='/rides/new'} 
+                                onClick={() => window.location.href='/rides/create'} 
                                 className="col-span-1 bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-full text-base w-max">
                                     Proposer un trajet

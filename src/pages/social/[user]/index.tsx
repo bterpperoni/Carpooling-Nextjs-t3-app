@@ -22,7 +22,7 @@ export default function UserGroup() {
     const { data: sessionData } = useSession();
     // Get user name from url
     const { query } = useRouter();
-    const name = query.name as string;
+    const name = query.user as string;
     // Get user groups 
     const { data: userGroups } = api.group.groupListByUser.useQuery({name: name}, {enabled: sessionData?.user !== undefined});
     // Delete group

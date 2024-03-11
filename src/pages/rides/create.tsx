@@ -14,8 +14,20 @@ export default function NewTrip()  {
     return (
          <>
             <LayoutMain>
-                <div className="bg-[var(--purple-g3)]  h-screen">
-                    <h1 className="text-6xl text-white mt-6">Nouveau Trajet</h1>
+                <div className="flex flex-col items-center">
+                    <h2 className=" md:text-4xl 
+                                            text-2xl 
+                                            font-bold 
+                                            mb-4 mt-4  
+                                            w-[fit-content]
+                                            text-center 
+                                            text-white
+                                            border-y-2
+                                            border-fuchsia-700
+                                            p-4
+                                            rounded-[12.5%]">
+                                Planifier un trajet
+                            </h2>
                     <NewTripForm />
                 </div>
             </LayoutMain>

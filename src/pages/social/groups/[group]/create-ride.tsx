@@ -14,14 +14,26 @@ export default function NewRideForGroup() {
 
     const { data: sessionData } = useSession();
     const { query } = useRouter();
-    const groupId = query.id;
+    const groupId = query.group;
 
     if (sessionData) {
         return (
             <>
                 <LayoutMain>
-                    <div className="bg-[var(--purple-g3)] max-w-[90%] h-screen">
-                        <h1 className="text-3xl text-white mt-6">Nouveau Trajet pour le groupe {groupId}</h1>
+                    <div className="flex flex-col items-center">
+                        <h2 className=" md:text-4xl 
+                                            text-2xl 
+                                            font-bold 
+                                            mb-4 mt-4  
+                                            w-[fit-content]
+                                            text-center 
+                                            text-white
+                                            border-y-2
+                                            border-fuchsia-700
+                                            p-4
+                                            rounded-[12.5%]">
+                                Planifier un trajet pour le groupe {groupId}
+                            </h2>
                         <NewTripForGroupForm isForGroup groupId={parseInt(groupId as string)} />
                     </div>
                 </LayoutMain>

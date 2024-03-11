@@ -6,19 +6,17 @@ import { useEffect, useState } from "react";
 import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
-import LayoutMain from '../../lib/components/layout/LayoutMain';
+import LayoutMain from '../../../lib/components/layout/LayoutMain';
 import TravelDetail from "$/lib/components/travel/TravelDetail";
-import UpdateTripForm from "$/lib/components/form/RideForm";
 
 
 export default function Detail() {
-    // Used to switch between display & edit mode
-    const [isEditing, setIsEditing] = useState(false);
+
     // Used to redirect after delete
     const [ travelDeleted, setTravelDeleted ] = useState(false);
     // Get id from url
     const { query, push } = useRouter();
-    const id = query.id;
+    const id = query.ride;
     // Session recovery
     const { data: sessionData } = useSession();
     // Get travel by id
@@ -74,7 +72,7 @@ export default function Detail() {
 
     // Enable edit mode & set travel data in form fields
       const handleEditClick = () => {
-        setIsEditing(true);
+        void push(`/rides/${id as string}/update`);
     };
 
     // Delete travel
@@ -97,7 +95,6 @@ export default function Detail() {
     <>
         <LayoutMain>
             {/* ------------------------------------Card with travel details--------------------------------------------------- */}  
-                {!isEditing ? (
                     <>
                         <Map zoom={zoom} onLoad={mapLoaded}/>
                         <TravelDetail travel={travel}>
@@ -127,27 +124,6 @@ export default function Detail() {
                                     )}
                         </TravelDetail>
                     </>
-                ) : (
-                    <>
-            {/* ------------------------------------Form to update the travel--------------------------------------------------- */}
-                        <div className="flex flex-col items-center">
-                            <h2 className=" md:text-4xl 
-                                            text-2xl 
-                                            font-bold 
-                                            mb-4 mt-4  
-                                            w-[fit-content]
-                                            text-center 
-                                            text-white
-                                            border-y-2
-                                            border-fuchsia-700
-                                            p-4
-                                            rounded-[12.5%]">
-                                Modifier votre trajet
-                            </h2>
-                            <UpdateTripForm travel={travel} />                       
-                        </div>
-                    </>
-                )}
         </LayoutMain>
     </>
   )

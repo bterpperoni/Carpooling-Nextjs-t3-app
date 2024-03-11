@@ -85,7 +85,7 @@ export default function Groups() {
                                 Créer un groupe
                         </Button>
                         <Button 
-                                onClick={() => router.push(`/social/groups/users/${sessionData.user.name}`)}
+                                onClick={() => router.push(`/social/${sessionData.user.name}`)}
                                 className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-md">
                                 Mes groupes
