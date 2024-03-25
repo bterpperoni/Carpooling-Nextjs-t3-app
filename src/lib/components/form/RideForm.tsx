@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
@@ -9,10 +10,15 @@ import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
+import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { useApiKey } from '$/context/google';
 import MuiStyle from '$/styles/MuiStyle.module.css';
-import type { Ride } from '@prisma/client';
+import { RideStatus, type Ride } from '@prisma/client';
+import Slider from '$/lib/components/button/Slider';
+import Dropdown from '../dropdown/Dropdown';
+import { data } from '$/utils/data/school';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
 
 export default function RideForm({ ride, isForGroup, groupId }: 
@@ -25,16 +31,23 @@ export default function RideForm({ ride, isForGroup, groupId }:
     const { data: sessionData } = useSession();
     const apiKey = useApiKey();
     // Address of departure and destination from google autocomplete
-    const address: {  departure: google.maps.places.PlaceResult | null, destination: google.maps.places.PlaceResult | null } = { departure: null, destination: null };
+    const address: {  
+        departure: google.maps.places.PlaceResult | null, 
+        destination: google.maps.places.PlaceResult | null 
+    } = { 
+        departure: null, 
+        destination: null 
+    };
     const [departure, setDeparture] = useState<string>();
     const [destination, setDestination] = useState<string>();
 
-    // Date of departure and destination
+    // Date of ride
     const [dateDeparture, setDateDeparture] = useState<Dayjs | null>(null);
     const [dateReturn, setDateReturn] = useState<Dayjs | null>(null);
     
     // Time of departure and destination
     const [timeDeparture, setTimeDeparture] = useState<Dayjs | null>(null);
+    // If ALLER-RETOUR
     const [timeReturn, setTimeReturn] = useState<Dayjs | null>(null);
 
     // Latitude and longitude of departure and destination
@@ -42,6 +55,10 @@ export default function RideForm({ ride, isForGroup, groupId }:
     const [departureLongitude, setDepartureLongitude] = useState<number>();
     const [destinationLatitude, setDestinationLatitude] = useState<number>();
     const [destinationLongitude, setDestinationLongitude] = useState<number>();
+
+    // School & campus state
+    const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
+    const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
 
     // Options for autocomplete
     const options = {
@@ -56,6 +73,10 @@ export default function RideForm({ ride, isForGroup, groupId }:
     const { data: updatedride, mutate: updateride } = api.ride.update.useMutation();
 
     useEffect(() => {
+
+        if(selectedSchool && selectedCampus) {
+            console.log(selectedSchool, selectedCampus);
+        }
 
         if(dateDeparture) {
             // if the user has selected a time for the departure date
@@ -72,18 +93,15 @@ export default function RideForm({ ride, isForGroup, groupId }:
             }
         }
 
-        if(dateReturn) {
-            // if the user has selected a time for the return date
+        if(checked) {
+            // if the user has selected ALLER-RETOUR
+            // Get the time
             if (timeReturn) {
-                // set the date of return with the time selected
-                setDateReturn(dayjs(dateReturn).set('hour', timeReturn.hour()).set('minute', timeReturn.minute()));
+                // Set dateReturn with (dateDeparture & timeReturn) because application is school based
+                setDateReturn(dayjs(dateDeparture).set('hour', timeReturn.hour()).set('minute', timeReturn.minute()));
             }else {
                 // else set the date of return with the time of the ride
-                setDateReturn(   
-                                dayjs(dateReturn)
-                                .set('hour', ride?.returnDateTime?.getHours() ?? 0)
-                                .set('minute', ride?.returnDateTime?.getMinutes() ?? 0)
-                            );
+                alert('Please select a time for the return');
             }
         }
     
@@ -118,10 +136,9 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                     destination: destination,
                                     destinationLatitude: destinationLatitude ?? 0,
                                     destinationLongitude: destinationLongitude ?? 0,
-                                    returnDateTime: dateReturn.toDate(),
+                                    returnTime: dateReturn.toDate(),
                                     isForGroup: isForGroup ?? false,
-                                    groupId: groupId ?? null,
-                                    status:0
+                                    groupId: groupId ?? null
                                 });  
                             } 
                     }else{
@@ -149,42 +166,54 @@ export default function RideForm({ ride, isForGroup, groupId }:
                             destination: destination ?? ride.destination,
                             destinationLatitude: destinationLatitude ?? ride.destinationLatitude,
                             destinationLongitude: destinationLongitude ?? ride.destinationLongitude,
-                            returnDateTime: dateReturn?.toDate() ?? ride.returnDateTime,
-                            status: 0
+                            returnTime: dateReturn?.toDate() ?? ride.returnTime,
+                            status: dateDeparture?.isSame(dayjs()) ? RideStatus.IN_PROGRESS : ride.status
                         });
                     }  
                 }
         }
     }
 
+    // Used to defines the type of the ride (ALLER or ALLER-RETOUR)
+    const [checked, setChecked] = useState(false);
+
+    const handleCheck = () => {
+        setChecked(!checked);
+        // console.log(checked);
+      };
+
         return (
                 <>
                     <form className="flex flex-col w-auto m-auto justify-center items-center bg-[var(--purple-g3)]">
+                        
                         {/* Departure */}
-                        <div className='my-16'>
+                        <div className='my-16 mb-8 border-2 border-[var(--purple-g1)]'>
                             <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
-                                <label htmlFor="departure" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>Departure </label>
+                                <label htmlFor="departure" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>
+                                    (1) Departure : 
+                                </label>
                                     <Autocomplete
-                                    defaultValue={ride?.departure ?? ''}
-                                    apiKey={apiKey}
-                                    options={options}
-                                    onPlaceSelected={(place) => {
-                                            address.departure = place;
-                                            setDeparture(address.departure.formatted_address);
-                                            if(address.departure.geometry?.location?.lat() && address.departure.geometry?.location?.lng()) {
-                                                setDepartureLatitude(address.departure.geometry.location.lat());
-                                                setDepartureLongitude(address.departure.geometry.location.lng()); 
+                                        defaultValue={ride?.departure ?? ''}
+                                        apiKey={apiKey}
+                                        options={options}
+                                        onPlaceSelected={(place) => {
+                                                address.departure = place;
+                                                setDeparture(address.departure.formatted_address);
+                                                if(address.departure.geometry?.location?.lat() && address.departure.geometry?.location?.lng()) {
+                                                    setDepartureLatitude(address.departure.geometry.location.lat());
+                                                    setDepartureLongitude(address.departure.geometry.location.lng()); 
+                                                }
                                             }
                                         }
-                                    }
-                                    className=" w-[75%] 
-                                                my-2 
-                                                md:w-[75%]
-                                                text-xl md:text-2xl
-                                                text-white
-                                                bg-[var(--purple-g3)]
-                                                p-2 "
-                                    id="departure"
+                                        className=" w-[75%] 
+                                                    my-2 
+                                                    md:w-[75%]
+                                                    text-xl md:text-2xl
+                                                    text-white
+                                                    bg-[var(--purple-g3)]
+                                                    p-2 
+                                                    border-2 border-[var(--purple-g1)]"
+                                        id="departure"
                                     />
                             </div>
                             <div className='p-4'>
@@ -214,11 +243,12 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                 />
                             </div>
                         </div>
-                    
                         {/* Destination */}
-                        <div>
+                        <div className='border-2 border-[var(--purple-g1)]'>
                             <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
-                                <label htmlFor="destination" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>Destination </label>
+                                <label htmlFor="destination" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>
+                                    (2) Destination 
+                                </label>
                                     <Autocomplete
                                     defaultValue={ride?.destination ?? ''}
                                     disabled = {false}
@@ -239,27 +269,29 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                                 text-xl md:text-2xl
                                                 text-white
                                                 bg-[var(--purple-g3)] 
-                                                p-2 "
+                                                p-2 
+                                                border-2 border-[var(--purple-g1)]"
                                     id="destination"
                                     />
                             </div>
+                            {/* Time of return if ALLER-RETOUR */}
                             <div className='p-4'>
                                 <DateTimeSelect
-                                    defaultDate={ride?.returnDateTime?.toDateString() ? 
-                                        dayjs(ride.returnDateTime?.toDateString()) 
+                                    defaultDate={ride?.departureDateTime?.toDateString() ? 
+                                        dayjs(ride.departureDateTime?.toDateString()) 
                                         : 
                                         dateReturn ?? null
                                     }
-                                    defaultTime={ride?.returnDateTime?.toDateString() ? 
-                                                dayjs(ride?.returnDateTime)
-                                                .set('hour' , ride?.returnDateTime?.getHours())
-                                                .set('minute', ride?.returnDateTime?.getMinutes()) 
+                                    defaultTime={ride?.returnTime?.toDateString() ? 
+                                                dayjs(ride?.returnTime)
+                                                .set('hour' , ride?.returnTime?.getHours())
+                                                .set('minute', ride?.returnTime?.getMinutes()) 
                                                 : 
                                                 timeReturn ?? null
                                             }
                                     labelexpTime="Time Return "
                                     labelexp="Date Return"
-                                    disableDate={false}
+                                    disableDate={true}
                                     disableTime={false}
                                     handleChangeDate={(date) => {
                                         setDateReturn(date)
@@ -269,6 +301,38 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                     }}
                                 />
                             </div>
+                        </div>
+                        <TimePicker
+                            defaultValue={ride?.returnTime?.toDateString() ? 
+                                dayjs(ride?.returnTime)
+                                .set('hour' , ride?.returnTime?.getHours())
+                                .set('minute', ride?.returnTime?.getMinutes()) 
+                                : 
+                                timeReturn ?? null
+                            }
+                            label="Time Return "
+                            className={`mt-4 ml-0 md:ml-2 md:mt-0 ${MuiStyle.MuiInputBaseRoot} ${MuiStyle.MuiInputBaseInput} ${MuiStyle.MuiFormLabelRoot}`}
+                            ampm={false}
+                            ampmInClock={true}
+                            value={timeReturn}
+                            onChange={(time) => {
+                                setTimeReturn(time);
+                            }}
+                        />
+                            <Dropdown 
+                            data={data} 
+                            onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
+                            setSelectedSchool(sc.target.value);
+                            setSelectedCampus(ca.target.value);
+                            }}/>
+
+                        <div className="col-span-1 mb-4 flex justify-center items-center">
+                            <p className="text-white text-base mb-2 mt-2!important border-2 border-white px-4 py-2 rounded-full">
+                                <label htmlFor="SliderDsiplay" className="mx-2 relative top-1">
+                                    (3) Type du trajet : {checked ? 'ALLER-RETOUR' : 'ALLER SIMPLE'}
+                                </label>
+                                <Slider check={handleCheck} checked={checked} />
+                            </p>
                         </div>
                     </form>
                         <div className="flex flex-col items-center">

@@ -14,6 +14,7 @@ import { paypalRouter } from "./routers/wallet/paypal";
  */
 export const appRouter = createTRPCRouter({
   ride: rideRouter,
+  // booking: bookingRouter,
   user: userRouter,
   group: groupRouter,
   groupMember: groupMemberRouter,

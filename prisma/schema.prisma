@@ -58,17 +58,26 @@ model User {
   locality           String?
   zip                Int?
   campus             String?
-  role               String        @default("user")
+  role               UserRole      @default(USER) 
+  // The rating match for the rides as driver because the passengers cannot be rated 
+  // (@todo : add rating for passengers)
+  rating             Int           @default(0)
   accounts           Account[]
   sessions           Session[]
-  ridesAsDriver    Ride[]      @relation("Driver")
-  ridesAsPassenger Passenger[]   @relation("UserPassenger")
+  ridesAsDriver      Ride[]      @relation("Driver")
+  ridesAsPassenger   Booking[]   @relation("UserPassenger")
   groupCreated       Group[]       @relation("GroupCreatedBy")
   groupMembers       GroupMember[] 
   wallet             Wallet[]         
 }
 
-// -------------------------------------------Ride & PASSENGER------------------------------------------------
+enum UserRole {
+  USER
+  ADMIN
+  BANNED
+}
+
+// -------------------------------------------Ride & PASSENGER (BOOKING)------------------------------------------------
 model Ride {
   id                   Int         @id @default(autoincrement())
   isForGroup           Boolean     @default(false)
@@ -77,28 +86,59 @@ model Ride {
   departure            String
   departureLatitude    Float
   departureLongitude   Float
-  departureDateTime    DateTime
+  // The time match of the maximum time the driver must pick up his last passenger
+  // The time at which the driver should start will be calculated approximately based on the number of passengers, distance, etc.
+  departureDateTime    DateTime 
   destination          String
   destinationLatitude  Float
   destinationLongitude Float
-  returnDateTime       DateTime?
-  maxPassengers        Int?        @default(2)
-  status               Int         @default(0)
+  maxPassengers        Int        @default(2)
+  // The maximum distance that the driver can make a detour to pick up a passenger
+  // This field applies to EACH passenger (not the sum of all detours)
+  maxDetourDist        Int        @default(10)
+  type                              RideType   @default(ALLER)
+  // the DATE for RETOUR ride it's the same of departure because the application is based on school timetables (so 1 day only)
+  // If the ride is a RETOUR, 'returnTime' is the time when the driver leaves the school
+  returnTime           DateTime?
+  status               RideStatus  @default(PENDING)
   group                Group?      @relation("GroupRides", fields: [groupId], references: [id])
   driver               User        @relation("Driver", fields: [driverId], references: [name])
-  passengers           Passenger[] @relation("Passengers")
-
-  @@index([departureLatitude, departureLongitude], name: "departure")
-  @@index([destinationLatitude, destinationLongitude], name: "destination")
+  passengers           Booking[]   @relation("Passengers")
 }
 
-model Passenger {
-  id       Int    @id @default(autoincrement())
-  RideId Int
-  userName   String
-  ride   Ride @relation("Passengers", fields: [RideId], references: [id])
-  user     User   @relation("UserPassenger", fields: [userName], references: [name])
+model Booking {
+  id         Int    @id @default(autoincrement())
+  rideId     Int
+  userName        String
+  pickupPoint     String
+  pickupLatitude  Float
+  pickupLongitude Float
+  price           String
+  
+  // All passengers should rate the driver after the ride
+  // An average rating will be calculated and displayed on the driver's profile
+  driverRating    Int?     
+  ride       Ride   @relation("Passengers", fields: [rideId], references: [id])
+  user       User   @relation("UserPassenger", fields: [userName], references: [name])
 }
+
+enum RideType {
+  ALLER
+  RETOUR
+}
+
+enum RideStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// enum BookingStatus {
+//   PENDING
+//   ACCEPTED
+//   REFUSED
+// }
 
 // -------------------------------------------GROUP & GROUPMEMBER------------------------------------------------
 model Group {
@@ -128,8 +168,8 @@ model Wallet {
   id            String     @id @default(cuid())
   userId        String
   paypalId      String?
-  balance       String     @default("0")
-  owner         User    @relation(fields: [userId], references: [id])
+  balance       String   @default("0")
+  owner         User     @relation(fields: [userId], references: [id])
   fromWalletTransaction  Transaction[] @relation("fromWallet")
   toWalletTransaction    Transaction[] @relation("toWallet")
   paypalTransaction      PaypalTransaction[]

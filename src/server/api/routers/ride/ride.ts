@@ -8,6 +8,7 @@ import {
   createTRPCRouter,
   protectedProcedure
 } from "$/server/api/trpc";
+import { RideStatus } from "@prisma/client";
 
 
 // API definition for rides
@@ -52,11 +53,9 @@ export const rideRouter = createTRPCRouter({
                 destination: z.string(),
                 destinationLatitude : z.number(),
                 destinationLongitude : z.number(), 
-                returnDateTime: z.date() || null,
+                returnTime: z.date() || null,
                 isForGroup: z.boolean().default(false),
-                groupId: z.number().nullable(),
-                status: z.number(),
-                
+                groupId: z.number().nullable()   
             }))
         .mutation(async ({ ctx, input }) => {
             // simulate a slow db call
@@ -71,10 +70,10 @@ export const rideRouter = createTRPCRouter({
                     destination: input.destination,
                     destinationLatitude: input.destinationLatitude,
                     destinationLongitude: input.destinationLongitude,
-                    returnDateTime: input.returnDateTime,
+                    returnTime: input.returnTime,
                     isForGroup: input.isForGroup,
                     groupId: input.groupId,
-                    status: input.status,
+                    status: RideStatus.PENDING,
                 },
             });
         }),
@@ -91,8 +90,8 @@ export const rideRouter = createTRPCRouter({
                 destination: z.string(),
                 destinationLatitude : z.number(),
                 destinationLongitude : z.number(), 
-                returnDateTime: z.date().nullable(),
-                status: z.number(),
+                returnTime: z.date().nullable(),
+                status: z.nativeEnum(RideStatus),
                 
             }))
         .mutation(async ({ ctx, input }) => {
@@ -109,7 +108,7 @@ export const rideRouter = createTRPCRouter({
                     destination: input.destination,
                     destinationLatitude: input.destinationLatitude,
                     destinationLongitude: input.destinationLongitude,
-                    returnDateTime: input.returnDateTime,
+                    returnTime: input.returnTime,
                     status: input.status,
                 },
             });

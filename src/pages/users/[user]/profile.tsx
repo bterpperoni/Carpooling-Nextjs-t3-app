@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /* eslint-disable @next/next/no-img-element */
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
@@ -10,6 +11,7 @@ import type { ChangeEvent } from "react";
 import Dropdown from '../../../lib/components/dropdown/Dropdown';
 import { data } from "$/utils/data/school";
 import Button from "$/lib/components/button/Button";
+import { UserRole } from "@prisma/client";
 
 
 export default function User() {
@@ -24,6 +26,11 @@ export default function User() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState<string>('');
   const [editedEmail, setEditedEmail] = useState<string>('');
+
+
+
+
+
   // Update user state
   const { data: updatedUser, mutate: updateUser } = api.user.update.useMutation();
   // Enable edit mode & set user data from form fields 
@@ -204,6 +211,23 @@ export default function User() {
                     ) : null
                   }
                   </div>
+              </div>
+              <div className="admin">
+                {sessionData.user.role === UserRole.ADMIN.toString() && name === sessionData.user.name ? (
+                  <div className="mt-4 border-2 border-black flex items-center flex-col">
+                    <h2 className="text-xl text-black font-bold">
+                      Options supplémentaires 
+                      (à changer de place de cette page à  e.g. : '/users/settings')
+                    </h2>
+                    <div className="mt-4">
+                      <Button 
+                          className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md m-2"
+                          onClick={() => window.location.assign(`/users/`)}>
+                              Voir la liste des utilisateurs
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </div>
           </LayoutMain> 
