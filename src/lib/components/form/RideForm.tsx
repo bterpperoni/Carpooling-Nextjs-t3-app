@@ -19,6 +19,8 @@ import Slider from '$/lib/components/button/Slider';
 import Dropdown from '../dropdown/Dropdown';
 import { data } from '$/utils/data/school';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 
 export default function RideForm({ ride, isForGroup, groupId }: 
@@ -185,38 +187,87 @@ export default function RideForm({ ride, isForGroup, groupId }:
         return (
                 <>
                     <form className="flex flex-col w-auto m-auto justify-center items-center bg-[var(--purple-g3)]">
-                        
-                        {/* Departure */}
+                        {/* First step of the form -> Departure & Destination */}
                         <div className='my-16 mb-8 border-2 border-[var(--purple-g1)]'>
-                            <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
+                            {/* Set up departure */}
+                            <div className=' flex flex-col sm:items-center sm:flex-row border-2 border-[var(--pink-g1)] m-4 p-2'>
                                 <label htmlFor="departure" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>
                                     (1) Departure : 
                                 </label>
-                                    <Autocomplete
-                                        defaultValue={ride?.departure ?? ''}
-                                        apiKey={apiKey}
-                                        options={options}
-                                        onPlaceSelected={(place) => {
-                                                address.departure = place;
-                                                setDeparture(address.departure.formatted_address);
-                                                if(address.departure.geometry?.location?.lat() && address.departure.geometry?.location?.lng()) {
-                                                    setDepartureLatitude(address.departure.geometry.location.lat());
-                                                    setDepartureLongitude(address.departure.geometry.location.lng()); 
-                                                }
+                                <Autocomplete
+                                    defaultValue={ride?.departure ?? ''}
+                                    apiKey={apiKey}
+                                    options={options}
+                                    onPlaceSelected={(place) => {
+                                            address.departure = place;
+                                            setDeparture(address.departure.formatted_address);
+                                            if(address.departure.geometry?.location?.lat() && address.departure.geometry?.location?.lng()) {
+                                                setDepartureLatitude(address.departure.geometry.location.lat());
+                                                setDepartureLongitude(address.departure.geometry.location.lng()); 
                                             }
                                         }
-                                        className=" w-[75%] 
-                                                    my-2 
-                                                    md:w-[75%]
-                                                    text-xl md:text-2xl
-                                                    text-white
-                                                    bg-[var(--purple-g3)]
-                                                    p-2 
-                                                    border-2 border-[var(--purple-g1)]"
-                                        id="departure"
-                                    />
+                                    }
+                                    className=" w-[75%] 
+                                                my-2 
+                                                md:w-[75%]
+                                                text-xl md:text-2xl
+                                                text-white
+                                                bg-[var(--purple-g3)]
+                                                p-2 
+                                                border-2 border-[var(--purple-g1)]"
+                                    id="departure"
+                                />
                             </div>
-                            <div className='p-4'>
+                            {/* Set up destination */}
+                            <div className='border-2 border-[var(--pink-g1)] m-4 p-2 flex flex-col'>
+                                <div className='p-2 m-4 border-2 border-[var(--pink-g1)]'>
+                                    <label htmlFor="destination" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-2'>
+                                        (2) Destination: 
+                                    </label>
+                                    <Autocomplete
+                                    defaultValue={ride?.destination ?? ''}
+                                    disabled = {false}
+                                    apiKey={apiKey}
+                                    options={options}
+                                    onPlaceSelected={(place) => {
+                                            address.destination = place;
+                                            setDestination(address.destination.formatted_address);
+                                            if(address.destination.geometry?.location?.lat() && address.destination.geometry?.location?.lng()) {
+                                            setDestinationLatitude(address.destination.geometry.location.lat());
+                                            setDestinationLongitude(address.destination.geometry.location.lng()); 
+                                            }
+                                        }
+                                    }
+                                    className=" w-[75%] 
+                                                my-2 
+                                                md:w-[75%]
+                                                text-xl md:text-2xl
+                                                text-white
+                                                bg-[var(--purple-g3)] 
+                                                p-2 
+                                                border-2 border-[var(--purple-g1)]"
+                                    id="destination"
+                                    />
+                                </div>
+                                {/* Input to select school */}
+                                <div className="p-2 m-4 border-2 border-[var(--pink-g1)]">
+                                    <p className="text-[var(--pink-g1)] text-[20px]"> 
+                                        (2'bis) School choice :
+                                        <p>Implement this choice with the destination's autocomplete</p>
+                                    </p>
+                                    <Dropdown 
+                                        data={data} 
+                                        onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
+                                        setSelectedSchool(sc.target.value);
+                                        setSelectedCampus(ca.target.value);
+                                    }}/>
+                                </div>
+                            </div>
+                            <div className='p-2 m-2 border-2 border-[var(--pink-g1)]'>
+                                <label htmlFor="destination" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-0'>
+                                    (3) Selection dateTime for the departure:
+                                    <p className='color-white text-[16px] m-1'> (N.B.) there is just an "ALLER" for now</p> 
+                                </label>
                                 <DateTimeSelect
                                     defaultDate={ride?.departureDateTime?.toDateString() ? 
                                                 dayjs(ride.departureDateTime?.toDateString()) 
@@ -243,96 +294,39 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                 />
                             </div>
                         </div>
-                        {/* Destination */}
-                        <div className='border-2 border-[var(--purple-g1)]'>
-                            <div className='ml-4 flex flex-col sm:items-center sm:flex-row'>
-                                <label htmlFor="destination" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>
-                                    (2) Destination 
-                                </label>
-                                    <Autocomplete
-                                    defaultValue={ride?.destination ?? ''}
-                                    disabled = {false}
-                                    apiKey={apiKey}
-                                    options={options}
-                                    onPlaceSelected={(place) => {
-                                            address.destination = place;
-                                            setDestination(address.destination.formatted_address);
-                                            if(address.destination.geometry?.location?.lat() && address.destination.geometry?.location?.lng()) {
-                                            setDestinationLatitude(address.destination.geometry.location.lat());
-                                            setDestinationLongitude(address.destination.geometry.location.lng()); 
-                                            }
-                                        }
-                                    }
-                                    className=" w-[75%] 
-                                                my-2 
-                                                md:w-[75%]
-                                                text-xl md:text-2xl
-                                                text-white
-                                                bg-[var(--purple-g3)] 
-                                                p-2 
-                                                border-2 border-[var(--purple-g1)]"
-                                    id="destination"
-                                    />
-                            </div>
-                            {/* Time of return if ALLER-RETOUR */}
-                            <div className='p-4'>
-                                <DateTimeSelect
-                                    defaultDate={ride?.departureDateTime?.toDateString() ? 
-                                        dayjs(ride.departureDateTime?.toDateString()) 
-                                        : 
-                                        dateReturn ?? null
-                                    }
-                                    defaultTime={ride?.returnTime?.toDateString() ? 
-                                                dayjs(ride?.returnTime)
-                                                .set('hour' , ride?.returnTime?.getHours())
-                                                .set('minute', ride?.returnTime?.getMinutes()) 
-                                                : 
-                                                timeReturn ?? null
-                                            }
-                                    labelexpTime="Time Return "
-                                    labelexp="Date Return"
-                                    disableDate={true}
-                                    disableTime={false}
-                                    handleChangeDate={(date) => {
-                                        setDateReturn(date)
-                                    }}    
-                                    handleChangeTime={(time) => {
-                                        setTimeReturn(time)
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        <TimePicker
-                            defaultValue={ride?.returnTime?.toDateString() ? 
-                                dayjs(ride?.returnTime)
-                                .set('hour' , ride?.returnTime?.getHours())
-                                .set('minute', ride?.returnTime?.getMinutes()) 
-                                : 
-                                timeReturn ?? null
-                            }
-                            label="Time Return "
-                            className={`mt-4 ml-0 md:ml-2 md:mt-0 ${MuiStyle.MuiInputBaseRoot} ${MuiStyle.MuiInputBaseInput} ${MuiStyle.MuiFormLabelRoot}`}
-                            ampm={false}
-                            ampmInClock={true}
-                            value={timeReturn}
-                            onChange={(time) => {
-                                setTimeReturn(time);
-                            }}
-                        />
-                            <Dropdown 
-                            data={data} 
-                            onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
-                            setSelectedSchool(sc.target.value);
-                            setSelectedCampus(ca.target.value);
-                            }}/>
-
+                        {/* Defines if the ride is ALLER SIMPLE or ALLER-RETOUR */}
                         <div className="col-span-1 mb-4 flex justify-center items-center">
                             <p className="text-white text-base mb-2 mt-2!important border-2 border-white px-4 py-2 rounded-full">
                                 <label htmlFor="SliderDsiplay" className="mx-2 relative top-1">
-                                    (3) Type du trajet : {checked ? 'ALLER-RETOUR' : 'ALLER SIMPLE'}
+                                    (4) Type du trajet : {checked ? 'ALLER-RETOUR' : 'ALLER SIMPLE'}
                                 </label>
                                 <Slider check={handleCheck} checked={checked} />
                             </p>
+                        </div>
+                        {/* Set up the return Time if ALLER-RETOUR (normally the last step of the form) */}
+                        <div className='p-2 m-2 border-2 border-[var(--pink-g1)]'>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <p className="text-[var(--pink-g1)] text-[20px]">
+                                    (5) Selection Time for the return:
+                                </p>
+                                <TimePicker
+                                    defaultValue={ride?.returnTime?.toDateString() ? 
+                                        dayjs(ride?.returnTime)
+                                        .set('hour' , ride?.returnTime?.getHours())
+                                        .set('minute', ride?.returnTime?.getMinutes()) 
+                                        : 
+                                        timeReturn ?? null
+                                    }
+                                    label="Time Return "
+                                    className={`mt-4 ml-0 md:ml-2 md:mt-0 ${MuiStyle.MuiInputBaseRoot} ${MuiStyle.MuiInputBaseInput} ${MuiStyle.MuiFormLabelRoot}`}
+                                    ampm={false}
+                                    ampmInClock={true}
+                                    value={timeReturn}
+                                    onChange={(time) => {
+                                        setTimeReturn(time);
+                                    }}
+                                />
+                            </LocalizationProvider>
                         </div>
                     </form>
                         <div className="flex flex-col items-center">
