@@ -128,8 +128,9 @@ export const getCampusAddress = (str: string) => {
   for (const school of data.school) {
     for (const campus of school.campus) {
         if (campus.campus_ref === str) {
-            console.log(campus.address);
-            // return campus.address;
+            // console.log(campus.address);
+            const address = campus.address;
+            return address;
         }
     }
   }
@@ -140,8 +141,10 @@ export const getCampusLatLng = (str: string) => {
   for (const school of data.school) {
     for (const campus of school.campus) {
         if (campus.campus_ref === str) {
-            console.log(campus.location);
-            // return campus.location;
+            // console.log(campus.location);
+            const campusLat = campus.location.lat;
+            const campusLng = campus.location.lng;
+            return { lat: campusLat, lng: campusLng };
         }
     }
   } return { lat: 0, lng: 0};

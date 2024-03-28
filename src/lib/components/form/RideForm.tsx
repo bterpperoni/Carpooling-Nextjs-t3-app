@@ -109,11 +109,14 @@ export default function RideForm({ ride, isForGroup, groupId }:
             window.location.href = `/rides/${rideCreated.id}`;
         }
             
-        if (destination != undefined) {
-            console.log("Destination: ", destination);
-        }else if(selectedCampus != undefined){
-            console.log("Destination: ", selectedSchool, selectedCampus);
-            getCampusAddress(selectedCampus);
+
+        if (destination) {
+            console.log("Destination: ", selectedSchool, selectedCampus + '\n' +
+                        "Address: ", destination + '\n' +
+                        "Latitude: ", destinationLatitude + '\n' +
+                        "Longitude: ", destinationLongitude);
+            // console.log(getCampusAddress(selectedCampus));
+            // console.log(getCampusLatLng(selectedCampus));
         }
         
     }, [rideCreated, updatedride, dateDeparture, timeDeparture, dateReturn, timeReturn, ride, departure, destination, 
@@ -241,15 +244,11 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                         onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement>) => {
                                             setSelectedSchool(sc.target.value);
                                             setSelectedCampus(ca.target.value);
-                                            // console.log(selectedSchool, selectedCampus);
-                                            // if(selectedCampus) {
-                                            //     const coordinatesSavedCampus = getCampusLatLng(selectedCampus)
-                                            //     if(coordinatesSavedCampus) {
-                                            //         console.log('..ok')
-                                            //         // setDestinationLatitude(coordinatesSavedCampus.lat);
-                                            //         // setDestinationLongitude(coordinatesSavedCampus.lng);
-                                            //     }
-                                            // }
+                                            // if(ca.target.value){
+                                                setDestination(getCampusAddress(ca.target.value));
+                                                setDestinationLatitude(getCampusLatLng(ca.target.value).lat);
+                                                setDestinationLongitude(getCampusLatLng(ca.target.value).lng);
+                                            //}
                                         }}/>
                                     ) : (
                                         <>
@@ -290,11 +289,18 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                         </>
                                        )}
                                     {/* border-2 border-[var(--pink-g1)] */}
-                                    {schoolInDropdown && (
+                                    {schoolInDropdown ? (
                                         <>
                                             <Button className="cursor-pointer hover:border-b-2 border-gray-600" 
                                                 onClick={() => setSchoolInDropdown(false)}>
                                                     Vous ne trouvez pas le vôtre ?
+                                            </Button>
+                                        </>
+                                    ):(
+                                        <>
+                                            <Button className="cursor-pointer hover:border-b-2 border-gray-600" 
+                                                onClick={() => setSchoolInDropdown(true)}>
+                                                    Retourner à la liste
                                             </Button>
                                         </>
                                     )}
