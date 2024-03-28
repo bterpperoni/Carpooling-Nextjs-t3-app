@@ -26,11 +26,11 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children }: RideDetailsP
             {ride.destination}
         </div>
       </div>
-      {ride.returnDateTime != null && (
+      {ride.returnTime != null && (
         <div className="ride-info flex flex-row justify-between">
             <div>
-                <span className="label">Date de retour:</span>
-                Le {ride.returnDateTime.toLocaleDateString()} à {ride.returnDateTime.toLocaleTimeString()}
+                <span className="label">Heure de retour:</span>
+                {ride.returnTime.toLocaleTimeString()}
             </div>
         </div>
       )}

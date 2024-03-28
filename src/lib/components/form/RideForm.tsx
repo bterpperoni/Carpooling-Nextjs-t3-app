@@ -76,23 +76,37 @@ export default function RideForm({ ride, isForGroup, groupId }:
     // Used to update ride
     const { data: updatedride, mutate: updateride } = api.ride.update.useMutation();
 
+    /* _______________ USEFFECT FOR SET UP DATE & TIME DEPARTURE WHEN CREATING OR UPDATING A RIDE _______________ */
     useEffect(() => {
-
-        if(dateDeparture) {
+        let shouldUpdateDateDeparture = false;
+        if (dateDeparture) {
             // if the user has selected a time for the departure date
-            if(timeDeparture) {
-                // set the date of departure with the time selected
-                setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
-            }else{
-                // else set the date of departure with the time of the ride
-                setDateDeparture(   
-                                dayjs(dateDeparture)
-                                .set('hour', ride?.departureDateTime?.getHours() ?? 0)
-                                .set('minute', ride?.departureDateTime?.getMinutes() ?? 0)
-                            );
+            if (timeDeparture) {
+                if(!shouldUpdateDateDeparture) {
+                    shouldUpdateDateDeparture = true;
+                    // CREATING A RIDE: set the date of departure with the time selected
+                    setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
+                }
+                // console.log("Date of departure: ", dateDeparture.toDate().toLocaleDateString(), "\n",
+                //         "Time of departure: ", dateDeparture.toDate().toLocaleTimeString());
+            } else {
+                if(shouldUpdateDateDeparture){
+                    shouldUpdateDateDeparture = true;
+                    // UPDATING A RIDE: else set the date of departure with the time of the ride
+                    setDateDeparture(
+                        dayjs(dateDeparture)
+                        .set('hour', ride?.departureDateTime?.getHours() ?? 0)
+                        .set('minute', ride?.departureDateTime?.getMinutes() ?? 0)
+                    );
+                }
+                // console.log("Date of departure: ", dateDeparture.toDate().toLocaleDateString(), "\n",
+                //         "Time of departure: ", dateDeparture.toDate().toLocaleTimeString());
             }
         }
+    },[dateDeparture, timeDeparture, ride]);
 
+    /* _______________________ USEFFECT FOR CHECK THE TIME IF THE TYPE OF RIDE IS ALLER-RETOUR _________________________ */
+    useEffect(() => {
         if(checked) {
             // if the user has selected ALLER-RETOUR
             // Get the time
@@ -104,23 +118,23 @@ export default function RideForm({ ride, isForGroup, groupId }:
                 alert('Please select a time for the return');
             }
         }
+    }, [dateDeparture, timeReturn]);
+
+    /* _______________________ USEFFECT FOR TEST & REDIRECT WHEN CREATING/UPDATING A RIDE _________________________ */
+    useEffect(() => {
     
+        // if (destination) {
+        //     console.log("Destination: ", selectedSchool, selectedCampus + '\n' +
+        //                 "Address: ", destination + '\n' +
+        //                 "Latitude: ", destinationLatitude + '\n' +
+        //                 "Longitude: ", destinationLongitude);
+        // }
+
         if(rideCreated)  {
             window.location.href = `/rides/${rideCreated.id}`;
-        }
-            
-
-        if (destination) {
-            console.log("Destination: ", selectedSchool, selectedCampus + '\n' +
-                        "Address: ", destination + '\n' +
-                        "Latitude: ", destinationLatitude + '\n' +
-                        "Longitude: ", destinationLongitude);
-            // console.log(getCampusAddress(selectedCampus));
-            // console.log(getCampusLatLng(selectedCampus));
-        }
+        }     
         
-    }, [rideCreated, updatedride, dateDeparture, timeDeparture, dateReturn, timeReturn, ride, departure, destination, 
-        departureLatitude, departureLongitude, destinationLatitude, destinationLongitude, selectedSchool, selectedCampus]);
+    }, [rideCreated]);
 
     // Submit a new ride or update an existing ride
     function handleClick() { 
@@ -316,14 +330,14 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                     defaultDate={ride?.departureDateTime?.toDateString() ? 
                                                 dayjs(ride.departureDateTime?.toDateString()) 
                                                 : 
-                                                dateReturn ?? null
+                                                dateDeparture ?? null
                                             }
                                     defaultTime={ride?.departureDateTime?.toDateString() ? 
                                                 dayjs(ride?.departureDateTime)
                                                 .set('hour' , ride?.departureDateTime?.getHours())
                                                 .set('minute', ride?.departureDateTime?.getMinutes()) 
                                                 : 
-                                                timeReturn ?? null
+                                                timeDeparture ?? null
                                             }
                                     labelexpTime='HEURE' 
                                     labelexp="DATE"
