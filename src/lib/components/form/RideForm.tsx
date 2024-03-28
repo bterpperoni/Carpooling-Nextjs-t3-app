@@ -17,7 +17,7 @@ import MuiStyle from '$/styles/MuiStyle.module.css';
 import { RideStatus, type Ride } from '@prisma/client';
 import Slider from '$/lib/components/button/Slider';
 import Dropdown from '../dropdown/Dropdown';
-import { data } from '$/utils/data/school';
+import { data, getCampusAddress, getCampusLatLng } from '$/utils/data/school';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -109,16 +109,15 @@ export default function RideForm({ ride, isForGroup, groupId }:
             window.location.href = `/rides/${rideCreated.id}`;
         }
             
-        if(updatedride) {
-            window.location.href = `/rides/${updatedride.id}`;
-        }
-
-        if(selectedCampus ?? selectedCampus != null) {
-            console.log(selectedSchool, selectedCampus);
+        if (destination != undefined) {
+            console.log("Destination: ", destination);
+        }else if(selectedCampus != undefined){
+            console.log("Destination: ", selectedSchool, selectedCampus);
+            getCampusAddress(selectedCampus);
         }
         
-    }, [rideCreated, updatedride, dateDeparture, timeDeparture, dateReturn, timeReturn, ride, departure, 
-        departureLatitude, departureLongitude, selectedSchool, selectedCampus]);
+    }, [rideCreated, updatedride, dateDeparture, timeDeparture, dateReturn, timeReturn, ride, departure, destination, 
+        departureLatitude, departureLongitude, destinationLatitude, destinationLongitude, selectedSchool, selectedCampus]);
 
     // Submit a new ride or update an existing ride
     function handleClick() { 
@@ -186,29 +185,6 @@ export default function RideForm({ ride, isForGroup, groupId }:
         setChecked(!checked);
         // console.log(checked);
       };
-
-    // Function to enter the address of the school in Autocomplete
-    // const enterSchoolAddress = () => {
-    //     if(selectedSchool) {
-    //         const school = data.school.find(s => s.reference === selectedSchool);
-    //         if (school) {
-    //             address.destination = {
-    //                 formatted_address: school.name + ', ' + school.city + ', ' + school.pays,
-    //                 geometry: {
-    //                     location: {
-    //                         lat: () => 0,
-    //                         lng: () => 0,
-    //                         equals: () => false,
-    //                         toJSON: () => ({ lat: 0, lng: 0 }), 
-    //                         toUrlValue: () => ''
-    //                     }
-    //                 }
-    //             };
-    //             setDestination(address.destination?.formatted_address);
-    //         }
-    //     }
-    // }
-
         
 
         return (
@@ -231,7 +207,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                             setDeparture(address.departure.formatted_address);
                                             if(address.departure.geometry?.location?.lat() && address.departure.geometry?.location?.lng()) {
                                                 setDepartureLatitude(address.departure.geometry.location.lat());
-                                                setDepartureLongitude(address.departure.geometry.location.lng()); 
+                                                setDepartureLongitude(address.departure.geometry.location.lng());
                                             }
                                         }
                                     }
@@ -262,9 +238,18 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                                        text-white bg-[var(--purple-g3)] p-2 border-2 
                                                        border-[var(--purple-g1)]'
                                         colorLabel='text-[var(--pink-g1)]'
-                                        onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
-                                        setSelectedSchool(sc.target.value);
-                                        setSelectedCampus(ca.target.value);
+                                        onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement>) => {
+                                            setSelectedSchool(sc.target.value);
+                                            setSelectedCampus(ca.target.value);
+                                            // console.log(selectedSchool, selectedCampus);
+                                            // if(selectedCampus) {
+                                            //     const coordinatesSavedCampus = getCampusLatLng(selectedCampus)
+                                            //     if(coordinatesSavedCampus) {
+                                            //         console.log('..ok')
+                                            //         // setDestinationLatitude(coordinatesSavedCampus.lat);
+                                            //         // setDestinationLongitude(coordinatesSavedCampus.lng);
+                                            //     }
+                                            // }
                                         }}/>
                                     ) : (
                                         <>

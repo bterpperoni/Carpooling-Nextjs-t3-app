@@ -1,3 +1,4 @@
+
 export const data ={
     "school": [
       {
@@ -108,10 +109,10 @@ export const data ={
   }
 
 export const getCampusFullName = (str: string) => {
-    const ref = str.split('-', 2);
-    const school = data.school.find((school) => school.reference === (ref ?? [])[0])?.name ?? (ref?.[0] ?? '');
-    const campus = data.school.find((school) => school.reference === (ref ?? [])[0])
-                   ?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name ?? (ref?.[1] ?? '');
+    const abbr = str.split('-', 2);
+    const school = data.school.find((school) => school.reference === (abbr ?? [])[0])?.name ?? (abbr?.[0] ?? '');
+    const campus = data.school.find((school) => school.reference === (abbr ?? [])[0])
+                   ?.campus?.find((campus) => campus.campus_ref === abbr?.[1])?.campus_name ?? (abbr?.[1] ?? '');
     return school + ' - ' + campus;
 }
 
@@ -121,4 +122,27 @@ export const getCampusAbbr = (str: string) => {
     const campus = data.school.find((school) => school.reference === (ref ?? [])[0])
                    ?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_ref ?? (ref?.[1] ?? '');
     return school + ' - ' + campus;
+}
+
+export const getCampusAddress = (str: string) => {
+  for (const school of data.school) {
+    for (const campus of school.campus) {
+        if (campus.campus_ref === str) {
+            console.log(campus.address);
+            // return campus.address;
+        }
+    }
+  }
+  return "Campus address not found";
+}
+
+export const getCampusLatLng = (str: string) => {
+  for (const school of data.school) {
+    for (const campus of school.campus) {
+        if (campus.campus_ref === str) {
+            console.log(campus.location);
+            // return campus.location;
+        }
+    }
+  } return { lat: 0, lng: 0};
 }

@@ -202,7 +202,8 @@ return (
                                        className="ds-range ds-range-warning"
                                        onChange={function (e: ChangeEvent<HTMLInputElement>): void {
                                         setDepositAmount(e.target.value);
-                                    }} />
+                                        }} 
+                                />
                             </div>
                             <PayPalScriptProvider
                                 options={{
