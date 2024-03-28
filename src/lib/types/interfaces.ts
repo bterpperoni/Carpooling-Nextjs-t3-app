@@ -1,4 +1,4 @@
-import { Ride } from "@prisma/client";
+import type { Ride } from "@prisma/client";
 import type { ChangeEvent } from "react";
 
 export interface Campus {
@@ -29,6 +29,8 @@ export interface RideDetailsProps {
   
 export interface DropdownProps {
     data: { school: School[] };
+    styleDropdown?: string;
+    colorLabel?: string;
     onChange: (selectedSchool: ChangeEvent<HTMLSelectElement>, selectedCampus:  ChangeEvent<HTMLSelectElement> ) => void;
   }
 
@@ -39,5 +41,4 @@ export interface DropdownProps {
 
   export interface PaypalTokenResponse {
     access_token: string;
-
   }

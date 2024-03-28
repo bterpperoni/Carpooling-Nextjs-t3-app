@@ -163,6 +163,8 @@ export default function User() {
                   {isEditingSchool ? (
                      <Dropdown 
                         data={data} 
+                        styleDropdown="max-w-md mx-auto mt-4 p-4 border rounded-md shadow-md bg-white"
+                        colorLabel='text-gray-600'
                         onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
                           setSelectedSchool(sc.target.value);
                           setSelectedCampus(ca.target.value);

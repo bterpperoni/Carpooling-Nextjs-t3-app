@@ -105,7 +105,9 @@ export default function GroupForm({ group, cancelButtonHandler }:
                                 </div>
                                 <div className="flex flex-col mb-4 overflow-hidden">
                                     <Dropdown 
-                                        data={data} 
+                                        data={data}
+                                        styleDropdown='max-w-md mx-auto mt-4 p-4 border rounded-md shadow-md bg-white'
+                                        colorLabel='text-gray-600'
                                         onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
                                         setSelectedSchool(sc.target.value);
                                         if(sc) setSelectedCampus(ca.target.value);

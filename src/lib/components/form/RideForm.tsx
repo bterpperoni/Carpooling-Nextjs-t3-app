@@ -61,6 +61,8 @@ export default function RideForm({ ride, isForGroup, groupId }:
     // School & campus state
     const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
     const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
+    // Verify if the school is in dropdown
+    const [ schoolInDropdown, setSchoolInDropdown ] = useState<boolean>(true);
 
     // Options for autocomplete
     const options = {
@@ -75,10 +77,6 @@ export default function RideForm({ ride, isForGroup, groupId }:
     const { data: updatedride, mutate: updateride } = api.ride.update.useMutation();
 
     useEffect(() => {
-
-        if(selectedSchool && selectedCampus) {
-            console.log(selectedSchool, selectedCampus);
-        }
 
         if(dateDeparture) {
             // if the user has selected a time for the departure date
@@ -114,8 +112,13 @@ export default function RideForm({ ride, isForGroup, groupId }:
         if(updatedride) {
             window.location.href = `/rides/${updatedride.id}`;
         }
+
+        if(selectedCampus ?? selectedCampus != null) {
+            console.log(selectedSchool, selectedCampus);
+        }
         
-    }, [rideCreated, updatedride, dateDeparture, timeDeparture, dateReturn, timeReturn, ride, departure, departureLatitude, departureLongitude]);
+    }, [rideCreated, updatedride, dateDeparture, timeDeparture, dateReturn, timeReturn, ride, departure, 
+        departureLatitude, departureLongitude, selectedSchool, selectedCampus]);
 
     // Submit a new ride or update an existing ride
     function handleClick() { 
@@ -184,15 +187,40 @@ export default function RideForm({ ride, isForGroup, groupId }:
         // console.log(checked);
       };
 
+    // Function to enter the address of the school in Autocomplete
+    // const enterSchoolAddress = () => {
+    //     if(selectedSchool) {
+    //         const school = data.school.find(s => s.reference === selectedSchool);
+    //         if (school) {
+    //             address.destination = {
+    //                 formatted_address: school.name + ', ' + school.city + ', ' + school.pays,
+    //                 geometry: {
+    //                     location: {
+    //                         lat: () => 0,
+    //                         lng: () => 0,
+    //                         equals: () => false,
+    //                         toJSON: () => ({ lat: 0, lng: 0 }), 
+    //                         toUrlValue: () => ''
+    //                     }
+    //                 }
+    //             };
+    //             setDestination(address.destination?.formatted_address);
+    //         }
+    //     }
+    // }
+
+        
+
         return (
                 <>
-                    <form className="flex flex-col w-auto m-auto justify-center items-center bg-[var(--purple-g3)]">
+                    <div className="flex flex-col w-auto m-auto justify-center items-center bg-[var(--purple-g3)]">
                         {/* First step of the form -> Departure & Destination */}
-                        <div className='my-16 mb-8 border-2 border-[var(--purple-g1)]'>
+                        <div className='my-16 mb-2 border-2 border-[var(--purple-g1)]'>
                             {/* Set up departure */}
-                            <div className=' flex flex-col sm:items-center sm:flex-row border-2 border-[var(--pink-g1)] m-4 p-2'>
-                                <label htmlFor="departure" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-4'>
-                                    (1) Departure : 
+                            {/*  */}
+                            <div className=' flex flex-col border-b-2 border-[var(--pink-g1)] sm:items-center sm:flex-row m-2 p-2'>
+                                <label htmlFor="departure" className='text-xl md:text-2xl text-[var(--pink-g1)] mb-1 mr-4'>
+                                    D'où partez-vous ?
                                 </label>
                                 <Autocomplete
                                     defaultValue={ride?.departure ?? ''}
@@ -219,54 +247,79 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                 />
                             </div>
                             {/* Set up destination */}
-                            <div className='border-2 border-[var(--pink-g1)] m-4 p-2 flex flex-col'>
-                                <div className='p-2 m-4 border-2 border-[var(--pink-g1)]'>
-                                    <label htmlFor="destination" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-2'>
-                                        (2) Destination: 
-                                    </label>
-                                    <Autocomplete
-                                    defaultValue={ride?.destination ?? ''}
-                                    disabled = {false}
-                                    apiKey={apiKey}
-                                    options={options}
-                                    onPlaceSelected={(place) => {
-                                            address.destination = place;
-                                            setDestination(address.destination.formatted_address);
-                                            if(address.destination.geometry?.location?.lat() && address.destination.geometry?.location?.lng()) {
-                                            setDestinationLatitude(address.destination.geometry.location.lat());
-                                            setDestinationLongitude(address.destination.geometry.location.lng()); 
-                                            }
-                                        }
-                                    }
-                                    className=" w-[75%] 
-                                                my-2 
-                                                md:w-[75%]
-                                                text-xl md:text-2xl
-                                                text-white
-                                                bg-[var(--purple-g3)] 
-                                                p-2 
-                                                border-2 border-[var(--purple-g1)]"
-                                    id="destination"
-                                    />
-                                </div>
+                            {/*  */}
+                            <div className='m-1 p-2 flex flex-col border-b-2 border-[var(--pink-g1)]'>
                                 {/* Input to select school */}
-                                <div className="p-2 m-4 border-2 border-[var(--pink-g1)]">
-                                    <p className="text-[var(--pink-g1)] text-[20px]"> 
-                                        (2'bis) School choice :
-                                        <p>Implement this choice with the destination's autocomplete</p>
+                                {/* border-2 border-[var(--pink-g1)] */}
+                                <div className="p-2 m-0 ">
+                                    <p className="text-[var(--pink-g1)] text-[1.25rem]"> 
+                                        A quel établissement scolaire vous rendez-vous ?
                                     </p>
-                                    <Dropdown 
-                                        data={data} 
+                                    { schoolInDropdown ? (
+                                        <Dropdown 
+                                        data={data}
+                                        styleDropdown='w-full my-2 text-[1.25rem] md:text-2xl 
+                                                       text-white bg-[var(--purple-g3)] p-2 border-2 
+                                                       border-[var(--purple-g1)]'
+                                        colorLabel='text-[var(--pink-g1)]'
                                         onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
                                         setSelectedSchool(sc.target.value);
                                         setSelectedCampus(ca.target.value);
-                                    }}/>
+                                        }}/>
+                                    ) : (
+                                        <>
+                                            <div className='p-2 mt-2'>
+                                                <p className='md:text-2xl text-gray-400'></p>
+                                                <label htmlFor="destination" 
+                                                       className='text-[1.25rem] 
+                                                                  md:text-2xl 
+                                                                  text-[var(--pink-g1)] 
+                                                                  mb-1 mr-2'>
+                                                    Entrez l'adresse
+                                                </label>
+                                                <Autocomplete
+                                                defaultValue={ride?.destination ?? ''}
+                                                disabled = {false}
+                                                apiKey={apiKey}
+                                                options={options}
+                                                onPlaceSelected={(place) => {
+                                                        address.destination = place;
+                                                        setDestination(address.destination.formatted_address);
+                                                        if(address.destination.geometry?.location?.lat() && address.destination.geometry?.location?.lng()) {
+                                                        setDestinationLatitude(address.destination.geometry.location.lat());
+                                                        setDestinationLongitude(address.destination.geometry.location.lng()); 
+                                                        }
+                                                    }
+                                                }
+                                                className=" w-[75%] 
+                                                            my-2 
+                                                            md:w-[75%]
+                                                            text-xl md:text-2xl
+                                                            text-white
+                                                            bg-[var(--purple-g3)] 
+                                                            p-2 
+                                                            border-2 border-[var(--purple-g1)]"
+                                                id="destination"
+                                                />
+                                            </div>
+                                        </>
+                                       )}
+                                    {/* border-2 border-[var(--pink-g1)] */}
+                                    {schoolInDropdown && (
+                                        <>
+                                            <Button className="cursor-pointer hover:border-b-2 border-gray-600" 
+                                                onClick={() => setSchoolInDropdown(false)}>
+                                                    Vous ne trouvez pas le vôtre ?
+                                            </Button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
-                            <div className='p-2 m-2 border-2 border-[var(--pink-g1)]'>
-                                <label htmlFor="destination" className='text-xl md:text-3xl text-[var(--pink-g1)] mb-1 mr-0'>
-                                    (3) Selection dateTime for the departure:
-                                    <p className='color-white text-[16px] m-1'> (N.B.) there is just an "ALLER" for now</p> 
+                            {/* Set up date & time */}
+                            {/* border-2 border-[var(--pink-g1)] */}
+                            <div className='p-2 m-2 flex flex-col'>
+                                <label htmlFor="destination" className='text-xl md:text-2xl text-[var(--pink-g1)] mb-1 mr-0'>
+                                    Quand partez-vous ?
                                 </label>
                                 <DateTimeSelect
                                     defaultDate={ride?.departureDateTime?.toDateString() ? 
@@ -281,8 +334,8 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                                 : 
                                                 timeReturn ?? null
                                             }
-                                    labelexpTime='Time Departure' 
-                                    labelexp="Date Departure"
+                                    labelexpTime='HEURE' 
+                                    labelexp="DATE"
                                     disableDate={false}
                                     disableTime={false}
                                     handleChangeDate={(date) => {
@@ -328,7 +381,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                 />
                             </LocalizationProvider>
                         </div>
-                    </form>
+                    </div>
                         <div className="flex flex-col items-center">
                             {/* Submit */}
                             {ride ? (

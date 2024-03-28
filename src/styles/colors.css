@@ -19,5 +19,7 @@
 
     --light-orange : #F2C94C;
     --red : rgb(175, 40, 17);
+
+    /* 1rem = 16px */
     font-size: 16px;
 }
