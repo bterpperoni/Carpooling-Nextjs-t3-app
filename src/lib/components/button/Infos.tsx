@@ -2,7 +2,7 @@
 
 export default function Infos( {wIcon, hIcon, handleInfos}: {wIcon: number, hIcon: number, handleInfos: () => void}) {
     return (
-        <div onClick={handleInfos}>
+        <div onClick={handleInfos} className="bg-white p-1 rounded-full">
             <svg  fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                   width={`${wIcon}px`} height={`${hIcon}px`} viewBox="0 0 416.979 416.979">
                     <g>
