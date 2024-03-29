@@ -132,7 +132,6 @@ export default function RideForm({ ride, isForGroup, groupId }:
             }else {
                 // else set the date of return with the time of the ride
                 // alert('Please select a time for the return');
-                throw new Error('An error occurred while setting the time of return');
                 return;
             }
         }
