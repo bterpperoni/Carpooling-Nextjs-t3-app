@@ -149,8 +149,8 @@ export default function RideForm({ ride, isForGroup, groupId }:
         //          "Longitude: ", destinationLongitude);
         //  }
 
-        if(rideCreated && updatedride !== undefined)  {
-            window.location.href = `/rides/${rideCreated.id}`;
+        if(rideCreated || updatedride)  {
+            window.location.href = `/rides/${rideCreated?.id}`;
         }     
         
     }, [rideCreated, updatedride]);
@@ -162,7 +162,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
             if(!ride){
                 if(departure && destination) {
                     // Check if the date of return is after the date of departure
-                    if(dateDeparture) {
+                    if(dateDeparture && !isRideReturn) {
                         // Check if the time of return is after the time of departure and at least 2 hours after
                         if(timeReturn?.isBefore(timeDeparture) && (timeReturn?.diff(timeDeparture, 'hour') ?? 0) < 2) {
                             setTimeReturn(dayjs(timeDeparture).add(2, 'hour'));
@@ -181,7 +181,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                 returnTime: timeReturn?.toDate() ?? null,
                                 maxBookings: maxBooking,
                                 maxDetour: maxDistance,
-                                type: isRideReturn ? 'RETOUR' : 'ALLER',
+                                type: isRideReturn ? 'ALLER' : 'RETOUR',
                                 isForGroup: isForGroup ?? false,
                                 groupId: groupId ?? null
                             }); 
@@ -212,7 +212,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                             returnTime: timeReturn?.toDate() ?? ride.returnTime,
                             maxBookings: maxBooking,
                             maxDistance: maxDistance,
-                            type: isRideReturn ? 'RETOUR' : 'ALLER',
+                            type: isRideReturn ? 'ALLER' : 'RETOUR',
                             status: dateDeparture?.isSame(dayjs()) ? RideStatus.IN_PROGRESS : ride.status,
                         });
                     }  
