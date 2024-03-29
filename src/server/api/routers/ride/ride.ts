@@ -53,7 +53,7 @@ export const rideRouter = createTRPCRouter({
                 destination: z.string(),
                 destinationLatitude : z.number(),
                 destinationLongitude : z.number(), 
-                returnTime: z.date() || null,
+                returnTime: z.date().nullable(),
                 maxBookings: z.number(),
                 maxDetour: z.number(),
                 type: z.nativeEnum(RideType),

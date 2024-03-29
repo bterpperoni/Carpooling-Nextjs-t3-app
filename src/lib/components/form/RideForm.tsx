@@ -169,25 +169,22 @@ export default function RideForm({ ride, isForGroup, groupId }:
                             alert("L'heure de retour doit au moins 2h après l'heure de départ, celle-ci ont été automatiquement modifiées"); 
                         } 
                         else{
-                            if(timeReturn){
-                                createride({
-                                    driverId: sessionData.user.name,
-                                    departure: departure,
-                                    departureLatitude: departureLatitude ?? 0,
-                                    departureLongitude: departureLongitude ?? 0,
-                                    departureDateTime: dateDeparture.toDate(),
-                                    destination: destination,
-                                    destinationLatitude: destinationLatitude ?? 0,
-                                    destinationLongitude: destinationLongitude ?? 0,
-                                    returnTime: timeReturn?.toDate(),
-                                    maxBookings: maxBooking,
-                                    maxDetour: maxDistance,
-                                    type: isRideReturn ? 'RETOUR' : 'ALLER',
-                                    isForGroup: isForGroup ?? false,
-                                    groupId: groupId ?? null
-                                }); 
-                            }
-                             
+                            createride({
+                                driverId: sessionData.user.name,
+                                departure: departure,
+                                departureLatitude: departureLatitude ?? 0,
+                                departureLongitude: departureLongitude ?? 0,
+                                departureDateTime: dateDeparture.toDate(),
+                                destination: destination,
+                                destinationLatitude: destinationLatitude ?? 0,
+                                destinationLongitude: destinationLongitude ?? 0,
+                                returnTime: timeReturn?.toDate() ?? null,
+                                maxBookings: maxBooking,
+                                maxDetour: maxDistance,
+                                type: isRideReturn ? 'RETOUR' : 'ALLER',
+                                isForGroup: isForGroup ?? false,
+                                groupId: groupId ?? null
+                            }); 
                         }
                     } 
                 }else{
@@ -471,9 +468,9 @@ export default function RideForm({ ride, isForGroup, groupId }:
                         <div className="flex flex-col items-center">
                             {/* Submit */}
                             {ride ? (
-                            <Button className={`${MuiStyle.MuiButtonText} w-max`} onClick={handleClick}> Modifier </Button>
+                            <Button type='submit' className={`${MuiStyle.MuiButtonText} w-max`} onClick={handleClick}> Modifier </Button>
                             ) : (
-                            <Button className={`${MuiStyle.MuiButtonText} w-max`} onClick={handleClick}> Submit </Button>
+                            <Button type='submit' className={`${MuiStyle.MuiButtonText} w-max`} onClick={handleClick}> Submit </Button>
                             )}
                             <Button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md w-max"
                                 onClick={() => ride ? location.assign(`/rides/${ride?.id}`) : location.assign('/rides/')}> 
