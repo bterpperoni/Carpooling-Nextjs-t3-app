@@ -159,15 +159,17 @@ export default function RideForm({ ride, isForGroup, groupId }:
         if(sessionData) {
             // ------------------- Create ride -------------------
             if(!ride){
+                if(!isRideReturn && timeReturn) {
+                    if(timeReturn?.isBefore(timeDeparture) && (timeReturn?.diff(timeDeparture, 'hour') ?? 0) < 2) {
+                        setTimeReturn(dayjs(timeDeparture).add(2, 'hour'));
+                        alert("L'heure de retour doit au moins 2h après l'heure de départ, celle-ci ont été automatiquement modifiées"); 
+                    }
+                }
+
                 if(departure && destination) {
                     // Check if the date of return is after the date of departure
-                    if(dateDeparture && !isRideReturn) {
+                    if(dateDeparture) {
                         // Check if the time of return is after the time of departure and at least 2 hours after
-                        if(timeReturn?.isBefore(timeDeparture) && (timeReturn?.diff(timeDeparture, 'hour') ?? 0) < 2) {
-                            setTimeReturn(dayjs(timeDeparture).add(2, 'hour'));
-                            alert("L'heure de retour doit au moins 2h après l'heure de départ, celle-ci ont été automatiquement modifiées"); 
-                        } 
-                        else{
                             createride({
                                 driverId: sessionData.user.name,
                                 departure: departure,
@@ -184,7 +186,6 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                 isForGroup: isForGroup ?? false,
                                 groupId: groupId ?? null
                             }); 
-                        }
                     } 
                 }else{
                    alert("An error occurred while creating the ride, please check the form and try again.");
