@@ -92,11 +92,11 @@ model Ride {
   destination          String
   destinationLatitude  Float
   destinationLongitude Float
-  maxPassengers        Int        @default(2)
+  maxPassengers        Int        
   // The maximum distance that the driver can make a detour to pick up a passenger
   // This field applies to EACH passenger (not the sum of all detours)
-  maxDetourDist        Int        @default(10)
-  type                              RideType   @default(ALLER)
+  maxDetourDist        Int        
+  type                 RideType   @default(ALLER)
   // the DATE for RETOUR ride it's the same of departure because the application is based on school timetables (so 1 day only)
   // If the ride is a RETOUR, 'returnTime' is the time when the driver leaves the school
   returnTime           DateTime?

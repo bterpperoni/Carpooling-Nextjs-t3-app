@@ -98,8 +98,6 @@ h2{
     /* Label */
     .MuiFormLabel-root {
         font-size: 1.15rem!important;
-        border-bottom: 1.5px solid var(--pink-g1)!important;
-        /* border-top: 1.5px solid var(--pink-g1)!important; */
     }
 }
 

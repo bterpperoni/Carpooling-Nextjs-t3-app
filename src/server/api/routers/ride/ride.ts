@@ -8,7 +8,7 @@ import {
   createTRPCRouter,
   protectedProcedure
 } from "$/server/api/trpc";
-import { RideStatus } from "@prisma/client";
+import { RideStatus, RideType } from "@prisma/client";
 
 
 // API definition for rides
@@ -54,8 +54,12 @@ export const rideRouter = createTRPCRouter({
                 destinationLatitude : z.number(),
                 destinationLongitude : z.number(), 
                 returnTime: z.date() || null,
+                maxBookings: z.number(),
+                maxDetour: z.number(),
+                type: z.nativeEnum(RideType),
                 isForGroup: z.boolean().default(false),
-                groupId: z.number().nullable()   
+                groupId: z.number().nullable(),
+                status: z.nativeEnum(RideStatus),   
             }))
         .mutation(async ({ ctx, input }) => {
             // simulate a slow db call
@@ -71,6 +75,9 @@ export const rideRouter = createTRPCRouter({
                     destinationLatitude: input.destinationLatitude,
                     destinationLongitude: input.destinationLongitude,
                     returnTime: input.returnTime,
+                    maxPassengers: input.maxBookings,
+                    maxDetourDist: input.maxDetour,
+                    type: input.type,
                     isForGroup: input.isForGroup,
                     groupId: input.groupId,
                     status: RideStatus.PENDING,
@@ -91,6 +98,9 @@ export const rideRouter = createTRPCRouter({
                 destinationLatitude : z.number(),
                 destinationLongitude : z.number(), 
                 returnTime: z.date().nullable(),
+                maxBookings: z.number(),
+                maxDetour: z.number(),
+                type: z.nativeEnum(RideType),
                 status: z.nativeEnum(RideStatus),
                 
             }))
@@ -109,7 +119,10 @@ export const rideRouter = createTRPCRouter({
                     destinationLatitude: input.destinationLatitude,
                     destinationLongitude: input.destinationLongitude,
                     returnTime: input.returnTime,
-                    status: input.status,
+                    maxPassengers: input.maxBookings,
+                    maxDetourDist: input.maxDetour,
+                    type: input.type,
+                    status: input.status
                 },
             });
         }),
