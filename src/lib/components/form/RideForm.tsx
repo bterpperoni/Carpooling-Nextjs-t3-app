@@ -91,37 +91,23 @@ export default function RideForm({ ride, isForGroup, groupId }:
 
     /* _______________ USEFFECT FOR SET UP DATE & TIME DEPARTURE WHEN CREATING OR UPDATING A RIDE _______________ */
     useEffect(() => {
-        /*
-        * [TODO]: Remove the console.log & the var shouldUpdateDateDeparture (not necessary)
-        */
-        let shouldUpdateDateDeparture = false;
         if (dateDeparture) {
             // if the user has selected a time for the departure date
             if (timeDeparture) {
-                if(!shouldUpdateDateDeparture) {
-                    shouldUpdateDateDeparture = true;
                     // CREATING A RIDE: set the date of departure with the time selected
                     setDateDeparture(dayjs(dateDeparture).set('hour', timeDeparture.hour()).set('minute', timeDeparture.minute()));
-                }
-                // console.log("Date of departure: ", dateDeparture.toDate().toLocaleDateString(), "\n",
-                //         "Time of departure: ", dateDeparture.toDate().toLocaleTimeString());
             } else {
-                if(shouldUpdateDateDeparture){
-                    shouldUpdateDateDeparture = false;
                     // UPDATING A RIDE: else set the date of departure with the time of the ride
                     setDateDeparture(
                         dayjs(dateDeparture)
                         .set('hour', ride?.departureDateTime?.getHours() ?? 0)
                         .set('minute', ride?.departureDateTime?.getMinutes() ?? 0)
                     );
-                }
-                // console.log("Date of departure: ", dateDeparture.toDate().toLocaleDateString(), "\n",
-                //         "Time of departure: ", dateDeparture.toDate().toLocaleTimeString());
             }
         }
     },[dateDeparture, timeDeparture, ride]);
 
-    /* _______________________ USEFFECT FOR CHECK THE TIME IF THE TYPE OF RIDE IS ALLER-RETOUR _________________________ */
+    /* _______________________ USEFFECT FOR CHECK & SET THE TIME IF THE TYPE OF RIDE IS ALLER-RETOUR _________________________ */
     useEffect(() => {
         if(checked) {
             // if the user has selected ALLER-RETOUR
@@ -129,29 +115,17 @@ export default function RideForm({ ride, isForGroup, groupId }:
             if (timeReturn) {
                 // Set dateReturn with (dateDeparture & timeReturn) because application is school based
                 setTimeReturn(dayjs(dateDeparture).set('hour', timeReturn.hour()).set('minute', timeReturn.minute()));
-            }else {
-                // else set the date of return with the time of the ride
-                // alert('Please select a time for the return');
-                return;
             }
+            return;
         }
     }, [timeReturn, dateDeparture]);
 
     /* _______________________ USEFFECT FOR TEST & REDIRECT WHEN CREATING/UPDATING A RIDE _________________________ */
     useEffect(() => {
-    
-        // if (destination) {
-        //     console.log(
-        //          "Destination: ", selectedSchool, selectedCampus + '\n' +
-        //          "Address: ", destination + '\n' +
-        //          "Latitude: ", destinationLatitude + '\n' +
-        //          "Longitude: ", destinationLongitude);
-        //  }
-
         if(rideCreated || updatedride)  {
             window.location.href = `/rides/${rideCreated?.id}`;
-        }     
-        
+        }   
+
     }, [rideCreated, updatedride]);
 
     // Submit a new ride or update an existing ride
@@ -240,7 +214,6 @@ export default function RideForm({ ride, isForGroup, groupId }:
                         {/* First step of the form -> Departure & Destination */}
                         <div className='my-8 border-2 border-[var(--purple-g1)]'>
                             {/* Set up departure */}
-                            {/*  */}
                             <div className=' flex flex-col border-b-2 border-[var(--pink-g1)] sm:items-center sm:flex-row m-2 p-2'>
                                 <label htmlFor="departure" className='text-xl md:text-2xl text-[var(--pink-g1)] mb-1 mr-4'>
                                     D'où partez-vous ?
@@ -329,7 +302,6 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                             </div>
                                         </>
                                        )}
-                                    {/* border-2 border-[var(--pink-g1)] */}
                                     {schoolInDropdown ? (
                                         <>
                                             <Button className="cursor-pointer hover:border-b-2 border-gray-600" 
