@@ -58,8 +58,7 @@ export const rideRouter = createTRPCRouter({
                 maxDetour: z.number(),
                 type: z.nativeEnum(RideType),
                 isForGroup: z.boolean().default(false),
-                groupId: z.number().nullable(),
-                status: z.nativeEnum(RideStatus),   
+                groupId: z.number().nullable() 
             }))
         .mutation(async ({ ctx, input }) => {
             // simulate a slow db call
@@ -80,7 +79,7 @@ export const rideRouter = createTRPCRouter({
                     type: input.type,
                     isForGroup: input.isForGroup,
                     groupId: input.groupId,
-                    status: RideStatus.PENDING,
+                    status: RideStatus.CREATED,
                 },
             });
         }),
@@ -99,7 +98,7 @@ export const rideRouter = createTRPCRouter({
                 destinationLongitude : z.number(), 
                 returnTime: z.date().nullable(),
                 maxBookings: z.number(),
-                maxDetour: z.number(),
+                maxDistance: z.number(),
                 type: z.nativeEnum(RideType),
                 status: z.nativeEnum(RideStatus),
                 
@@ -120,7 +119,7 @@ export const rideRouter = createTRPCRouter({
                     destinationLongitude: input.destinationLongitude,
                     returnTime: input.returnTime,
                     maxPassengers: input.maxBookings,
-                    maxDetourDist: input.maxDetour,
+                    maxDetourDist: input.maxDistance,
                     type: input.type,
                     status: input.status
                 },

@@ -100,7 +100,7 @@ model Ride {
   // the DATE for RETOUR ride it's the same of departure because the application is based on school timetables (so 1 day only)
   // If the ride is a RETOUR, 'returnTime' is the time when the driver leaves the school
   returnTime           DateTime?
-  status               RideStatus  @default(PENDING)
+  status               RideStatus  @default(CREATED)
   group                Group?      @relation("GroupRides", fields: [groupId], references: [id])
   driver               User        @relation("Driver", fields: [driverId], references: [name])
   passengers           Booking[]   @relation("Passengers")
@@ -128,7 +128,8 @@ enum RideType {
 }
 
 enum RideStatus {
-  PENDING
+  CREATED
+  UPDATED
   IN_PROGRESS
   COMPLETED
   CANCELLED

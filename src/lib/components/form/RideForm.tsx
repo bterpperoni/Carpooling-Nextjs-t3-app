@@ -180,6 +180,9 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                     destinationLatitude: destinationLatitude ?? 0,
                                     destinationLongitude: destinationLongitude ?? 0,
                                     returnTime: timeReturn?.toDate(),
+                                    maxBookings: maxBooking,
+                                    maxDetour: maxDistance,
+                                    type: isRideReturn ? 'RETOUR' : 'ALLER',
                                     isForGroup: isForGroup ?? false,
                                     groupId: groupId ?? null
                                 }); 
@@ -210,7 +213,10 @@ export default function RideForm({ ride, isForGroup, groupId }:
                             destinationLatitude: destinationLatitude ?? ride.destinationLatitude,
                             destinationLongitude: destinationLongitude ?? ride.destinationLongitude,
                             returnTime: timeReturn?.toDate() ?? ride.returnTime,
-                            status: dateDeparture?.isSame(dayjs()) ? RideStatus.IN_PROGRESS : ride.status
+                            maxBookings: maxBooking,
+                            maxDistance: maxDistance,
+                            type: isRideReturn ? 'RETOUR' : 'ALLER',
+                            status: dateDeparture?.isSame(dayjs()) ? RideStatus.IN_PROGRESS : ride.status,
                         });
                     }  
                 }
