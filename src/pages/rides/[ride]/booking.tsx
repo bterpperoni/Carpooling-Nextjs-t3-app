@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
@@ -8,8 +12,9 @@ import { useRouter } from "next/dist/client/router";
 import { signIn, useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { useEffect, useState } from "react";
-import useDistanceCalculator from '$/hook/distanceMatrix';
 import Button from "$/lib/components/button/Button";
+// import { calculateDistance } from "$/hook/distanceMatrix";
+import axios from "axios";
 
 
 
@@ -17,24 +22,21 @@ export default function Booking() {
     // ________________________________ STATE ________________________________
     const apiKey = useApiKey();
     // Get id from url
-    const { query, push } = useRouter();
+    const { query } = useRouter();
     const id = query.ride;
     // Session recovery
     const { data: sessionData } = useSession();
     // Get ride by id
     const {data: ride} = api.ride.rideById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     //  Max distance driver can go to pick up passenger
-    const maxDistance: number|null = ride?.maxDetourDist ?? 0;
+    const maxDistance: number = ride?.maxDetourDist ?? 0;
+    // Is booking eligible
+    const [distanceEligible, setDistanceEligible] = useState<number>(0);
+    const [bookingEligible, setBookingEligible] = useState<boolean>(false);
     // Address of departure (got from 'ride' object) and destination from google autocomplete (Place Result object)
-    const address: {  
-        departure: string | null, 
-        destination: google.maps.places.PlaceResult | null 
-    } = { 
-        departure: ride?.departure ?? null, 
-        destination: null 
-    };
-    // Address of destination (formatted address)
-    const [destination, setDestination] = useState<string>();
+    const origin = ride?.departure ?? "";
+    const [destinationBooking, setDestinationBooking] = useState<string>("");
+
     const [destinationLatitude, setDestinationLatitude] = useState<number>();
     const [destinationLongitude, setDestinationLongitude] = useState<number>();
     
@@ -44,19 +46,55 @@ export default function Booking() {
         strictBounds: false,
         types: ['address']
     };
+    
 
     // ________________________________ BEHAVIOR ________________________________
-    function calculDistance() {
-        const distance = useDistanceCalculator(address.departure ?? '', destination ?? '');
-        console.log(distance);
+    useEffect(() => {
+        const getDistance = async () => {
+            if(origin && destinationBooking){
+                const distance = await calculateDistance(origin, destinationBooking);
+                setDistanceEligible(parseInt(distance));
+            }
+        };
+        console.log(origin,'\n', destinationBooking);
+        console.log('Distance Eligible: ' + distanceEligible);
+
+        void getDistance();
+        
+    }, [destinationBooking]);
+
+    // Fonction pour calculer la distance entre deux adresses
+    async function calculateDistance(origin: string, destination: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+        const service = new google.maps.DistanceMatrixService();
+        void service.getDistanceMatrix(
+            {
+            origins: [origin],
+            destinations: [destination],
+            travelMode: google.maps.TravelMode.DRIVING,
+            },
+            (response, status) => {
+            if (status === google.maps.DistanceMatrixStatus.OK) {
+                if (response && response.rows.length > 0) {
+                    if(response.rows[0]?.elements[0]?.distance.value !== undefined){
+                        const distance = response.rows[0]?.elements[0]?.distance.value;
+                        console.log('Distance: ' + distance);
+                        resolve(distance.toString());
+                    }
+                } else {
+                console.error('Aucune réponse valide du service de calcul de distance.');
+                reject(new Error('Aucune réponse valide du service de calcul de distance.'));
+                }
+            } else {
+                console.error('Erreur lors du calcul de la distance: ' + status);
+                reject(new Error('Erreur lors du calcul de la distance: ' + status));
+            }
+            }
+        );
+        });
     }
 
-    useEffect(() => {
-        if(destination !== null) {
-            console.log(destination);
-        }
-    }, [destination]);
-
+    
     // ________________________________ RENDER ________________________________
     if(sessionData?.user) {
         return (
@@ -88,12 +126,11 @@ export default function Booking() {
                     <Autocomplete
                         apiKey={apiKey}
                         options={options}
-                        onPlaceSelected={(place) => {
-                                address.destination = place;
-                                setDestination(address.destination.formatted_address);
-                                if(address.destination.geometry?.location?.lat() && address.destination.geometry?.location?.lng()) {
-                                    setDestinationLatitude(address.destination.geometry.location.lat());
-                                    setDestinationLongitude(address.destination.geometry.location.lng()); 
+                        onPlaceSelected={async (place) => {
+                            setDestinationBooking(place.formatted_address ?? "");
+                                if(place.geometry?.location?.lat() && place.geometry?.location?.lng()) {
+                                    setDestinationLatitude(place.geometry.location.lat());
+                                    setDestinationLongitude(place.geometry.location.lng()); 
                                 }
                             }
                         }

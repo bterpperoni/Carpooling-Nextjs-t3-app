@@ -1,43 +1,32 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-// distance.ts
 
-import { useApiKey } from '$/context/google';
-import { useState, useEffect } from 'react';
 
-// Fonction pour calculer la distance entre deux adresses
-const calculateDistance = async (origin: string, destination: string): Promise<number> => {
-    const apiKey = useApiKey();
-  
-    try {
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`
-    );
 
-    if (!response.ok) {
-      throw new Error('Erreur lors de la requête à l\'API Distance Matrix');
-    }
-
-    const data = await response.json();
-    const distanceInKilometers = (data.rows[0].elements[0].distance.value) / 1000;
-    return distanceInKilometers;
-  } catch (error) {
-    console.error('An error occured when calculate the distance:', error);
-    return -1;
+export async function calculateDistance(origin: string, destination: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const service = new google.maps.DistanceMatrixService();
+      void service.getDistanceMatrix(
+        {
+          origins: [origin],
+          destinations: [destination],
+          travelMode: google.maps.TravelMode.DRIVING,
+        },
+        (response, status) => {
+          if (status === google.maps.DistanceMatrixStatus.OK) {
+            if (response && response.rows.length > 0) {
+                if(response.rows[0]?.elements[0]?.distance.value !== undefined){
+                    const distance = response.rows[0]?.elements[0]?.distance.value;
+                    console.log('Distance: ' + distance);
+                    resolve(distance.toString());
+                }
+            } else {
+              console.error('Aucune réponse valide du service de calcul de distance.');
+              reject(new Error('Aucune réponse valide du service de calcul de distance.'));
+            }
+          } else {
+            console.error('Erreur lors du calcul de la distance: ' + status);
+            reject(new Error('Erreur lors du calcul de la distance: ' + status));
+          }
+        }
+      );
+    });
   }
-};
-
-// Custom hook to calculate the distance between two addresses
-const distanceCalculator = (origin: string, destination: string): number => {
-  const [distance, setDistance] = useState<number>(-1);
-
-  useEffect(() => {
-    calculateDistance(origin, destination)
-      .then((result) => setDistance(result))
-      .catch((error) => console.error('Erreur lors du calcul de la distance :', error));
-  }, [origin, destination]);
-
-  return distance;
-};
-
-export default distanceCalculator;
