@@ -114,7 +114,7 @@ model Booking {
   pickupLatitude  Float
   pickupLongitude Float
   price           String
-  
+  status          BookingStatus @default(CREATED)
   // All passengers should rate the driver after the ride
   // An average rating will be calculated and displayed on the driver's profile
   driverRating    Int?     
@@ -135,11 +135,13 @@ enum RideStatus {
   CANCELLED
 }
 
-// enum BookingStatus {
-//   PENDING
-//   ACCEPTED
-//   REFUSED
-// }
+enum BookingStatus {
+  CREATED
+  UPDATED
+  CHECKED
+  COMPLETED
+  CANCELLED
+}
 
 // -------------------------------------------GROUP & GROUPMEMBER------------------------------------------------
 model Group {

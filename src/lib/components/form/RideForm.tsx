@@ -123,7 +123,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
     /* _______________________ USEFFECT FOR TEST & REDIRECT WHEN CREATING/UPDATING A RIDE _________________________ */
     useEffect(() => {
         if(rideCreated || updatedride)  {
-            window.location.href = `/rides/${rideCreated?.id}`;
+            window.location.href = `/rides/${rideCreated?.id ?? updatedride?.id}`;
         }   
 
     }, [rideCreated, updatedride]);

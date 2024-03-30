@@ -5,11 +5,10 @@ import { useApiKey } from '$/context/google';
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
 
-
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Geocode an address using the Google Maps Geocoding API --------------------------------------
 ------------------------------------------------------------------------------------------------------------------------ */
-export const geocode = async (address: string): Promise<{location: google.maps.LatLng|null, formattedAddress: string, placeId: string}> => {
+const geocode = async (address: string): Promise<{location: google.maps.LatLng|null, formattedAddress: string, placeId: string}> => {
 
   const apiKey = useApiKey();
   if (!apiKey) {
@@ -46,4 +45,17 @@ export const geocode = async (address: string): Promise<{location: google.maps.L
     throw error;
   }
 };
+
+// Custom hook to geocode an address
+const geocodeAddress = async (address: string): Promise<google.maps.LatLng|null> => {
+  try {
+    const { location } = await geocode(address);
+    return location;
+  } catch (error) {
+    console.error('Error geocoding address:', error);
+    return null;
+  }
+};
+
+export default geocodeAddress;
   

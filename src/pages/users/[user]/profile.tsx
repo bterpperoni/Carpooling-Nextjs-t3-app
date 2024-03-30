@@ -27,10 +27,6 @@ export default function User() {
   const [editedName, setEditedName] = useState<string>('');
   const [editedEmail, setEditedEmail] = useState<string>('');
 
-
-
-
-
   // Update user state
   const { data: updatedUser, mutate: updateUser } = api.user.update.useMutation();
   // Enable edit mode & set user data from form fields 

@@ -43,7 +43,7 @@ export default function Detail() {
     const zoom = 12;
     
     // Function to display line between departure & destination
-    function calculAndDisplayRoute(directionsService: google.maps.DirectionsService, directionsRenderer: google.maps.DirectionsRenderer) {
+    function displayRoute(directionsService: google.maps.DirectionsService, directionsRenderer: google.maps.DirectionsRenderer) {
         directionsService.route(
             {
                 origin: departureLatLng,
@@ -68,7 +68,7 @@ export default function Detail() {
         const directionsRenderer = new google.maps.DirectionsRenderer(
             {map: map}
         );     
-        calculAndDisplayRoute(directionsService, directionsRenderer);
+        displayRoute(directionsService, directionsRenderer);
     }
 
     // Redirect to update ride page
@@ -118,8 +118,8 @@ export default function Detail() {
                                         <>
                                             <Button
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md"
-                                                onClick={() => alert('not implemented')}>
-                                                    Réserver ce trajet
+                                                onClick={() => push(`/rides/${id as string}/booking`)}>
+                                                    Créer une réservation
                                             </Button>
                                         </>
                                     )}
