@@ -63,7 +63,6 @@ export default function Booking() {
     }
 
     useEffect(() => {
-
         if(origin && destinationBooking) {
             void getDistanceAndCheckEligibility();
         }
