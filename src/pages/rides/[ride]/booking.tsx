@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
 // import { calculateDistance } from "$/hook/distanceMatrix";
 import axios from "axios";
+import { calculateDistance } from "$/hook/distanceMatrix";
 
 
 
@@ -47,52 +48,29 @@ export default function Booking() {
         types: ['address']
     };
     
-
+    
     // ________________________________ BEHAVIOR ________________________________
-    useEffect(() => {
-        const getDistance = async () => {
-            if(origin && destinationBooking){
-                const distance = await calculateDistance(origin, destinationBooking);
-                setDistanceEligible(parseInt(distance));
-            }
-        };
-        console.log(origin,'\n', destinationBooking);
-        console.log('Distance Eligible: ' + distanceEligible);
+    async function getDistanceAndCheckEligibility(){
+        const distanceInMeters = await calculateDistance(origin, destinationBooking);
+        const distanceInKilometers = parseInt(distanceInMeters) / 1000;
+        console.log("Distance: ", distanceInKilometers);
+        if(distanceInKilometers <= maxDistance) {
+            setBookingEligible(true);
+        }else{
+            setBookingEligible(false);
+        }
+        console.log("Booking Eligible: ", bookingEligible);
+    }
 
-        void getDistance();
+    useEffect(() => {
+
+        console.log(origin,'\n', destinationBooking);
+
+        if(origin && destinationBooking) {
+            void getDistanceAndCheckEligibility();
+        }
         
     }, [destinationBooking]);
-
-    // Fonction pour calculer la distance entre deux adresses
-    async function calculateDistance(origin: string, destination: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-        const service = new google.maps.DistanceMatrixService();
-        void service.getDistanceMatrix(
-            {
-            origins: [origin],
-            destinations: [destination],
-            travelMode: google.maps.TravelMode.DRIVING,
-            },
-            (response, status) => {
-            if (status === google.maps.DistanceMatrixStatus.OK) {
-                if (response && response.rows.length > 0) {
-                    if(response.rows[0]?.elements[0]?.distance.value !== undefined){
-                        const distance = response.rows[0]?.elements[0]?.distance.value;
-                        console.log('Distance: ' + distance);
-                        resolve(distance.toString());
-                    }
-                } else {
-                console.error('Aucune réponse valide du service de calcul de distance.');
-                reject(new Error('Aucune réponse valide du service de calcul de distance.'));
-                }
-            } else {
-                console.error('Erreur lors du calcul de la distance: ' + status);
-                reject(new Error('Erreur lors du calcul de la distance: ' + status));
-            }
-            }
-        );
-        });
-    }
 
     
     // ________________________________ RENDER ________________________________

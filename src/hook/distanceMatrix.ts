@@ -15,7 +15,6 @@ export async function calculateDistance(origin: string, destination: string): Pr
             if (response && response.rows.length > 0) {
                 if(response.rows[0]?.elements[0]?.distance.value !== undefined){
                     const distance = response.rows[0]?.elements[0]?.distance.value;
-                    console.log('Distance: ' + distance);
                     resolve(distance.toString());
                 }
             } else {
