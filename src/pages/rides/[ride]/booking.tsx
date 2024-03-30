@@ -30,7 +30,7 @@ export default function Booking() {
     // Get ride by id
     const {data: ride} = api.ride.rideById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     //  Max distance driver can go to pick up passenger
-    const maxDistance: number = ride?.maxDetourDist ?? 0;
+    const maxDistance = ride?.maxDetourDist ?? 0;
     // Is booking eligible
     const [distanceEligible, setDistanceEligible] = useState<number>(0);
     const [bookingEligible, setBookingEligible] = useState<boolean>(false);
@@ -48,29 +48,29 @@ export default function Booking() {
         types: ['address']
     };
     
+
     
     // ________________________________ BEHAVIOR ________________________________
     async function getDistanceAndCheckEligibility(){
         const distanceInMeters = await calculateDistance(origin, destinationBooking);
         const distanceInKilometers = parseInt(distanceInMeters) / 1000;
-        console.log("Distance: ", distanceInKilometers);
+        console.log("Distance: ", distanceInKilometers, " km\nMax Distance: ", maxDistance, " km");
         if(distanceInKilometers <= maxDistance) {
             setBookingEligible(true);
         }else{
             setBookingEligible(false);
         }
-        console.log("Booking Eligible: ", bookingEligible);
     }
 
     useEffect(() => {
 
-        console.log(origin,'\n', destinationBooking);
-
         if(origin && destinationBooking) {
             void getDistanceAndCheckEligibility();
         }
+
+        console.log("Booking Eligible: ", bookingEligible);
         
-    }, [destinationBooking]);
+    }, [destinationBooking, bookingEligible, maxDistance, origin]);
 
     
     // ________________________________ RENDER ________________________________
