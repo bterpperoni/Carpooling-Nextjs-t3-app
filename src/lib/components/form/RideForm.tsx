@@ -53,7 +53,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
     // Time of departure and destination
     const [timeDeparture, setTimeDeparture] = useState<Dayjs | null>();
     // Is a return ride ? 
-
+    const [isRideReturn, setisRideReturn] = useState<boolean>(ride && ride?.type === RideType.RETOUR ? true : false);
     // If return
     const [timeReturn, setTimeReturn] = useState<Dayjs | null>(ride?.returnTime ? dayjs(ride.returnTime) : null);
 
@@ -201,10 +201,9 @@ export default function RideForm({ ride, isForGroup, groupId }:
         }
     }
 
-    // Used to defines the type of the ride (ALLER or ALLER-RETOUR)
-    const [isRideReturn, setisRideReturn] = useState<boolean>(ride && ride?.type === RideType.RETOUR ? true : false);
 
-    // Used to defines is the ride is simple or return
+
+    // Used to defines is the ride is simple or return isRideReturn const
     const handleCheck = () => {
         if(isRideReturn) {
             setisRideReturn(false);
@@ -360,6 +359,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                     handleChangeTime={(time) => {
                                         setTimeDeparture(time)
                                     }}
+                                    justTime={false}
                                 />
                             </div>
                             {/* Defines maximum number of booking */}
@@ -418,29 +418,32 @@ export default function RideForm({ ride, isForGroup, groupId }:
                             <>
                                 {/* Set up the return Time if ALLER-RETOUR (normally the last step of the form) */}
                                 <div className='p-2 mx-2 w-[90%] border-2 border-[var(--pink-g1)]'>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <p className="text-white m-2 text-[20px]">
                                             A quelle heure démarrez-vous pour rentrez à votre domicile ?
                                         </p>
-                                        <TimePicker
-                                            defaultValue={ride?.returnTime?.toDateString() ? 
-                                                dayjs(ride?.returnTime)
-                                                .set('hour' , ride?.returnTime?.getHours())
-                                                .set('minute', ride?.returnTime?.getMinutes()) 
-                                                : 
-                                                null
-                                            }
-                                            label="HEURE DE RETOUR"
-                                            className={`mt-4 ml-0 md:ml-2 md:mt-0 ${MuiStyle.MuiInputBaseRoot} ${MuiStyle.MuiInputBaseInput} ${MuiStyle.MuiFormLabelRoot}`}
-                                            ampm={false}
-                                            ampmInClock={true}
-                                            value={timeReturn}
-                                            onChange={(time) => {
-                                                setTimeReturn(time);
-                                                console.log(time);
+                                        <DateTimeSelect
+                                            defaultDate={ride?.departureDateTime?.toDateString() ? 
+                                                        dayjs(ride.departureDateTime?.toDateString()) 
+                                                        : dateDeparture
+                                                    }
+                                            defaultTime={ride?.departureDateTime?.toDateString() ? 
+                                                        dayjs(ride?.departureDateTime)
+                                                        .set('hour' , ride?.departureDateTime?.getHours())
+                                                        .set('minute', ride?.departureDateTime?.getMinutes()) 
+                                                        : null
+                                                    }
+                                            labelexpTime='H. DE DEPART' 
+                                            labelexp="DATE DE DEPART"
+                                            disableDate={false}
+                                            disableTime={false}
+                                            handleChangeDate={() => {
+                                                console.log("No date to set for return time");   
+                                            }}    
+                                            handleChangeTime={(time) => {
+                                                setTimeReturn(time)
                                             }}
+                                            justTime={true}
                                         />
-                                    </LocalizationProvider>
                                 </div>
                             </>
                         )}
