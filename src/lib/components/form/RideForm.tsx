@@ -16,7 +16,7 @@ import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { useApiKey } from '$/context/google';
 import MuiStyle from '$/styles/MuiStyle.module.css';
-import { RideStatus, type Ride } from '@prisma/client';
+import { RideStatus, RideType, type Ride } from '@prisma/client';
 import Slider from '$/lib/components/button/Slider';
 import Dropdown from '../dropdown/Dropdown';
 import { data, getCampusAddress, getCampusLatLng } from '$/utils/data/school';
@@ -24,6 +24,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Infos from '$/lib/components/button/Infos';
+import { check } from 'prettier';
 
 
 export default function RideForm({ ride, isForGroup, groupId }: 
@@ -47,14 +48,14 @@ export default function RideForm({ ride, isForGroup, groupId }:
     const [destination, setDestination] = useState<string>();
 
     // Date of ride
-    const [dateDeparture, setDateDeparture] = useState<Dayjs | null>(null);
+    const [dateDeparture, setDateDeparture] = useState<Dayjs | null>(ride?.departureDateTime ? dayjs(ride.departureDateTime) : null);
     
     // Time of departure and destination
-    const [timeDeparture, setTimeDeparture] = useState<Dayjs | null>(null);
+    const [timeDeparture, setTimeDeparture] = useState<Dayjs | null>();
     // Is a return ride ? 
-    const [isRideReturn, setIsRideReturn] = useState<boolean>(true);
+
     // If return
-    const [timeReturn, setTimeReturn] = useState<Dayjs | null>(null);
+    const [timeReturn, setTimeReturn] = useState<Dayjs | null>(ride?.returnTime ? dayjs(ride.returnTime) : null);
 
     // Latitude and longitude of departure and destination
     const [departureLatitude, setDepartureLatitude] = useState<number>();
@@ -69,10 +70,10 @@ export default function RideForm({ ride, isForGroup, groupId }:
     const [ schoolInDropdown, setSchoolInDropdown ] = useState<boolean>(true);
 
     // Maximum number of booking
-    const [maxBooking, setMaxBooking] = useState<number>(2);
+    const [maxBooking, setMaxBooking] = useState<number>(ride?.maxPassengers ?? 2);
 
     // Maximum distance to pick up a passenger
-    const [maxDistance, setMaxDistance] = useState<number>(10);
+    const [maxDistance, setMaxDistance] = useState<number>(ride?.maxDetourDist ?? 10);
 
     // Options for autocomplete
     const options = {
@@ -85,8 +86,6 @@ export default function RideForm({ ride, isForGroup, groupId }:
     const { data: rideCreated, mutate: createride } = api.ride.create.useMutation();
     // Used to update ride
     const { data: updatedride, mutate: updateride } = api.ride.update.useMutation();
-
-
 
 
     /* _______________ USEFFECT FOR SET UP DATE & TIME DEPARTURE WHEN CREATING OR UPDATING A RIDE _______________ */
@@ -107,9 +106,17 @@ export default function RideForm({ ride, isForGroup, groupId }:
         }
     },[dateDeparture, timeDeparture, ride]);
 
+    /* _______________________ USEFFECT FOR CHECK IF RIDE IS PRESENT & SET MAXBOOKING + MAXDETOURDIST ________________________ */
+    useEffect(() => {
+        if (ride) {
+            setMaxBooking(maxBooking ?? ride.maxPassengers);
+            setMaxDistance(maxDistance ?? ride.maxDetourDist);
+        }
+    },[ride, maxBooking, maxDistance]);
+
     /* _______________________ USEFFECT FOR CHECK & SET THE TIME IF THE TYPE OF RIDE IS ALLER-RETOUR _________________________ */
     useEffect(() => {
-        if(checked) {
+        if(isRideReturn) {
             // if the user has selected ALLER-RETOUR
             // Get the time
             if (timeReturn) {
@@ -154,8 +161,8 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                 destinationLatitude: destinationLatitude ?? 0,
                                 destinationLongitude: destinationLongitude ?? 0,
                                 returnTime: timeReturn?.toDate() ?? null,
-                                maxBookings: maxBooking,
-                                maxDetour: maxDistance,
+                                maxBookings: maxBooking ?? 2,
+                                maxDetour: maxDistance ?? 10,
                                 type: isRideReturn ? 'ALLER' : 'RETOUR',
                                 isForGroup: isForGroup ?? false,
                                 groupId: groupId ?? null
@@ -183,9 +190,9 @@ export default function RideForm({ ride, isForGroup, groupId }:
                             destination: destination ?? ride.destination,
                             destinationLatitude: destinationLatitude ?? ride.destinationLatitude,
                             destinationLongitude: destinationLongitude ?? ride.destinationLongitude,
-                            returnTime: timeReturn?.toDate() ?? ride.returnTime,
-                            maxBookings: maxBooking,
-                            maxDistance: maxDistance,
+                            returnTime: tmpTimeReturn ?? ride.returnTime,
+                            maxBookings: maxBooking ?? ride.maxPassengers,
+                            maxDistance: maxDistance ?? ride.maxDetourDist,
                             type: isRideReturn ? 'ALLER' : 'RETOUR',
                             status: dateDeparture?.isSame(dayjs()) ? RideStatus.IN_PROGRESS : ride.status,
                         });
@@ -195,16 +202,16 @@ export default function RideForm({ ride, isForGroup, groupId }:
     }
 
     // Used to defines the type of the ride (ALLER or ALLER-RETOUR)
-    const [checked, setChecked] = useState(false);
+    const [isRideReturn, setisRideReturn] = useState<boolean>(ride && ride?.type === RideType.RETOUR ? true : false);
 
     // Used to defines is the ride is simple or return
     const handleCheck = () => {
-        setChecked(!checked);
-        if(!isRideReturn){
-            setIsRideReturn(true);
-        }else{
-            setIsRideReturn(false);
+        if(isRideReturn) {
+            setisRideReturn(false);
+        }else {
+            setisRideReturn(true);
         }
+        console.log("Is a simple ride ? ", isRideReturn);
       };
         
 
@@ -359,7 +366,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                             <div className="ml-4 w-[90%] my-4 border-b-2 border-[var(--pink-g1)] pb-4">
                                 <div className="text-[var(--pink-g1)] text-[1.25rem] mb-3 flex flex-row items-center">
                                     Combien avez-vous de places disponibles ?
-                                    <p className="ml-4 border-2 bg-white rounded-full p-1 text-gray-600">{maxBooking}</p>
+                                    <p className="ml-4 border-2 bg-white rounded-full p-1 text-gray-600">{maxBooking ?? ride?.maxPassengers}</p>
                                 </div>
                                 <input 
                                     type="range" 
@@ -402,12 +409,12 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                     Voulez-vous planifier le retour ?
                                 </label>
                                 <div className="flex flex-col items-center mt-5">
-                                    <Slider check={handleCheck} checked={checked} />
-                                    <p className="mt-2">{checked ? 'Oui je le souhaite !' : 'Non merci, peut-être plus tard'}</p>
+                                    <Slider check={handleCheck} checked={isRideReturn} />
+                                    <p className="mt-2">{isRideReturn ? 'Oui je le souhaite !' : 'Non merci, peut-être plus tard'}</p>
                                 </div>
                             </div>
                         </div>
-                        {!isRideReturn ? (
+                        {isRideReturn && (
                             <>
                                 {/* Set up the return Time if ALLER-RETOUR (normally the last step of the form) */}
                                 <div className='p-2 mx-2 w-[90%] border-2 border-[var(--pink-g1)]'>
@@ -421,7 +428,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                                 .set('hour' , ride?.returnTime?.getHours())
                                                 .set('minute', ride?.returnTime?.getMinutes()) 
                                                 : 
-                                                timeReturn ?? null
+                                                null
                                             }
                                             label="HEURE DE RETOUR"
                                             className={`mt-4 ml-0 md:ml-2 md:mt-0 ${MuiStyle.MuiInputBaseRoot} ${MuiStyle.MuiInputBaseInput} ${MuiStyle.MuiFormLabelRoot}`}
@@ -430,12 +437,13 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                             value={timeReturn}
                                             onChange={(time) => {
                                                 setTimeReturn(time);
+                                                console.log(time);
                                             }}
                                         />
                                     </LocalizationProvider>
                                 </div>
                             </>
-                        ): null}
+                        )}
                     </div>
                         <div className="flex flex-col items-center">
                             {/* Submit */}
