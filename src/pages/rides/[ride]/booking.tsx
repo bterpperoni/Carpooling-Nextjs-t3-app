@@ -29,16 +29,20 @@ export default function Booking() {
     const {data: ride} = api.ride.rideById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     //  Max distance driver can go to pick up passenger
     const maxDistance = ride?.maxDetourDist ?? 0;
+    // Distance in kilometers between driver departure and passenger destination
+    const [distanceInKilometers, setDistanceInKilometers] = useState<number>(0);
     // Is booking eligible
-    const [distanceEligible, setDistanceEligible] = useState<number>(0);
     const [bookingEligible, setBookingEligible] = useState<boolean>(false);
-    // Address of departure (got from 'ride' object) and destination from google autocomplete (Place Result object)
+    // Address of departure (got from 'ride' object)
     const origin = ride?.departure ?? "";
+    // Address of destination + Latitude and Longitude (got from Autocomplete)
     const [destinationBooking, setDestinationBooking] = useState<string>("");
-
     const [destinationLatitude, setDestinationLatitude] = useState<number>();
     const [destinationLongitude, setDestinationLongitude] = useState<number>();
-    
+    // Price for fuel per kilometer
+    const fuelPrice = 0.2;
+
+
     // Options for autocomplete
     const options = {
         componentRestrictions: { country: 'be' },
@@ -46,13 +50,11 @@ export default function Booking() {
         types: ['address']
     };
     
-
-    
     // ________________________________ BEHAVIOR ________________________________
     async function getDistanceAndCheckEligibility(){
         const distanceInMeters = await calculateDistance(origin, destinationBooking);
         const distanceInKilometers = parseInt(distanceInMeters) / 1000;
-        console.log("Distance: ", distanceInKilometers, " km\nMax Distance: ", maxDistance, " km");
+        setDistanceInKilometers(distanceInKilometers);
         if(distanceInKilometers <= maxDistance) {
             setBookingEligible(true);
         }else{
@@ -65,9 +67,10 @@ export default function Booking() {
             void getDistanceAndCheckEligibility();
         }
 
+        console.log("Distance: ", distanceInKilometers, " km\nMax Distance: ", maxDistance, " km");
         console.log("Booking Eligible: ", bookingEligible);
         
-    }, [destinationBooking, bookingEligible, origin]);
+    }, [destinationBooking, bookingEligible, origin, distanceInKilometers, maxDistance]);
 
     
     // ________________________________ RENDER ________________________________
@@ -120,6 +123,41 @@ export default function Booking() {
                         id="destination"
                     />
                 </div>
+                <div className="m-1 mt-5 p-2 flex flex-col border-t-2 border-[var(--pink-g1)]">
+                    <div className="text-white text-xl">
+                        <p>
+                            Départ :
+                            <span className="text-[var(--pink-g1)]"> {ride?.departure}</span>
+                        </p>
+                        <p>
+                            Destination : 
+                            <span className="text-[var(--pink-g1)]"> {destinationBooking ? destinationBooking : "Aucune addresse n'a été saisie"}</span>
+                        </p>
+                    </div>
+                </div>
+                <div className="mt-5 p-2 flex flex-col border-y-2 border-[var(--pink-g1)]">
+                    <div className="text-white text-xl">
+                        <p>
+                            Distance : 
+                            <span className="text-[var(--pink-g1)]"> {distanceInKilometers} km</span>
+                        </p>
+                        <p>
+                            Distance Maximum : 
+                            <span className="text-[var(--pink-g1)]"> {maxDistance} km</span>
+                        </p>
+                        <p>
+                            Êtes-vous éligible à la réservation ?
+                            <span className="text-[var(--pink-g1)]"> {bookingEligible ? "Oui" : "Non"}</span>
+                        </p>
+                        <p>
+                            Prix estimé du trajet : 
+                            <span className="text-[var(--pink-g1)]"> {distanceInKilometers * fuelPrice} €</span>
+                        </p>
+                    </div>
+                </div>
+                {/* Here is the beginning to add div blocks */}
+
+            {/* Here is the global div for page */}
             </div>
         </LayoutMain>
         );
