@@ -1,5 +1,3 @@
-// Input.tsx
-
 import type { InputProps } from '$/lib/types/types';
 import React from 'react';
 

@@ -1,3 +1,4 @@
+// Import from old Svelte project
 import React, { useState } from 'react';
 
 const SlideButton: React.FC<{ check: () => void; checked: boolean; }> = ({ check, checked }) => {

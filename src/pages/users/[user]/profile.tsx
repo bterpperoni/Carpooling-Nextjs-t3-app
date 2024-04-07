@@ -214,8 +214,7 @@ export default function User() {
                 {sessionData.user.role === UserRole.ADMIN.toString() && name === sessionData.user.name ? (
                   <div className="mt-4 border-2 border-black flex items-center flex-col">
                     <h2 className="text-xl text-black font-bold">
-                      Options supplémentaires 
-                      (à changer de place de cette page à  e.g. : '/users/settings')
+                      Options supplémentaires pour les administrateurs
                     </h2>
                     <div className="mt-4">
                       <Button 

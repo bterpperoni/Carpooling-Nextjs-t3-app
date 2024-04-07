@@ -64,8 +64,8 @@ model User {
   rating             Int           @default(0)
   accounts           Account[]
   sessions           Session[]
-  ridesAsDriver      Ride[]      @relation("Driver")
-  ridesAsPassenger   Booking[]   @relation("UserPassenger")
+  ridesAsDriver      Ride[]        @relation("Driver")
+  ridesAsPassenger   Booking[]     @relation("UserPassenger")
   groupCreated       Group[]       @relation("GroupCreatedBy")
   groupMembers       GroupMember[] 
   wallet             Wallet[]         
@@ -102,7 +102,7 @@ model Ride {
   returnTime           DateTime?
   status               RideStatus  @default(CREATED)
   group                Group?      @relation("GroupRides", fields: [groupId], references: [id])
-  driver               User        @relation("Driver", fields: [driverId], references: [name])
+  driver               User        @relation("Driver", fields: [driverId], references: [name], onDelete: Cascade)
   passengers           Booking[]   @relation("Passengers")
 }
 
@@ -119,7 +119,7 @@ model Booking {
   // An average rating will be calculated and displayed on the driver's profile
   driverRating    Int?     
   ride       Ride   @relation("Passengers", fields: [rideId], references: [id])
-  user       User   @relation("UserPassenger", fields: [userName], references: [name])
+  user       User   @relation("UserPassenger", fields: [userName], references: [name], onDelete: Cascade)
 }
 
 enum RideType {
@@ -151,8 +151,8 @@ model Group {
   createdBy        String
   visibility       Boolean       @default(false)
   acceptInvitation Boolean?      @default(true)
-  rides          Ride[]      @relation("GroupRides")
-  creator          User          @relation("GroupCreatedBy", fields: [createdBy], references: [name])
+  rides            Ride[]        @relation("GroupRides")
+  creator          User          @relation("GroupCreatedBy", fields: [createdBy], references: [name], onDelete: Cascade)
   members          GroupMember[] @relation("GroupMembers")
 }
 
@@ -172,7 +172,7 @@ model Wallet {
   userId        String
   paypalId      String?
   balance       String   @default("0")
-  owner         User     @relation(fields: [userId], references: [id])
+  owner         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   fromWalletTransaction  Transaction[] @relation("fromWallet")
   toWalletTransaction    Transaction[] @relation("toWallet")
   paypalTransaction      PaypalTransaction[]

@@ -13,8 +13,6 @@ import { signIn, useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
-// import { calculateDistance } from "$/hook/distanceMatrix";
-import axios from "axios";
 import { calculateDistance } from "$/hook/distanceMatrix";
 
 
@@ -69,7 +67,7 @@ export default function Booking() {
 
         console.log("Booking Eligible: ", bookingEligible);
         
-    }, [destinationBooking, bookingEligible, maxDistance, origin]);
+    }, [destinationBooking, bookingEligible, origin]);
 
     
     // ________________________________ RENDER ________________________________
