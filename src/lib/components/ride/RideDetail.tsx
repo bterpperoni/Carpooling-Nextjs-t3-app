@@ -1,10 +1,11 @@
 // rideDetails.tsx
 import type { RideDetailsProps } from "$/lib/types/interfaces";
 import React from 'react';
-
-
+import { getCampusNameWithAddress } from "$/utils/data/school";
 
 const rideDetail: React.FC<RideDetailsProps> = ({ ride, children }: RideDetailsProps) => {
+
+  const campusName: string | null = getCampusNameWithAddress(ride.destination);
 
   return (
     <div className="ride-details-container">
@@ -23,7 +24,7 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children }: RideDetailsP
       <div className="ride-info flex flex-row justify-between">
         <div>
             <span className="label">Destination:</span>
-            {ride.destination}
+            {campusName ?? ride.destination}
         </div>
       </div>
       {ride.returnTime != null && (

@@ -4,7 +4,7 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { api } from "$/utils/api";
-import { ApiKeyProvider } from "$/context/google";
+import { ApiKeyProvider } from "$/context/api";
 
 const Carheh: AppType<{ session: Session | null }> = ({
   Component,

@@ -5,7 +5,7 @@ import Button from "$/lib/components/button/Button";
 import LayoutMain from '$/lib/components/layout/LayoutMain';
 import { useState } from "react";
 import GroupForm from "$/lib/components/form/GroupForm";
-import { getCampusAbbr } from "$/utils/data/school";
+import { getCampusAbbrWithFullName } from "$/utils/data/school";
 import Infos from "$/lib/components/button/Infos";
 
 /* ------------------------------------------------------------------------------------------------------------------------
@@ -216,7 +216,7 @@ if(sessionData)
                                                                                                     text-left">
                                                         Destination
                                                     </label>
-                                                    <div id="groupMemberCount">{getCampusAbbr(group?.campus ?? '')}</div>
+                                                    <div id="groupMemberCount">{getCampusAbbrWithFullName(group?.campus ?? '')}</div>
                                                 </div>
                                             </div>
                                         </div>

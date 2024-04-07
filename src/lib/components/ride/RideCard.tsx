@@ -1,7 +1,11 @@
 // rideCard.tsx
 import type { RideCardProps } from "$/lib/types/interfaces";
+import { getCampusNameWithAddress } from "$/utils/data/school";
 
-const rideCard: React.FC<RideCardProps> = ({ ride, driver, goToRide }) => {
+const rideCard: React.FC<RideCardProps> = ({ ride, driver, goToRide } : RideCardProps) => {
+
+  const campusName: string | null = getCampusNameWithAddress(ride.destination);
+
   return (
     <div className="ride-card-container" onClick={goToRide}>
       <div className="ride-info">
@@ -14,7 +18,7 @@ const rideCard: React.FC<RideCardProps> = ({ ride, driver, goToRide }) => {
       </div>
       <div className="ride-info">
         <span className="label">Destination:</span>
-        {ride.destination}
+        {campusName ?? ride.destination}
       </div>
       <div className="ride-info">
         <span className="label">Conducteur:</span>

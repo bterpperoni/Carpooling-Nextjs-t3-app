@@ -14,17 +14,13 @@ import { useSession } from 'next-auth/react';
 import { api } from '$/utils/api';
 import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
-import { useApiKey } from '$/context/google';
+import { useApiKey } from '$/context/api';
 import MuiStyle from '$/styles/MuiStyle.module.css';
 import { RideStatus, RideType, type Ride } from '@prisma/client';
 import Slider from '$/lib/components/button/Slider';
 import Dropdown from '../dropdown/Dropdown';
-import { data, getCampusAddress, getCampusLatLng } from '$/utils/data/school';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { data, getCampusAddressWithAbbr, getCampusLatLng } from '$/utils/data/school';
 import Infos from '$/lib/components/button/Infos';
-import { check } from 'prettier';
 
 
 export default function RideForm({ ride, isForGroup, groupId }: 
@@ -265,7 +261,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                             setSelectedSchool(sc.target.value);
                                             setSelectedCampus(ca.target.value);
                                             if(ca.target.value){
-                                                setDestination(getCampusAddress(ca.target.value));
+                                                setDestination(getCampusAddressWithAbbr(ca.target.value));
                                                 setDestinationLatitude(getCampusLatLng(ca.target.value).lat);
                                                 setDestinationLongitude(getCampusLatLng(ca.target.value).lng);
                                             }

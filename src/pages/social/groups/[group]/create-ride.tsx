@@ -3,7 +3,6 @@ import NewTripForGroupForm from "$/lib/components/form/RideForm";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Button from "$/lib/components/button/Button";
-import { getCampusFullName } from "$/utils/data/school";
 
 
 

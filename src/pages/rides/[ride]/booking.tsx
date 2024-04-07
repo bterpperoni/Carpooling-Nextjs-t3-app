@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import { useApiKey } from "$/context/google";
+import { useApiKey } from "$/context/api";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Autocomplete  from 'react-google-autocomplete';
 import { useRouter } from "next/dist/client/router";
@@ -88,7 +88,7 @@ export default function Booking() {
                                 rounded-[12.5%]">
                     Créer une réservation
                 </h2>
-                <div className='p-2 mt-2'>
+                <div className='p-2 mt-2 flex flex-col md:flex-row'>
                     <p className='md:text-2xl text-gray-400'></p>
                     <label htmlFor="destination" 
                            className='text-[1.25rem] 
