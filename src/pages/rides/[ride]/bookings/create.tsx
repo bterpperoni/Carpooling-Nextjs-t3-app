@@ -14,11 +14,12 @@ import { api } from "$/utils/api";
 import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
 import { calculateDistance } from "$/hook/distanceMatrix";
-import MuiStyle from '$/styles/MuiStyle.module.css';
 
 
-
-export default function Booking() {
+/* ------------------------------------------------------------------------------------------------------------------------
+------------------------- Page to create a new booking for a ride ---------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------ */
+export default function CreateBooking() {
     // ________________________________ STATE ________________________________
     const apiKey = useApiKey();
     // Get id from url

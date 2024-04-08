@@ -11,7 +11,10 @@ import RideCard from '$/lib/components/ride/RideCard';
 import { useRouter } from 'next/router';
 import Button from '$/lib/components/button/Button';
 
-const All: React.FC = () => {
+/* ------------------------------------------------------------------------------------------------------------------------
+------------------------- Page to display all rides -----------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------ */
+const AllRides: React.FC = () => {
         // Map settings
         const center: google.maps.LatLngLiteral =  { lat: 50.463727, lng: 3.938247 };
         const zoom = 12;
@@ -115,4 +118,4 @@ const All: React.FC = () => {
         );
     };
     
-export default All;
+export default AllRides;

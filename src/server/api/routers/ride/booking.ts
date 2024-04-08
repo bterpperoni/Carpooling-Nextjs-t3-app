@@ -13,6 +13,21 @@ export const bookingRouter = createTRPCRouter({
     }),
 
 
+  bookingById: protectedProcedure
+  .input(
+    z.object({
+      id: z.number(),
+    })
+  ).query(async ({ ctx, input }) => {
+    return ctx.db.booking.findUnique({
+      where: {
+        id: input.id,
+      },
+    });
+  }),
+
+  
+  // Get all bookings for a specific ride
   bookingByRideId: protectedProcedure
   .input(
     z.object({
@@ -25,48 +40,24 @@ export const bookingRouter = createTRPCRouter({
       },
     });
   }),
-
-
-  bookingById: protectedProcedure
-    .input(
-      z.object({
-        id: z.number(),
-      })
-    ).query(async ({ ctx, input }) => {
-      return ctx.db.booking.findUnique({
-        where: {
-          id: input.id,
-        },
-      });
-    }),
     
 
-  bookingByUser: protectedProcedure
-    .input(
-      z.object({
-        userName: z.string(),
-      })
-    ).query(async ({ ctx, input }) => {
-      return ctx.db.booking.findMany({
-        where: {
-          userName: input.userName,
-        },
-      });
-    }),
+  // Get a complete booking for a specific ride by a specific userName
+  userBookingByRideId: protectedProcedure
+  .input(
+    z.object({
+      rideId: z.number(),
+      userName: z.string(),
+    })
+  ).query(async ({ ctx, input }) => {
+    return ctx.db.booking.findMany({
+      where: {
+        rideId: input.rideId,
+        userName: input.userName,
+      },
+    });
+  }),
 
-  // get all user details per booking
-  userListPerBooking: protectedProcedure
-    .input(
-      z.object({
-        userName: z.string(),
-      })
-    ).query(async ({ ctx, input }) => {
-      return ctx.db.user.findMany({
-        where: {
-          name: input.userName,
-        },
-      });
-    }),
 
 
   create: protectedProcedure

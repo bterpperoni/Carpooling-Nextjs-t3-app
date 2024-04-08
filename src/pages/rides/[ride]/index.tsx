@@ -10,7 +10,9 @@ import Map from "$/lib/components/map/Map";
 import LayoutMain from '../../../lib/components/layout/LayoutMain';
 import RideDetail from "$/lib/components/ride/RideDetail";
 
-
+/* ------------------------------------------------------------------------------------------------------------------------
+------------------------- Page to display details of a specific ride ------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------ */
 export default function Detail() {
 
     // Used to redirect after delete
@@ -24,6 +26,16 @@ export default function Detail() {
     const {data: ride} = api.ride.rideById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     // Used to delete ride
     const { mutate: deleteride } = api.ride.delete.useMutation();
+    // Get all passengers for this ride
+    const { data: userBooking } = api.booking.userBookingByRideId.useQuery(
+        {   rideId: parseInt(id as string), 
+            userName: sessionData?.user?.name ?? ''
+        },
+        {enabled: sessionData?.user !== undefined});
+
+
+    console.log(userBooking);
+
     // Set if ride can be edited
     const canEdit = sessionData?.user?.name === ride?.driverId;
     

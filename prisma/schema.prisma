@@ -118,7 +118,7 @@ model Booking {
   // All passengers should rate the driver after the ride
   // An average rating will be calculated and displayed on the driver's profile
   driverRating    Int?     
-  ride       Ride   @relation("Passengers", fields: [rideId], references: [id])
+  ride       Ride   @relation("Passengers", fields: [rideId], references: [id], onDelete: Cascade)
   user       User   @relation("UserPassenger", fields: [userName], references: [name], onDelete: Cascade)
 }
 

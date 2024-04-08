@@ -1,11 +1,11 @@
 import LayoutMain from '../../lib/components/layout/LayoutMain';
 import { signIn, useSession } from 'next-auth/react';
-import NewTripForm from '../../lib/components/form/RideForm';
+import NewRideForm from '../../lib/components/form/RideForm';
 import Button from '$/lib/components/button/Button';
 
 /* --------------------------------------------------------- */
 
-export default function NewTrip()  {
+export default function NewRide()  {
     /* ------------ States ------------------ */
     const { data: sessionData } = useSession();
 
@@ -28,7 +28,7 @@ export default function NewTrip()  {
                                             rounded-[12.5%]">
                                 Planifier un trajet
                             </h2>
-                    <NewTripForm />
+                    <NewRideForm />
                 </div>
             </LayoutMain>
         </>
