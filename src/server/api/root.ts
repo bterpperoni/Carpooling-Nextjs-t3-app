@@ -6,6 +6,7 @@ import { groupMemberRouter } from "./routers/group/groupMember";
 import { walletRouter } from "./routers/wallet/wallet";
 import { transactionRouter } from "./routers/wallet/transaction";
 import { paypalRouter } from "./routers/wallet/paypal";
+import { bookingRouter } from "./routers/ride/booking";
 
 /**
  * This is the primary router for your server.
@@ -14,7 +15,7 @@ import { paypalRouter } from "./routers/wallet/paypal";
  */
 export const appRouter = createTRPCRouter({
   ride: rideRouter,
-  // booking: bookingRouter,
+  booking: bookingRouter,
   user: userRouter,
   group: groupRouter,
   groupMember: groupMemberRouter,
