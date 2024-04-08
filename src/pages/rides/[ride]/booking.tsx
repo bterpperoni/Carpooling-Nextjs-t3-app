@@ -14,6 +14,7 @@ import { api } from "$/utils/api";
 import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
 import { calculateDistance } from "$/hook/distanceMatrix";
+import MuiStyle from '$/styles/MuiStyle.module.css';
 
 
 
@@ -21,7 +22,7 @@ export default function Booking() {
     // ________________________________ STATE ________________________________
     const apiKey = useApiKey();
     // Get id from url
-    const { query } = useRouter();
+    const { query, push } = useRouter();
     const id = query.ride;
     // Session recovery
     const { data: sessionData } = useSession();
@@ -50,15 +51,25 @@ export default function Booking() {
     // Price for fuel per kilometer
     const fuelPrice = 0.15;
 
-
     // Options for autocomplete
     const options = {
         componentRestrictions: { country: 'be' },
         strictBounds: false,
         types: ['address']
     };
+
+    // Create new booking
+    const {data: bookingCreated, mutate: createBooking} = api.booking.create.useMutation();
+    // Update booking
+    const {data: bookingUpdated, mutate: updateBooking} = api.booking.update.useMutation();
+    // Redirect to ride page when booking is created 
+    useEffect(() => {
+        if(bookingCreated) {
+            location.assign(`/rides/${ride?.id}`);
+        }
+    }, [bookingCreated]);
     
-    // ________________________________ BEHAVIOR ________________________________
+    // ________________________________ STATE TO MANAGE ELIGIBILITY & PRICE FOR PASSENGER ________________________________
     useEffect(() => {
         async function getDistanceAndCheckEligibility(){
             /* ----DISTANCE A--- */
@@ -86,7 +97,22 @@ export default function Booking() {
         
     }, [destinationBooking, origin, distanceInKilometersA, distanceInKilometersB, priceRide]);
 
-    
+    // When click on submit button
+    function handleClick() { 
+        if(sessionData) {
+            // ------------------- Create booking -------------------
+            createBooking({
+                rideId: ride?.id ?? 0,
+                userName: sessionData.user.name,
+                pickupPoint: destinationBooking,
+                pickupLatitude: destinationLatitude ?? 0,
+                pickupLongitude: destinationLongitude ?? 0,
+                price: priceRide?.toString() ?? "0",
+                status: "CREATED"
+            });
+        }
+    }
+
     // ________________________________ RENDER ________________________________
     if(sessionData?.user) {
         return (
@@ -166,26 +192,33 @@ export default function Booking() {
                                 <span className="text-[var(--pink-g1)]"> {bookingEligible ? "Oui" : "Non"}</span>
                             </p>
                             {bookingEligible &&
-                                <p>
-                                    Prix estimé du trajet : 
-                                    <span className="text-[var(--pink-g1)]"> ~ {priceRide} €</span>
-                                </p>
+                                <>
+                                    <p>
+                                        Prix estimé du trajet : 
+                                        <span className="text-[var(--pink-g1)]"> ~ {priceRide} €</span>
+                                    </p>
+                                </>
                             }
                         </div>
                     </div>
-                    <div className="flex flex-row m-4 mt-8 justify-around w-full">
-                        <Button 
-                            onClick={() => window.location.href='/rides/create'} 
-                            className="col-span-1 bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
-                                    border-2 text-white px-3 py-2 rounded-full text-base w-max">
-                                Confirmer la réservation
-                        </Button>
-                        <Button 
-                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md"
-                            onClick={() => ride ? location.assign(`/rides/${ride?.id}`) : location.assign('/rides/')}> 
-                                Annuler 
-                        </Button>
-                    </div>
+                    {bookingEligible &&
+                        <>
+                            <div className="flex flex-row m-4 mt-6 justify-around w-full items-center">
+                                <Button 
+                                    onClick={handleClick} 
+                                    className="col-span-1 bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                            border-2 text-white px-3 py-2 rounded-full text-base w-max">
+                                        Confirmer la réservation
+                                </Button>
+                                <Button 
+                                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md h-10 w-24"
+                                    onClick={() => ride ? location.assign(`/rides/${ride?.id}`) : location.assign('/rides/')}> 
+                                        Annuler 
+                                </Button>
+                            </div>
+                        </>
+                    }
+                    
                 </>
                 }
             </div>
@@ -206,7 +239,7 @@ export default function Booking() {
                                     no-underline 
                                     transition 
                                     hover:bg-white/20" 
-                        onClick={() => void signIn()}>Sign in</Button>
+                        onClick={() => void signIn()}>Se connecter</Button>
         </LayoutMain>
     );
     

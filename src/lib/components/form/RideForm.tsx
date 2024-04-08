@@ -449,7 +449,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                             {ride ? (
                             <Button type='submit' className={`${MuiStyle.MuiButtonText} w-max`} onClick={handleClick}> Modifier </Button>
                             ) : (
-                            <Button type='submit' className={`${MuiStyle.MuiButtonText} w-max`} onClick={handleClick}> Submit </Button>
+                            <Button type='submit' className={`${MuiStyle.MuiButtonText} w-max`} onClick={handleClick}> Enregistrer </Button>
                             )}
                             <Button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md w-max"
                                 onClick={() => ride ? location.assign(`/rides/${ride?.id}`) : location.assign('/rides/')}> 
