@@ -59,36 +59,32 @@ export default function Booking() {
     };
     
     // ________________________________ BEHAVIOR ________________________________
-    async function getDistanceAndCheckEligibility(){
-        /* ----DISTANCE A--- */
-        const distanceInMetersEligibility = await calculateDistance(origin, destinationBooking);
-        const distanceEligibility = parseInt(distanceInMetersEligibility) / 1000;
-        setDistanceInKilometersA(distanceEligibility);
-        /* ----DISTANCE B--- */
-        const distanceInMetersForTotal = await calculateDistance(destinationBooking, destination);
-        const distanceRest = parseInt(distanceInMetersForTotal) / 1000;
-        setDistanceInKilometersB(distanceRest);
-        /* ----------------- */  
-        if(distanceInKilometersA <= maxDistanceDetour) {
-            setBookingEligible(true);
-            const tmpPrice = (distanceInKilometersA + distanceInKilometersB) * fuelPrice;
-            setPriceRide(tmpPrice.toFixed(2));
-            console.log("Price of ride: ", priceRide);
-        }else{
-            setBookingEligible(false);
-            return;
-        }
-    }
-
     useEffect(() => {
+        async function getDistanceAndCheckEligibility(){
+            /* ----DISTANCE A--- */
+            const distanceInMetersEligibility = await calculateDistance(origin, destinationBooking);
+            const distanceEligibility = parseInt(distanceInMetersEligibility) / 1000;
+            setDistanceInKilometersA(distanceEligibility);
+            /* ----DISTANCE B--- */
+            const distanceInMetersForTotal = await calculateDistance(destinationBooking, destination);
+            const distanceRest = parseInt(distanceInMetersForTotal) / 1000;
+            setDistanceInKilometersB(distanceRest);
+            /* ----------------- */  
+            if(distanceInKilometersA <= maxDistanceDetour) {
+                setBookingEligible(true);
+                const tmpPrice = (distanceInKilometersA + distanceInKilometersB) * fuelPrice;
+                setPriceRide(tmpPrice.toFixed(2));
+            }else{
+                setBookingEligible(false);
+                return;
+            }
+        }
+
         if(origin && destinationBooking) {
             void getDistanceAndCheckEligibility();
         }
-
-        console.log("Distance: ", distanceInKilometersA, " km\nMax Distance: ", maxDistanceDetour, " km");
-        console.log("Booking Eligible: ", bookingEligible);
         
-    }, [destinationBooking, bookingEligible, origin, distanceInKilometersA, maxDistanceDetour]);
+    }, [destinationBooking, origin, distanceInKilometersA, distanceInKilometersB, priceRide]);
 
     
     // ________________________________ RENDER ________________________________
@@ -109,7 +105,7 @@ export default function Booking() {
                                 rounded-[12.5%]">
                     Créer une réservation
                 </h2>
-                <div className='p-2 mt-2 flex flex-col md:flex-row'>
+                <div className='p-2 mt-2 flex flex-col md:flex-row w-[90vw]'>
                     <p className='md:text-2xl text-gray-400'></p>
                     <label htmlFor="destination" 
                            className='text-[1.25rem] 
@@ -141,7 +137,7 @@ export default function Booking() {
                         id="destination"
                     />
                 </div>
-                <div className="m-1 mt-5 p-2 flex flex-col border-t-2 border-[var(--pink-g1)]">
+                <div className="m-1 mt-5 p-2 flex flex-col border-t-2 border-[var(--pink-g1)] w-[90vw]">
                     <div className="text-white text-xl">
                         <p>
                             Départ :
@@ -151,37 +147,47 @@ export default function Booking() {
                             Addresse du point de passage : 
                             <span className="text-[var(--pink-g1)]"> {destinationBooking ? destinationBooking : "Aucune addresse n'a été saisie"}</span>
                         </p>
-                        <p>
-                            Distance Maximum de Détour : 
-                            <span className="text-[var(--pink-g1)]"> {maxDistanceDetour} km</span>
-                        </p>
                     </div>
                 </div>
-                <div className="mt-5 p-2 flex flex-col border-y-2 border-[var(--pink-g1)]">
-                    <div className="text-white text-xl">
-                        <p>
-                            DEPART -- POINT DE PASSAGE: 
-                            <span className="text-[var(--pink-g1)]"> {distanceInKilometersA} km</span>
-                        </p>
-                        <p>
-                            POINT DE PASSAGE -- DESTINATION: 
-                            <span className="text-[var(--pink-g1)]"> {distanceInKilometersB} km</span>
-                        </p>
-                        <p>
-                            Êtes-vous éligible à la réservation ?
-                            <span className="text-[var(--pink-g1)]"> {bookingEligible ? "Oui" : "Non"}</span>
-                        </p>
-                        {bookingEligible &&
+                {destinationBooking &&
+                <>
+                    <div className="mt-5 p-2 flex flex-col border-y-2 border-[var(--pink-g1)] w-[90vw]">
+                        <div className="text-white text-xl">
                             <p>
-                                Prix estimé du trajet : 
-                                <span className="text-[var(--pink-g1)]"> ~ {priceRide} €</span>
+                                DEPART -- POINT DE PASSAGE: 
+                                <span className="text-[var(--pink-g1)]"> {distanceInKilometersA} km</span>
                             </p>
-                        }
+                            <p>
+                                POINT DE PASSAGE -- DESTINATION: 
+                                <span className="text-[var(--pink-g1)]"> {distanceInKilometersB} km</span>
+                            </p>
+                            <p>
+                                Êtes-vous éligible à la réservation ?
+                                <span className="text-[var(--pink-g1)]"> {bookingEligible ? "Oui" : "Non"}</span>
+                            </p>
+                            {bookingEligible &&
+                                <p>
+                                    Prix estimé du trajet : 
+                                    <span className="text-[var(--pink-g1)]"> ~ {priceRide} €</span>
+                                </p>
+                            }
+                        </div>
                     </div>
-                </div>
-                {/* Here is the beginning to add div blocks */}
-
-            {/* Here is the global div for page */}
+                    <div className="flex flex-row m-4 mt-8 justify-around w-full">
+                        <Button 
+                            onClick={() => window.location.href='/rides/create'} 
+                            className="col-span-1 bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                                    border-2 text-white px-3 py-2 rounded-full text-base w-max">
+                                Confirmer la réservation
+                        </Button>
+                        <Button 
+                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md"
+                            onClick={() => ride ? location.assign(`/rides/${ride?.id}`) : location.assign('/rides/')}> 
+                                Annuler 
+                        </Button>
+                    </div>
+                </>
+                }
             </div>
         </LayoutMain>
         );
