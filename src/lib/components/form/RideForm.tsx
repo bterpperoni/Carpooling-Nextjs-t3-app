@@ -159,7 +159,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                 returnTime: timeReturn?.toDate() ?? null,
                                 maxBookings: maxBooking ?? 2,
                                 maxDetour: maxDistance ?? 10,
-                                type: isRideReturn ? 'ALLER' : 'RETOUR',
+                                type: isRideReturn ? 'RETOUR' : 'ALLER',
                                 isForGroup: isForGroup ?? false,
                                 groupId: groupId ?? null
                             }); 

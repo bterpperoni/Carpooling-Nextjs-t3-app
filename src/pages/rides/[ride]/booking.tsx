@@ -27,20 +27,28 @@ export default function Booking() {
     const { data: sessionData } = useSession();
     // Get ride by id
     const {data: ride} = api.ride.rideById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
+
     //  Max distance driver can go to pick up passenger
-    const maxDistance = ride?.maxDetourDist ?? 0;
+    const maxDistanceDetour = ride?.maxDetourDist ?? 0;
     // Distance in kilometers between driver departure and passenger destination
-    const [distanceInKilometers, setDistanceInKilometers] = useState<number>(0);
+    const [distanceInKilometersA, setDistanceInKilometersA] = useState<number>(0);
+    // Distance in kilometers between passenger pickup point and destination
+    const [distanceInKilometersB, setDistanceInKilometersB] = useState<number>(0);
+    // Price of ride
+    const [priceRide, setPriceRide] = useState<string>(); 
+
     // Is booking eligible
     const [bookingEligible, setBookingEligible] = useState<boolean>(false);
     // Address of departure (got from 'ride' object)
     const origin = ride?.departure ?? "";
-    // Address of destination + Latitude and Longitude (got from Autocomplete)
+    // Address of destination (got from 'ride' object)
+    const destination = ride?.destination ?? "";
+    // Address of pickup point + Latitude and Longitude (got from Autocomplete)
     const [destinationBooking, setDestinationBooking] = useState<string>("");
     const [destinationLatitude, setDestinationLatitude] = useState<number>();
     const [destinationLongitude, setDestinationLongitude] = useState<number>();
     // Price for fuel per kilometer
-    const fuelPrice = 0.2;
+    const fuelPrice = 0.15;
 
 
     // Options for autocomplete
@@ -52,13 +60,23 @@ export default function Booking() {
     
     // ________________________________ BEHAVIOR ________________________________
     async function getDistanceAndCheckEligibility(){
-        const distanceInMeters = await calculateDistance(origin, destinationBooking);
-        const distanceInKilometers = parseInt(distanceInMeters) / 1000;
-        setDistanceInKilometers(distanceInKilometers);
-        if(distanceInKilometers <= maxDistance) {
+        /* ----DISTANCE A--- */
+        const distanceInMetersEligibility = await calculateDistance(origin, destinationBooking);
+        const distanceEligibility = parseInt(distanceInMetersEligibility) / 1000;
+        setDistanceInKilometersA(distanceEligibility);
+        /* ----DISTANCE B--- */
+        const distanceInMetersForTotal = await calculateDistance(destinationBooking, destination);
+        const distanceRest = parseInt(distanceInMetersForTotal) / 1000;
+        setDistanceInKilometersB(distanceRest);
+        /* ----------------- */  
+        if(distanceInKilometersA <= maxDistanceDetour) {
             setBookingEligible(true);
+            const tmpPrice = (distanceInKilometersA + distanceInKilometersB) * fuelPrice;
+            setPriceRide(tmpPrice.toFixed(2));
+            console.log("Price of ride: ", priceRide);
         }else{
             setBookingEligible(false);
+            return;
         }
     }
 
@@ -67,10 +85,10 @@ export default function Booking() {
             void getDistanceAndCheckEligibility();
         }
 
-        console.log("Distance: ", distanceInKilometers, " km\nMax Distance: ", maxDistance, " km");
+        console.log("Distance: ", distanceInKilometersA, " km\nMax Distance: ", maxDistanceDetour, " km");
         console.log("Booking Eligible: ", bookingEligible);
         
-    }, [destinationBooking, bookingEligible, origin, distanceInKilometers, maxDistance]);
+    }, [destinationBooking, bookingEligible, origin, distanceInKilometersA, maxDistanceDetour]);
 
     
     // ________________________________ RENDER ________________________________
@@ -130,29 +148,35 @@ export default function Booking() {
                             <span className="text-[var(--pink-g1)]"> {ride?.departure}</span>
                         </p>
                         <p>
-                            Destination : 
+                            Addresse du point de passage : 
                             <span className="text-[var(--pink-g1)]"> {destinationBooking ? destinationBooking : "Aucune addresse n'a été saisie"}</span>
+                        </p>
+                        <p>
+                            Distance Maximum de Détour : 
+                            <span className="text-[var(--pink-g1)]"> {maxDistanceDetour} km</span>
                         </p>
                     </div>
                 </div>
                 <div className="mt-5 p-2 flex flex-col border-y-2 border-[var(--pink-g1)]">
                     <div className="text-white text-xl">
                         <p>
-                            Distance : 
-                            <span className="text-[var(--pink-g1)]"> {distanceInKilometers} km</span>
+                            DEPART -- POINT DE PASSAGE: 
+                            <span className="text-[var(--pink-g1)]"> {distanceInKilometersA} km</span>
                         </p>
                         <p>
-                            Distance Maximum : 
-                            <span className="text-[var(--pink-g1)]"> {maxDistance} km</span>
+                            POINT DE PASSAGE -- DESTINATION: 
+                            <span className="text-[var(--pink-g1)]"> {distanceInKilometersB} km</span>
                         </p>
                         <p>
                             Êtes-vous éligible à la réservation ?
                             <span className="text-[var(--pink-g1)]"> {bookingEligible ? "Oui" : "Non"}</span>
                         </p>
-                        <p>
-                            Prix estimé du trajet : 
-                            <span className="text-[var(--pink-g1)]"> {distanceInKilometers * fuelPrice} €</span>
-                        </p>
+                        {bookingEligible &&
+                            <p>
+                                Prix estimé du trajet : 
+                                <span className="text-[var(--pink-g1)]"> ~ {priceRide} €</span>
+                            </p>
+                        }
                     </div>
                 </div>
                 {/* Here is the beginning to add div blocks */}
