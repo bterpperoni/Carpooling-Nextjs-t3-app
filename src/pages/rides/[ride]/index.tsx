@@ -26,7 +26,7 @@ export default function Detail() {
     const {data: ride} = api.ride.rideById.useQuery({id: parseInt(id as string)}, {enabled: sessionData?.user !== undefined});
     // Used to delete ride
     const { mutate: deleteride } = api.ride.delete.useMutation();
-    // Get all passengers for this ride
+    // Get if a user already subscribed to this ride
     const { data: userBooking } = api.booking.userBookingByRideId.useQuery(
         {   rideId: parseInt(id as string), 
             userName: sessionData?.user?.name ?? ''
@@ -93,6 +93,14 @@ export default function Detail() {
         deleteride({id: parseInt(id as string)});
         setrideDeleted(true);
     }
+
+    // Check if user already subscribed to this ride
+    useEffect(() => {
+        if(userBooking && userBooking.length > 0) {
+            const bookingId = userBooking[0]?.id ?? '';
+            console.log('Vous avez déjà réservé ce trajet. Le numéro de réservation est:' + bookingId);
+        }
+    }, [userBooking]);
 
     // Redirect after delete
     useEffect(() => {

@@ -61,7 +61,7 @@ const AllRides: React.FC = () => {
                                     </div>
                                     <div className="col-span-1 flex justify-center items-center">
                                         <p className="text-white text-base m-4 border-2 border-white px-4 py-2 rounded-full">
-                                            <label htmlFor="SliderDsiplay" className="mx-2 relative top-1">
+                                            <label htmlFor="SliderDsiplay" className="mx-2">
                                                 Type d'affichage : {checked ? 'Liste' : 'Carte'}
                                             </label>
                                             <Slider check={handleCheck} checked={checked} />
@@ -72,7 +72,7 @@ const AllRides: React.FC = () => {
                     </div>
                     <div className='block flex-col'>
                         <div className="grid grid-cols-2 grid-flow-col gap-12 items-center m-2 justify-items-center">
-                            <div className='col-span-1 relative ml-6'>
+                            <div className='col-span-1 ml-6'>
                                 <span className="text-fuchsia-700 text-xl text-sm mr-2">Filtres</span>
                                 <select className="border rounded-md px-3 py-2">
                                     <option value="all">Tout</option>
