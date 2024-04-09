@@ -33,7 +33,7 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
             center={center} 
             zoom={zoom} 
             mapContainerStyle={mapContainerStyle}
-            onLoad={onLoad ? onLoad : () => setIsMapLoaded(true)}
+            onLoad={onLoad ? onLoad : async () => setIsMapLoaded(true)}
             onUnmount={() => setIsMapLoaded(false)}>
             {isMapLoaded && children}
         </GoogleMap>

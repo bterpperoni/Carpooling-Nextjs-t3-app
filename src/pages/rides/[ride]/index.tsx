@@ -52,6 +52,7 @@ export default function Detail() {
         lat: ride?.destinationLatitude!, 
         lng: ride?.destinationLongitude!
     };
+    
     // Map options
     const zoom = 12;
     
