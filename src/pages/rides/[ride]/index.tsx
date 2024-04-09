@@ -38,7 +38,8 @@ export default function Detail() {
 
     // Set if ride can be edited
     const canEdit = sessionData?.user?.name === ride?.driverId;
-    
+    // Get booking id
+    const bookingId = userBooking?.[0]?.id ?? '';
     
     /* -------------------------------------------------------------------------------------------- */
 
@@ -97,10 +98,9 @@ export default function Detail() {
     // Check if user already subscribed to this ride
     useEffect(() => {
         if(userBooking && userBooking.length > 0) {
-            const bookingId = userBooking[0]?.id ?? '';
-            console.log('Vous avez déjà réservé ce trajet. Le numéro de réservation est:' + bookingId);
+            console.log('Vous avez déjà réservé ce trajet. Le numéro de réservation est ' + bookingId);
         }
-    }, [userBooking]);
+    }, [userBooking, bookingId]);
 
     // Redirect after delete
     useEffect(() => {
@@ -117,7 +117,6 @@ export default function Detail() {
         <LayoutMain>
             {/* ------------------------------------Card with ride details--------------------------------------------------- */}  
                     <>
-                        <Map zoom={zoom} onLoad={mapLoaded}/>
                         <RideDetail ride={ride}>
                                     {canEdit ? (
                                         <>
@@ -135,15 +134,28 @@ export default function Detail() {
                                             </div>
                                         </>
                                     ) : (
-                                        <>
-                                            <Button
-                                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md"
-                                                onClick={() => push(`/rides/${id as string}/booking`)}>
-                                                    Créer une réservation
-                                            </Button>
-                                        </>
+                                        <div className="mt-4">
+                                            {userBooking && userBooking.length === 0 ? (
+                                            <>
+                                                <Button
+                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md"
+                                                    onClick={() => push(`/rides/${id as string}/bookings/create`)}>
+                                                        Créer une réservation
+                                                </Button>
+                                            </>
+                                            ) : (
+                                            <>
+                                                <Button
+                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md"
+                                                    onClick={() => push(`/rides/${id as string}/bookings/${bookingId}`)}>
+                                                        Voir ma réservation
+                                                </Button>           
+                                            </>
+                                            )}
+                                        </div>
                                     )}
                         </RideDetail>
+                        <Map zoom={zoom} onLoad={mapLoaded}/>
                     </>
         </LayoutMain>
     </>
