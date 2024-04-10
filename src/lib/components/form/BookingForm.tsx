@@ -66,7 +66,7 @@ export default function BookingForm({ ride, booking }:
   // Redirect to ride page when booking is created
   useEffect(() => {
     if (bookingCreated) {
-      location.assign(`/rides/${ride?.id}`);
+      location.assign(`/rides/${ride?.id}/bookings/${bookingCreated.id}`);
     }
   }, [bookingCreated]);
 
@@ -100,7 +100,7 @@ export default function BookingForm({ ride, booking }:
     }
 
     if (origin && destinationBooking) {
-      async () => await getDistanceAndCheckEligibility();
+      void getDistanceAndCheckEligibility();
     }
   }, [
     destinationBooking,
@@ -195,14 +195,12 @@ export default function BookingForm({ ride, booking }:
               <p>
                 POINT DE PASSAGE -- DESTINATION:
                 <span className="text-[var(--pink-g1)]">
-                  {" "}
                   {distanceInKilometersB} km
                 </span>
               </p>
               <p>
                 Êtes-vous éligible à la réservation ?
                 <span className="text-[var(--pink-g1)]">
-                  {" "}
                   {bookingEligible ? "Oui" : "Non"}
                 </span>
               </p>
@@ -211,7 +209,6 @@ export default function BookingForm({ ride, booking }:
                   <p>
                     Prix estimé du trajet :
                     <span className="text-[var(--pink-g1)]">
-                      {" "}
                       ~ {priceRide} €
                     </span>
                   </p>

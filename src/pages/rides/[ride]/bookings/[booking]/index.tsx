@@ -33,6 +33,15 @@ export default function BookingDetails() {
     // Map options
     const zoom = 12;
 
+    // Display map with line between departure & destination after map is loaded
+    function mapLoaded(map: google.maps.Map) {
+        const directionsService = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer(
+            {map: map}
+        );     
+        displayRoute(directionsService, directionsRenderer);
+    }
+
     // Function to display line between driver departure & passenger pickup point
     function displayRoute(directionsService: google.maps.DirectionsService, directionsRenderer: google.maps.DirectionsRenderer) {
         directionsService.route(
@@ -45,21 +54,12 @@ export default function BookingDetails() {
                 if (status === google.maps.DirectionsStatus.OK) {
                     directionsRenderer.setDirections(response);
                 } else {
-                    alert("Directions request failed due to " + status);
+                    window.alert("Directions request failed due to " + status);
                 }
             }
         ).catch((err) => {
             console.log(err);
         });
-    }
-
-    // Display map with line between departure & destination after map is loaded
-    async function mapLoaded(map: google.maps.Map) {
-        const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer(
-            {map: map}
-        );     
-        displayRoute(directionsService, directionsRenderer);
     }
 
     if(sessionData){
@@ -123,7 +123,7 @@ export default function BookingDetails() {
                 }
                 `}</style>
             </div>
-            <Map zoom={zoom} onLoad={mapLoaded}/>
+            <Map zoom={zoom} onLoad={mapLoaded} />
         </LayoutMain>
         );
     }
