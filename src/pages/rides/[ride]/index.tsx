@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
-import LayoutMain from '../../../lib/components/layout/LayoutMain';
+import LayoutMain from '$/lib/components/layout/LayoutMain';
 import RideDetail from "$/lib/components/ride/RideDetail";
 
 /* ------------------------------------------------------------------------------------------------------------------------
-------------------------- Page to display details of a specific ride ------------------------------------------------------
+------------------------- Page to display details of ride ------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------ */
 export default function Detail() {
 

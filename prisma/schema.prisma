@@ -86,19 +86,13 @@ model Ride {
   departure            String
   departureLatitude    Float
   departureLongitude   Float
-  // The time match of the maximum time the driver must pick up his last passenger
-  // The time at which the driver should start will be calculated approximately based on the number of passengers, distance, etc.
   departureDateTime    DateTime 
   destination          String
   destinationLatitude  Float
   destinationLongitude Float
   maxPassengers        Int        
-  // The maximum distance that the driver can make a detour to pick up a passenger
-  // This field applies to EACH passenger (not the sum of all detours)
   maxDetourDist        Int        
   type                 RideType   @default(ALLER)
-  // the DATE for RETOUR ride it's the same of departure because the application is based on school timetables (so 1 day only)
-  // If the ride is a RETOUR, 'returnTime' is the time when the driver leaves the school
   returnTime           DateTime?
   status               RideStatus  @default(CREATED)
   group                Group?      @relation("GroupRides", fields: [groupId], references: [id])
@@ -115,8 +109,6 @@ model Booking {
   pickupLongitude Float
   price           String
   status          BookingStatus @default(CREATED)
-  // All passengers should rate the driver after the ride
-  // An average rating will be calculated and displayed on the driver's profile
   driverRating    Int?     
   ride       Ride   @relation("Passengers", fields: [rideId], references: [id], onDelete: Cascade)
   user       User   @relation("UserPassenger", fields: [userName], references: [name], onDelete: Cascade)
