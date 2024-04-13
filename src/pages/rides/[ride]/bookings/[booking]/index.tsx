@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { displayRoute } from "$/hook/distanceMatrix";
+import Button from "$/lib/components/button/Button";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import { api } from "$/utils/api";
@@ -14,9 +16,9 @@ export default function BookingDetails() {
     const { data: sessionData } = useSession();
 
     // Get id of ride & booking from url
-    const { query } = useRouter();
-    const rideId = query.ride;
-    const bookingId = query.booking;
+    const router = useRouter();
+    const rideId = router.query.ride;
+    const bookingId = router.query.booking;
     // Get ride by id
     const {data: ride} = api.ride.rideById.useQuery({id: parseInt(rideId as string)}, {enabled: sessionData?.user !== undefined});
     // Get booking by id
@@ -35,7 +37,7 @@ export default function BookingDetails() {
     // Map options
     const zoom = 12;
 
-
+//  
     function mapLoaded(map: google.maps.Map) {
         const directionsService = new google.maps.DirectionsService();
         const directionsRenderer = new google.maps.DirectionsRenderer(
@@ -45,6 +47,10 @@ export default function BookingDetails() {
     }
 
     if(sessionData){
+      function goToUpdateBookingPage(): void {
+        location.assign(`/rides/${rideId as string}/bookings/${bookingId}/update`);
+      }
+
         return (
         <LayoutMain>
             <div className="ride-details-container">
@@ -80,9 +86,12 @@ export default function BookingDetails() {
                       </div>
                   </div>
                 )}
-
-                {/* {children}   */}
-
+                <Button
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md mb-4"
+                    onClick={() => goToUpdateBookingPage()}>
+                        Voir ma réservation
+                </Button>   
+                <Map zoom={zoom} onLoad={mapLoaded} />
                 <style jsx>{`
                 .ride-details-container {
                   background-color: #ffffff;
@@ -105,7 +114,6 @@ export default function BookingDetails() {
                 }
                 `}</style>
             </div>
-            <Map zoom={zoom} onLoad={mapLoaded} />
         </LayoutMain>
         );
     }

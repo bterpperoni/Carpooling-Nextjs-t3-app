@@ -42,10 +42,12 @@ export default function BookingForm({ ride, booking }:
   const origin = ride?.departure ?? "";
   // Address of destination (got from 'ride' object)
   const destination = ride?.destination ?? "";
+  // Address of pickup point (got from booking object)
+  const destPickup = booking?.pickupPoint ?? "";
   // Address of pickup point + Latitude and Longitude (got from Autocomplete)
-  const [destinationBooking, setDestinationBooking] = useState<string>("");
-  const [destinationLatitude, setDestinationLatitude] = useState<number>();
-  const [destinationLongitude, setDestinationLongitude] = useState<number>();
+  const [destinationBooking, setDestinationBooking] = useState<string | null>(null);
+  const [destinationLatitude, setDestinationLatitude] = useState<number| null>(null);
+  const [destinationLongitude, setDestinationLongitude] = useState<number| null>(null);
   // Price for fuel per kilometer
   const fuelPrice = 0.15;
 
@@ -65,10 +67,10 @@ export default function BookingForm({ ride, booking }:
 
   // Redirect to ride page when booking is created
   useEffect(() => {
-    if (bookingCreated) {
-      location.assign(`/rides/${ride?.id}/bookings/${bookingCreated.id}`);
+    if (bookingCreated ?? bookingUpdated) {
+      location.assign(`/rides/${ride?.id}/bookings/${bookingCreated?.id ?? bookingUpdated?.id}`);
     }
-  }, [bookingCreated]);
+  }, [bookingCreated, bookingUpdated]);
 
   // ________________________________ STATE TO MANAGE ELIGIBILITY & PRICE FOR PASSENGER ________________________________
   useEffect(() => {
@@ -76,13 +78,13 @@ export default function BookingForm({ ride, booking }:
       /* ----DISTANCE A--- */
       const distanceInMetersEligibility = await calculateDistance(
         origin,
-        destinationBooking,
+        destinationBooking ?? destPickup,
       );
       const distanceEligibility = parseInt(distanceInMetersEligibility) / 1000;
       setDistanceInKilometersA(distanceEligibility);
       /* ----DISTANCE B--- */
       const distanceInMetersForTotal = await calculateDistance(
-        destinationBooking,
+        destinationBooking ?? destPickup,
         destination,
       );
       const distanceRest = parseInt(distanceInMetersForTotal) / 1000;
@@ -99,11 +101,12 @@ export default function BookingForm({ ride, booking }:
       }
     }
 
-    if (origin && destinationBooking) {
+    if (origin && (destinationBooking ?? destPickup)) {
       void getDistanceAndCheckEligibility();
     }
   }, [
     destinationBooking,
+    destPickup,
     origin,
     distanceInKilometersA,
     distanceInKilometersB,
@@ -113,19 +116,34 @@ export default function BookingForm({ ride, booking }:
   // When click on submit button
   function handleClick() {
     if (sessionData) {
-      // ------------------- Create booking -------------------
-      createBooking({
-        rideId: ride?.id ?? 0,
-        userName: sessionData.user.name,
-        pickupPoint: destinationBooking,
-        pickupLatitude: destinationLatitude ?? 0,
-        pickupLongitude: destinationLongitude ?? 0,
-        price: priceRide?.toString() ?? "0",
-        status: "CREATED",
-      });
+      if(booking) {
+        // ------------------- Update booking -------------------
+        updateBooking({
+          id: booking.id,
+          rideId: ride?.id ?? 0,
+          userName: sessionData.user.name,
+          pickupPoint: destinationBooking ?? destPickup,
+          pickupLatitude: destinationLatitude ?? booking.pickupLatitude,
+          pickupLongitude: destinationLongitude ?? booking.pickupLongitude,
+          price: priceRide?.toString() ?? booking.price,
+          status: "UPDATED",
+        });
+      }else {
+        // ------------------- Create booking -------------------
+        createBooking({
+          rideId: ride?.id ?? 0,
+          userName: sessionData.user.name,
+          pickupPoint: destinationBooking ?? '',
+          pickupLatitude: destinationLatitude ?? 0,
+          pickupLongitude: destinationLongitude ?? 0,
+          price: priceRide?.toString() ?? "0",
+          status: "CREATED",
+        });
+      }
     }
   }
 
+  // ________________________________ RENDER ________________________________
   return (
     <>
       <div className="mt-2 flex w-[90vw] flex-col p-2 md:flex-row">
@@ -140,6 +158,7 @@ export default function BookingForm({ ride, booking }:
         </label>
         {/* This autocomplete will be used as destination to calcul distance from driver departure to this address */}
         <Autocomplete
+          defaultValue={booking?.pickupPoint ?? ""}
           apiKey={apiKey}
           options={options}
           onPlaceSelected={async (place) => {
@@ -173,34 +192,33 @@ export default function BookingForm({ ride, booking }:
             Addresse du point de passage :
             <span className="text-[var(--pink-g1)]">
               {" "}
-              {destinationBooking
-                ? destinationBooking
-                : "Aucune addresse n'a été saisie"}
+              {(destinationBooking ?? destPickup) ? destinationBooking ?? destPickup : "Aucune addresse n'a été saisie"}
             </span>
           </p>
         </div>
       </div>
-      {destinationBooking && (
+      {(destinationBooking ?? destPickup) && (
         <>
           <div className="mt-5 flex w-[90vw] flex-col border-y-2 border-[var(--pink-g1)] p-2">
             <div className="text-xl text-white">
               <p>
-                DEPART -- POINT DE PASSAGE:
+                DEPART - Pt. DE PASSAGE:
                 <span className="text-[var(--pink-g1)]">
                   {" "}
                   {distanceInKilometersA} km
                 </span>
               </p>
               <p>
-                POINT DE PASSAGE -- DESTINATION:
+                Pt. DE PASSAGE - DESTINATION:
                 <span className="text-[var(--pink-g1)]">
+                  {" "}
                   {distanceInKilometersB} km
                 </span>
               </p>
               <p>
                 Êtes-vous éligible à la réservation ?
                 <span className="text-[var(--pink-g1)]">
-                  {bookingEligible ? "Oui" : "Non"}
+                  {bookingEligible ? " Oui" : " Non"}
                 </span>
               </p>
               {bookingEligible && (
@@ -218,13 +236,27 @@ export default function BookingForm({ ride, booking }:
           {bookingEligible && (
             <>
               <div className="m-4 mt-6 flex w-full flex-row items-center justify-around">
-                <Button
-                  onClick={handleClick}
-                  className="col-span-1 w-max rounded-full border-2 
-                                            border-[var(--pink-g1)] bg-[var(--purple-g3)] px-3 py-2 text-base text-white hover:bg-[var(--pink-g1)]"
-                >
-                  Confirmer la réservation
-                </Button>
+                {booking ? (
+                  <>
+                    <Button
+                      onClick={handleClick}
+                      className="col-span-1 w-max rounded-full border-2 
+                                 border-[var(--pink-g1)] bg-[var(--purple-g3)] px-3 py-2 text-base text-white hover:bg-[var(--pink-g1)]"
+                      >
+                      Modifier la réservation
+                    </Button> 
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      onClick={handleClick}
+                      className="col-span-1 w-max rounded-full border-2 
+                                 border-[var(--pink-g1)] bg-[var(--purple-g3)] px-3 py-2 text-base text-white hover:bg-[var(--pink-g1)]"
+                    >
+                      Confirmer la réservation
+                    </Button> 
+                  </>
+                )}
                 <Button
                   className="h-10 w-24 rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600"
                   onClick={() =>

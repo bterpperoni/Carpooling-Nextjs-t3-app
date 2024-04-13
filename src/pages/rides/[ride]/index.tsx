@@ -54,7 +54,7 @@ export default function Detail() {
     };
     
     // Map options
-    const zoom = 12;
+    const zoom = 13;
     
     // Function to display line between departure & destination
     function displayRoute(directionsService: google.maps.DirectionsService, directionsRenderer: google.maps.DirectionsRenderer) {
@@ -121,7 +121,7 @@ export default function Detail() {
                         <RideDetail ride={ride}>
                                     {canEdit ? (
                                         <>
-                                            <div className="flex justify-between">
+                                            <div className="flex justify-between my-4">
                                                 <Button 
                                                     onClick={handleEditClick}
                                                     className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md">
@@ -133,13 +133,14 @@ export default function Detail() {
                                                     Supprimer le trajet
                                                 </Button>
                                             </div>
+                                            <Map zoom={zoom} onLoad={mapLoaded}/>
                                         </>
                                     ) : (
-                                        <div className="mt-4">
+                                        <div className="my-4">
                                             {userBooking && userBooking.length === 0 ? (
                                             <>
                                                 <Button
-                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md"
+                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md mb-4"
                                                     onClick={() => push(`/rides/${id as string}/bookings/create`)}>
                                                         Créer une réservation
                                                 </Button>
@@ -147,16 +148,17 @@ export default function Detail() {
                                             ) : (
                                             <>
                                                 <Button
-                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md"
+                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md mb-4"
                                                     onClick={() => push(`/rides/${id as string}/bookings/${bookingId}`)}>
                                                         Voir ma réservation
                                                 </Button>           
                                             </>
                                             )}
+                                            <Map zoom={zoom} onLoad={mapLoaded}/>
                                         </div>
                                     )}
                         </RideDetail>
-                        <Map zoom={zoom} onLoad={mapLoaded}/>
+                       
                     </>
         </LayoutMain>
     </>

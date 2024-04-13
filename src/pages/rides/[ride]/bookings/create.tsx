@@ -5,13 +5,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import { useApiKey } from "$/context/api";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
-import Autocomplete  from 'react-google-autocomplete';
 import { useRouter } from "next/dist/client/router";
 import { signIn, useSession } from "next-auth/react";
 import Button from "$/lib/components/button/Button";
-import { calculateDistance } from "$/hook/distanceMatrix";
 import BookingForm from "$/lib/components/form/BookingForm";
 import { api } from "$/utils/api";
 

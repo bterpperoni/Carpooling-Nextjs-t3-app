@@ -29,7 +29,7 @@ export default function NewRide()  {
                                             p-4
                                             rounded-[12.5%]">
                                 Planifier un trajet
-                            </h2>
+                    </h2>
                     <NewRideForm />
                 </div>
             </LayoutMain>
