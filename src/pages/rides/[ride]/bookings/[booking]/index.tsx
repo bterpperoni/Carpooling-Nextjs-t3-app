@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
-import { displayRoute } from "$/hook/distanceMatrix";
 import Button from "$/lib/components/button/Button";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import { api } from "$/utils/api";
+import { Loader } from "@googlemaps/js-api-loader";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
+import { useEffect } from "react";
 // import { useEffect } from "react";
 
 
@@ -37,14 +39,61 @@ export default function BookingDetails() {
     // Map options
     const zoom = 12;
 
-//  
-    function mapLoaded(map: google.maps.Map) {
-        const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer(
-            {map: map}
-        );     
-        displayRoute(directionsService, directionsRenderer, departureLatLng, pickpointLatLng);
+    // Function to get route
+    async function getRoute(map: google.maps.Map) {
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer({ map: map});
+
+      const request: google.maps.DirectionsRequest = {
+          origin: departureLatLng,
+          destination: pickpointLatLng,
+          travelMode: google.maps.TravelMode.DRIVING
+      };
+      await directionsService.route(request, (result, status) => {
+          if (status === google.maps.DirectionsStatus.OK) {
+              directionsRenderer.setDirections(result);
+          }
+      });
     }
+
+
+    // async function mapLoaded(map: google.maps.Map) {
+    //     await getRoute(map);
+    //     // const directionsService = new google.maps.DirectionsService();
+    //     // const directionsRenderer = new google.maps.DirectionsRenderer(
+    //     //     {map: map}
+    //     // );     
+    //     // displayRoute(directionsService, directionsRenderer, departureLatLng, pickpointLatLng);
+    // }
+
+    useEffect(() => {
+      const loader = new Loader({
+          apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+          version: 'weekly',
+      });
+
+      void loader.importLibrary('places').then(async () => {
+          
+          // const directionsService = new google.maps.DirectionsService();
+          // const directionsRenderer = new google.maps.DirectionsRenderer();
+          const map = new google.maps.Map(document.getElementById('map')!, {
+              zoom: zoom,
+              center: departureLatLng
+          });
+          // directionsRenderer.setMap(map);
+          await getRoute(map);
+          // const request: google.maps.DirectionsRequest = {
+          //         origin: ride?.departureLatitude + ',' + ride?.departureLongitude,
+          //         destination: booking?.pickupLatitude + ',' + booking?.pickupLongitude,
+          //         travelMode: google.maps.TravelMode.DRIVING,
+          // };
+          // void directionsService.route(request, (result, status) => {
+          //         if (status === 'OK') {
+          //             directionsRenderer.setDirections(result);
+          //         }
+          //     });
+      });
+  }, []);
 
     if(sessionData){
       function goToUpdateBookingPage(): void {
@@ -91,7 +140,9 @@ export default function BookingDetails() {
                     onClick={() => goToUpdateBookingPage()}>
                         Voir ma réservation
                 </Button>   
-                <Map zoom={zoom} onLoad={mapLoaded} />
+                <div className="map">
+                  <Map zoom={zoom} />
+                </div>
                 <style jsx>{`
                 .ride-details-container {
                   background-color: #ffffff;
@@ -118,3 +169,5 @@ export default function BookingDetails() {
         );
     }
   };
+
+

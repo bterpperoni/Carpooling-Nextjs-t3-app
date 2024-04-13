@@ -18,8 +18,7 @@ export default function UpdateBooking() {
     const {data: rideForBooking} = api.ride.rideById.useQuery({id: parseInt(rideId)});
     // Get booking by id
     const { data: bookingToUpdate } = api.booking.bookingById.useQuery({id: parseInt(bookingId)}, {enabled: sessionData?.user !== undefined});
-
-    console.log(bookingToUpdate);
+    
     // ________________________________ RENDER ________________________________
     if(sessionData?.user) {
         return (

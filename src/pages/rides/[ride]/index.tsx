@@ -9,12 +9,14 @@ import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
 import LayoutMain from '$/lib/components/layout/LayoutMain';
 import RideDetail from "$/lib/components/ride/RideDetail";
+import { Loader } from '@googlemaps/js-api-loader';
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of ride ------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------ */
 export default function Detail() {
 
+    
     // Used to redirect after delete
     const [ rideDeleted, setrideDeleted ] = useState(false);
     // Get id from url
@@ -34,7 +36,7 @@ export default function Detail() {
         {enabled: sessionData?.user !== undefined});
 
 
-    console.log(userBooking);
+    // console.log(userBooking);
 
     // Set if ride can be edited
     const canEdit = sessionData?.user?.name === ride?.driverId;
@@ -55,34 +57,55 @@ export default function Detail() {
     
     // Map options
     const zoom = 13;
-    
-    // Function to display line between departure & destination
-    function displayRoute(directionsService: google.maps.DirectionsService, directionsRenderer: google.maps.DirectionsRenderer) {
+
+        // Function to display line between driver departure & passenger pickup point
+    async function displayRoute(directionsService: google.maps.DirectionsService, directionsRenderer: google.maps.DirectionsRenderer, origin: google.maps.LatLngLiteral, destination: google.maps.LatLngLiteral) {
         directionsService.route(
             {
-                origin: departureLatLng,
-                destination: destinationLatLng,
-                travelMode: google.maps.TravelMode.DRIVING,
+                origin: origin,
+                destination: destination,
+                travelMode: google.maps.TravelMode.DRIVING
             },
             (response: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
-                if (status === "OK") {
+                if (status === google.maps.DirectionsStatus.OK) {
                     directionsRenderer.setDirections(response);
                 } else {
-                    window.alert("Directions request failed due to " + status);
+                    console.log("Directions request failed due to " + status);
+                    console.log(response);
                 }
             }
         ).catch((err) => {
             console.log(err);
         });
     }
-   
+
+       // Function to get route
+    // async function getRoute(map: google.maps.Map) {
+    //  const directionsService = new google.maps.DirectionsService();
+    //  const directionsRenderer = new google.maps.DirectionsRenderer(
+    //      {map: map}
+    //  );
+    //  const request: google.maps.DirectionsRequest = {
+    //      origin: departureLatLng,
+    //      destination: destinationLatLng,
+    //      travelMode: google.maps.TravelMode.DRIVING
+    //  };
+    //  await directionsService.route(request, (result, status) => {
+    //      if (status === google.maps.DirectionsStatus.OK) {
+    //          directionsRenderer.setDirections(result);
+    //      }
+    //  });
+    // }
+
     // Display map with line between departure & destination after map is loaded
-    function mapLoaded(map: google.maps.Map) {
-        const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer(
-            {map: map}
-        );     
-        displayRoute(directionsService, directionsRenderer);
+    async function mapLoaded(map: google.maps.Map) {
+        // await getRoute(map);
+            console.log(map.get('map'));
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer(
+                {map: map}
+            );     
+            await displayRoute(directionsService, directionsRenderer, departureLatLng, destinationLatLng);
     }
 
     // Redirect to update ride page
@@ -99,9 +122,9 @@ export default function Detail() {
     // Check if user already subscribed to this ride
     useEffect(() => {
         if(userBooking && userBooking.length > 0) {
-            console.log('Vous avez déjà réservé ce trajet. Le numéro de réservation est ' + bookingId);
+             console.log('Vous avez déjà réservé ce trajet. Le numéro de réservation est ' + bookingId);
         }
-    }, [userBooking, bookingId]);
+    }, [userBooking]);
 
     // Redirect after delete
     useEffect(() => {
@@ -110,7 +133,6 @@ export default function Detail() {
                 void push('/rides');
         }
     }, [rideDeleted]);
-   
 
   if(!ride) return <div className="text-white m-6 text-3xl m-4 w-screen text-center">ride not found</div>
   return (

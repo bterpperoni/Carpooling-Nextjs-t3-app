@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import React, { useEffect, useRef, useState } from 'react';
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import React, { useRef, useState } from 'react';
+import { GoogleMap, LoadScriptNext } from '@react-google-maps/api';
 import type { MapProps } from '$/lib/types/types';
 import { useApiKey } from '$/context/api';
 
 function Map({ center, zoom, children, onLoad }: MapProps) {
 
-  const apiKey = useApiKey()!;
+  const apiKey = useApiKey();
 
   // Set the map container style
   const mapContainerStyle = {
@@ -18,27 +18,23 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
   const mapRef = useRef<google.maps.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
-  // Set the map options
-  useEffect(() => {
-    if (mapRef.current) {
-      console.log('mapRef.current', mapRef.current);
-    }
-  }, [mapRef]);
-
   if(!apiKey) return <div>Google maps api key is missing</div>
   return (
     <>
-      <LoadScript googleMapsApiKey={apiKey}>
+      <LoadScriptNext googleMapsApiKey={apiKey}>
         <GoogleMap
             id='map'
             center={center} 
             zoom={zoom} 
             mapContainerStyle={mapContainerStyle}
+            ref={(map) => {
+              mapRef.current = map as google.maps.Map | null;              
+            }}
             onLoad={onLoad ? onLoad : async () => setIsMapLoaded(true)}
-            onUnmount={() => setIsMapLoaded(false)}>
+            onUnmount={async () => setIsMapLoaded(false)}>
             {isMapLoaded && children}
         </GoogleMap>
-      </LoadScript>
+      </LoadScriptNext>
     </>
   );
 };

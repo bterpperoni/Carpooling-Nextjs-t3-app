@@ -49,7 +49,7 @@ export default function BookingForm({ ride, booking }:
   const [destinationLatitude, setDestinationLatitude] = useState<number| null>(null);
   const [destinationLongitude, setDestinationLongitude] = useState<number| null>(null);
   // Price for fuel per kilometer
-  const fuelPrice = 0.15;
+  const fuelPrice = 0.1;
 
   // Options for autocomplete
   const options = {
@@ -202,14 +202,14 @@ export default function BookingForm({ ride, booking }:
           <div className="mt-5 flex w-[90vw] flex-col border-y-2 border-[var(--pink-g1)] p-2">
             <div className="text-xl text-white">
               <p>
-                DEPART - Pt. DE PASSAGE:
+                Départ - Pt. passage:
                 <span className="text-[var(--pink-g1)]">
                   {" "}
                   {distanceInKilometersA} km
                 </span>
               </p>
               <p>
-                Pt. DE PASSAGE - DESTINATION:
+              Pt. passage - Destination:
                 <span className="text-[var(--pink-g1)]">
                   {" "}
                   {distanceInKilometersB} km
@@ -270,8 +270,19 @@ export default function BookingForm({ ride, booking }:
               </div>
             </>
           )}
+
         </>
       )}
+      <Button
+        className="h-10 w-24 rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600 my-4"
+        onClick={() =>
+          ride
+            ? location.assign(`/rides/${ride?.id}`)
+            : location.assign("/rides/")
+        }
+      >
+        Annuler
+      </Button>
     </>
   );
 }
