@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
 import { calculateDistance } from "$/hook/distanceMatrix";
 import type { Booking, Ride } from "@prisma/client";
+import { Loader } from '@googlemaps/js-api-loader';
+
 
 export default function BookingForm({ ride, booking }: 
     { 
@@ -23,10 +25,11 @@ export default function BookingForm({ ride, booking }:
   // ________________________________ STATE ________________________________
   const apiKey = useApiKey();
   // Get id from url
-  const { push } = useRouter();
+  const { query, push } = useRouter();
   // Session recovery
   const { data: sessionData } = useSession();
 
+  const rideIdQuery = query.ride as string;
   //  Max distance driver can go to pick up passenger
   const maxDistanceDetour = ride?.maxDetourDist ?? 0;
   // Distance in kilometers between driver departure and passenger destination
@@ -57,7 +60,7 @@ export default function BookingForm({ ride, booking }:
     strictBounds: false,
     types: ["address"],
   };
-
+    
   // Create new booking
   const { data: bookingCreated, mutate: createBooking } =
     api.booking.create.useMutation();

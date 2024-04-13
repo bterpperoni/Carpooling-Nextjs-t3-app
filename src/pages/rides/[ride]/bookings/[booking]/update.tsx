@@ -10,14 +10,14 @@ export default function UpdateBooking() {
     // Get session
     const { data: sessionData } = useSession();
     // Get router
-    const router = useRouter();
+    const { query } = useRouter();
     // Get RideId from url
-    const rideId = router.query.ride as string;
-    const bookingId = router.query.booking as string;
+    const rideId = query.ride;
+    const bookingId = query.booking;
     // Get ride by id
-    const {data: rideForBooking} = api.ride.rideById.useQuery({id: parseInt(rideId)});
+    const {data: rideForBooking} = api.ride.rideById.useQuery({id: parseInt(rideId as string)}, {enabled: sessionData?.user !== undefined});
     // Get booking by id
-    const { data: bookingToUpdate } = api.booking.bookingById.useQuery({id: parseInt(bookingId)}, {enabled: sessionData?.user !== undefined});
+    const { data: bookingToUpdate } = api.booking.bookingById.useQuery({id: parseInt(bookingId as string)}, {enabled: sessionData?.user !== undefined});
     
     // ________________________________ RENDER ________________________________
     if(sessionData?.user) {

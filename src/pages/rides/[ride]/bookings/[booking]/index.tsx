@@ -1,15 +1,14 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
-import { useApiKey } from "$/context/api";
+import { displayRoute } from "$/hook/distanceMatrix";
 import Button from "$/lib/components/button/Button";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import { api } from "$/utils/api";
-import { Loader } from "@googlemaps/js-api-loader";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
-import { useEffect } from "react";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of booking ------------------------------------------------------
@@ -28,6 +27,9 @@ export default function BookingDetails() {
     // Get booking by id
     const { data: booking } = api.booking.bookingById.useQuery({id: parseInt(bookingId as string)}, {enabled: sessionData?.user !== undefined});
 
+    // Delete booking
+    const { mutate: deleteBooking } = api.booking.delete.useMutation();
+
     // Get lat & lng of driver departure & pick up point passenger
     const departureLatLng: google.maps.LatLngLiteral = { 
         lat: ride?.departureLatitude ?? 0, 
@@ -40,40 +42,21 @@ export default function BookingDetails() {
 
     // Map options
     const zoom = 12;
-    const apiKey = useApiKey();
 
-    useEffect(() => {
-    // Function to get route
-    async function getRoute(map: google.maps.Map) {
-      const directionsService = new google.maps.DirectionsService();
-      const directionsRenderer = new google.maps.DirectionsRenderer({ map: map});
-
-      const request: google.maps.DirectionsRequest = {
-          origin: departureLatLng,
-          destination: pickpointLatLng,
-          travelMode: google.maps.TravelMode.DRIVING
-      };
-      await directionsService.route(request, (result, status) => {
-          if (status === google.maps.DirectionsStatus.OK) {
-              directionsRenderer.setDirections(result);
-          }
-      });
-    }
-
-    // Load google maps
-    const loader = new Loader({
-      apiKey: apiKey!,
-      version: 'weekly',
-    });
-
-    void loader.importLibrary('core').then(async () => {
-      const map: google.maps.Map = new google.maps.Map(document.getElementById('map')!, {
-        zoom: zoom,
-        center: departureLatLng
-      });
-      await getRoute(map);
-    });
-  }, []);
+   // Display map with line between departure & destination after map is loaded
+  async function mapLoaded(map: google.maps.Map) {
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+    setTimeout(async () => {
+      console.log("fu mapLoaded");
+      }, 5000);
+      await displayRoute(
+        directionsService,
+        directionsRenderer,
+        departureLatLng,
+        pickpointLatLng
+      )
+  }
 
     if(sessionData){
       function goToUpdateBookingPage(): void {
@@ -82,17 +65,26 @@ export default function BookingDetails() {
 
         return (
         <LayoutMain>
+          <div className="flex flex-col items-center">
+                <h2 className=" md:text-4xl 
+                                text-2xl 
+                                font-bold 
+                                mb-4 mt-4  
+                                w-[fit-content]
+                                text-center 
+                                text-white
+                                border-y-2
+                                border-fuchsia-700
+                                p-4
+                                rounded-[12.5%]">
+                    Détails de la réservation
+                </h2>
+            </div>
             <div className="ride-details-container">
                 <div className="ride-info flex flex-row justify-between">
                   <div>
                       <span className="label">Départ:</span>
-                      {ride?.departure}
-                  </div>
-                </div>
-                <div className="ride-info flex flex-row justify-between">
-                  <div>
-                      <span className="label">Date de départ:</span>
-                      Le {ride?.departureDateTime.toLocaleDateString()} à {ride?.departureDateTime.toLocaleTimeString()}
+                      {ride?.departure.split(',', 2).toString()} le {ride?.departureDateTime.toLocaleDateString()} à {ride?.departureDateTime.toLocaleTimeString()}
                   </div>
                 </div>
                 <div className="ride-info flex flex-row justify-between">
@@ -115,14 +107,46 @@ export default function BookingDetails() {
                       </div>
                   </div>
                 )}
-                <Button
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md mb-4"
+                <div className="flex flex-row justify-between w-auto h-full my-5">
+                  <Button
+                    className=" border-2 
+                                bg-blue-500 
+                                hover:bg-white 
+                                hover:text-blue-500 
+                                hover:border-2 
+                                hover:border-blue-500 
+                                text-white 
+                                px-3 py-2 
+                                rounded-md 
+                                h-max
+                                mb-4 mt-3"
                     onClick={() => goToUpdateBookingPage()}>
-                        Voir ma réservation
-                </Button>   
-                <div className="map">
-                  <Map zoom={zoom} />
+                        Modifier la réservation
+                  </Button>
+                  <Button
+                    onClick={() => deleteBooking({ id: parseInt(bookingId as string) }, 
+                      { onSuccess: () =>{ 
+                        alert("La réservation a été supprimée avec succès");
+                        void router.push(`/rides/${rideId}`)} 
+                      })
+                    }
+                    className="rounded-md
+                               bg-red-500 
+                               hover:border-2 
+                               hover:bg-white
+                               hover:text-red-500
+                               hover:border-red-500 
+                               hover:text-white 
+                               px-3 py-2 
+                               text-white  
+                               h-max
+                               mb-4 mt-3"
+                  >
+                    Supprimer le trajet
+                  </Button>   
                 </div>
+                
+                <Map zoom={zoom} onLoad={mapLoaded} />
                 <style jsx>{`
                 .ride-details-container {
                   background-color: #ffffff;

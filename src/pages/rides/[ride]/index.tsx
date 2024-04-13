@@ -9,6 +9,8 @@ import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import RideDetail from "$/lib/components/ride/RideDetail";
+import { displayRoute } from "$/hook/distanceMatrix";
+import Link from "next/link";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of ride ------------------------------------------------------
@@ -52,40 +54,10 @@ export default function Detail() {
   // Map options
   const zoom = 13;
   /* -------------------------------------------------------------------------------------------- */
-  // Function to display line between driver departure & passenger pickup point
-  async function displayRoute(
-    directionsService: google.maps.DirectionsService,
-    directionsRenderer: google.maps.DirectionsRenderer,
-    origin: google.maps.LatLngLiteral,
-    destination: google.maps.LatLngLiteral,
-  ) {
-    directionsService
-      .route(
-        {
-          origin: origin,
-          destination: destination,
-          travelMode: google.maps.TravelMode.DRIVING,
-        },
-        (
-          response: google.maps.DirectionsResult | null,
-          status: google.maps.DirectionsStatus,
-        ) => {
-          if (status === google.maps.DirectionsStatus.OK) {
-            directionsRenderer.setDirections(response);
-          } else {
-            console.log("Directions request failed due to " + status);
-            console.log("Response: ", response);
-          }
-        },
-      )
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  
 
   // Display map with line between departure & destination after map is loaded
   async function mapLoaded(map: google.maps.Map) {
-    console.log(map.get("map"));
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
     await displayRoute(
@@ -135,6 +107,21 @@ export default function Detail() {
       <LayoutMain>
         {/* ------------------------------------Card with ride details--------------------------------------------------- */}
         <>
+          <div className="flex flex-col items-center">
+              <h2 className=" md:text-4xl 
+                                text-2xl 
+                                font-bold 
+                                mb-4 mt-4  
+                                w-[fit-content]
+                                text-center 
+                                text-white
+                                border-y-2
+                                border-fuchsia-700
+                                p-4
+                                rounded-[12.5%]">
+                  Détails du trajet
+                </h2>
+            </div>
           <RideDetail ride={ride}>
             {canEdit ? (
               <>
@@ -158,14 +145,12 @@ export default function Detail() {
               <div className="my-4">
                 {userBooking && userBooking.length === 0 ? (
                   <>
-                    <Button
-                      className="mb-4 rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
-                      onClick={() =>
-                        push(`/rides/${id as string}/bookings/create`)
-                      }
+                    <Link
+                      className="mb-4 rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 mb-6"
+                      href={`/rides/${id as string}/bookings/create`}
                     >
                       Créer une réservation
-                    </Button>
+                    </Link>
                   </>
                 ) : (
                   <>
