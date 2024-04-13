@@ -2,6 +2,7 @@
 import type { RideDetailsProps } from "$/lib/types/interfaces";
 import React from 'react';
 import { getCampusNameWithAddress } from "$/utils/data/school";
+import { RideType } from "@prisma/client";
 
 const rideDetail: React.FC<RideDetailsProps> = ({ ride, children }: RideDetailsProps) => {
 
@@ -27,7 +28,7 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children }: RideDetailsP
             {campusName ?? ride.destination}
         </div>
       </div>
-      {ride.returnTime != null && (
+      {ride.type === RideType.RETOUR && ride.returnTime && (
         <div className="ride-info flex flex-row justify-between">
             <div>
                 <span className="label">Heure de retour:</span>

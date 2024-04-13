@@ -257,16 +257,6 @@ export default function BookingForm({ ride, booking }:
                     </Button> 
                   </>
                 )}
-                <Button
-                  className="h-10 w-24 rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600"
-                  onClick={() =>
-                    ride
-                      ? location.assign(`/rides/${ride?.id}`)
-                      : location.assign("/rides/")
-                  }
-                >
-                  Annuler
-                </Button>
               </div>
             </>
           )}
@@ -276,11 +266,8 @@ export default function BookingForm({ ride, booking }:
       <Button
         className="h-10 w-24 rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600 my-4"
         onClick={() =>
-          ride
-            ? location.assign(`/rides/${ride?.id}`)
-            : location.assign("/rides/")
-        }
-      >
+          booking ? location.assign(`/rides/${ride?.id}/bookings/${booking?.id}`) : location.assign(`/rides/${ride?.id}/`)
+        }>
         Annuler
       </Button>
     </>

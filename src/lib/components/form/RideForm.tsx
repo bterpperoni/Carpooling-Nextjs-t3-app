@@ -49,7 +49,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
     // Time of departure and destination
     const [timeDeparture, setTimeDeparture] = useState<Dayjs | null>();
     // Is a return ride ? 
-    const [isRideReturn, setisRideReturn] = useState<boolean>(ride && ride?.type === RideType.RETOUR ? true : false);
+    const [isRideReturn, setisRideReturn] = useState<boolean>(ride?.type === RideType.RETOUR ? true : false);
     // If return
     const [timeReturn, setTimeReturn] = useState<Dayjs | null>(ride?.returnTime ? dayjs(ride.returnTime) : null);
 
@@ -189,7 +189,7 @@ export default function RideForm({ ride, isForGroup, groupId }:
                             returnTime: tmpTimeReturn ?? ride.returnTime,
                             maxBookings: maxBooking ?? ride.maxPassengers,
                             maxDistance: maxDistance ?? ride.maxDetourDist,
-                            type: isRideReturn ? 'ALLER' : 'RETOUR',
+                            type: isRideReturn ? 'RETOUR' : 'ALLER',
                             status: dateDeparture?.isSame(dayjs()) ? RideStatus.IN_PROGRESS : ride.status,
                         });
                     }  
@@ -418,16 +418,16 @@ export default function RideForm({ ride, isForGroup, groupId }:
                                             A quelle heure démarrez-vous pour rentrez à votre domicile ?
                                         </p>
                                         <DateTimeSelect
-                                            defaultDate={ride?.departureDateTime?.toDateString() ? 
-                                                        dayjs(ride.departureDateTime?.toDateString()) 
-                                                        : dateDeparture
-                                                    }
-                                            defaultTime={ride?.departureDateTime?.toDateString() ? 
-                                                        dayjs(ride?.departureDateTime)
-                                                        .set('hour' , ride?.departureDateTime?.getHours())
-                                                        .set('minute', ride?.departureDateTime?.getMinutes()) 
-                                                        : null
-                                                    }
+                                            defaultDate={ride?.returnTime?.toDateString() ? 
+                                                dayjs(ride.returnTime.toDateString()) 
+                                                : dateDeparture
+                                            }
+                                            defaultTime={ride?.returnTime?.toDateString() ? 
+                                                dayjs(ride?.departureDateTime)
+                                                .set('hour' , ride?.returnTime?.getHours())
+                                                .set('minute', ride?.returnTime?.getMinutes()) 
+                                                : null
+                                            }
                                             labelexpTime='H. DE DEPART' 
                                             labelexp="DATE DE DEPART"
                                             disableDate={false}

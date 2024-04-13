@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
+import { useApiKey } from "$/context/api";
 import Button from "$/lib/components/button/Button";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
@@ -9,9 +10,10 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { useEffect } from "react";
-// import { useEffect } from "react";
 
-
+/* ------------------------------------------------------------------------------------------------------------------------
+------------------------- Page to display details of booking ------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------ */
 export default function BookingDetails() {
 
     // Session recovery
@@ -38,7 +40,9 @@ export default function BookingDetails() {
 
     // Map options
     const zoom = 12;
+    const apiKey = useApiKey();
 
+    useEffect(() => {
     // Function to get route
     async function getRoute(map: google.maps.Map) {
       const directionsService = new google.maps.DirectionsService();
@@ -56,43 +60,19 @@ export default function BookingDetails() {
       });
     }
 
+    // Load google maps
+    const loader = new Loader({
+      apiKey: apiKey!,
+      version: 'weekly',
+    });
 
-    // async function mapLoaded(map: google.maps.Map) {
-    //     await getRoute(map);
-    //     // const directionsService = new google.maps.DirectionsService();
-    //     // const directionsRenderer = new google.maps.DirectionsRenderer(
-    //     //     {map: map}
-    //     // );     
-    //     // displayRoute(directionsService, directionsRenderer, departureLatLng, pickpointLatLng);
-    // }
-
-    useEffect(() => {
-      const loader = new Loader({
-          apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-          version: 'weekly',
+    void loader.importLibrary('core').then(async () => {
+      const map: google.maps.Map = new google.maps.Map(document.getElementById('map')!, {
+        zoom: zoom,
+        center: departureLatLng
       });
-
-      void loader.importLibrary('places').then(async () => {
-          
-          // const directionsService = new google.maps.DirectionsService();
-          // const directionsRenderer = new google.maps.DirectionsRenderer();
-          const map = new google.maps.Map(document.getElementById('map')!, {
-              zoom: zoom,
-              center: departureLatLng
-          });
-          // directionsRenderer.setMap(map);
-          await getRoute(map);
-          // const request: google.maps.DirectionsRequest = {
-          //         origin: ride?.departureLatitude + ',' + ride?.departureLongitude,
-          //         destination: booking?.pickupLatitude + ',' + booking?.pickupLongitude,
-          //         travelMode: google.maps.TravelMode.DRIVING,
-          // };
-          // void directionsService.route(request, (result, status) => {
-          //         if (status === 'OK') {
-          //             directionsRenderer.setDirections(result);
-          //         }
-          //     });
-      });
+      await getRoute(map);
+    });
   }, []);
 
     if(sessionData){
