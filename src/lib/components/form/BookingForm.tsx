@@ -133,10 +133,9 @@ export default function BookingForm({ ride, booking }:
         <label
           htmlFor="destination"
           className=" mb-1 
-                                    mr-2 
-                                    text-[1.25rem] 
-                                    text-[var(--pink-g1)] md:text-2xl"
-        >
+                      mr-2 
+                      text-[1.25rem] 
+                      text-[var(--pink-g1)] md:text-2xl">
           Où souhaitez vous que {ride?.driverId} vous récupère ?
         </label>
         {/* This autocomplete will be used as destination to calcul distance from driver departure to this address */}

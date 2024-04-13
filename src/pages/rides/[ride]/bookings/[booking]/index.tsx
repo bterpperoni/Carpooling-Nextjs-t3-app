@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
+import { displayRoute } from "$/hook/distanceMatrix";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import { api } from "$/utils/api";
@@ -33,33 +35,13 @@ export default function BookingDetails() {
     // Map options
     const zoom = 12;
 
-    // Display map with line between departure & destination after map is loaded
+
     function mapLoaded(map: google.maps.Map) {
         const directionsService = new google.maps.DirectionsService();
         const directionsRenderer = new google.maps.DirectionsRenderer(
             {map: map}
         );     
-        displayRoute(directionsService, directionsRenderer);
-    }
-
-    // Function to display line between driver departure & passenger pickup point
-    function displayRoute(directionsService: google.maps.DirectionsService, directionsRenderer: google.maps.DirectionsRenderer) {
-        directionsService.route(
-            {
-                origin: departureLatLng,
-                destination: pickpointLatLng,
-                travelMode: google.maps.TravelMode.DRIVING,
-            },
-            (response: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
-                if (status === google.maps.DirectionsStatus.OK) {
-                    directionsRenderer.setDirections(response);
-                } else {
-                    window.alert("Directions request failed due to " + status);
-                }
-            }
-        ).catch((err) => {
-            console.log(err);
-        });
+        displayRoute(directionsService, directionsRenderer, departureLatLng, pickpointLatLng);
     }
 
     if(sessionData){

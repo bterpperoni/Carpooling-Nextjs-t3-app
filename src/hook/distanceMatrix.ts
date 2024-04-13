@@ -38,3 +38,25 @@ export async function calculateDistance(origin: string, destination: string): Pr
       );
     });
 }
+
+
+    // Function to display line between driver departure & passenger pickup point
+export function displayRoute(directionsService: google.maps.DirectionsService, directionsRenderer: google.maps.DirectionsRenderer, origin: google.maps.LatLngLiteral, destination: google.maps.LatLngLiteral) {
+      directionsService.route(
+          {
+              origin: origin,
+              destination: destination,
+              travelMode: google.maps.TravelMode.DRIVING
+          },
+          (response: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
+              if (status === google.maps.DirectionsStatus.OK) {
+                  directionsRenderer.setDirections(response);
+              } else {
+                  console.log("Directions request failed due to " + status);
+                  console.log(response);
+              }
+          }
+      ).catch((err) => {
+          console.log(err);
+      });
+  }

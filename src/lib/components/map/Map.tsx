@@ -6,7 +6,7 @@ import { useApiKey } from '$/context/api';
 
 function Map({ center, zoom, children, onLoad }: MapProps) {
 
-  const apiKey = useApiKey();
+  const apiKey = useApiKey()!;
 
   // Set the map container style
   const mapContainerStyle = {
@@ -29,7 +29,8 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
   return (
     <>
       <LoadScript googleMapsApiKey={apiKey}>
-        <GoogleMap 
+        <GoogleMap
+            id='map'
             center={center} 
             zoom={zoom} 
             mapContainerStyle={mapContainerStyle}
