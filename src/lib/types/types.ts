@@ -24,6 +24,7 @@ export type MapProps = {
   zoom: number;
   children?: React.ReactNode | undefined;
   onLoad?: (map: google.maps.Map) => void;
+  reference?: google.maps.Map | null;
 };
 
 

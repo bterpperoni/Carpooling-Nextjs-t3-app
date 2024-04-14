@@ -10,7 +10,6 @@ import Map from "$/lib/components/map/Map";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import RideDetail from "$/lib/components/ride/RideDetail";
 import { displayRoute } from "$/hook/distanceMatrix";
-import Link from "next/link";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of ride ------------------------------------------------------
@@ -26,8 +25,7 @@ export default function Detail() {
   // Get ride by id
   const { data: ride } = api.ride.rideById.useQuery(
     { id: parseInt(id as string) },
-    { enabled: sessionData?.user !== undefined },
-  );
+    { enabled: sessionData?.user !== undefined });
   // Used to delete ride
   const { mutate: deleteride } = api.ride.delete.useMutation();
   // Get if a user already subscribed to this ride
@@ -57,10 +55,10 @@ export default function Detail() {
   
 
   // Display map with line between departure & destination after map is loaded
-  async function mapLoaded(map: google.maps.Map) {
+  function mapLoaded(map: google.maps.Map) {
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
-    await displayRoute(
+    displayRoute(
       directionsService,
       directionsRenderer,
       departureLatLng,
@@ -86,7 +84,7 @@ export default function Detail() {
           bookingId,
       );
     }
-  }, [userBooking]);
+  }, []);
 
   // Redirect after delete
   useEffect(() => {
@@ -145,19 +143,21 @@ export default function Detail() {
               <div className="my-4">
                 {userBooking && userBooking.length === 0 ? (
                   <>
-                    <Link
+                    <Button
                       className="mb-4 rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 mb-6"
-                      href={`/rides/${id as string}/bookings/create`}
+                      onClick={() =>
+                        window.location.assign(`/rides/${id as string}/bookings/create`)
+                      }
                     >
                       Créer une réservation
-                    </Link>
+                    </Button>
                   </>
                 ) : (
                   <>
                     <Button
                       className="mb-4 rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
                       onClick={() =>
-                        push(`/rides/${id as string}/bookings/${bookingId}`)
+                        window.location.assign(`/rides/${id as string}/bookings/${bookingId}`)
                       }
                     >
                       Voir ma réservation

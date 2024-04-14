@@ -42,8 +42,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_PAYPAL_CLIENT_ID: z.string(),
-    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: z.string()
+    NEXT_PUBLIC_PAYPAL_CLIENT_ID: z.string()
   },
 
   /**
@@ -60,8 +59,7 @@ export const env = createEnv({
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
     PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
     PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET,
-    NEXT_PUBLIC_PAYPAL_CLIENT_ID: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
-    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+    NEXT_PUBLIC_PAYPAL_CLIENT_ID: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

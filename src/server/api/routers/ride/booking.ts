@@ -14,20 +14,13 @@ export const bookingRouter = createTRPCRouter({
 
 
   bookingById: protectedProcedure
-  .input(
-    z.object({
-      id: z.number(),
-    })
-  ).query(async ({ ctx, input }) => {
-    return ctx.db.booking.findUnique({
-      where: {
-        id: input.id,
-      },
-    });
-  }),
-
+        .input(z.object({ id: z.number() }))
+        .query(async ({ ctx, input }) => {
+          return ctx.db.booking.findUnique({
+            where: { id: input.id },
+          });
+        }),
   
-  // Get all bookings for a specific ride
   bookingByRideId: protectedProcedure
   .input(
     z.object({

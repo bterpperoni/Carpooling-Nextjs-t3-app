@@ -4,7 +4,7 @@ import { GoogleMap, LoadScriptNext } from '@react-google-maps/api';
 import type { MapProps } from '$/lib/types/types';
 import { useApiKey } from '$/context/api';
 
-function Map({ center, zoom, children, onLoad }: MapProps) {
+function Map({ center, zoom, children, onLoad, reference }: MapProps) {
 
   const apiKey = useApiKey();
 
@@ -15,7 +15,7 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
   };
 
   // Access the map object
-  const mapRef = useRef<google.maps.Map | null>(null);
+  // const mapRef = useRef<google.maps.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   if(!apiKey) return <div>Google maps api key is missing</div>
@@ -28,7 +28,7 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
             zoom={zoom} 
             mapContainerStyle={mapContainerStyle}
             ref={(map) => {
-              mapRef.current = map as google.maps.Map | null;              
+              {reference} map as google.maps.Map | null | undefined;            
             }}
             onLoad={onLoad ? onLoad : async () => setIsMapLoaded(true)}
             onUnmount={async () => setIsMapLoaded(false)}>

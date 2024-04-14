@@ -1,3 +1,5 @@
+'use strict';
+
 export async function calculateDistance(origin: string, destination: string): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
@@ -34,28 +36,27 @@ export async function calculateDistance(origin: string, destination: string): Pr
 
 
 // Function to display line between driver departure & passenger pickup point
-export async function displayRoute(
+export function displayRoute(
   directionsService: google.maps.DirectionsService,
   directionsRenderer: google.maps.DirectionsRenderer,
   origin: google.maps.LatLngLiteral,
   destination: google.maps.LatLngLiteral,
-) {
-  directionsService
-    .route(
+): void {
+  console.log("Origin: ", origin, "\nDestination: ", destination);
+  directionsService.route(
       {
         origin: origin,
         destination: destination,
-        travelMode: google.maps.TravelMode.DRIVING,
+        travelMode: google.maps.TravelMode.DRIVING
       },
       (
-        response: google.maps.DirectionsResult | null,
+        result: google.maps.DirectionsResult | null,
         status: google.maps.DirectionsStatus,
       ) => {
         if (status === google.maps.DirectionsStatus.OK) {
-          directionsRenderer.setDirections(response);
+          directionsRenderer.setDirections(result);
         } else {
           console.log("Directions request failed due to " + status);
-          console.log("Response: ", response);
         }
       },
     ).catch((err) => {
