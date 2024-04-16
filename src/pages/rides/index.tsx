@@ -98,7 +98,7 @@ const AllRides: React.FC = () => {
                             </>
                         )}
                         {/* -------------------------------------- display map ---------------------------------------------- */}
-                        {!checked &&
+                        {!checked ? (
                         <>
                             <Map center={center} zoom={zoom}>
                                 {rideList?.map((ride) => (
@@ -111,10 +111,10 @@ const AllRides: React.FC = () => {
                                 ))}
                             </Map>
                         </>
-                        }
+                        ) : null}
                     </div>
                 </LayoutMain>
-            </>
+            </> 
         );
     };
     

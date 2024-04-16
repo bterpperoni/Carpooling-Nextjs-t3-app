@@ -10,7 +10,8 @@ import Map from "$/lib/components/map/Map";
 import { api } from "$/utils/api";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { displayRoute } from '../../../../../hook/distanceMatrix';
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of booking ------------------------------------------------------
@@ -36,14 +37,24 @@ export default function BookingDetails() {
       { id: parseInt(rideIdFromUrl as string) },
       { enabled: sessionData?.user !== undefined },
     );
+
+  // Map ref
+  const mapRef = useRef<google.maps.Map | null>(null);
   
   useEffect(() => {
     // Set the booking if it's fetched
-    if (fetchedBooking) {
+    if (fetchedBooking !== undefined && fetchedRide !== undefined) {
+      if((departureLatLng && destinationLatLng) !== undefined)
       console.log("Booking verified :", fetchedBooking);
       console.log("Ride verified :", fetchedRide);
+      console.log("Departure : ", departureLatLng, "\nDestination: ", destinationLatLng);
+      console.log("Map ref : ", mapRef.current);
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer();
+      directionsRenderer.setMap(mapRef.current);
+      displayRoute(directionsService, directionsRenderer, departureLatLng, destinationLatLng);
     }
-  }, [fetchedBooking]);
+  }, [fetchedBooking, mapRef]);
 
   // Delete booking
   const { mutate: deleteBooking } = api.booking.delete.useMutation();
@@ -61,13 +72,12 @@ export default function BookingDetails() {
   // Map options
   const zoom = 12;
 
-  // Display map with line between departure & destination after map is loaded
-  async function mapLoaded() {
-    // const directionsService = new google.maps.DirectionsService();
-    // const directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
-    console.log("Departure : ", departureLatLng, "\nDestination: ", destinationLatLng);
+  // Set the map ref when it's loaded
+  async function mapLoaded(map: google.maps.Map) {
+    mapRef.current = map;
   }
-
+  
+ 
   if (sessionData) {
     return (
       <LayoutMain>
@@ -165,7 +175,6 @@ export default function BookingDetails() {
               Supprimer le trajet
             </Button>
           </div>
-
           <Map zoom={zoom} onLoad={mapLoaded} />
           <style jsx>{`
             .ride-details-container {

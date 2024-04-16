@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-sync-scripts */
 import NavBar from "$/lib/components/nav/Nav";
 
 export default function LayoutMain({ children }: { children: React.ReactNode }) {

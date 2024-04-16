@@ -1,5 +1,3 @@
-'use strict';
-
 export async function calculateDistance(origin: string, destination: string): Promise<string> {
   return new Promise((resolve, reject) => {
     try {

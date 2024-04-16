@@ -5,6 +5,7 @@ import {SessionProvider} from "next-auth/react";
 import {type AppType} from "next/app";
 import {api} from "$/utils/api";
 import {ApiKeyProvider} from "$/context/api";
+import { StrictMode } from "react";
 
 
 const Carheh: AppType<{ session: Session | null }> = ({
@@ -12,11 +13,13 @@ const Carheh: AppType<{ session: Session | null }> = ({
     pageProps: {session, ...pageProps},
 }) => {
     return (
-        <ApiKeyProvider>
+        <StrictMode>
+            <ApiKeyProvider>
             <SessionProvider session={session}>
                     <Component {...pageProps} />
             </SessionProvider>
         </ApiKeyProvider>
+        </StrictMode>
     );
 };
 
