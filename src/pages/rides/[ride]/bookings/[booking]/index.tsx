@@ -42,7 +42,7 @@ export default function BookingDetails() {
   const mapRef = useRef<google.maps.Map | null>(null);
   
   useEffect(() => {
-    // Set the booking if it's fetched
+    // Display route on map when booking & ride are fetched
     if (fetchedBooking !== undefined && fetchedRide !== undefined) {
       if((departureLatLng && destinationLatLng) !== undefined)
       console.log("Booking verified :", fetchedBooking);
@@ -146,7 +146,7 @@ export default function BookingDetails() {
                 )
               }
             >
-              Modifier la réservation
+              Modifier votre réservation
             </Button>
             <Button
               onClick={() =>
@@ -172,7 +172,7 @@ export default function BookingDetails() {
                                hover:bg-white
                                hover:text-red-500 hover:text-white"
             >
-              Supprimer le trajet
+              Supprimer la réservation
             </Button>
           </div>
           <Map zoom={zoom} onLoad={mapLoaded} />

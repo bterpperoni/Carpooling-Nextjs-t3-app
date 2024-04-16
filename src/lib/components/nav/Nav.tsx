@@ -10,7 +10,7 @@ const navigation = [
   { name: 'Rides', href: '/rides', current: false },
   { name: 'Wallet', href: '/wallet', current: false },
   { name: 'Social', href: '/social/groups', current: false },
-  { name: 'Calendar', href: '/calendar/user', current: false },
+  { name: 'Calendar', href: '/calendar/', current: false },
 ]
 
 function classNames(...classes: string[]) {
