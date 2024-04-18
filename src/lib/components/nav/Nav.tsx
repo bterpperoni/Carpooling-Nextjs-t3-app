@@ -4,6 +4,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
+import Image from 'next/image'
 
 const navigation = [
   { name: 'Home', href: '/', current: false },
@@ -64,9 +65,11 @@ export default function Nav() {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <img
-                    className="h-8 w-auto"
-                    src="/public/car.png"
+                  <Image
+                    width={20}
+                    height={20}
+                    className="h-8 w-auto rounded-full"
+                    src="/images/logo.png"
                     alt="CarHeh"
                   />
                 </div>

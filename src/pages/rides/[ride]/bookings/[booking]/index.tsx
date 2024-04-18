@@ -11,13 +11,12 @@ import { api } from "$/utils/api";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { useEffect, useRef } from "react";
-import { displayRoute } from '../../../../../hook/distanceMatrix';
+import { displayRoute } from "../../../../../hook/distanceMatrix";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of booking ------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------ */
 export default function BookingDetails() {
-
   // Get id of ride & booking from url
   const { query, push } = useRouter();
   const id = query.booking;
@@ -26,33 +25,42 @@ export default function BookingDetails() {
   const { data: sessionData } = useSession();
 
   // Get booking by the id in the url
-  const { data: fetchedBooking } =
-    api.booking.bookingById.useQuery(
-      { id: parseInt(id as string) },
-      { enabled: sessionData?.user !== undefined });
+  const { data: fetchedBooking } = api.booking.bookingById.useQuery(
+    { id: parseInt(id as string) },
+    { enabled: sessionData?.user !== undefined },
+  );
 
-
-    // Get the attached ride at this booking
-    const { data: fetchedRide } = api.ride.rideById.useQuery(
-      { id: parseInt(rideIdFromUrl as string) },
-      { enabled: sessionData?.user !== undefined },
-    );
+  // Get the attached ride at this booking
+  const { data: fetchedRide } = api.ride.rideById.useQuery(
+    { id: parseInt(rideIdFromUrl as string) },
+    { enabled: sessionData?.user !== undefined },
+  );
 
   // Map ref
   const mapRef = useRef<google.maps.Map | null>(null);
-  
+
   useEffect(() => {
     // Display route on map when booking & ride are fetched
     if (fetchedBooking !== undefined && fetchedRide !== undefined) {
-      if((departureLatLng && destinationLatLng) !== undefined)
-      console.log("Booking verified :", fetchedBooking);
+      if ((departureLatLng && destinationLatLng) !== undefined)
+        console.log("Booking verified :", fetchedBooking);
       console.log("Ride verified :", fetchedRide);
-      console.log("Departure : ", departureLatLng, "\nDestination: ", destinationLatLng);
+      console.log(
+        "Departure : ",
+        departureLatLng,
+        "\nDestination: ",
+        destinationLatLng,
+      );
       console.log("Map ref : ", mapRef.current);
       const directionsService = new google.maps.DirectionsService();
       const directionsRenderer = new google.maps.DirectionsRenderer();
       directionsRenderer.setMap(mapRef.current);
-      displayRoute(directionsService, directionsRenderer, departureLatLng, destinationLatLng);
+      displayRoute(
+        directionsService,
+        directionsRenderer,
+        departureLatLng,
+        destinationLatLng,
+      );
     }
   }, [fetchedBooking, mapRef]);
 
@@ -76,8 +84,7 @@ export default function BookingDetails() {
   async function mapLoaded(map: google.maps.Map) {
     mapRef.current = map;
   }
-  
- 
+
   if (sessionData) {
     return (
       <LayoutMain>
@@ -110,7 +117,7 @@ export default function BookingDetails() {
           <div className="ride-info flex flex-row justify-between">
             <div>
               <span className="label">Pt. de ramassage:</span>
-              {fetchedBooking?.pickupPoint}
+              {fetchedBooking?.pickupPoint.split(",", 2).toString()}
             </div>
           </div>
           <div className="ride-info flex flex-row justify-between">
@@ -161,16 +168,17 @@ export default function BookingDetails() {
                 )
               }
               className="mb-4
-                               mt-3 
-                               h-max 
-                               rounded-md
-                               bg-red-500
-                               px-3 
-                               py-2 
-                               text-white hover:border-2 
-                               hover:border-red-500  
-                               hover:bg-white
-                               hover:text-red-500 hover:text-white"
+                         mt-3 
+                         h-max 
+                         rounded-md
+                         bg-red-500
+                         px-3 
+                         py-2 
+                         text-white 
+                         hover:border-2 
+                         hover:border-red-500  
+                         hover:bg-white
+                         hover:text-red-500"
             >
               Supprimer la réservation
             </Button>
@@ -201,7 +209,4 @@ export default function BookingDetails() {
       </LayoutMain>
     );
   }
-};
-  
-
-
+}

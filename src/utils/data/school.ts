@@ -134,7 +134,7 @@ export const getCampusAddressWithAbbr = (str: string) => {
         }
     }
   }
-  return "Campus address not found";
+  return null;
 }
 
 export const getCampusNameWithAddress = (str: string) => {
@@ -147,7 +147,7 @@ export const getCampusNameWithAddress = (str: string) => {
         }
     }
   }
-  return "Campus name not found";
+  return null;
 }
 
 export const getCampusLatLng = (str: string) => {

@@ -1,51 +1,48 @@
 // rideCard.tsx
 import type { RideCardProps } from "$/lib/types/interfaces";
 import { getCampusNameWithAddress } from "$/utils/data/school";
+import Image from "next/image";
 
-const rideCard: React.FC<RideCardProps> = ({ ride, driver, goToRide } : RideCardProps) => {
-
-  const campusName: string | null = getCampusNameWithAddress(ride.destination);
+const rideCard: React.FC<RideCardProps> = ({ ride, goToRide } : RideCardProps) => {
 
   return (
-    <div className="ride-card-container" onClick={goToRide}>
-      <div className="ride-info">
-        <span className="label">Date:</span>
-        {ride.departureDateTime.toLocaleDateString()}
-      </div>
-      <div className="ride-info">
-        <span className="label">Départ:</span>
-        {ride.departure}
-      </div>
-      <div className="ride-info">
-        <span className="label">Destination:</span>
-        {campusName ?? ride.destination}
-      </div>
-      <div className="ride-info">
-        <span className="label">Conducteur:</span>
-        {driver ?? ride.driverId}
-      </div>
-
-      <style jsx>{`
-        .ride-card-container {
-          background-color: #f5f5f5;
-          border: 1px solid #e0e0e0;
-          border-radius: 8px;
-          padding: 10px;
-          margin: 10px;
-          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-          cursor: pointer;
-        }
-
-        .ride-info {
-          font-size: 14px;
-          margin-bottom: 8px;
-        }
-
-        .label {
-          font-weight: bold;
-          margin-right: 5px;
-        }
-      `}</style>
+    <div className="ride-card-container cursor-pointer" onClick={goToRide}>
+     <div key={ride.id}>
+                <div className="rounded-lg border border-gray-200 bg-white p-4 shadow">
+                  <div className="mb-4 flex items-center">
+                    <Image
+                      width={40}
+                      height={40}
+                      src={"/images/logo.png" ?? "/avatar.png"}
+                      alt="Avatar de l'utilisateur"
+                      className="mr-3 h-10 w-10 rounded-full"
+                    />
+                    <div>
+                      <p className="font-semibold">{ride.driverId}</p>
+                    </div>
+                  </div>
+                  <div className="mb-4">
+                    <p className="text-lg font-semibold">
+                      {ride.departure} → {getCampusNameWithAddress(ride.destination) ?? ride.destination}
+                    </p>
+                  </div>
+                  <div className="flex justify-between text-sm font-medium text-gray-600">
+                    <p>
+                      Départ:{" "}
+                      {ride.departureDateTime.toLocaleDateString()}
+                    </p>
+                    {ride.returnTime ? (
+                      <p>
+                      Heure de retour:{" "}
+                      {ride.returnTime?.toLocaleTimeString()}
+                    </p>
+                    ):
+                    <p>
+                      Pas de retour
+                    </p>}
+                  </div>
+                </div>
+              </div>
     </div>
   );
 };

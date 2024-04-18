@@ -20,16 +20,17 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
 
   // Set the map options
   useEffect(() => {
-    if (mapRef.current) {
-      console.log('mapRef.current', mapRef.current.getBounds());
+    if (isMapLoaded) {
+      console.log('Map is loaded');
     }
-  }, [mapRef]);
+  }, [isMapLoaded]);
 
   if(!apiKey) return <div>Google maps api key is missing</div>
   return (
     <> 
           <LoadScriptNext googleMapsApiKey={apiKey}>
             <GoogleMap 
+              id='mapId'
               center={center} 
               zoom={zoom} 
               mapContainerStyle={mapContainerStyle}
@@ -38,12 +39,12 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
                 setIsMapLoaded(true);
                 onLoad && onLoad(mapRef.current);
               }}
+              children={children}
               onUnmount={() => {
-                setIsMapLoaded(false);
                 console.log('Map is unmounted')
+                setIsMapLoaded(false);
               }}
               >
-            {isMapLoaded && children}
             </GoogleMap>
           </LoadScriptNext>
     </>

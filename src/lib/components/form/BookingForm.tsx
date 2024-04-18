@@ -36,6 +36,8 @@ export default function BookingForm({ ride, booking }:
   const [distanceInKilometersA, setDistanceInKilometersA] = useState<number>(0);
   // Distance in kilometers between passenger pickup point and destination
   const [distanceInKilometersB, setDistanceInKilometersB] = useState<number>(0);
+  // Total distance between origin and destination
+  const [totalDistance, setTotalDistance] = useState<number>(0);
   // Price of ride
   const [priceRide, setPriceRide] = useState<string>();
 
@@ -54,13 +56,22 @@ export default function BookingForm({ ride, booking }:
   // Price for fuel per kilometer
   const fuelPrice = 0.1;
 
+/* ----DISTANCE TOTAL --- */
+async function getTotalDistance() {
+  const distanceInMeters = await calculateDistance(origin, destination);
+  const distance = parseInt(distanceInMeters) / 1000;
+  setTotalDistance(distance);
+}
+
+
   // Options for autocomplete
   const options = {
     componentRestrictions: { country: "be" },
     strictBounds: false,
     types: ["address"],
   };
-    
+
+  
   // Create new booking
   const { data: bookingCreated, mutate: createBooking } =
     api.booking.create.useMutation();
@@ -77,7 +88,9 @@ export default function BookingForm({ ride, booking }:
 
   // ________________________________ STATE TO MANAGE ELIGIBILITY & PRICE FOR PASSENGER ________________________________
   useEffect(() => {
+
     async function getDistanceAndCheckEligibility() {
+      await getTotalDistance();
       /* ----DISTANCE A--- */
       const distanceInMetersEligibility = await calculateDistance(
         origin,
@@ -86,11 +99,11 @@ export default function BookingForm({ ride, booking }:
       const distanceEligibility = parseInt(distanceInMetersEligibility) / 1000;
       setDistanceInKilometersA(distanceEligibility);
       /* ----DISTANCE B--- */
-      const distanceInMetersForTotal = await calculateDistance(
+      const distanceInMetersForRest = await calculateDistance(
         destinationBooking ?? destPickup,
         destination,
       );
-      const distanceRest = parseInt(distanceInMetersForTotal) / 1000;
+      const distanceRest = parseInt(distanceInMetersForRest) / 1000;
       setDistanceInKilometersB(distanceRest);
       /* ----------------- */
       if (distanceInKilometersA <= maxDistanceDetour) {
@@ -111,8 +124,6 @@ export default function BookingForm({ ride, booking }:
     destinationBooking,
     destPickup,
     origin,
-    distanceInKilometersA,
-    distanceInKilometersB,
     priceRide,
   ]);
 
@@ -187,6 +198,7 @@ export default function BookingForm({ ride, booking }:
       </div>
       <div className="m-1 mt-5 flex w-[90vw] flex-col border-t-2 border-[var(--pink-g1)] p-2">
         <div className="text-xl text-white">
+          <p>Total = {totalDistance} km</p>
           <p>
             Départ :
             <span className="text-[var(--pink-g1)]"> {ride?.departure}</span>
