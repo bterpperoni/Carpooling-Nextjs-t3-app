@@ -1,4 +1,4 @@
-import { Ride } from "@prisma/client";
+import type { Ride } from "@prisma/client";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ChangeEvent } from "react";
 
 export type Children = {

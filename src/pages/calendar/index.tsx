@@ -1,13 +1,13 @@
-import React, { useState } from "react"; // Import the React module
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import React, { useEffect, useState } from "react"; // Import the React module
 import { getCampusNameWithAddress } from "$/utils/data/school";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import dayjs from "dayjs";
 import type { Ride } from "@prisma/client";
 import type { TypeReturnRideAsPassenger } from "$/lib/types/types";
-import { AnimatePresence, motion } from 'framer-motion';
+import Modal from "$/lib/components/containers/Modal";
 
 export default function Calendar(): JSX.Element {
   // Get the user session
@@ -34,14 +34,16 @@ export default function Calendar(): JSX.Element {
     return date;
   });
 
-
-    const [expandedRideId, setExpandedRideId] = useState<number | null>(null);
-  
-    const toggleDetails = (id: number) => {
-      setExpandedRideId(expandedRideId === id ? null : id);
-    };
+  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [checkIfModalDriverIsOpen, setCheckIfModalDriverIsOpen] = useState<boolean>(false);
+  const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] = useState<boolean>(false);
 
   type GroupedRides = Record<string, Ride[] & TypeReturnRideAsPassenger>;
+
+  useEffect(() => {
+    console.log("Current Ride selected: ", selectedRide);
+    console.log("Modal is open: ", checkIfModalDriverIsOpen);
+  } , [checkIfModalDriverIsOpen]);
 
   const groupRidesByDate = (rideListAsDriver: Ride[]): GroupedRides => {
     return rideListAsDriver.reduce((acc: GroupedRides, ride: Ride) => {
@@ -59,110 +61,125 @@ export default function Calendar(): JSX.Element {
   };
 
   return (
-      <LayoutMain>
-        <div className="flex flex-col items-center">
-          <h2 className="mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
-            Calendrier des Trajets
-          </h2>
+    <LayoutMain>
+      <div className="flex flex-col items-center">
+        <h2 className="mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
+          Calendrier des Trajets
+        </h2>
+      </div>
+      {/* ----------------- as Driver ------------------------- */}
+      <div className="m-4 rounded-lg bg-white p-4 shadow-lg">
+        <h3 className="mb-4 text-2xl font-semibold text-fuchsia-700">
+          Trajets en tant que conducteur
+        </h3>
+        <div className="grid grid-rows-7  gap-4">
+          {next7DaysDate.map((date, index) => (
+            <div
+              key={index}
+              className="col-span-1 rounded-lg bg-gray-100 p-2 shadow"
+            >
+              <h4 className="mb-2 text-xl font-semibold">
+                {dayjs(date).format("DD/MM/YYYY")}
+              </h4>
+              {/* Check if the ride is available for the date */}
+              {groupRidesByDate(rideListAsDriver ?? [])[
+                dayjs(date).format("YYYY-MM-DD")
+              ]?.map((ride) => (
+                <div
+                  key={ride.id}
+                  className="mb-2 cursor-pointer rounded-md bg-blue-100 p-2 hover:bg-blue-200"
+                >
+                  <p className="text-sm" onClick={() =>  {
+                    setCheckIfModalDriverIsOpen(true);
+                    if(ride){
+                      setSelectedRide(ride);
+                    }
+                  }}>
+                    {ride.departure} →{" "}
+                    {getCampusNameWithAddress(ride.destination) ??
+                      ride.destination}
+                  </p>
+                  {checkIfModalDriverIsOpen && (
+                    <Modal
+                      ride={ride}
+                      isOpen={checkIfModalDriverIsOpen}
+                      onClose={async () =>  {
+                        setCheckIfModalDriverIsOpen(false);
+                        setSelectedRide(null);
+                      }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
-        {/* ----------------- as Driver ------------------------- */}
-        <div className="m-4 rounded-lg bg-white p-4 shadow-lg">
-          <h3 className="mb-4 text-2xl font-semibold text-fuchsia-700">
-            Trajets en tant que conducteur
-          </h3>
-          <div className="grid grid-rows-7  gap-4">
-            {next7DaysDate.map((date, index) => (
-              <div
-                key={index}
-                className="col-span-1 rounded-lg bg-gray-100 p-2 shadow"
-              >
-                <h4 className="mb-2 text-xl font-semibold">
-                  {dayjs(date).format("DD/MM/YYYY")}
-                </h4>
-                {/* Check if the ride is available for the date */}
-                {groupRidesByDate(rideListAsDriver ?? [])[
-                  dayjs(date).format("YYYY-MM-DD")
-                ]?.map((ride) => (
+      </div>
+
+      {/* ----------------- as Passenger ------------------------- */}
+      <div className="m-4 rounded-lg bg-white p-4 shadow-lg">
+        <h3 className="mb-4 text-2xl font-semibold text-fuchsia-700">
+          Trajets en tant que passager
+        </h3>
+        <div className="grid grid-rows-7 gap-4">
+          {next7DaysDate.map((date, index) => (
+            <div
+              key={index}
+              className="col-span-1 rounded-lg bg-gray-100 p-2 shadow"
+            >
+              <h4 className="mb-2 text-xl font-semibold">
+                {dayjs(date).format("DD/MM/YYYY")}
+              </h4>
+              {/* Check if the ride is available for the date */}
+              {groupRidesByDate(rideListAsPassenger ?? [])[
+                dayjs(date).format("YYYY-MM-DD")
+              ]?.map(
+                (
+                  ride: Ride & {
+                    driver: {
+                      name: string;
+                      email: string | null;
+                      image: string | null;
+                    };
+                  },
+                ) => (
                   <div
                     key={ride.id}
-                    className="mb-2 rounded-md bg-blue-100 p-2 cursor-pointer hover:bg-blue-200"
+                    className="mb-2 cursor-pointer rounded-md bg-green-100 p-2 hover:bg-green-200"
                   >
-                    <p className="text-sm"  onClick={() => toggleDetails(ride.id)}>
-                      {ride.departure} → {getCampusNameWithAddress(ride.destination) ?? ride.destination}
-                    </p>
-                    
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ----------------- as Passenger ------------------------- */}
-        <div className="m-4 rounded-lg bg-white p-4 shadow-lg">
-          <h3 className="mb-4 text-2xl font-semibold text-fuchsia-700">
-            Trajets en tant que passager
-          </h3>
-          <div className="grid grid-rows-7 gap-4">
-            {next7DaysDate.map((date, index) => (
-              <div
-                key={index}
-                className="col-span-1 rounded-lg bg-gray-100 p-2 shadow"
-              >
-                <h4 className="mb-2 text-xl font-semibold">
-                  {dayjs(date).format("DD/MM/YYYY")}
-                </h4>
-                {/* Check if the ride is available for the date */}
-                {groupRidesByDate(rideListAsPassenger ?? [])[
-                  dayjs(date).format("YYYY-MM-DD")
-                ]?.map(
-                  (
-                    ride: Ride & {
-                      driver: {
-                        name: string;
-                        email: string | null;
-                        image: string | null;
-                      };
-                    },
-                  ) => (
-                    <div
-                      key={ride.id}
-                      className="mb-2 rounded-md bg-green-100 p-2 cursor-pointer hover:bg-green-200"
-                      onClick={() => toggleDetails(ride.id)}
+                    <p className="text-sm" onClick={() =>  {
+                        setCheckIfModalPassengerIsOpen(true);
+                        if(ride){
+                          setSelectedRide({...ride});
+                          console.log("Ride selected: ", ride);
+                        }
+                      }}
                     >
-                      <p className="text-sm">
-                        {ride.departure} → {getCampusNameWithAddress(ride.destination) ?? ride.destination}
-                      </p>
-                      {/* Transition fadIn/Out DATA of the ride */}
-                      <AnimatePresence>
-                        {expandedRideId === ride.id && (
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5 }}
-                            style={{ overflow: 'hidden' }}
-                          >
-                            {/* Details that will be animate */}
-                            <div className="mt-2 text-xs">
-                              <p>Conducteur: {ride.driver.name}</p>
-                              <p>Email: {ride.driver.email}</p>
-                              {ride.driver.image && (
-                                <Image width={30} height={30} src={ride.driver.image} alt="Image du conducteur" className="mt-1 h-10 w-10 rounded-full" />
-                              )}
-                            </div>
-                            {/* ---------------------------- */}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  ),
-                )}
-              </div>
-            ))}
-          </div>
+                      {ride.departure} →{" "}
+                      {getCampusNameWithAddress(ride.destination) ??
+                        ride.destination}
+                    </p>
+                    {/* Modal for ride details */}
+                    {checkIfModalPassengerIsOpen && (
+                      <Modal
+                        ride={{...selectedRide} as Ride}
+                        driverName={ride.driver.name}
+                        driverEmail={ride.driver.email ?? undefined}
+                        driverImage={ride.driver.image ?? undefined}
+                        isOpen={Boolean(selectedRide)}
+                        onClose={async () =>  {
+                          setCheckIfModalPassengerIsOpen(false);
+                          setSelectedRide(null);
+                        }}
+                      />
+                    )}
+                  </div>
+                ),
+              )}
+            </div>
+          ))}
         </div>
-      </LayoutMain>
+      </div>
+    </LayoutMain>
   );
 }
-
