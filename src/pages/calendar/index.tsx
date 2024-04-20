@@ -7,7 +7,7 @@ import Image from "next/image";
 import dayjs from "dayjs";
 import type { Ride } from "@prisma/client";
 import type { TypeReturnRideAsPassenger } from "$/lib/types/types";
-import { Transition } from "@headlessui/react";
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Calendar(): JSX.Element {
   // Get the user session
@@ -88,7 +88,7 @@ export default function Calendar(): JSX.Element {
                     className="mb-2 rounded-md bg-blue-100 p-2 cursor-pointer hover:bg-blue-200"
                   >
                     <p className="text-sm"  onClick={() => toggleDetails(ride.id)}>
-                      {ride.departure} → {ride.destination}
+                      {ride.departure} → {getCampusNameWithAddress(ride.destination) ?? ride.destination}
                     </p>
                     
                   </div>
@@ -127,36 +127,34 @@ export default function Calendar(): JSX.Element {
                   ) => (
                     <div
                       key={ride.id}
-                      className="mb-2 rounded-md bg-green-100 p-2 cursor=pointer hover:bg-green-200"
+                      className="mb-2 rounded-md bg-green-100 p-2 cursor-pointer hover:bg-green-200"
+                      onClick={() => toggleDetails(ride.id)}
                     >
-                      <p className="text-sm"  onClick={() => toggleDetails(ride.id)}>
-                        {ride.departure} → {ride.destination}
+                      <p className="text-sm">
+                        {ride.departure} → {getCampusNameWithAddress(ride.destination) ?? ride.destination}
                       </p>
                       {/* Transition fadIn/Out DATA of the ride */}
-                      <Transition
-                        show={expandedRideId === ride.id}
-                        enter="transition-all duration-500 ease-out"
-                        enterFrom="max-h-0"
-                        enterTo="max-h-[1000px]"
-                        leave="transition-all duration-500 ease-in"
-                        leaveFrom="max-h-[1000px]"
-                        leaveTo="max-h-0"
-                        className="overflow-hidden"
-                      >
-                          <div className="mt-2 text-xs">
-                            <p>Conducteur: {ride.driver.name}</p>
-                            <p>Email: {ride.driver.email}</p>
-                            {ride.driver.image && (
-                              <Image
-                                width={30}
-                                height={30}
-                                src={ride.driver.image}
-                                alt="Image du conducteur"
-                                className="mt-1 h-10 w-10 rounded-full"
-                              />
-                            )}
-                          </div>
-                      </Transition>
+                      <AnimatePresence>
+                        {expandedRideId === ride.id && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            {/* Details that will be animate */}
+                            <div className="mt-2 text-xs">
+                              <p>Conducteur: {ride.driver.name}</p>
+                              <p>Email: {ride.driver.email}</p>
+                              {ride.driver.image && (
+                                <Image width={30} height={30} src={ride.driver.image} alt="Image du conducteur" className="mt-1 h-10 w-10 rounded-full" />
+                              )}
+                            </div>
+                            {/* ---------------------------- */}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   ),
                 )}

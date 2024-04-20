@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { Marker } from "@react-google-maps/api";
-import RideCard from "$/lib/components/ride/RideCard";
+import RideCard from "$/lib/components/containers/RideCard";
 import { useRouter } from "next/router";
 import Button from "$/lib/components/button/Button";
 

@@ -8,7 +8,7 @@ import { api } from "$/utils/api";
 import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
-import RideDetail from "$/lib/components/ride/RideDetail";
+import RideDetail from "$/lib/components/containers/RideDetail";
 import { displayRoute } from "$/hook/distanceMatrix";
 
 /* ------------------------------------------------------------------------------------------------------------------------
