@@ -56,7 +56,10 @@ const AllRides: React.FC = () => {
 
   useEffect(() => {
     
-    if(mapRef.current !== null) void mapLoaded(mapRef.current);
+    if(mapRef && mapRef.current === null){
+      void mapLoaded;
+      return;
+    } 
     console.log("Map ref : ", mapRef.current);
   }, [mapRef, checked]);
 

@@ -32,7 +32,9 @@ export default function Calendar(): JSX.Element {
     return date;
   });
 
-  type GroupedRides = Record<string, Ride[]>;
+  type TypePassengerObject = ({driver: {name: string, email: string | null, image: string | null, }} & Ride)[]; 
+
+  type GroupedRides = Record< string, Ride[] & TypePassengerObject>;
 
   const groupRidesByDate = (rideListAsDriver: Ride[]): GroupedRides => {
     return rideListAsDriver.reduce((acc: GroupedRides, ride: Ride) => {
@@ -49,147 +51,69 @@ export default function Calendar(): JSX.Element {
     }, {});
   };
 
-  console.log(
-  "Ride as driver grouped by date: " ,groupRidesByDate(rideListAsDriver ?? []),"\n",
-  "Ride as passenger grouped by date: ", groupRidesByDate(rideListAsPassenger ?? []));
-
 
   return (
     <>
       <LayoutMain>
-        <div className="flex flex-col items-center">
-          <h2
-            className=" mb-4 
-                        mt-4 
-                        w-[fit-content] 
-                        rounded-[12.5%] border-y-2  
-                        border-fuchsia-700
-                        p-4 
-                        text-center
-                        text-2xl
-                        font-bold
-                        text-white
-                        md:text-4xl"
-          >
-            Calendrier
-          </h2>
+      <div className="flex flex-col items-center">
+        <h2 className="mb-4 mt-4 w-full text-center text-2xl font-bold text-white md:text-4xl bg-fuchsia-700 p-4 rounded-lg shadow-lg">
+          Calendrier des Trajets
+        </h2>
+      </div>
+      {/* Section pour les trajets en tant que conducteur */}
+      <div className="m-4 p-4 bg-white rounded-lg shadow-lg">
+        <h3 className="text-2xl font-semibold text-fuchsia-700 mb-4">
+          Trajets en tant que conducteur
+        </h3>
+        <div className="grid grid-rows-7  gap-4">
+          {next7DaysDate.map((date, index) => (
+            <div key={index} className="col-span-1 bg-gray-100 p-2 rounded-lg shadow">
+              <h4 className="text-xl font-semibold mb-2">
+                {dayjs(date).format("DD/MM/YYYY")}
+              </h4>
+              {groupRidesByDate(rideListAsDriver ?? [])[
+                    dayjs(date).format("YYYY-MM-DD")
+                  ]?.map((ride) => (
+                <div key={ride.id} className="mb-2 p-2 bg-blue-100 rounded-md">
+                  <p className="text-sm">{ride.departure} → {ride.destination}</p>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
-        <div className="mx-auto mt-8 max-w-5xl rounded bg-white p-8 shadow-md">
-          Display the rides calendar here :
-          <br />
-          1) Get all user rides & booking attached
-          <br />
-          2) Set UI with the next 7 days and UI for a ride as passenger or
-          driver (split the UI in 2 parts)
-          <br />
-          3) Display the rides for each day
-          <br />
-        </div>
-
-        <div className="m-4 h-[95%] w-[95%] border-2 border-black">
-          <div className="flex justify-between">
-            <h3 className="text-2xl font-semibold">
-              Trajets en tant que passager
-            </h3>
-            <p>{today}</p>
-          </div>
-          <div className="m-4 ">
-            {rideListAsPassenger?.map((booking) => (
-              <div key={booking.id}>
-                <div className="rounded-lg border border-gray-200 bg-white p-4 shadow">
-                  <div className="mb-4 flex items-center">
-                    <Image
-                      width={40}
-                      height={40}
-                      src={booking.driver.image ?? "/avatar.png"}
-                      alt="Avatar de l'utilisateur"
-                      className="mr-3 h-10 w-10 rounded-full"
-                    />
-                    <div>
-                      <p className="font-semibold">{booking.driver.name}</p>
-                      <p className="text-sm text-gray-500">
-                        {booking.driver.email}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <p className="text-lg font-semibold">
-                      {booking.departure} →{" "}
-                      {getCampusNameWithAddress(booking.destination) ??
-                        booking.destination}
-                    </p>
-                  </div>
-                  <div className="flex justify-between text-sm font-medium text-gray-600">
-                    <p>
-                      Départ: {booking.departureDateTime.toLocaleDateString()}
-                    </p>
-                    {booking.returnTime ? (
-                      <p>
-                        Heure de retour:{" "}
-                        {booking.returnTime?.toLocaleTimeString()}
-                      </p>
-                    ) : (
-                      <p>Pas de retour</p>
+      </div>
+      
+      {/* Section pour les trajets en tant que passager */}
+      <div className="m-4 p-4 bg-white rounded-lg shadow-lg">
+      <h3 className="text-2xl font-semibold text-fuchsia-700 mb-4">
+        Trajets en tant que passager
+      </h3>
+        <div className="grid grid-rows-7 gap-4">
+          {next7DaysDate.map((date, index) => (
+            <div key={index} className="col-span-1 bg-gray-100 p-2 rounded-lg shadow">
+              <h4 className="text-xl font-semibold mb-2">
+                {dayjs(date).format("DD/MM/YYYY")}
+              </h4>
+              {groupRidesByDate(rideListAsPassenger ?? [])[
+                  dayjs(date).format("YYYY-MM-DD")
+                ]?.map((ride: Ride & {driver: {name: string, email: string | null, image: string | null, }}) => (
+                <div key={ride.id} className="mb-2 p-2 bg-green-100 rounded-md">
+                  <p className="text-sm">{ride.departure} → {ride.destination}</p>
+                  <div className="mt-2 text-xs">
+                    <p>Conducteur: {ride.driver.name}</p>
+                    <p>Email: {ride.driver.email}</p>
+                    {ride.driver.image && (
+                      <Image width={30} height={30} src={ride.driver.image} alt="Image du conducteur" className="w-10 h-10 rounded-full mt-1"/>
                     )}
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ))}
         </div>
-        <div className="m-4 h-[95%] w-[95%] border-2 border-black">
-          <div className="flex justify-between">
-            <h3 className="text-2xl font-semibold">
-              Trajets en tant que conducteur
-            </h3>
-            <p>{today}</p>
-          </div>
-          <div className="m-4">
-            {rideListAsDriver?.map((ride) => (
-              <div
-                key={ride.id}
-                className="rounded-lg border border-gray-200 bg-white p-4 shadow"
-              >
-                <div className="mb-4 flex items-center">
-                  <Image
-                    width={40}
-                    height={40}
-                    src={sessionData?.user.image ?? "/avatar.png"}
-                    alt="Avatar de l'utilisateur"
-                    className="mr-3 h-10 w-10 rounded-full"
-                  />
-                  <div>
-                    <p className="font-semibold">{sessionData?.user.name}</p>
-                    <p className="text-sm text-gray-500">
-                      {sessionData?.user.email}
-                    </p>
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <p className="text-lg font-semibold">
-                    {ride.departure} →{" "}
-                    {getCampusNameWithAddress(ride.destination) ??
-                      ride.destination}
-                  </p>
-                </div>
-                <div className="flex justify-between text-sm font-medium text-gray-600">
-                  <p>
-                    Départ:{" "}
-                    {dayjs(ride.departureDateTime).toDate().toLocaleString()}
-                  </p>
-                  {ride.returnTime ? (
-                    <p>
-                      Heure de retour: {ride.returnTime?.toLocaleTimeString()}
-                    </p>
-                  ) : (
-                    <p>Pas de retour</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </LayoutMain>
+      </div>
+    </LayoutMain>
     </>
+
   );
 }

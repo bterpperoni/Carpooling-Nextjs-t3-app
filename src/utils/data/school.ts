@@ -163,3 +163,7 @@ export const getCampusLatLng = (str: string) => {
   } return { lat: 0, lng: 0};
 }
 
+export const formatStrAddress = (str: string) => {
+  const address = str.split(',', 2);
+  return address;
+}
