@@ -1,3 +1,4 @@
+import { Ride } from "@prisma/client";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ChangeEvent } from "react";
 
 export type Children = {
@@ -26,6 +27,8 @@ export type MapProps = {
   onLoad?: (map: google.maps.Map) => void;
 };
 
-
+export   type TypeReturnRideAsPassenger = ({
+  driver: { name: string; email: string | null; image: string | null };
+} & Ride)[];
 
 
