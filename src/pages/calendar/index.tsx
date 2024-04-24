@@ -133,6 +133,15 @@ export default function Calendar(): JSX.Element {
                             };
                           }
                         }
+                        isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
+                        childrenToday={
+                          <Button
+                            className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700 mr-3"
+                            onClick={() => console.log("not")}
+                          >
+                            Démarrer le trajet
+                          </Button>
+                        }
                         isOpen={checkIfModalDriverIsOpen}
                         onClose={() => {
                           setCheckIfModalDriverIsOpen(false);
@@ -144,8 +153,9 @@ export default function Calendar(): JSX.Element {
                             className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
                             onClick={() => console.log("not")}
                           >
-                            Voir le trajet
+                            Voir le trajet 
                         </Button>    
+                        
                       </Modal>
                     )}
                   </div>
@@ -219,7 +229,7 @@ export default function Calendar(): JSX.Element {
                               };
                             }
                           }
-                          isOpen={Boolean(selectedRide)}
+                          isOpen={checkIfModalPassengerIsOpen}
                           onClose={() => {
                             setCheckIfModalPassengerIsOpen(false);
                             setCheckIfModalDriverIsOpen(false);
