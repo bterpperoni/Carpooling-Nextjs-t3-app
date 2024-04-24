@@ -11,7 +11,6 @@ export const notifyStartRide = async ({rideId, driverId, destination}: RideInfor
         });
     
         console.log('Succès:', response.data);
-        // Gérer le succès (par exemple, afficher un message de succès)
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error('Erreur Axios:', error.response?.data);

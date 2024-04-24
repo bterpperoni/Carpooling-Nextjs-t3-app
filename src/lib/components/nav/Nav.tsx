@@ -41,23 +41,30 @@ export default function Nav() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
-      cluster: "eu",
-    });
-    // Subscribe to the channel related the current user
-    const channel = pusher.subscribe(`passenger-channel-${session?.user.id}`);
-    // Bind to the ride-started event & add the notification to the list
-    channel.bind('ride-started', (data: Notification) => {
-      setNotifications((prevNotifications) => [...prevNotifications, data]);
-    });
+    if(session){
+      const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+        cluster: "eu",
+      });
   
-    console.log("Notifications: ", notifications);
-    // Clean up
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    };
+      // Subscribe to the channel related the current user
+      const channel = pusher.subscribe(`passenger-channel-${session.user.id}`);
+      // Bind to the ride-started event & add the notification to the list
+      const handleNewNotification = (data: Notification) => {
+        setNotifications((prevNotifications) => [...prevNotifications, data]);
+      };
+    
+      channel.bind('ride-started', handleNewNotification);
+
+      return () => {
+        channel.unbind('ride-started', handleNewNotification);
+        channel.unsubscribe();
+      };
+    }
   }, [session?.user.id])
+
+  useEffect(() => {
+    console.log(notifications);
+  }, [notifications]);
 
   return (
     <Disclosure as="nav" className="bg-gray-800 fixed top-0 w-full z-1">

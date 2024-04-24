@@ -69,8 +69,6 @@ export default function Calendar(): JSX.Element {
     }, {});
   };
 
-  console.log(groupRidesByDate(rideListAsDriver ?? []) );
-
   return (
     <LayoutMain>
       <div className="flex flex-col items-center">
@@ -104,7 +102,7 @@ export default function Calendar(): JSX.Element {
                     return (
                       <div
                         key={ride.id}
-                        className={`${isToday ? "text-black" : "text-gray-400"} mb-2 h-[45px] rounded-md bg-blue-100 p-2 hover:bg-blue-200`}
+                        className={`${isToday ? "text-black" : "text-gray-400"} cursor-pointer mb-2 h-[45px] rounded-md bg-blue-100 p-2 hover:bg-blue-200`}
                         onClick={() => {
                           if (ride) {
                             const rideSelected = {
@@ -154,14 +152,14 @@ export default function Calendar(): JSX.Element {
                                     const listPassengersId: string[] = [];
                                     passengersList.forEach((passenger) => {
                                       passenger.forEach((passenger) => {
-                                        listPassengersId.push(passenger.userId as string);
+                                        listPassengersId.push(passenger.userId);
                                       });
                                     });
     
                                     console.log("Liste des passagers", listPassengersId);
                                     console.log("Informations du trajet", rideInformations);
                                     // Notify the passengers
-                                    // await notifyStartRide(rideInformations, listPassengersId);
+                                    await notifyStartRide(rideInformations, listPassengersId);
                                   }
                                 }}
                               >
@@ -177,7 +175,7 @@ export default function Calendar(): JSX.Element {
                           >
                             <Button
                                 className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
-                                onClick={() => console.log("not")}
+                                onClick={() => location.assign(`/rides/${selectedRide?.id}`)}
                               >
                                 Voir le trajet 
                             </Button>    
@@ -230,7 +228,7 @@ export default function Calendar(): JSX.Element {
                   ) => (
                     <div
                       key={ride.id}
-                      className={`${isToday ? "text-black" : "text-gray-400"} mb-2 h-[45px] rounded-md bg-green-200 p-2 hover:bg-green-300 `}
+                      className={`${isToday ? "text-black" : "text-gray-400"} cursor-pointer mb-2 h-[45px] rounded-md bg-green-200 p-2 hover:bg-green-300 `}
                       onClick={() => {
                         if (ride) {
                           const rideSelected = {
@@ -263,6 +261,17 @@ export default function Calendar(): JSX.Element {
                               };
                             }
                           }
+                          isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
+                          childrenToday={
+                            <Button
+                              className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700 mr-3"
+                              onClick={async () => {
+                                console.log("not");
+                              }}
+                            >
+                              Démarrer le trajet
+                            </Button>
+                          }
                           isOpen={checkIfModalPassengerIsOpen}
                           onClose={() => {
                             setCheckIfModalPassengerIsOpen(false);
@@ -270,21 +279,12 @@ export default function Calendar(): JSX.Element {
                             setSelectedRide(null);
                           }}
                         >
-                        {isToday === true ? (
                           <Button
                             className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
-                            onClick={() => console.log("not")}
-                          >
-                            Démarrer le trajet
-                          </Button>
-                        ): 
-                          <Button
-                            className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
-                            onClick={() => console.log("not")}
+                            onClick={() => location.assign(`/rides/${selectedRide?.id}`)}
                           >
                             Voir le trajet
                           </Button>
-                        }
                         </Modal>
                       )}
                     </div>

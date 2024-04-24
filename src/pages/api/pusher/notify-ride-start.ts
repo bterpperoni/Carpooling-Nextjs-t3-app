@@ -14,19 +14,9 @@ if (req.method === "POST") {
         passengers: string[]
     };
     try {
-            await Promise.all(passengers.map((passengerId: string) => {
-                    return pusher.trigger(`passenger-channel-${passengerId}`, 'ride-started', {
-                        message: `Le trajet à destination de 
-                        ${
-                            getCampusNameWithAddress(
-                                rideInfos.destination,
-                            ) !== null
-                                ? getCampusNameWithAddress(
-                                        rideInfos.destination,
-                                    )
-                                : rideInfos.destination
-                        } 
-                    a commencé ! 🚗🎉 N'oubliez pas de 'check' !`,
+            await Promise.all(passengers.map((userId: string) => {
+                    return pusher.trigger(`passenger-channel-${userId}`, 'ride-started', {
+                        message: `Le trajet à destination de ${getCampusNameWithAddress(rideInfos.destination) !== null ? getCampusNameWithAddress(rideInfos.destination): rideInfos.destination} a commencé ! 🚗🎉 N'oubliez pas de 'check' !`
                     });
                 }));
                 res.status(200).json({ success: true });
