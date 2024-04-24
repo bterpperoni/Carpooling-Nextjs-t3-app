@@ -50,6 +50,6 @@ export default async function Handler(req: NextApiRequest, res:  NextApiResponse
         
       } catch (err) {
         console.log("Err at Create Order: ", err);
-        return res.status(500).json({ success: false, message: "Could Not Found the user" });
+        res.status(500).json({ success: false, message: "Could Not Found the user" });
       }
 }

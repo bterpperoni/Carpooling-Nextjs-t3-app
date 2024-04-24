@@ -176,7 +176,7 @@ export default function RideForm({
           if (dateDeparture) {
             // Check if the time of return is after the time of departure and at least 2 hours after
             createride({
-              driverId: sessionData.user.name,
+              driverId: sessionData.user.id,
               departure: departure,
               departureLatitude: departureLatitude ?? 0,
               departureLongitude: departureLongitude ?? 0,
@@ -280,13 +280,13 @@ export default function RideForm({
                 }
               }}
               className=" my-2 
-                                                w-[75%] 
-                                                border-2
-                                                border-[var(--purple-g1)] bg-[var(--purple-g3)]
-                                                p-2
-                                                text-xl
-                                                text-white 
-                                                md:w-[75%] md:text-2xl"
+                          w-[75%] 
+                          border-2
+                          border-[var(--purple-g1)] bg-[var(--purple-g3)]
+                          p-2
+                          text-xl
+                          text-white 
+                          md:w-[75%] md:text-2xl"
               id="departure"
             />
           </div>
@@ -310,7 +310,10 @@ export default function RideForm({
                     setSelectedSchool(sc.target.value);
                     setSelectedCampus(ca.target.value);
                     if (ca.target.value) {
-                      setDestination(getCampusAddressWithAbbr(ca.target.value));
+                      const campusAddress = getCampusAddressWithAbbr(ca.target.value);
+                      if (campusAddress) {
+                        setDestination(campusAddress);
+                      }
                       setDestinationLatitude(
                         getCampusLatLng(ca.target.value).lat,
                       );

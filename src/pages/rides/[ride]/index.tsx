@@ -30,12 +30,12 @@ export default function Detail() {
   const { mutate: deleteride } = api.ride.delete.useMutation();
   // Get if a user already subscribed to this ride
   const { data: userBooking } = api.booking.userBookingByRideId.useQuery(
-    { rideId: parseInt(id as string), userName: sessionData?.user?.name ?? "" },
+    { rideId: parseInt(id as string)},
     { enabled: sessionData?.user !== undefined },
   );
 
   // Set if ride can be edited
-  const canEdit = sessionData?.user?.name === ride?.driverId;
+  const canEdit = sessionData?.user?.id === ride?.driverId;
   // Get booking id
   const bookingId = userBooking?.[0]?.id ?? "";
 

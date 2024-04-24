@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import { Fragment, useEffect } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
+import Pusher from 'pusher-js';
 
 const navigation = [
   { name: 'Home', href: '/', current: false },
@@ -31,6 +32,32 @@ export default function Nav() {
     })
   }
   , [navigation])
+
+  // Notification type
+  type Notification = {
+    message: string;
+  }
+  // Notifications List  
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  useEffect(() => {
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+      cluster: "eu",
+    });
+    // Subscribe to the channel related the current user
+    const channel = pusher.subscribe(`passenger-channel-${session?.user.id}`);
+    // Bind to the ride-started event & add the notification to the list
+    channel.bind('ride-started', (data: Notification) => {
+      setNotifications((prevNotifications) => [...prevNotifications, data]);
+    });
+  
+    console.log("Notifications: ", notifications);
+    // Clean up
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [session?.user.id])
 
   return (
     <Disclosure as="nav" className="bg-gray-800 fixed top-0 w-full z-1">
@@ -96,40 +123,52 @@ export default function Nav() {
 
                 {session && (
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                   
-                    {/* DaisyUI notifications icon + floating icon for number of */}
-                  <div className="ds-indicator mr-1 cursor-pointer">
-                    <span className="ds-indicator-item ds-badge ds-badge-secondary relative left-7 top-[2px]">??</span> 
-                    <button
-                      type="button"
-                      className=" ds-join-item relative 
-                                  rounded-full 
-                                  bg-gray-800 
-                                  p-1 
-                                  text-gray-400 
-                                  hover:text-white 
-                                  focus:outline-none 
-                                  focus:ring-2 
-                                  focus:ring-white 
-                                  focus:ring-offset-2 
-                                  focus:ring-offset-gray-800">
-                      <span className="absolute -inset-1.5" />
-                      <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-7 w-7" aria-hidden="true" />
-                    </button>
-                  </div>
+                  {/* DaisyUI notifications icon + floating icon for number of */}
+                    <Menu as="div" className="relative right-1">
+                    <div className="ds-indicator mr-1 cursor-pointer">
+                      <span className="ds-indicator-item ds-badge ds-badge-secondary relative left-6 top-[2px]"></span> 
+                      <Menu.Button className=" relative flex rounded-full bg-gray-800 text-sm focus:outline-none 
+                                               focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <span className="sr-only">View notifications</span>
+                        <BellIcon className="h-7 w-7" aria-hidden="true" />
+                      </Menu.Button>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 
+                                             shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none top-7 z-10">
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link href={`/users/${session.user.id}/notifications`} className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                              View Notifications
+                            </Link>
+                          )}
+                        </Menu.Item>
+                      </Menu.Items>
+                    </Transition>
+                    </div>
+                    </Menu>
+                 
                   {/* ----------------------------------------------------------------------------- */}
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
                   <div>
                     {/* Profile dropdown */}
-                    <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none 
+                                            focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">Open user menu</span>
                       <img 
-                        className="h-8 w-8 rounded-full"
+                        className="h-10 w-10s rounded-full"
                         src={session?.user.image}
                         alt="img of user"
+                        aria-hidden="true"
                       />
                     </Menu.Button>
                   </div>
@@ -142,10 +181,11 @@ export default function Nav() {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 
+                                           shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Menu.Item>
                         {({ active }) => (
-                          <Link href={`/users/${session?.user.name}/profile`} className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                          <Link href={`/users/${session?.user.name}/`} className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
                             Profile
                           </Link>
                         )}
@@ -153,6 +193,7 @@ export default function Nav() {
                       <Menu.Item>
                         {({ active }) => (
                           <Link 
+
                             href="#"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >

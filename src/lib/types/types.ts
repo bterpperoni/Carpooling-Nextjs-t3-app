@@ -31,4 +31,8 @@ export   type TypeReturnRideAsPassenger = ({
   driver: { name: string; email: string | null; image: string | null };
 } & Ride)[];
 
+export type ApiResponse = { success: boolean, message?: string };
+
+export type RideInformationsProps = { rideId: number; driverId: string; destination: string}
+
 

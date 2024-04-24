@@ -96,14 +96,14 @@ model Ride {
   returnTime           DateTime?
   status               RideStatus  @default(CREATED)
   group                Group?      @relation("GroupRides", fields: [groupId], references: [id])
-  driver               User        @relation("Driver", fields: [driverId], references: [name], onDelete: Cascade)
+  driver               User        @relation("Driver", fields: [driverId], references: [id], onDelete: Cascade)
   passengers           Booking[]   @relation("Passengers")
 }
 
 model Booking {
   id         Int    @id @default(autoincrement())
   rideId     Int
-  userName        String
+  userId        String
   pickupPoint     String
   pickupLatitude  Float
   pickupLongitude Float
@@ -111,7 +111,7 @@ model Booking {
   status          BookingStatus @default(CREATED)
   driverRating    Int?     
   ride       Ride   @relation("Passengers", fields: [rideId], references: [id], onDelete: Cascade)
-  user       User   @relation("UserPassenger", fields: [userName], references: [name], onDelete: Cascade)
+  userPassenger       User   @relation("UserPassenger", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum RideType {

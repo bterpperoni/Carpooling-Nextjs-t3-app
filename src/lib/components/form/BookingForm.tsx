@@ -135,7 +135,7 @@ async function getTotalDistance() {
         updateBooking({
           id: booking.id,
           rideId: ride?.id ?? 0,
-          userName: sessionData.user.name,
+          userId: sessionData.user.id,
           pickupPoint: destinationBooking ?? destPickup,
           pickupLatitude: destinationLatitude ?? booking.pickupLatitude,
           pickupLongitude: destinationLongitude ?? booking.pickupLongitude,
@@ -146,7 +146,7 @@ async function getTotalDistance() {
         // ------------------- Create booking -------------------
         createBooking({
           rideId: ride?.id ?? 0,
-          userName: sessionData.user.name,
+          userId: sessionData.user.id,
           pickupPoint: destinationBooking ?? '',
           pickupLatitude: destinationLatitude ?? 0,
           pickupLongitude: destinationLongitude ?? 0,

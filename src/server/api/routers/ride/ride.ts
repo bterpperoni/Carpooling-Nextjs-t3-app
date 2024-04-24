@@ -26,25 +26,10 @@ export const rideRouter = createTRPCRouter({
     const rideListAsDriver = await ctx.db.ride.findMany({
       where: {
         isForGroup: false,
-        driverId: ctx.session.user.name,
+        driverId: ctx.session.user.id,
       },
       include: {
-        passengers: { 
-          select: {
-            pickupPoint: true,
-            pickupLatitude: true, 
-            pickupLongitude: true, 
-            price: true, 
-            status: true, 
-            user: { 
-              select: {
-                name: true,
-                email: true,
-                image: true,
-              }
-            }
-          }
-        }
+        passengers: true
       }
     });
     return rideListAsDriver;
@@ -53,14 +38,14 @@ export const rideRouter = createTRPCRouter({
 
   // Get all rides with driver data where the user is as passenger
   rideListAsPassengerIncDriverData: protectedProcedure
-    .input(z.object({ userName: z.string() }))
+    .input(z.object({ userId: z.string() }))
     .query(async ({ input, ctx }) => {
       const rideListAsPassengerIncDriverData = await ctx.db.ride.findMany({
         where: {
           isForGroup: false,
           passengers: {
             some: {
-              userName: input.userName,
+              userId: input.userId,
             },
           },
         },

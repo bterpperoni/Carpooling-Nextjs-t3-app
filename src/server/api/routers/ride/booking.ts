@@ -40,24 +40,23 @@ export const bookingRouter = createTRPCRouter({
   .input(
     z.object({
       rideId: z.number(),
-      userName: z.string(),
     })
   ).query(async ({ ctx, input }) => {
     return ctx.db.booking.findMany({
       where: {
         rideId: input.rideId,
-        userName: input.userName,
-      },
-    });
-  }),
-
+        userPassenger: {
+          id: ctx.session.user.id,
+      }},
+      });
+    }),
 
 
   create: protectedProcedure
     .input(
       z.object({
         rideId: z.number(),
-        userName: z.string(),
+        userId: z.string(),
         pickupPoint: z.string(),
         pickupLatitude: z.number(),
         pickupLongitude: z.number(),
@@ -69,7 +68,7 @@ export const bookingRouter = createTRPCRouter({
       return ctx.db.booking.create({
         data: {
           rideId: input.rideId,
-          userName: input.userName,
+          userId: input.userId,
           pickupPoint: input.pickupPoint,
           pickupLatitude: input.pickupLatitude,
           pickupLongitude: input.pickupLongitude,
@@ -85,7 +84,7 @@ export const bookingRouter = createTRPCRouter({
       z.object({
         id: z.number(),
         rideId: z.number(),
-        userName: z.string(),
+        userId: z.string(),
         pickupPoint: z.string(),
         pickupLatitude: z.number(),
         pickupLongitude: z.number(),
@@ -100,7 +99,7 @@ export const bookingRouter = createTRPCRouter({
         },
         data: {
           rideId: input.rideId,
-          userName: input.userName,
+          userId: input.userId,
           pickupPoint: input.pickupPoint,
           pickupLatitude: input.pickupLatitude,
           pickupLongitude: input.pickupLongitude,
