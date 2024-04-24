@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @next/next/no-img-element */
 import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
@@ -6,6 +11,7 @@ import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Pusher from 'pusher-js';
+import { api } from '$/utils/api'
 
 const navigation = [
   { name: 'Home', href: '/', current: false },
@@ -37,8 +43,29 @@ export default function Nav() {
   type Notification = {
     message: string;
   }
+
+  // Get the list of unread notifications
+  const { data: unreadnotifications } = api.notification.unreadNotificationListByUser.useQuery(undefined,
+    { enabled: session?.user !== undefined }
+  );
+  // Update unread notifications to read
+  const { mutate: updateNotification } = api.notification.update.useMutation();
+
+  const handleNotificationRead = async (id: number) => {
+    updateNotification({ id, read: true });
+    location.reload();
+  }
+
+  // Display the list of unread notifications
+  useEffect(() => {
+    if (unreadnotifications) {
+      console.log("Unread Notifications: ", unreadnotifications);
+    }
+  }, [unreadnotifications]);
+
   // Notifications List  
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  
 
   useEffect(() => {
     if(session){
@@ -50,7 +77,7 @@ export default function Nav() {
       const channel = pusher.subscribe(`passenger-channel-${session.user.id}`);
       // Bind to the ride-started event & add the notification to the list
       const handleNewNotification = (data: Notification) => {
-        setNotifications((prevNotifications) => [...prevNotifications, data]);
+        setNotifications((prevNotifications) => prevNotifications ? [...prevNotifications, data] : [data]);
       };
     
       channel.bind('ride-started', handleNewNotification);
@@ -63,7 +90,7 @@ export default function Nav() {
   }, [session?.user.id])
 
   useEffect(() => {
-    console.log(notifications);
+    console.log("Notifications: ", notifications);
   }, [notifications]);
 
   return (
@@ -133,7 +160,9 @@ export default function Nav() {
                   {/* DaisyUI notifications icon + floating icon for number of */}
                     <Menu as="div" className="relative right-1">
                     <div className="ds-indicator mr-1 cursor-pointer">
-                      <span className="ds-indicator-item ds-badge ds-badge-secondary relative left-6 top-[2px]"></span> 
+                      {unreadnotifications && unreadnotifications.length > 0 && (
+                        <span className="absolute top-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white bg-red-400 z-10"></span>
+                      )}
                       <Menu.Button className=" relative flex rounded-full bg-gray-800 text-sm focus:outline-none 
                                                focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="sr-only">View notifications</span>
@@ -150,13 +179,27 @@ export default function Nav() {
                       >
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 
                                              shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none top-7 z-10">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link href={`/users/${session.user.id}/notifications`} className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
-                              View Notifications
-                            </Link>
+                        {(unreadnotifications && unreadnotifications.length > 0) ? 
+                          unreadnotifications?.map((notification, index) => (
+                            <Menu.Item key={index}>
+                              {({ active }) => (
+                                <a 
+                                  className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')} 
+                                  onClick={() => handleNotificationRead(notification.id)}>
+                                  {notification.message}
+                                </a>
+                              )}
+                            </Menu.Item>
+                          )): (
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a 
+                                  className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                                  No notifications
+                                </a>
+                              )}
+                            </Menu.Item>
                           )}
-                        </Menu.Item>
                       </Menu.Items>
                     </Transition>
                     </div>

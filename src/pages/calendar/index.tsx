@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import React, { useState } from "react"; // Import the React module
 import { getCampusNameWithAddress } from "$/utils/data/school";
@@ -26,6 +27,9 @@ export default function Calendar(): JSX.Element {
     undefined,
     { enabled: sessionData?.user !== undefined },
   );
+
+  // Fetch the notification creation function
+  const { data: createdNotification, mutate: createNotification } = api.notification.create.useMutation();
 
   // New date object
   // const today = new Date().toLocaleDateString();
@@ -158,6 +162,15 @@ export default function Calendar(): JSX.Element {
     
                                     console.log("Liste des passagers", listPassengersId);
                                     console.log("Informations du trajet", rideInformations);
+                                    listPassengersId.forEach((userId: string) => {
+                                      // Save the ride start notification in the database
+                                      createNotification({
+                                              userId: userId,
+                                              message: `Le trajet à destination de ${getCampusNameWithAddress(rideInformations.destination) !== null ? getCampusNameWithAddress(rideInformations.destination): rideInformations.destination} a commencé ! 🚗🎉 N'oubliez pas de 'check' !`,
+                                              read: false
+                                      });
+                                      console.log(createdNotification);
+                                    });
                                     // Notify the passengers
                                     await notifyStartRide(rideInformations, listPassengersId);
                                   }

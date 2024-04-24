@@ -4,7 +4,6 @@ import pusher from "$/utils/pusher";
 import {
   getCampusNameWithAddress,
 } from "$/utils/data/school";
-import { api } from "$/utils/api";
 
 export default async function Handler(
   req: NextApiRequest,
@@ -15,20 +14,12 @@ if (req.method === "POST") {
         rideInfos: { rideId: number; driverId: string; destination: string},
         passengers: string[]
     };
-    try {
+
+    try {  
         await Promise.all(passengers.map(async (userId: string) => {
-                await pusher.trigger(`passenger-channel-${userId}`, 'ride-started', {
+                return await pusher.trigger(`passenger-channel-${userId}`, 'ride-started', {
                     message: `Le trajet à destination de ${getCampusNameWithAddress(rideInfos.destination) !== null ? getCampusNameWithAddress(rideInfos.destination): rideInfos.destination} a commencé ! 🚗🎉 N'oubliez pas de 'check' !`
                 });
-                // Save the ride start notification in the database
-                const { data: createdNotification, mutate: createNotification } = api.notification.create.useMutation();
-                createNotification({
-                        userId: userId,
-                        message: `Le trajet à destination de ${getCampusNameWithAddress(rideInfos.destination) !== null ? getCampusNameWithAddress(rideInfos.destination): rideInfos.destination} a commencé ! 🚗🎉 N'oubliez pas de 'check' !`,
-                        read: false
-                });
-                console.log(createdNotification);
-                return createdNotification as Notification | undefined;
             }));
         
         res.status(200).json({ success: true });

@@ -14,11 +14,15 @@ export const notificationRouter = createTRPCRouter({
         return ctx.db.notifications.findMany({ take: 10 });
     }),
     
-    notificationListByUnread: protectedProcedure.query(async ({ ctx }) => {
+    unreadNotificationListByUser: protectedProcedure
+        .query(async ({ ctx }) => {
         return ctx.db.notifications.findMany({
-            where: { read: false },
+            where: { 
+                userId: ctx.session.user.id, 
+                read: false 
+            },
         });
-    }),
+        }),
 
     notificationById: protectedProcedure
         .input(z.object({ id: z.number() }))
@@ -51,8 +55,6 @@ export const notificationRouter = createTRPCRouter({
         .input(
         z.object({
             id: z.number(),
-            userId: z.string(),
-            message: z.string(),
             read: z.boolean(),
         })
         )
@@ -60,9 +62,7 @@ export const notificationRouter = createTRPCRouter({
         return ctx.db.notifications.update({
             where: { id: input.id },
             data: {
-            userId: input.userId,
-            message: input.message,
-            read: input.read,
+                read: input.read,
             },
         });
         }),

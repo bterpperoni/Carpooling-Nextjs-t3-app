@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import LayoutMain from '../lib/components/layout/LayoutMain';
 import { signIn, useSession } from "next-auth/react";
 import Button from "$/lib/components/button/Button";
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
+import { api } from '$/utils/api';
 
 export default function Home() {
 
   // Session recovery
-  const { data: session } = useSession();
+    const { data: session } = useSession();
 
   return (
     <>
