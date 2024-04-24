@@ -7,6 +7,7 @@ import { walletRouter } from "./routers/wallet/wallet";
 import { transactionRouter } from "./routers/wallet/transaction";
 import { paypalRouter } from "./routers/wallet/paypal";
 import { bookingRouter } from "./routers/ride/booking";
+import { notificationRouter } from "./routers/notification";
 
 /**
  * This is the primary router for your server.
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
   wallet: walletRouter,
   transaction: transactionRouter,
   paypal: paypalRouter,
+  notification: notificationRouter,
 });
 
 // export type definition of API

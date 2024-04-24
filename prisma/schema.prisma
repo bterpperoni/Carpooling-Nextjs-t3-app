@@ -59,8 +59,6 @@ model User {
   zip                Int?
   campus             String?
   role               UserRole      @default(USER) 
-  // The rating match for the rides as driver because the passengers cannot be rated 
-  // (@todo : add rating for passengers)
   rating             Int           @default(0)
   accounts           Account[]
   sessions           Session[]
@@ -68,7 +66,8 @@ model User {
   ridesAsPassenger   Booking[]     @relation("UserPassenger")
   groupCreated       Group[]       @relation("GroupCreatedBy")
   groupMembers       GroupMember[] 
-  wallet             Wallet[]         
+  wallet             Wallet[]     
+  notifications      Notifications[]
 }
 
 enum UserRole {
@@ -190,4 +189,13 @@ model PaypalTransaction {
   type      String       
   createdAt DateTime @default(now())
   wallet    Wallet   @relation(fields: [walletId], references: [id])
+}
+
+model Notifications {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  userNotified      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
