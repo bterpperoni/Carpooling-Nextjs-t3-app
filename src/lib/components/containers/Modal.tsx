@@ -36,10 +36,15 @@ const Modal: React.FC<ModalProps> = ({ ride, isOpen, driverName, driverEmail, dr
                 // Get the event and stop the relation with the parent element   
                 onClick={(e) => e.stopPropagation()}
             >
-                <h4 className="text-xl font-semibold mb-4">{formatStrAddress(ride.departure)} → {getCampusNameWithAddress(ride.destination)}</h4>
+                <h4 className="text-xl font-semibold mb-4">
+                  {formatStrAddress(ride.departure)} → {getCampusNameWithAddress(ride.destination) !== null ? 
+                    getCampusNameWithAddress(ride.destination) 
+                      : 
+                    ride.destination}
+                </h4>
                 <p>Conducteur: {driverName ?? sessionData?.user?.name}</p>
                 <p>Email: {driverEmail ?? sessionData?.user?.email}</p>
-                    <Image width={50} height={50} src={(driverImage ? driverImage : sessionData?.user?.image) ?? "" } alt="Image du conducteur" className="mt-4 rounded-full" />
+                    <Image width={50} height={50} src={driverImage ?? ""} alt="Image du conducteur" className="mt-4 rounded-full" />
                 <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700" onClick={onClose}>Fermer</button>
             </motion.div>
           </motion.div>

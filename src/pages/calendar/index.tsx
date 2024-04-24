@@ -39,11 +39,7 @@ export default function Calendar(): JSX.Element {
   const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] = useState<boolean>(false);
 
   type GroupedRides = Record<string, Ride[] & TypeReturnRideAsPassenger>;
-
-  useEffect(() => {
-    console.log("Current Ride selected: ", selectedRide);
-    console.log("Modal is open: ", checkIfModalDriverIsOpen);
-  } , [checkIfModalDriverIsOpen]);
+  
 
   const groupRidesByDate = (rideListAsDriver: Ride[]): GroupedRides => {
     return rideListAsDriver.reduce((acc: GroupedRides, ride: Ride) => {
@@ -82,9 +78,7 @@ export default function Calendar(): JSX.Element {
                 {dayjs(date).format("DD/MM/YYYY")}
               </h4>
               {/* Check if the ride is available for the date */}
-              {groupRidesByDate(rideListAsDriver ?? [])[
-                dayjs(date).format("YYYY-MM-DD")
-              ]?.map((ride) => (
+              {groupRidesByDate(rideListAsDriver ?? [])[dayjs(date).format("YYYY-MM-DD")]?.map((ride) => (
                 <div
                   key={ride.id}
                   className="mb-2 cursor-pointer rounded-md bg-blue-100 p-2 hover:bg-blue-200"
@@ -96,15 +90,19 @@ export default function Calendar(): JSX.Element {
                     }
                   }}>
                     {ride.departure} →{" "}
-                    {getCampusNameWithAddress(ride.destination) ??
+                    {getCampusNameWithAddress(ride.destination) !== null ? getCampusNameWithAddress(ride.destination) :
                       ride.destination}
                   </p>
                   {checkIfModalDriverIsOpen && (
                     <Modal
-                      ride={ride}
+                      ride={selectedRide as Ride & { driver: { name: string; email: string | null; image: string | null; } }}
                       isOpen={checkIfModalDriverIsOpen}
-                      onClose={async () =>  {
+                      driverName={sessionData?.user.name}
+                      driverEmail={sessionData?.user.email}
+                      driverImage={sessionData?.user.image}
+                      onClose={() =>  {
                         setCheckIfModalDriverIsOpen(false);
+                        setCheckIfModalPassengerIsOpen(false);
                         setSelectedRide(null);
                       }}
                     />
@@ -131,9 +129,7 @@ export default function Calendar(): JSX.Element {
                 {dayjs(date).format("DD/MM/YYYY")}
               </h4>
               {/* Check if the ride is available for the date */}
-              {groupRidesByDate(rideListAsPassenger ?? [])[
-                dayjs(date).format("YYYY-MM-DD")
-              ]?.map(
+              {groupRidesByDate(rideListAsPassenger ?? [])[dayjs(date).format("YYYY-MM-DD")]?.map(
                 (
                   ride: Ride & {
                     driver: {
@@ -150,25 +146,25 @@ export default function Calendar(): JSX.Element {
                     <p className="text-sm" onClick={() =>  {
                         setCheckIfModalPassengerIsOpen(true);
                         if(ride){
-                          setSelectedRide({...ride});
-                          console.log("Ride selected: ", ride);
+                          setSelectedRide(ride);
                         }
                       }}
                     >
                       {ride.departure} →{" "}
-                      {getCampusNameWithAddress(ride.destination) ??
-                        ride.destination}
+                      {getCampusNameWithAddress(ride.destination) !== null ? getCampusNameWithAddress(ride.destination) :
+                      ride.destination}
                     </p>
                     {/* Modal for ride details */}
                     {checkIfModalPassengerIsOpen && (
                       <Modal
-                        ride={{...selectedRide} as Ride}
+                        ride={selectedRide as Ride & { driver: { name: string; email: string | null; image: string | null; } }}
                         driverName={ride.driver.name}
                         driverEmail={ride.driver.email ?? undefined}
                         driverImage={ride.driver.image ?? undefined}
                         isOpen={Boolean(selectedRide)}
-                        onClose={async () =>  {
+                        onClose={() =>  {
                           setCheckIfModalPassengerIsOpen(false);
+                          setCheckIfModalDriverIsOpen(false);
                           setSelectedRide(null);
                         }}
                       />
