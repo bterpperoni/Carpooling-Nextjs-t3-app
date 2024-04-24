@@ -6,19 +6,22 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { formatStrAddress } from '../../../utils/data/school';
 import { useSession } from "next-auth/react";
+import Button from "$/lib/components/button/Button";
 
 interface ModalProps {
-    ride: Ride;
+    ride: Ride & {
+      driver: {
+        name: string;
+        email: string | null;
+        image: string | null;
+      };
+    };
     isOpen: boolean;
-    driverName?: string;
-    driverEmail?: string;
-    driverImage?: string;
+    children: React.ReactNode;
     onClose: () => void;
   }
   
-const Modal: React.FC<ModalProps> = ({ ride, isOpen, driverName, driverEmail, driverImage, onClose }: ModalProps) => {
-
-    const { data: sessionData } = useSession();
+const Modal: React.FC<ModalProps> = ({ ride, isOpen, children, onClose }: ModalProps) => {
 
     return (
       <AnimatePresence>
@@ -29,7 +32,7 @@ const Modal: React.FC<ModalProps> = ({ ride, isOpen, driverName, driverEmail, dr
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 m-4"
-            onClick={onClose}
+            onClick={(e) => e.stopPropagation()}
           >
             <motion.div
                 className="bg-white p-6 rounded-lg shadow-lg"
@@ -42,10 +45,13 @@ const Modal: React.FC<ModalProps> = ({ ride, isOpen, driverName, driverEmail, dr
                       : 
                     ride.destination}
                 </h4>
-                <p>Conducteur: {driverName ?? sessionData?.user?.name}</p>
-                <p>Email: {driverEmail ?? sessionData?.user?.email}</p>
-                    <Image width={50} height={50} src={driverImage ?? ""} alt="Image du conducteur" className="mt-4 rounded-full" />
-                <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700" onClick={onClose}>Fermer</button>
+                <p>Conducteur: {ride.driver.name}</p>
+                <p>Email: {ride.driver.email}</p>
+                    <Image width={50} height={50} src={ride.driver.image ?? ""} alt="Image du conducteur" className="mt-4 rounded-full" />
+                <div className="flex flox-row justify-around">
+                  <Button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700" onClick={onClose}>Fermer</Button>
+                  {children}
+                </div>
             </motion.div>
           </motion.div>
         )}
