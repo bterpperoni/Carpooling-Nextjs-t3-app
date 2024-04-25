@@ -58,7 +58,7 @@ export default function Calendar(): JSX.Element {
   }, [selectedRide, passengersDetail]);
 
   // Fetch the notification creation function
-  const { data: createdNotification, mutate: createNotification } = api.notification.create.useMutation();
+  const { mutate: createNotification } = api.notification.create.useMutation();
 
   // New date object
   // const today = new Date().toLocaleDateString();
@@ -68,9 +68,6 @@ export default function Calendar(): JSX.Element {
     date.setDate(date.getDate() + i);
     return date;
   });
-
-  
-
 
   // Type definition for grouping rides by date
   type GroupedRides = Record<string, Ride[] & TypeReturnRideAsPassenger>;
@@ -191,6 +188,7 @@ export default function Calendar(): JSX.Element {
                                     });
                                     // Notify the passengers
                                     await notifyStartRide(rideInformations, listPassengers.map(({passengerId}) => passengerId));
+                                    location.assign(`/calendar/${selectedRide?.id}/`);
                                   }
                                 }}
                               >

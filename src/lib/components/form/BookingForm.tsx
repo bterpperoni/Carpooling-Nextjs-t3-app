@@ -176,7 +176,7 @@ export default function BookingForm({ ride, booking }:
                       mr-2 
                       text-[1.25rem] 
                       text-[var(--pink-g1)] md:text-2xl">
-          Où souhaitez vous que {ride?.driverId} vous récupère ?
+          Où souhaitez vous que l'on vous récupère ?
         </label>
         {/* This autocomplete will be used as destination to calcul distance from driver departure to this address */}
         <Autocomplete
@@ -256,7 +256,7 @@ export default function BookingForm({ ride, booking }:
               )}
             </div>
           </div>
-          {bookingEligible && (
+          {bookingEligible === true ? (
             <>
               <div className="m-4 mt-6 flex w-full flex-row items-center justify-around">
                 {booking ? (
@@ -282,12 +282,22 @@ export default function BookingForm({ ride, booking }:
                 )}
               </div>
             </>
+          ): (
+            <>
+              <div className="m-4 mt-6 flex w-full flex-row items-center justify-around">
+                <Button
+                  disabled
+                  className="border-2 border-gray-500 rounded-lg cursor-not-allowed px-3 py-2 text-gray-300"
+                >
+                  Confirmer la réservation
+                </Button>
+              </div>
+            </>
           )}
-
         </>
       )}
       <Button
-        className="h-10 w-24 rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600 my-4"
+        className="h-10 w-24 rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600 my-2"
         onClick={() =>
           booking ? location.assign(`/rides/${ride?.id}/bookings/${booking?.id}`) : location.assign(`/rides/${ride?.id}/`)
         }>

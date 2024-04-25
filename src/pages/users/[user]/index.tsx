@@ -78,7 +78,7 @@ export default function User() {
   useEffect(() => {
     if (updatedUser ?? updatedSchool ) {
       alert("Vos informations ont bien été modifiés!");
-      window.location.assign(`/users/${editedName !== '' ? editedName : user?.name}/profile`);
+      window.location.assign(`/users/${editedName !== '' ? editedName : user?.name}/`);
     }
   }, [ updatedSchool, updatedUser]);
 
