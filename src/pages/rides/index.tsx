@@ -60,7 +60,6 @@ const AllRides: React.FC = () => {
       void mapLoaded;
       return;
     } 
-    console.log("Map ref : ", mapRef.current);
   }, [mapRef, checked]);
 
   return (

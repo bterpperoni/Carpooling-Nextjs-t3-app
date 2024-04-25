@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { RideInformationsProps, ApiResponse } from "$/lib/types/types";
-import { api } from "$/utils/api";
-import { getCampusNameWithAddress } from "$/utils/data/school";
 import axios from "axios";
 
 export const notifyStartRide = async ({rideId, driverId, destination}: RideInformationsProps, passengersList: string[]): Promise<void> => {
@@ -12,7 +10,6 @@ export const notifyStartRide = async ({rideId, driverId, destination}: RideInfor
           rideInfos,
           passengers
         });
-        
         
         console.log('Succès:', response.data);
       } catch (error) {

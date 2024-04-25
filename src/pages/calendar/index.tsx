@@ -148,15 +148,21 @@ export default function Calendar(): JSX.Element {
                                     // set the ride informations
                                     const rideInformations: RideInformationsProps = {
                                       rideId: selectedRide.id,
-                                      driverId: selectedRide.driverId,
+                                      driverId: selectedRide.driver.name ?? "",
                                       destination: selectedRide.destination
                                     };
                                     // Set passengers List
                                     const passengersList = rideListAsDriver?.filter((ride) => ride.id === selectedRide.id).map((ride) => ride.passengers) ?? [];
                                     const listPassengersId: string[] = [];
+                                    // Destruct passengers list 
                                     passengersList.forEach((passenger) => {
                                       passenger.forEach((passenger) => {
-                                        listPassengersId.push(passenger.userId);
+                                        // Get the detail of each passenger
+                                        const { data: passengersDetail } = api.user.userById.useQuery(
+                                          { id: passenger.userId },
+                                          { enabled: sessionData?.user !== undefined }
+                                        );
+                                        listPassengersId.push(passengersDetail?.name ?? "");
                                       });
                                     });
     
@@ -166,7 +172,7 @@ export default function Calendar(): JSX.Element {
                                       // Save the ride start notification in the database
                                       createNotification({
                                               userId: userId,
-                                              message: `Le trajet à destination de ${getCampusNameWithAddress(rideInformations.destination) !== null ? getCampusNameWithAddress(rideInformations.destination): rideInformations.destination} a commencé ! 🚗🎉 N'oubliez pas de 'check' !`,
+                                              message: `Le trajet avec ${sessionData?.user.name} à destination de ${getCampusNameWithAddress(rideInformations.destination) !== null ? getCampusNameWithAddress(rideInformations.destination): rideInformations.destination} a commencé ! 🚗🎉`,
                                               read: false
                                       });
                                       console.log(createdNotification);

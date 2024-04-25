@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
 import { calculateDistance } from "$/hook/distanceMatrix";
 import type { Booking, Ride } from "@prisma/client";
-import { Loader } from '@googlemaps/js-api-loader';
 
 
 export default function BookingForm({ ride, booking }: 
@@ -33,9 +32,9 @@ export default function BookingForm({ ride, booking }:
   //  Max distance driver can go to pick up passenger
   const maxDistanceDetour = ride?.maxDetourDist ?? 0;
   // Distance in kilometers between driver departure and passenger destination
-  const [distanceInKilometersA, setDistanceInKilometersA] = useState<number>(0);
+  const [distanceToPassengerInKm, setDistanceToPassengerInKm] = useState<number>(0);
   // Distance in kilometers between passenger pickup point and destination
-  const [distanceInKilometersB, setDistanceInKilometersB] = useState<number>(0);
+  const [distanceToDestinationInKm, setDistanceToDestinationInKm] = useState<number>(0);
   // Total distance between origin and destination
   const [totalDistance, setTotalDistance] = useState<number>(0);
   // Price of ride
@@ -53,16 +52,9 @@ export default function BookingForm({ ride, booking }:
   const [destinationBooking, setDestinationBooking] = useState<string | null>(null);
   const [destinationLatitude, setDestinationLatitude] = useState<number| null>(null);
   const [destinationLongitude, setDestinationLongitude] = useState<number| null>(null);
+  
   // Price for fuel per kilometer
   const fuelPrice = 0.1;
-
-/* ----DISTANCE TOTAL --- */
-async function getTotalDistance() {
-  const distanceInMeters = await calculateDistance(origin, destination);
-  const distance = parseInt(distanceInMeters) / 1000;
-  setTotalDistance(distance);
-}
-
 
   // Options for autocomplete
   const options = {
@@ -90,26 +82,37 @@ async function getTotalDistance() {
   useEffect(() => {
 
     async function getDistanceAndCheckEligibility() {
-      await getTotalDistance();
-      /* ----DISTANCE A--- */
-      const distanceInMetersEligibility = await calculateDistance(
+      /* ----DISTANCE TOTAL FROM ORIGIN TO DESTINATION --- */
+      const distanceInMeters = await calculateDistance(
+        origin, 
+        destination
+      );
+      const distanceInKm = parseInt(distanceInMeters) / 1000;
+      setTotalDistance(distanceInKm);
+      /* ----DISTANCE FROM ORIGIN TO PASSENGER --- */
+      const distanceToPassenger = await calculateDistance(
         origin,
         destinationBooking ?? destPickup,
       );
-      const distanceEligibility = parseInt(distanceInMetersEligibility) / 1000;
-      setDistanceInKilometersA(distanceEligibility);
-      /* ----DISTANCE B--- */
-      const distanceInMetersForRest = await calculateDistance(
+      const distanceToPassengerInKm = parseInt(distanceToPassenger) / 1000;
+      setDistanceToPassengerInKm(distanceToPassengerInKm);
+      /* ----DISTANCE FROM TO DESTINATION--- */
+      const distanceToDestination = await calculateDistance(
         destinationBooking ?? destPickup,
         destination,
       );
-      const distanceRest = parseInt(distanceInMetersForRest) / 1000;
-      setDistanceInKilometersB(distanceRest);
-      /* ----------------- */
-      if (distanceInKilometersA <= maxDistanceDetour) {
+      const distanceToDestinationInKm = parseInt(distanceToDestination) / 1000;
+      setDistanceToDestinationInKm(distanceToDestinationInKm);
+      /* -------------------------------------------------- */
+      // console.log("Distance from origin to passenger: ", distanceToPassengerInKm);
+      // console.log("Distance from passenger to destination: ", distanceToDestinationInKm);
+      // console.log("Distance with waypoint : ", (distanceToPassengerInKm + distanceToDestinationInKm));
+      // console.log("Total distance : ", maxDistanceDetour + totalDistance + (0.05 * totalDistance));
+      // console.log("MaxDetour : ", maxDistanceDetour);
+
+      if ((distanceToPassengerInKm + distanceToDestinationInKm) <= maxDistanceDetour + totalDistance + (0.05 * totalDistance)) {
         setBookingEligible(true);
-        const tmpPrice =
-          (distanceInKilometersA + distanceInKilometersB) * fuelPrice;
+        const tmpPrice = (distanceToPassengerInKm + distanceToDestinationInKm) * fuelPrice;
         setPriceRide(tmpPrice.toFixed(2));
       } else {
         setBookingEligible(false);
@@ -220,14 +223,14 @@ async function getTotalDistance() {
                 Départ - Pt. passage:
                 <span className="text-[var(--pink-g1)]">
                   {" "}
-                  {distanceInKilometersA} km
+                  {distanceToPassengerInKm} km
                 </span>
               </p>
               <p>
               Pt. passage - Destination:
                 <span className="text-[var(--pink-g1)]">
                   {" "}
-                  {distanceInKilometersB} km
+                  {distanceToDestinationInKm} km
                 </span>
               </p>
               <p>

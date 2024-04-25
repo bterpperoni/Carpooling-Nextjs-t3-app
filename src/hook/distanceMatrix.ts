@@ -1,3 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+import { Loader } from "@googlemaps/js-api-loader";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+
+
 export async function calculateDistance(origin: string, destination: string): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
@@ -7,6 +14,10 @@ export async function calculateDistance(origin: string, destination: string): Pr
           origins: [origin],
           destinations: [destination],
           travelMode: google.maps.TravelMode.DRIVING,
+          drivingOptions: {
+            departureTime: new Date(),
+            trafficModel: google.maps.TrafficModel.BEST_GUESS,
+          },
         },
         (response, status) => {
           if (status === google.maps.DistanceMatrixStatus.OK) {
@@ -61,3 +72,57 @@ export function displayRoute(
       console.log(err);
     });
 }
+
+/*
+// Implementation of the calculateDetour function to check if a passenger can be included in a ride 
+// without exceeding the maximum detour distance
+// The function takes the origin, destination, waypoint, maximum detour distance, and departure time as parameters
+// It returns a boolean indicating if the passenger can be included
+*/
+export const calculateDetour = async (origin: string, destination: string, waypoints: string[], maxDetourDistance: number, departureTime: Dayjs) => {
+  const loader = new Loader({
+    apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
+    version: "weekly"
+  });
+
+  const google = await loader.load();
+
+  const directionsService = new google.maps.DirectionsService();
+
+  const directRoute = await directionsService.route({
+    origin: origin,
+    destination: destination,
+    travelMode: google.maps.TravelMode.DRIVING,
+    drivingOptions: {
+      departureTime: (dayjs(departureTime)).toDate() ?? new Date(),
+      trafficModel: google.maps.TrafficModel.BEST_GUESS,
+    }, 
+  });
+  // Total Distance of the direct route
+  const directDistance = directRoute?.routes[0]?.legs[0]?.distance?.value ?? 0;
+ 
+  // Prepare the waypoints for the detour route
+  const formattedWaypoints = waypoints.map(waypoint => ({
+    location: waypoint,
+    stopover: true,
+  }));
+  const detourRoute = await directionsService.route({
+    origin: origin,
+    destination: destination,
+    waypoints: formattedWaypoints,
+    travelMode: google.maps.TravelMode.DRIVING,
+  });
+   // Total Distance of the detour route
+  const detourDistance = detourRoute?.routes[0]?.legs.reduce((acc, leg) => acc + (leg?.distance?.value ?? 0), 0);
+  
+  // Compare the direct distance with the detour distance
+  const detourDifference = (detourDistance ?? 0) - directDistance;
+  // Verify if the detour distance is within the maximum detour distance
+  if (detourDifference <= maxDetourDistance * 1000) {
+    console.log("Vous êtes éligible au trajet");
+    return true;
+  } else {
+    console.log("Le détour est trop important, veuillez vous rapprocher un peu ou trouver un autre trajet.");
+    return false;
+  }
+};
