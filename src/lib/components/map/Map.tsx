@@ -11,7 +11,8 @@ import { useApiKey } from "$/context/api";
 import Error from "../error/Error";
 
 
-async function Map({ center, zoom, children, onLoad }: MapProps) {
+
+function Map({ center, zoom, children, onLoad }: MapProps) {
   const apiKey = useApiKey();
 
   // Set the map container style
@@ -22,8 +23,6 @@ async function Map({ center, zoom, children, onLoad }: MapProps) {
   // Access the map object
   const mapRef = useRef<google.maps.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
-
-  const { } = await google.maps.importLibrary("core");
 
   // Set the map options
   useEffect(() => {
@@ -48,9 +47,10 @@ async function Map({ center, zoom, children, onLoad }: MapProps) {
           center={center}
           zoom={zoom}
           mapContainerStyle={mapContainerStyle}
-          onLoad={(map) => {
+          onLoad={async (map) => {
             mapRef.current = map;
             setIsMapLoaded(true);
+            await google.maps.importLibrary("maps");
             onLoad && onLoad(mapRef.current);
           }}
           children={children}

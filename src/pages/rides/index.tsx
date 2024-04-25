@@ -123,9 +123,9 @@ const AllRides: React.FC = () => {
           {/* -------------------------------------- display map ---------------------------------------------- */}
           {!checked && (
             <>
-              <Map center={center} zoom={zoom} onLoad={async (map) => await mapLoaded(map)} children={rideList?.map((ride) => (
+              <Map center={center} zoom={zoom} onLoad={async (map) => await mapLoaded(map)} children={rideList?.map((ride, index) => (
                   <Marker
-                    key={ride.id}
+                    key={index}
                     position={{
                       lat: ride.departureLatitude,
                       lng: ride.departureLongitude,

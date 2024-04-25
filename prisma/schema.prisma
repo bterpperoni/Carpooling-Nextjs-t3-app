@@ -90,7 +90,8 @@ model Ride {
   destinationLatitude  Float
   destinationLongitude Float
   maxPassengers        Int        
-  maxDetourDist        Int        
+  maxDetourDist        Int
+  distance             String?        
   type                 RideType   @default(ALLER)
   returnTime           DateTime?
   status               RideStatus  @default(CREATED)
@@ -100,15 +101,16 @@ model Ride {
 }
 
 model Booking {
-  id         Int    @id @default(autoincrement())
-  rideId     Int
-  userId        String
-  pickupPoint     String
-  pickupLatitude  Float
-  pickupLongitude Float
-  price           String
-  status          BookingStatus @default(CREATED)
-  driverRating    Int?     
+  id                 Int    @id @default(autoincrement())
+  rideId             Int
+  userId             String
+  pickupPoint        String
+  pickupLatitude     Float
+  pickupLongitude    Float
+  distanceWithDetour String?
+  price              String
+  status             BookingStatus @default(CREATED)
+  driverRating       Int?     
   ride       Ride   @relation("Passengers", fields: [rideId], references: [id], onDelete: Cascade)
   userPassenger       User   @relation("UserPassenger", fields: [userId], references: [id], onDelete: Cascade)
 }

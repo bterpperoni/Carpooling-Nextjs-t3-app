@@ -18,6 +18,9 @@ export const bookingRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
           return ctx.db.booking.findUnique({
             where: { id: input.id },
+            include: {
+              userPassenger: true
+            },
           });
         }),
   
@@ -30,6 +33,9 @@ export const bookingRouter = createTRPCRouter({
     return ctx.db.booking.findMany({
       where: {
         rideId: input.rideId,
+      },
+      include: {
+        userPassenger: true
       },
     });
   }),

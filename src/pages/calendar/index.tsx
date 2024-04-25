@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import React, { useState } from "react"; // Import the React module
+import React, { useEffect, useState } from "react"; // Import the React module
 import { getCampusNameWithAddress } from "$/utils/data/school";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
@@ -28,6 +29,34 @@ export default function Calendar(): JSX.Element {
     { enabled: sessionData?.user !== undefined },
   );
 
+    // State for managing selected ride and modal visibility
+    const [selectedRide, setSelectedRide] = useState<Ride & {
+      driver: {
+        name: string | null;
+        email: string | null;
+        image: string | null;
+      };
+    }| null>(null);
+  
+    const [checkIfModalDriverIsOpen, setCheckIfModalDriverIsOpen] =
+      useState<boolean>(false);
+    const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
+      useState<boolean>(false);
+
+    // Fetch the passengers details
+    const { data: passengersDetail, refetch: refetchPassengersDetails } = api.booking.bookingByRideId.useQuery(
+      { rideId: selectedRide?.id ?? 0},
+      { enabled: sessionData?.user !== undefined }
+    );
+
+
+  useEffect(() => {
+    if(selectedRide !== undefined){
+      void refetchPassengersDetails();
+      console.log("Passengers details", passengersDetail);
+    }
+  }, [selectedRide, passengersDetail]);
+
   // Fetch the notification creation function
   const { data: createdNotification, mutate: createNotification } = api.notification.create.useMutation();
 
@@ -41,18 +70,7 @@ export default function Calendar(): JSX.Element {
   });
 
   
-  // State for managing selected ride and modal visibility
-  const [selectedRide, setSelectedRide] = useState<Ride & {
-    driver: {
-      name: string | null;
-      email: string | null;
-      image: string | null;
-    };
-  }| null>(null);
-  const [checkIfModalDriverIsOpen, setCheckIfModalDriverIsOpen] =
-    useState<boolean>(false);
-  const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
-    useState<boolean>(false);
+
 
   // Type definition for grouping rides by date
   type GroupedRides = Record<string, Ride[] & TypeReturnRideAsPassenger>;
@@ -144,41 +162,35 @@ export default function Calendar(): JSX.Element {
                               <Button
                                 className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700 mr-3"
                                 onClick={async () => {
-                                  if (selectedRide) {
+                                  if (selectedRide) {                                    
                                     // set the ride informations
                                     const rideInformations: RideInformationsProps = {
                                       rideId: selectedRide.id,
                                       driverId: selectedRide.driver.name ?? "",
                                       destination: selectedRide.destination
                                     };
-                                    // Set passengers List
-                                    const passengersList = rideListAsDriver?.filter((ride) => ride.id === selectedRide.id).map((ride) => ride.passengers) ?? [];
-                                    const listPassengersId: string[] = [];
+
+                                    // Set passengers name List
+                                    const listPassengers: {passengerId: string, passengerName: string}[] = [];
                                     // Destruct passengers list 
-                                    passengersList.forEach((passenger) => {
-                                      passenger.forEach((passenger) => {
-                                        // Get the detail of each passenger
-                                        const { data: passengersDetail } = api.user.userById.useQuery(
-                                          { id: passenger.userId },
-                                          { enabled: sessionData?.user !== undefined }
-                                        );
-                                        listPassengersId.push(passengersDetail?.name ?? "");
+                                    passengersDetail?.forEach((passenger) => {
+                                        // Add the passenger name to the list
+                                        listPassengers.push({passengerId: passenger.userId, passengerName: passenger.userPassenger.name});
                                       });
-                                    });
-    
-                                    console.log("Liste des passagers", listPassengersId);
+                                    
+                                    console.log("Liste des passagers", listPassengers);
                                     console.log("Informations du trajet", rideInformations);
-                                    listPassengersId.forEach((userId: string) => {
-                                      // Save the ride start notification in the database
+
+                                    // Save the ride start notification in the database for each passenger
+                                    listPassengers.map(async ({passengerId}) => {
                                       createNotification({
-                                              userId: userId,
+                                              userId: passengerId,
                                               message: `Le trajet avec ${sessionData?.user.name} à destination de ${getCampusNameWithAddress(rideInformations.destination) !== null ? getCampusNameWithAddress(rideInformations.destination): rideInformations.destination} a commencé ! 🚗🎉`,
                                               read: false
                                       });
-                                      console.log(createdNotification);
                                     });
                                     // Notify the passengers
-                                    await notifyStartRide(rideInformations, listPassengersId);
+                                    await notifyStartRide(rideInformations, listPassengers.map(({passengerId}) => passengerId));
                                   }
                                 }}
                               >
