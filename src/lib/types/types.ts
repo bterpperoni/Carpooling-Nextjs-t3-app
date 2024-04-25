@@ -35,4 +35,7 @@ export type ApiResponse = { success: boolean, message?: string };
 
 export type RideInformationsProps = { rideId: number; driverId: string; destination: string}
 
-
+export type DistanceMatrixPromise = {
+  distance: string;
+  duration: string;
+};

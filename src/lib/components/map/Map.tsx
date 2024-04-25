@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import React, { useEffect, useRef, useState } from "react";
@@ -10,7 +11,7 @@ import { useApiKey } from "$/context/api";
 import Error from "../error/Error";
 
 
-function Map({ center, zoom, children, onLoad }: MapProps) {
+async function Map({ center, zoom, children, onLoad }: MapProps) {
   const apiKey = useApiKey();
 
   // Set the map container style
@@ -21,6 +22,8 @@ function Map({ center, zoom, children, onLoad }: MapProps) {
   // Access the map object
   const mapRef = useRef<google.maps.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+
+  const { } = await google.maps.importLibrary("core");
 
   // Set the map options
   useEffect(() => {

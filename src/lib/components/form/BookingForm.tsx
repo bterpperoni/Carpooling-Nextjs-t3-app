@@ -108,8 +108,11 @@ export default function BookingForm({ ride, booking }:
       /* -------------------------------------------------- */
       // console.log("Distance from origin to passenger: ", distanceToPassengerInKm);
       // console.log("Distance from passenger to destination: ", distanceToDestinationInKm);
-      // console.log("Distance with waypoint : ", (distanceToPassengerInKm + distanceToDestinationInKm));
-      // console.log("Total distance : ", maxDistanceDetour + totalDistance + (0.05 * totalDistance));
+      console.log("Distance with waypoint(Km) : ", Math.round(distanceToPassengerInKm + distanceToDestinationInKm), "km");
+      console.log("Distance with waypoint duration(Min) : ", 
+        Math.round((parseInt(distanceToPassenger.duration) / 60) + (parseInt(distanceToDestination.duration) / 60)), "minutes");
+      console.log("Total distance(Km) : ", Math.round(maxDistanceDetour + totalDistance + (0.05 * totalDistance)), "km");
+      console.log("Total distance duration(Min) : ", Math.round(parseInt(distanceInMeters.duration) / 60), "minutes");
       // console.log("MaxDetour : ", maxDistanceDetour);
 
       if ((distanceToPassengerInKm + distanceToDestinationInKm) <= maxDistanceDetour + totalDistance + (0.05 * totalDistance)) {

@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
+import type { DistanceMatrixPromise } from "$/lib/types/types";
 import { Loader } from "@googlemaps/js-api-loader";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 
-type DistanceMatrixPromise = {
-  distance: string;
-  duration: string;
-};
+
 
 export async function calculateDistance(origin: string, destination: string): Promise<DistanceMatrixPromise> {
   const service = new google.maps.DistanceMatrixService();
