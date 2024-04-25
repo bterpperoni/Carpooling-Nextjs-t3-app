@@ -3,6 +3,9 @@ import { useSession } from 'next-auth/react';
 import { api } from "$/utils/api";
 import { useRouter } from 'next/router';
 import { BookingStatus } from '@prisma/client';
+import Button from '$/lib/components/button/Button';
+import Map from '$/lib/components/map/Map';
+import { useEffect, useRef } from 'react';
 
 export default function currentRide(){
     // Get session
@@ -15,6 +18,17 @@ export default function currentRide(){
         { rideId: parseInt(rideId) ?? 0},
         { enabled: sessionData?.user !== undefined }
     );
+
+    // Map ref
+    const mapRef = useRef<google.maps.Map | null>(null);
+    
+    // Map options
+    const zoom = 12;
+    
+    // Set the map ref when it's loaded
+    async function mapLoaded(map: google.maps.Map) {
+      mapRef.current = map;
+    }
 
     return (
             <LayoutMain>
@@ -40,12 +54,10 @@ export default function currentRide(){
                             </div>
                         ))}
                         </div>
-                        <div className="mt-8">
-                        {/* Utilisez votre composant Map ici */}
-                        {/* Assurez-vous que la bibliothèque Google Maps est correctement chargée */}
-                        {/* Affichez les polylignes correspondantes pour chaque passager */}
+                        <div className="mt-8 z-1">
+                            <Map zoom={zoom} onLoad={mapLoaded} />
                         </div>
-                        <button
+                        <Button
                         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         onClick={() => {
                             // Gérez l'action lorsque le bouton est cliqué
@@ -53,7 +65,7 @@ export default function currentRide(){
                         }}
                         >
                          En route !
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </LayoutMain>

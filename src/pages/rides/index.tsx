@@ -55,7 +55,6 @@ const AllRides: React.FC = () => {
   }
 
   useEffect(() => {
-    
     if(mapRef && mapRef.current === null){
       void mapLoaded;
       return;
@@ -123,7 +122,7 @@ const AllRides: React.FC = () => {
           {/* -------------------------------------- display map ---------------------------------------------- */}
           {!checked && (
             <>
-              <Map center={center} zoom={zoom} onLoad={async (map) => await mapLoaded(map)} children={rideList?.map((ride, index) => (
+              <Map center={center} zoom={zoom} onLoad={mapLoaded} children={rideList?.map((ride, index) => (
                   <Marker
                     key={index}
                     position={{

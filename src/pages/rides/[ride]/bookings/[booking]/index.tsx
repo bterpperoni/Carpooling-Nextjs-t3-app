@@ -44,8 +44,8 @@ export default function BookingDetails() {
     if (fetchedBooking !== undefined && fetchedRide !== undefined) {
       if ((departureLatLng && destinationLatLng) !== undefined)
         console.log("Booking verified :", fetchedBooking);
-      console.log("Ride verified :", fetchedRide);
-      console.log(
+        console.log("Ride verified :", fetchedRide);
+        console.log(
         "Departure : ",
         departureLatLng,
         "\nDestination: ",
