@@ -4,11 +4,15 @@ import { Loader } from "@googlemaps/js-api-loader";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 
+type DistanceMatrixPromise = {
+  distance: string;
+  duration: string;
+};
 
-export async function calculateDistance(origin: string, destination: string): Promise<string> {
+export async function calculateDistance(origin: string, destination: string): Promise<DistanceMatrixPromise> {
+  const service = new google.maps.DistanceMatrixService();
   return new Promise((resolve, reject) => {
     try {
-      const service = new google.maps.DistanceMatrixService();
       void service.getDistanceMatrix(
         {
           origins: [origin],
@@ -24,7 +28,8 @@ export async function calculateDistance(origin: string, destination: string): Pr
             if (response && response.rows.length > 0) {
               if (response.rows[0]?.elements[0]?.distance.value !== undefined) {
                 const distance = response.rows[0]?.elements[0]?.distance.value;
-                resolve(distance.toString());
+                const duration = response.rows[0]?.elements[0]?.duration.value;
+                resolve({distance: distance.toString(), duration: duration.toString()});
               }
             } else {
               console.error('Aucune réponse valide du service de calcul de distance.');

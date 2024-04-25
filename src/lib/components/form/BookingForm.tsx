@@ -82,26 +82,28 @@ export default function BookingForm({ ride, booking }:
   useEffect(() => {
 
     async function getDistanceAndCheckEligibility() {
+
       /* ----DISTANCE TOTAL FROM ORIGIN TO DESTINATION --- */
       const distanceInMeters = await calculateDistance(
         origin, 
         destination
       );
-      const distanceInKm = parseInt(distanceInMeters) / 1000;
+      const distanceInKm = parseInt(distanceInMeters.distance) / 1000;
       setTotalDistance(distanceInKm);
       /* ----DISTANCE FROM ORIGIN TO PASSENGER --- */
       const distanceToPassenger = await calculateDistance(
         origin,
         destinationBooking ?? destPickup,
       );
-      const distanceToPassengerInKm = parseInt(distanceToPassenger) / 1000;
+      const distanceToPassengerInKm = parseInt(distanceToPassenger.distance) / 1000;
       setDistanceToPassengerInKm(distanceToPassengerInKm);
+
       /* ----DISTANCE FROM TO DESTINATION--- */
       const distanceToDestination = await calculateDistance(
         destinationBooking ?? destPickup,
         destination,
       );
-      const distanceToDestinationInKm = parseInt(distanceToDestination) / 1000;
+      const distanceToDestinationInKm = parseInt(distanceToDestination.distance) / 1000;
       setDistanceToDestinationInKm(distanceToDestinationInKm);
       /* -------------------------------------------------- */
       // console.log("Distance from origin to passenger: ", distanceToPassengerInKm);
