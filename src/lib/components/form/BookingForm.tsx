@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import { useApiKey } from "$/context/api";
+import { useApiKey } from "$/context/apiContext";
 import Autocomplete from "react-google-autocomplete";
 import { useRouter } from "next/dist/client/router";
 import { useSession } from "next-auth/react";
@@ -60,9 +60,7 @@ export default function BookingForm({
   const [destinationLatitude, setDestinationLatitude] = useState<number | null>(
     null,
   );
-  const [destinationLongitude, setDestinationLongitude] = useState<
-    number | null
-  >(null);
+  const [destinationLongitude, setDestinationLongitude] = useState<number | null>(null);
 
   // Price for fuel per kilometer
   const fuelPrice = 0.1;
@@ -81,40 +79,6 @@ export default function BookingForm({
   const { data: bookingUpdated, mutate: updateBooking } =
     api.booking.update.useMutation();
 
-  async function checkEligibility() {
-    if (
-      ride &&
-      origin &&
-      (destinationBooking ?? destPickup)
-    ) {
-      // void getDistanceAndCheckEligibility();
-      await calculateDetour(
-        origin,
-        destination,
-        [destinationBooking ?? destPickup],
-        maxDistanceDetour,
-        ride.departureDateTime,
-      ).then((result) => {
-        setBookingEligible(result);
-      }).catch((err) => {
-        console.log(err);
-      });
-    }
-  }
-
-  async function getTotal() {
-    /* ----DISTANCE TOTAL FROM ORIGIN TO DESTINATION --- */
-    if(window.google){
-    const distanceInMeters = await calculateDistance(origin, destination);
-    const distanceInKm = distanceInMeters.distance / 1000;
-    const timeInMinutes = distanceInMeters.duration / 60;
-    // console.log("Total distance(Km) origine-destination(école) : ", parseFloat(distanceInKm.toFixed(2)), "km");
-    // console.log("Total time(Min) : ", Math.round(totalTime), "minutes");
-    // console.log("MaxDetour : ", maxDistanceDetour, "km");
-    setTotalTime(timeInMinutes);
-    setTotalDistance(distanceInKm);
-    }
-  }
 
   // When click on submit button
   function handleClick() {
@@ -146,16 +110,25 @@ export default function BookingForm({
     }
   }
 
-  // Redirect to ride page when booking is created
   useEffect(() => {
-    if (bookingCreated ?? bookingUpdated) {
-      location.assign(
-        `/rides/${ride?.id}/bookings/${bookingCreated?.id ?? bookingUpdated?.id}`,
-      );
-    }
-  }, [bookingCreated, bookingUpdated]);
 
-  // ________________________________ STATE TO MANAGE ELIGIBILITY & PRICE FOR PASSENGER ________________________________
+    async function getTotal() {
+      /* ----DISTANCE TOTAL FROM ORIGIN TO DESTINATION --- */
+      const distanceInMeters = await calculateDistance(origin, destination);
+      const distanceInKm = distanceInMeters.distance / 1000;
+      const timeInMinutes = distanceInMeters.duration / 60;
+      // console.log("Total distance(Km) origine-destination(école) : ", parseFloat(distanceInKm.toFixed(2)), "km");
+      // console.log("Total time(Min) : ", Math.round(totalTime), "minutes");
+      // console.log("MaxDetour : ", maxDistanceDetour, "km");
+      setTotalTime(timeInMinutes);
+      setTotalDistance(distanceInKm);
+    }
+    if (ride ) {
+      void getTotal();
+    }
+  }, []);
+
+
   useEffect(() => {
     
     async function distanceConsoleLog() {
@@ -167,21 +140,47 @@ export default function BookingForm({
       console.log("Distance from origin to waypoint : ", distanceToWaypointInKm, "km");
       console.log("Distance from waypoint to destination : ", distanceToDestinationInKm, "km");
       console.log("Total distance including WayPoint : ", distanceToWaypointInKm + distanceToDestinationInKm, "km");
+      console.log("Distance total without waypoint : ", totalDistance, "km");
     }
 
     void distanceConsoleLog();
 
-  }, [destinationBooking, destPickup, origin]);
+  }, [destinationBooking, destPickup, origin, totalDistance]);
+
+
 
   useEffect(() => {
-    if (ride ) {
-      void getTotal();
+    async function checkEligibility() {
+      if (
+        ride &&
+        origin &&
+        (destinationBooking ?? destPickup)
+      ) {
+        await calculateDetour(
+          origin,
+          destination,
+          [destinationBooking ?? destPickup],
+          maxDistanceDetour,
+          ride.departureDateTime,
+        ).then((result) => {
+          setBookingEligible(result);
+        }).catch((err) => {
+          console.log(err);
+        });
+      }
     }
-  }, []);
-
-  useEffect(() => {
+  
     void checkEligibility();
   }, [destinationBooking, destPickup, ride]);
+
+    // Redirect to ride page when booking is created
+    useEffect(() => {
+      if (bookingCreated ?? bookingUpdated) {
+        location.assign(
+          `/rides/${ride?.id}/bookings/${bookingCreated?.id ?? bookingUpdated?.id}`,
+        );
+      }
+    }, [bookingCreated, bookingUpdated]);
 
   // ________________________________ RENDER ________________________________
   return (

@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import type { ChangeEvent } from "react";
 import { useEffect, useState } from "react";
-import { useApiKey } from "$/context/api";
+import { useApiKey } from "$/context/apiContext";
 import MuiStyle from "$/styles/MuiStyle.module.css";
 import { RideStatus, RideType, type Ride } from "@prisma/client";
 import Slider from "$/lib/components/button/Slider";

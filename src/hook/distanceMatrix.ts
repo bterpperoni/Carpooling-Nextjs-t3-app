@@ -4,29 +4,6 @@ import type { DistanceMatrixPromise } from "$/lib/types/types";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
-// Function to load the Google Maps API
-export async function loadGoogleMaps(): Promise<typeof google> {
-  return new Promise((resolve, reject) => {
-    const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
-    if (!googleMapsApiKey) {
-      console.error("GOOGLE_MAPS_API_KEY is not defined");
-      reject(new Error("GOOGLE_MAPS_API_KEY is not defined"));
-    }
-    const googleMapsUrl = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places,distance_matrix`;
-    const script = document.createElement("script");
-    script.src = googleMapsUrl;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      resolve(window.google);
-    };
-    script.onerror = () => {
-      reject(new Error("Error loading Google Maps API"));
-    };
-    document.head.appendChild(script);
-  });
-}
-
 export async function calculateDistance(origin: string, destination: string): Promise<DistanceMatrixPromise> {
   return new Promise((resolve, reject) => {
     try {
@@ -61,7 +38,6 @@ export async function calculateDistance(origin: string, destination: string): Pr
       );
     } catch (error) {
       console.error('Une erreur est survenue lors du calcul de la distance :', error);
-      
     }
   });
 }
@@ -134,6 +110,8 @@ export const calculateDetour = async (origin: string, destination: string, waypo
       trafficModel: google.maps.TrafficModel.BEST_GUESS,
     }, 
   });
+
+  console.log("Response detourRoute: ", detourRoute);
    // Total Distance of the detour route
   const detourDistance = detourRoute?.routes[0]?.legs.reduce((acc, leg) => acc + (leg?.distance?.value ?? 0), 0);
   

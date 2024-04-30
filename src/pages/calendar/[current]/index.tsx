@@ -6,7 +6,7 @@ import { BookingStatus } from '@prisma/client';
 import Button from '$/lib/components/button/Button';
 import { useEffect, useRef, useState } from 'react';
 import { GoogleMap, LoadScriptNext } from '@react-google-maps/api';
-import { useApiKey } from '$/context/api';
+import { useApiKey } from '$/context/apiContext';
 import Map from '$/lib/components/map/Map';
 
 export default function currentRide(){

@@ -215,7 +215,9 @@ export default function Nav() {
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">Open user menu</span>
                       <img 
-                        className="h-10 w-10s rounded-full"
+                        width={10}
+                        height={10}
+                        className="rounded-full"
                         src={session?.user.image}
                         alt="img of user"
                         aria-hidden="true"

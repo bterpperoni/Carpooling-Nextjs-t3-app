@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { useApiKey } from '$/context/api';
+import { useApiKey } from '$/context/apiContext';
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
 

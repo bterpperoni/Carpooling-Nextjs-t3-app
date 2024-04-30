@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import LayoutMain from "../../lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import Slider from "$/lib/components/button/Slider";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { Marker } from "@react-google-maps/api";
@@ -33,13 +35,9 @@ const AllRides: React.FC = () => {
     enabled: sessionData?.user !== undefined,
   });
 
-  const customMarker = {
-    // Refer to https://developers.google.com/maps/documentation/javascript/examples/marker-symbol-custom
-    path: "M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
-    fillOpacity: 1,
-    scale: 2,
-    strokeWeight: 2,
-  };
+  // Access the map object
+  const mapRef = useRef<google.maps.Map | null>(null);
+  
 
   // Used to display the list of rides or the map
   const [checked, setChecked] = useState(false);
@@ -116,15 +114,7 @@ const AllRides: React.FC = () => {
                 zoom={zoom}
               >
                 {rideList?.map((ride, index) => (
-                  <Marker
-                    key={index}
-                    position={{
-                      lat: ride.departureLatitude,
-                      lng: ride.departureLongitude,
-                    }}
-                    onClick={() => handleClick(ride.id)}
-                    icon={customMarker}
-                  />
+                  // Display a marker for each ride
                 ))}
               </Map>
             </>

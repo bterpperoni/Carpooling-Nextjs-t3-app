@@ -1,7 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 // rideCard.tsx
 import type { RideCardProps } from "$/lib/types/interfaces";
 import { getCampusNameWithAddress } from "$/utils/data/school";
-import Image from "next/image";
 
 const rideCard: React.FC<RideCardProps> = ({ ride, goToRide } : RideCardProps) => {
 
@@ -10,9 +10,7 @@ const rideCard: React.FC<RideCardProps> = ({ ride, goToRide } : RideCardProps) =
      <div key={ride.id}>
                 <div className="rounded-lg border border-gray-200 bg-white p-4 shadow">
                   <div className="mb-4 flex items-center">
-                    <Image
-                      width={40}
-                      height={40}
+                    <img
                       src={"/images/logo.png" ?? "/avatar.png"}
                       alt="Avatar de l'utilisateur"
                       className="mr-3 h-10 w-10 rounded-full"
