@@ -118,30 +118,20 @@ export default function BookingForm({
     const totalDistanceIncludingWaypoint = distanceToWaypointInKm + distanceToDestinationInKm;
     // Price calculation
     setPriceRide((totalDistanceIncludingWaypoint * fuelPrice).toFixed(2));
+    /* ----DISTANCE TOTAL FROM ORIGIN TO DESTINATION --- */
+    const distanceInMeters = await calculateDistance(origin, destination);
+    const distanceInKm = distanceInMeters.distance / 1000;
+    const timeInMinutes = distanceInMeters.duration / 60;
+    setTotalTime(parseFloat(timeInMinutes.toFixed(0)));
+    setTotalDistance(parseFloat(distanceInKm.toFixed(2)));
 
 
-    console.log("Total distance including WayPoint : \n ", distanceToWaypointInKm, "km +", distanceToDestinationInKm, "km = ", totalDistanceIncludingWaypoint, "km");
-    console.log("Distance total without waypoint : ", totalDistance, "km");
+    console.log("Total distance including WayPoint : \n ", distanceToWaypointInKm.toFixed(2), "km +", distanceToDestinationInKm.toFixed(2), "km = ", totalDistanceIncludingWaypoint.toFixed(2), "km");
+    console.log("Distance total without waypoint : ", totalDistance, "km \n Temps total : ", totalTime, "min");
 
     setDistanceToPassengerInKm(distanceToWaypointInKm);
     setDistanceToDestinationInKm(distanceToDestinationInKm);
   }
-
-  useEffect(() => {
-
-    async function getTotal() {
-      /* ----DISTANCE TOTAL FROM ORIGIN TO DESTINATION --- */
-      const distanceInMeters = await calculateDistance(origin, destination);
-      const distanceInKm = distanceInMeters.distance / 1000;
-      const timeInMinutes = distanceInMeters.duration / 60;
-      setTotalTime(timeInMinutes);
-      setTotalDistance(distanceInKm);
-    }
-    if (ride) {
-      void getTotal();
-    }
-  }, []);
-
 
   useEffect(() => {
 
