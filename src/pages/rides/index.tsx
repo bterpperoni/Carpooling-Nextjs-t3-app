@@ -5,20 +5,20 @@
 import LayoutMain from "../../lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import Slider from "$/lib/components/button/Slider";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
-import { Marker } from "@react-google-maps/api";
 import RideCard from "$/lib/components/containers/RideCard";
 import { useRouter } from "next/router";
 import Button from "$/lib/components/button/Button";
+import { useMap } from "$/context/mapContext";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display all rides -----------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------ */
 const AllRides: React.FC = () => {
   // Map settings
-  const center: google.maps.LatLngLiteral = { lat: 50.463727, lng: 3.938247 };
+  const center = { lat: 50.463727, lng: 3.938247 };
   const zoom = 12;
   // Session recovery
   const { data: sessionData } = useSession();
@@ -35,16 +35,22 @@ const AllRides: React.FC = () => {
     enabled: sessionData?.user !== undefined,
   });
 
-  // Access the map object
-  const mapRef = useRef<google.maps.Map | null>(null);
-  
-
   // Used to display the list of rides or the map
   const [checked, setChecked] = useState(false);
 
   const handleCheck = () => {
     setChecked(!checked);
   };
+  
+  // Access the map object
+  const mapRef = useMap();
+
+  useEffect(() => {
+      if(mapRef.current !== null){
+        console.log("Map Loaded \n Map ref: ", mapRef.current);
+      }
+  }
+  , [checked]);
 
 
 
@@ -109,14 +115,10 @@ const AllRides: React.FC = () => {
           {/* -------------------------------------- display map ---------------------------------------------- */}
           {!checked && (
             <>
-              <Map
+              <Map 
+                zoom={zoom} 
                 center={center}
-                zoom={zoom}
-              >
-                {rideList?.map((ride, index) => (
-                  // Display a marker for each ride
-                ))}
-              </Map>
+              />
             </>
           )}
         </div>

@@ -6,6 +6,7 @@ import {type AppType} from "next/app";
 import {api} from "$/utils/api";
 import {ApiKeyProvider} from "$/context/apiContext";
 import { StrictMode } from "react";
+import { MapProvider } from '$/context/mapContext';
 
 
 const Carheh: AppType<{ session: Session | null }> = ({
@@ -15,10 +16,12 @@ const Carheh: AppType<{ session: Session | null }> = ({
     return (
         <StrictMode>
             <ApiKeyProvider>
-            <SessionProvider session={session}>
-                    <Component {...pageProps} />
-            </SessionProvider>
-        </ApiKeyProvider>
+                <MapProvider>
+                    <SessionProvider session={session}>
+                        <Component {...pageProps} />
+                    </SessionProvider>
+                </MapProvider>
+            </ApiKeyProvider>
         </StrictMode>
     );
 };

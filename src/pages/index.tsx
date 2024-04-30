@@ -3,8 +3,6 @@
 import LayoutMain from '../lib/components/layout/LayoutMain';
 import { signIn, useSession } from "next-auth/react";
 import Button from "$/lib/components/button/Button";
-import { StrictMode, useEffect } from 'react';
-import { api } from '$/utils/api';
 
 export default function Home() {
 
@@ -13,7 +11,6 @@ export default function Home() {
 
   return (
     <>
-     <StrictMode>
       <LayoutMain>
           <section className="flex flex-col min-h-screen items-center justify-center">
             <h1 className="text-6xl text-white">CARHEH</h1>
@@ -32,9 +29,7 @@ export default function Home() {
                       )}
                   </div>
             </section> 
-        </LayoutMain>
-     </StrictMode>
-    
+        </LayoutMain>    
     </>
   );
 }

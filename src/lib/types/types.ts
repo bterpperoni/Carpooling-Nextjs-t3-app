@@ -20,11 +20,7 @@ export type InputProps = {
         classLabel?: string;
 }
 
-export type MapProps = {
-  center?: google.maps.LatLngLiteral;
-  zoom?: number;
-  children?: React.ReactNode | undefined;
-};
+
 
 export   type TypeReturnRideAsPassenger = ({
   driver: { name: string; email: string | null; image: string | null };
