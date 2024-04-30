@@ -215,8 +215,8 @@ export default function Nav() {
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">Open user menu</span>
                       <img 
-                        width={10}
-                        height={10}
+                        width={40}
+                        height={40}
                         className="rounded-full"
                         src={session?.user.image}
                         alt="img of user"

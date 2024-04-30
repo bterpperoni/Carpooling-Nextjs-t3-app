@@ -11,7 +11,6 @@ import LayoutMain from "$/lib/components/layout/LayoutMain";
 import RideDetail from "$/lib/components/containers/RideDetail";
 import { displayRoute } from "$/hook/distanceMatrix";
 import { useMap } from "$/context/mapContext";
-import { map } from "@trpc/server/observable";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of ride ------------------------------------------------------
@@ -76,7 +75,7 @@ export default function Detail() {
     if (userBooking && userBooking.length > 0) {
       console.log(
         "Vous avez déjà réservé ce trajet. Le numéro de réservation est " +
-          bookingId,
+          bookingId
       );
     }
   }, []);
@@ -133,50 +132,50 @@ export default function Detail() {
                   </Button>
                 </div>
               </>
-            ) : (
-              <div className="my-4">
-                {userBooking && userBooking.length === 0 ? (
-                  <>
-                    <Button
-                      className="mb-4 rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 mb-6"
-                      onClick={() =>
-                        window.location.assign(`/rides/${id as string}/bookings/create`)
-                      }
-                    >
-                      Créer une réservation
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      className="mb-4 rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
-                      onClick={() =>
-                        window.location.assign(`/rides/${id as string}/bookings/${bookingId}`)
-                      }
-                    >
-                      Voir ma réservation
-                    </Button>
-                  </>
-                )}
-                <Map zoom={zoom} onMapLoad={async () => {
-                  setIsMapLoaded(true);
-                  if(isMapLoaded){
-                    // Create the directions service & renderer
-                    const directionsService = new google.maps.DirectionsService();
-                    const directionsRenderer = new google.maps.DirectionsRenderer(
-                      { map: mapRef.current }
-                    );
-                    // Display the route
-                    void displayRoute(
-                      directionsService,
-                      directionsRenderer,
-                      departureLatLng,
-                      destinationLatLng,
-                    );
-                  }
-                }}/>
-              </div>
-            )}
+              ) : (
+                <div className="my-4">
+                  {userBooking && userBooking.length === 0 ? (
+                    <>
+                      <Button
+                        className="mb-4 rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 mb-6"
+                        onClick={() =>
+                          window.location.assign(`/rides/${id as string}/bookings/create`)
+                        }
+                      >
+                        Créer une réservation
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        className="mb-4 rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
+                        onClick={() =>
+                          window.location.assign(`/rides/${id as string}/bookings/${bookingId}`)
+                        }
+                      >
+                        Voir ma réservation
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
+              <Map zoom={zoom} onMapLoad={async () => {
+                    setIsMapLoaded(true);
+                    if(isMapLoaded){
+                      // Create the directions service & renderer
+                      const directionsService = new google.maps.DirectionsService();
+                      const directionsRenderer = new google.maps.DirectionsRenderer(
+                        { map: mapRef.current }
+                      );
+                      // Display the route
+                      void displayRoute(
+                        directionsService,
+                        directionsRenderer,
+                        departureLatLng,
+                        destinationLatLng,
+                      );
+                    }
+              }}/>
           </RideDetail>
         </>
       </LayoutMain>

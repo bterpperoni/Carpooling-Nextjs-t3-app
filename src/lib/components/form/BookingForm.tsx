@@ -63,7 +63,7 @@ export default function BookingForm({
   const [destinationLongitude, setDestinationLongitude] = useState<number | null>(null);
 
   // Price for fuel per kilometer
-  const fuelPrice = 0.1;
+  const fuelPrice = 0.12;
 
   // Options for autocomplete
   const options = {
@@ -110,6 +110,23 @@ export default function BookingForm({
     }
   }
 
+  async function distanceConsoleLog() {
+    const distanceToWaypoint = await calculateDistance(origin, destinationBooking ?? destPickup);
+    const distanceToWaypointInKm = distanceToWaypoint.distance / 1000;
+    const distanceToDestination = await calculateDistance(destinationBooking ?? destPickup, destination);
+    const distanceToDestinationInKm = distanceToDestination.distance / 1000;
+    const totalDistanceIncludingWaypoint = distanceToWaypointInKm + distanceToDestinationInKm;
+    // Price calculation
+    setPriceRide((totalDistanceIncludingWaypoint * fuelPrice).toFixed(2));
+
+
+    console.log("Total distance including WayPoint : \n ", distanceToWaypointInKm, "km +", distanceToDestinationInKm, "km = ", totalDistanceIncludingWaypoint, "km");
+    console.log("Distance total without waypoint : ", totalDistance, "km");
+
+    setDistanceToPassengerInKm(distanceToWaypointInKm);
+    setDistanceToDestinationInKm(distanceToDestinationInKm);
+  }
+
   useEffect(() => {
 
     async function getTotal() {
@@ -117,33 +134,20 @@ export default function BookingForm({
       const distanceInMeters = await calculateDistance(origin, destination);
       const distanceInKm = distanceInMeters.distance / 1000;
       const timeInMinutes = distanceInMeters.duration / 60;
-      // console.log("Total distance(Km) origine-destination(école) : ", parseFloat(distanceInKm.toFixed(2)), "km");
-      // console.log("Total time(Min) : ", Math.round(totalTime), "minutes");
-      // console.log("MaxDetour : ", maxDistanceDetour, "km");
       setTotalTime(timeInMinutes);
       setTotalDistance(distanceInKm);
     }
-    if (ride ) {
+    if (ride) {
       void getTotal();
     }
   }, []);
 
 
   useEffect(() => {
-    
-    async function distanceConsoleLog() {
-      const distanceToWaypoint = await calculateDistance(origin, destinationBooking ?? destPickup);
-      const distanceToWaypointInKm = distanceToWaypoint.distance / 1000;
-      const distanceToDestination = await calculateDistance(destinationBooking ?? destPickup, destination);
-      const distanceToDestinationInKm = distanceToDestination.distance / 1000;
 
-      console.log("Distance from origin to waypoint : ", distanceToWaypointInKm, "km");
-      console.log("Distance from waypoint to destination : ", distanceToDestinationInKm, "km");
-      console.log("Total distance including WayPoint : ", distanceToWaypointInKm + distanceToDestinationInKm, "km");
-      console.log("Distance total without waypoint : ", totalDistance, "km");
+    if(destinationBooking ?? destPickup !== null){
+      void distanceConsoleLog();
     }
-
-    void distanceConsoleLog();
 
   }, [destinationBooking, destPickup, origin, totalDistance]);
 
@@ -200,6 +204,8 @@ export default function BookingForm({
           defaultValue={booking?.pickupPoint ?? ""}
           apiKey={apiKey}
           options={options}
+          async
+          libraries={["places"]}
           onPlaceSelected={async (place) => {
             setDestinationBooking(place.formatted_address ?? "");
             if (

@@ -10,8 +10,9 @@ import Map from "$/lib/components/map/Map";
 import { api } from "$/utils/api";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
-import { useEffect, useRef } from "react";
-import { displayRoute } from "../../../../../hook/distanceMatrix";
+import { useEffect, useState } from "react";
+import { displayRoute } from "$/hook/distanceMatrix";
+import { useMap } from "$/context/mapContext";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of booking ------------------------------------------------------
@@ -36,33 +37,7 @@ export default function BookingDetails() {
     { enabled: sessionData?.user !== undefined },
   );
 
-  // Map ref
-  const mapRef = useRef<google.maps.Map | null>(null);
 
-  useEffect(() => {
-    // Display route on map when booking & ride are fetched
-    if (fetchedBooking !== undefined && fetchedRide !== undefined) {
-      if ((departureLatLng && destinationLatLng) !== undefined)
-        console.log("Booking verified :", fetchedBooking);
-        console.log("Ride verified :", fetchedRide);
-        console.log(
-        "Departure : ",
-        departureLatLng,
-        "\nDestination: ",
-        destinationLatLng,
-      );
-      console.log("Map ref : ", mapRef.current);
-      const directionsService = new google.maps.DirectionsService();
-      const directionsRenderer = new google.maps.DirectionsRenderer();
-      directionsRenderer.setMap(mapRef.current);
-      displayRoute(
-        directionsService,
-        directionsRenderer,
-        departureLatLng,
-        destinationLatLng,
-      );
-    }
-  }, [fetchedBooking, mapRef]);
 
   // Delete booking
   const { mutate: deleteBooking } = api.booking.delete.useMutation();
@@ -80,11 +55,28 @@ export default function BookingDetails() {
   // Map options
   const zoom = 12;
 
-  // Set the map ref when it's loaded
-  async function mapLoaded(map: google.maps.Map) {
-    mapRef.current = map;
-  }
+  // Access the map object
+  const mapRef = useMap();
 
+  // Used to define if the map is loaded
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
+  
+  useEffect(() => {
+    // Display route on map when booking & ride are fetched
+    if (fetchedBooking !== undefined && fetchedRide !== undefined) {
+      if ((departureLatLng && destinationLatLng) !== undefined) {
+        console.log("Booking verified :", fetchedBooking);
+        console.log("Ride verified :", fetchedRide);
+        console.log(
+        "Departure : ",
+        departureLatLng,
+        "\nDestination: ",
+        destinationLatLng,
+        );
+    }}
+  }, [fetchedBooking, isMapLoaded]);
+
+  
   if (sessionData) {
     return (
       <LayoutMain>
@@ -183,7 +175,24 @@ export default function BookingDetails() {
               Supprimer la réservation
             </Button>
           </div>
-          <Map zoom={zoom} onLoad={mapLoaded} />
+          <Map zoom={zoom} onMapLoad={async () => {
+            setIsMapLoaded(true);
+            if(isMapLoaded){
+              if(fetchedBooking !== undefined && fetchedRide !== undefined){
+                const directionsService = new google.maps.DirectionsService();
+                const directionsRenderer = new google.maps.DirectionsRenderer(
+                  { map: mapRef.current }
+                );
+                // Display route on map
+                void displayRoute(
+                  directionsService,
+                  directionsRenderer,
+                  departureLatLng,
+                  destinationLatLng,
+                );
+              }
+            }
+          }} />
           <style jsx>{`
             .ride-details-container {
               background-color: #ffffff;

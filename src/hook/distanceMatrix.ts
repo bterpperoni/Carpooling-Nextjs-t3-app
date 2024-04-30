@@ -36,8 +36,8 @@ export async function calculateDistance(origin: string, destination: string): Pr
           }
         }
       );
-    } catch (error) {
-      console.error('Une erreur est survenue lors du calcul de la distance :', error);
+    } catch (e) {
+      console.log("Empty fields in the form");
     }
   });
 }
@@ -112,8 +112,7 @@ export const calculateDetour = async (origin: string, destination: string, waypo
     }, 
   });
 
-  console.log("Response detourRoute: ", detourRoute);
-   // Total Distance of the detour route
+  // Total Distance of the detour route
   const detourDistance = detourRoute?.routes[0]?.legs.reduce((acc, leg) => acc + (leg?.distance?.value ?? 0), 0);
   
   // Substract the direct distance with the detour distance
