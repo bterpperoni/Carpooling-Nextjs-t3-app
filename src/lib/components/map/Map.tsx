@@ -20,9 +20,10 @@ type MapProps = {
   zoom?: number;
   children?: React.ReactNode | undefined;
   ride?: Ride;
+  onMapLoad?: () => void;
 };
 
-const Map: React.FC<MapProps> = ({ center, zoom, children }) => {
+const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad  }) => {
   const apiKey = useApiKey();
 
   const position = {
@@ -34,28 +35,36 @@ const Map: React.FC<MapProps> = ({ center, zoom, children }) => {
   // Reference to the map container
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
-  // Set the map options
   useEffect(() => {
-    if (!apiKey) return;
+    if (!apiKey) throw new Error({ title: "API key is not defined", statusCode: 0 });
 
-    // Load the map
+    // Initialize the loader of the Google Maps API
     const loader = new Loader({
       apiKey: apiKey,
-      version: "weekly"
+      version: "weekly",
+      region: "BE",
+      retries: 3,
+      language: "fr",
+      id: "routes-loader"
     });
 
     let map: google.maps.Map;
-
+    // Load the library and create the map 
     loader.importLibrary("maps").then(({ Map }) => {
-      // The map, centered at
-      map = new Map(document.getElementById("map") as HTMLDivElement, {
+      // The map object
+      map = new Map(mapContainerRef.current!, {
         center: center ?? position,
         zoom: zoom ?? 12,
         clickableIcons: true,
-        mapId: `map-${(Math.random() * 999).toFixed(0)}`,
+        mapId: `map-${(Math.random() * 999).toFixed(0)}`
       });
+      // Set the map object in the context
       mapRef.current = map;
-      // console.log("Log in Map Component \n Map ref: ", mapRef.current);
+
+      if(onMapLoad) {
+        onMapLoad();
+      }
+
     });
 
     // loader.importLibrary("marker").then(({ AdvancedMarkerElement }) => {
@@ -66,15 +75,12 @@ const Map: React.FC<MapProps> = ({ center, zoom, children }) => {
     //     title: `Trajet n°${ride?.id}`
     //   });
     // });
-  }, [mapRef]);
+  }, [mapRef, center, zoom, apiKey, onMapLoad]);
 
-  if (!apiKey) {
-    throw new Error({ title: "API key is not defined", statusCode: 0 });
-  }
   return (
     <>
       <div
-        id="map"
+        ref={mapContainerRef}
         style={{ width: "100%", height: "50vh" }}
         className="rounded-lg border-2 border-black p-2"
       >

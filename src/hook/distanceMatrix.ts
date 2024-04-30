@@ -44,13 +44,14 @@ export async function calculateDistance(origin: string, destination: string): Pr
 
 
 // Function to display line between driver departure & passenger pickup point
-export function displayRoute(
+export async function displayRoute(
   directionsService: google.maps.DirectionsService,
   directionsRenderer: google.maps.DirectionsRenderer,
   origin: google.maps.LatLngLiteral,
   destination: google.maps.LatLngLiteral,
-): void {
+): Promise<void> {
   console.log("Origin: ", origin, "\nDestination: ", destination);
+
   directionsService.route(
       {
         origin: origin,

@@ -5,7 +5,7 @@
 import LayoutMain from "../../lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import Slider from "$/lib/components/button/Slider";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import RideCard from "$/lib/components/containers/RideCard";
@@ -50,7 +50,7 @@ const AllRides: React.FC = () => {
         console.log("Map Loaded \n Map ref: ", mapRef.current);
       }
   }
-  , [checked]);
+  , [checked, mapRef]);
 
 
 

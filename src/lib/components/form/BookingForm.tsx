@@ -154,7 +154,7 @@ export default function BookingForm({
       if (
         ride &&
         origin &&
-        (destinationBooking ?? destPickup)
+        ((destinationBooking ?? destPickup) !== null)
       ) {
         await calculateDetour(
           origin,
@@ -169,9 +169,8 @@ export default function BookingForm({
         });
       }
     }
-  
     void checkEligibility();
-  }, [destinationBooking, destPickup, ride]);
+  }, [destinationBooking, destPickup]);
 
     // Redirect to ride page when booking is created
     useEffect(() => {

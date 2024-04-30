@@ -10,6 +10,8 @@ import Map from "$/lib/components/map/Map";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import RideDetail from "$/lib/components/containers/RideDetail";
 import { displayRoute } from "$/hook/distanceMatrix";
+import { useMap } from "$/context/mapContext";
+import { map } from "@trpc/server/observable";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of ride ------------------------------------------------------
@@ -49,22 +51,15 @@ export default function Detail() {
     lng: ride?.destinationLongitude!,
   };
 
+  // Access the map object
+  const mapRef = useMap();
+  
+  // Used to define if the map is loaded
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
+
   // Map options
   const zoom = 13;
   /* -------------------------------------------------------------------------------------------- */
-  
-
-  // Display map with line between departure & destination after map is loaded
-  function mapLoaded(map: google.maps.Map) {
-    const directionsService = new google.maps.DirectionsService();
-    const directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
-    displayRoute(
-      directionsService,
-      directionsRenderer,
-      departureLatLng,
-      destinationLatLng,
-    );
-  }
 
   // Redirect to update ride page
   const handleEditClick = () => {
@@ -163,7 +158,23 @@ export default function Detail() {
                     </Button>
                   </>
                 )}
-                <Map zoom={zoom} onLoad={mapLoaded} />
+                <Map zoom={zoom} onMapLoad={async () => {
+                  setIsMapLoaded(true);
+                  if(isMapLoaded){
+                    // Create the directions service & renderer
+                    const directionsService = new google.maps.DirectionsService();
+                    const directionsRenderer = new google.maps.DirectionsRenderer(
+                      { map: mapRef.current }
+                    );
+                    // Display the route
+                    void displayRoute(
+                      directionsService,
+                      directionsRenderer,
+                      departureLatLng,
+                      destinationLatLng,
+                    );
+                  }
+                }}/>
               </div>
             )}
           </RideDetail>
