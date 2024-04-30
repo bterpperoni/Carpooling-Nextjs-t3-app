@@ -3,7 +3,7 @@
 import LayoutMain from "../../lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import Slider from "$/lib/components/button/Slider";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { Marker } from "@react-google-maps/api";
@@ -18,7 +18,6 @@ const AllRides: React.FC = () => {
   // Map settings
   const center: google.maps.LatLngLiteral = { lat: 50.463727, lng: 3.938247 };
   const zoom = 12;
-  const mapRef = useRef<google.maps.Map | null>(null);
   // Session recovery
   const { data: sessionData } = useSession();
   // Router
@@ -49,17 +48,7 @@ const AllRides: React.FC = () => {
     setChecked(!checked);
   };
 
-  // Set the map ref when it's loaded
-  async function mapLoaded(map: google.maps.Map) {
-    mapRef.current = map;
-  }
 
-  useEffect(() => {
-    if(mapRef && mapRef.current === null){
-      void mapLoaded;
-      return;
-    } 
-  }, [mapRef, checked]);
 
   return (
     <>
@@ -69,7 +58,7 @@ const AllRides: React.FC = () => {
             <div className="border-b-t-2 border-0 border-white">
               <div
                 className="mx-12 mb-4 rounded-[5%] border-y-2 border-fuchsia-700 
-                                                    bg-[var(--purple-g3)] p-4 text-center text-xl text-fuchsia-700 md:text-2xl"
+                           bg-[var(--purple-g3)] p-4 text-center text-xl text-fuchsia-700 md:text-2xl"
               >
                 <p>Trouver un trajet</p>
               </div>
@@ -122,7 +111,11 @@ const AllRides: React.FC = () => {
           {/* -------------------------------------- display map ---------------------------------------------- */}
           {!checked && (
             <>
-              <Map center={center} zoom={zoom} onLoad={mapLoaded} children={rideList?.map((ride, index) => (
+              <Map
+                center={center}
+                zoom={zoom}
+              >
+                {rideList?.map((ride, index) => (
                   <Marker
                     key={index}
                     position={{
@@ -132,7 +125,7 @@ const AllRides: React.FC = () => {
                     onClick={() => handleClick(ride.id)}
                     icon={customMarker}
                   />
-                ))}>
+                ))}
               </Map>
             </>
           )}

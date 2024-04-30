@@ -137,7 +137,6 @@ export default function Detail() {
                     Supprimer le trajet
                   </Button>
                 </div>
-                <Map zoom={zoom} onLoad={mapLoaded} />
               </>
             ) : (
               <div className="my-4">

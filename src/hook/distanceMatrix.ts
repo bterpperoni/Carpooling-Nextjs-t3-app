@@ -1,14 +1,36 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { DistanceMatrixPromise } from "$/lib/types/types";
-import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+
+// Function to load the Google Maps API
+export async function loadGoogleMaps(): Promise<typeof google> {
+  return new Promise((resolve, reject) => {
+    const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+    if (!googleMapsApiKey) {
+      console.error("GOOGLE_MAPS_API_KEY is not defined");
+      reject(new Error("GOOGLE_MAPS_API_KEY is not defined"));
+    }
+    const googleMapsUrl = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places,distance_matrix`;
+    const script = document.createElement("script");
+    script.src = googleMapsUrl;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      resolve(window.google);
+    };
+    script.onerror = () => {
+      reject(new Error("Error loading Google Maps API"));
+    };
+    document.head.appendChild(script);
+  });
+}
 
 export async function calculateDistance(origin: string, destination: string): Promise<DistanceMatrixPromise> {
   return new Promise((resolve, reject) => {
     try {
-      const service = new google.maps.DistanceMatrixService();
+      const service = new window.google.maps.DistanceMatrixService();
       void service.getDistanceMatrix(
         {
           origins: [origin],
@@ -21,11 +43,11 @@ export async function calculateDistance(origin: string, destination: string): Pr
         },
         (response, status) => {
           if (status === google.maps.DistanceMatrixStatus.OK) {
-            if (response && response.rows.length > 0) {
-              if (response.rows[0]?.elements[0]?.distance.value !== undefined) {
-                const distance = response.rows[0]?.elements[0]?.distance.value;
-                const duration = response.rows[0]?.elements[0]?.duration_in_traffic.value;
-                resolve({distance: distance.toString(), duration: duration.toString()});
+            if (response?.rows[0]?.elements[0]  && response.rows.length > 0  ) {
+              if (response.rows[0].elements[0].distance.value !== undefined) {
+                const distance = response.rows[0].elements[0].distance.value;
+                const duration = response.rows[0].elements[0].duration_in_traffic.value;
+                resolve({distance: distance, duration: duration});
               }
             } else {
               console.error('Aucune réponse valide du service de calcul de distance.');
@@ -39,7 +61,7 @@ export async function calculateDistance(origin: string, destination: string): Pr
       );
     } catch (error) {
       console.error('Une erreur est survenue lors du calcul de la distance :', error);
-      reject(error);
+      
     }
   });
 }
@@ -79,10 +101,10 @@ export function displayRoute(
 // The function takes the origin, destination, waypoint, maximum detour distance, and departure time as parameters.
 // It returns a boolean indicating if the passenger can be included.
 */
-export const calculateDetour = async (origin: string, destination: string, waypoints: string[], maxDetourDistance: number, departureTime: Dayjs) => {
+export const calculateDetour = async (origin: string, destination: string, waypoints: string[], maxDetourDistance: number, departureTime: Date) => {
 
-  const directionsService = new window.google.maps.DirectionsService();
-
+  const directionsService = new window.google.maps.DirectionsService;
+  // Direct route between origin and destination
   const directRoute = await directionsService.route({
     origin: origin,
     destination: destination,
@@ -102,13 +124,13 @@ export const calculateDetour = async (origin: string, destination: string, waypo
     stopover: true,
   }));
 
-  const detourRoute = await directionsService.route({
+  const detourRoute: google.maps.DirectionsResult = await directionsService.route({
     origin: origin,
     destination: destination,
     waypoints: formattedWaypoints,
     travelMode: google.maps.TravelMode.DRIVING,
     drivingOptions: {
-      departureTime: (dayjs(departureTime)).toDate() ?? new Date(),
+      departureTime: departureTime,
       trafficModel: google.maps.TrafficModel.BEST_GUESS,
     }, 
   });
@@ -120,9 +142,11 @@ export const calculateDetour = async (origin: string, destination: string, waypo
   // Verify if the detour distance is within the maximum detour distance
   if ((detourDifference) <= maxDetourDistance * 1000) {
     console.log("Vous êtes éligible au trajet");
+    console.log("Le détour est de ", detourDifference/1000, "km et le détour maximum est de ", maxDetourDistance, "km.");
     return true;
   } else {
     console.log("Le détour est trop important, veuillez vous rapprocher un peu ou trouver un autre trajet.");
+    console.log("Le détour est de ", detourDifference/1000, "km et le détour maximum est de ", maxDetourDistance, "km.");
     return false;
   }
 };

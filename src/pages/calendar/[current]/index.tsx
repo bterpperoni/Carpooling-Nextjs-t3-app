@@ -4,8 +4,10 @@ import { api } from "$/utils/api";
 import { useRouter } from 'next/router';
 import { BookingStatus } from '@prisma/client';
 import Button from '$/lib/components/button/Button';
+import { useEffect, useRef, useState } from 'react';
+import { GoogleMap, LoadScriptNext } from '@react-google-maps/api';
+import { useApiKey } from '$/context/api';
 import Map from '$/lib/components/map/Map';
-import { useEffect, useRef } from 'react';
 
 export default function currentRide(){
     // Get session
@@ -19,16 +21,23 @@ export default function currentRide(){
         { enabled: sessionData?.user !== undefined }
     );
 
-    // Map ref
-    const mapRef = useRef<google.maps.Map | null>(null);
-    
-    // Map options
-    const zoom = 12;
-    
-    // Set the map ref when it's loaded
-    async function mapLoaded(map: google.maps.Map) {
-      mapRef.current = map;
+    const apiKey = useApiKey();
+
+  // Set the map container style
+  const mapContainerStyle = {
+    width: "100%",
+    height: "25rem",
+  };
+  // Access the map object
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
+
+  // Set the map options
+  useEffect(() => {
+    if (isMapLoaded) {
+      console.log("Map is loaded");
     }
+  }, [isMapLoaded]);
 
     return (
             <LayoutMain>
@@ -54,8 +63,24 @@ export default function currentRide(){
                             </div>
                         ))}
                         </div>
-                        <div className="mt-8 z-1">
-                            <Map zoom={zoom} onLoad={mapLoaded} />
+                        <div className="mt-8">
+                            <Map zoom={12} center={{ lat: 0, lng: 0 }} />
+                            {/* <LoadScriptNext googleMapsApiKey={apiKey ?? ""}>
+                                <GoogleMap
+                                id="mapId"
+                                center={{ lat: 0, lng: 0 }}
+                                zoom={2}
+                                mapContainerStyle={mapContainerStyle}
+                                onLoad={async (map) => {
+                                    mapRef.current = map;
+                                    setIsMapLoaded(true);
+                                }}
+                                onUnmount={() => {
+                                    console.log("Map is unmounted");
+                                    setIsMapLoaded(false);
+                                }}
+                                ></GoogleMap>
+                            </LoadScriptNext> */}
                         </div>
                         <Button
                         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"

@@ -13,7 +13,7 @@ import Modal from "$/lib/components/containers/Modal";
 import Button from "$/lib/components/button/Button";
 import { notifyStartRide } from "$/hook/pusherNotifyRideStart";
 
-export default function Calendar(): JSX.Element {
+export default function Calendar() {
   // Get the user session
   const { data: sessionData } = useSession();
 

@@ -22,9 +22,8 @@ export type InputProps = {
 
 export type MapProps = {
   center?: google.maps.LatLngLiteral;
-  zoom: number;
+  zoom?: number;
   children?: React.ReactNode | undefined;
-  onLoad?: (map: google.maps.Map) => void;
 };
 
 export   type TypeReturnRideAsPassenger = ({
@@ -36,6 +35,6 @@ export type ApiResponse = { success: boolean, message?: string };
 export type RideInformationsProps = { rideId: number; driverId: string; destination: string}
 
 export type DistanceMatrixPromise = {
-  distance: string;
-  duration: string;
+  distance: number;
+  duration: number;
 };
