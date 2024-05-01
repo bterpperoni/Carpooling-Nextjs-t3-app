@@ -110,7 +110,7 @@ export default function BookingForm({
     }
   }
 
-  async function distanceConsoleLog() {
+  async function setTimeAndDistanceWithWayPoint() {
     const distanceToWaypoint = await calculateDistance(origin, destinationBooking ?? destPickup);
     const distanceToWaypointInKm = distanceToWaypoint.distance / 1000;
     const distanceToDestination = await calculateDistance(destinationBooking ?? destPickup, destination);
@@ -136,7 +136,7 @@ export default function BookingForm({
   useEffect(() => {
 
     if(destinationBooking ?? destPickup !== null){
-      void distanceConsoleLog();
+      void setTimeAndDistanceWithWayPoint();
     }
 
   }, [destinationBooking, destPickup, origin, totalDistance]);

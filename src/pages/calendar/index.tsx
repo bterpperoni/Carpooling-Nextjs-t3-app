@@ -293,12 +293,12 @@ export default function Calendar() {
                           isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
                           childrenToday={
                             <Button
-                              className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700 mr-3"
+                              className="mt-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700 mr-3"
                               onClick={async () => {
-                                console.log("not");
+                                location.assign(`/calendar/${selectedRide?.id}/`);
                               }}
                             >
-                              Démarrer le trajet
+                              Afficher le trajet en cours
                             </Button>
                           }
                           isOpen={checkIfModalPassengerIsOpen}

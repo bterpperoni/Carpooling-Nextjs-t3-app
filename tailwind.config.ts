@@ -10,6 +10,13 @@ export default {
     themeRoot: ":root",
     logs: false,
     prefix: "ds-"
+  },
+  theme: {
+    extend: {
+      animation: {
+        'ping-fast': 'ping 1.25s cubic-bezier(0, -0.2, 1, 0.5) infinite',
+      },
+    },
   }
 }satisfies Config;
 

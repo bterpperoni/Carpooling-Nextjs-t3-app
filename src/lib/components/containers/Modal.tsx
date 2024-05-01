@@ -1,9 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { getCampusNameWithAddress } from "$/utils/data/school";
 import type { Ride } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
 import { formatStrAddress } from "../../../utils/data/school";
 import Button from "$/lib/components/button/Button";
 
@@ -54,7 +54,7 @@ const Modal: React.FC<ModalProps> = ({
             </h4>
             <p>Conducteur: {ride.driver.name}</p>
             <p>Email: {ride.driver.email}</p>
-            <Image
+            <img
               width={50}
               height={50}
               src={ride.driver.image ?? ""}

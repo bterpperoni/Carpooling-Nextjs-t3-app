@@ -52,15 +52,8 @@ export default function Nav() {
 
   const handleNotificationRead = async (id: number) => {
     updateNotification({ id, read: true });
-    location.reload();
+    location.assign(`/calendar/`);
   }
-
-  // Display the list of unread notifications
-  useEffect(() => {
-    if (unreadnotifications) {
-      console.log("Unread Notifications: ", unreadnotifications);
-    }
-  }, [unreadnotifications]);
 
   // Notifications List  
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -87,6 +80,13 @@ export default function Nav() {
       };
     }
   }, [session?.user.id])
+
+  // Display the list of unread notifications
+  useEffect(() => {
+    if (unreadnotifications) {
+      console.log("Unread Notifications: ", unreadnotifications);
+    }
+  }, [unreadnotifications]);
 
   useEffect(() => {
     console.log("Notifications: ", notifications);
@@ -160,7 +160,8 @@ export default function Nav() {
                     <Menu as="div" className="relative right-1">
                     <div className="ds-indicator mr-1 cursor-pointer">
                       {unreadnotifications && unreadnotifications.length > 0 && (
-                        <span className="absolute top-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white bg-red-400 z-10"></span>
+                        <span className="animate-ping-fast absolute inline-flex top-0 right-0 h-2 w-3 rounded-full 
+                                         ring-2 ring-red-200 bg-red-500 z-10"></span>
                       )}
                       <Menu.Button className=" relative flex rounded-full bg-gray-800 text-sm focus:outline-none 
                                                focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">

@@ -18,6 +18,9 @@
     --test: #eff6ff;
 
     --light-orange : #F2C94C;
+    --middle-orange : #F29F05;
+    --dark-orange : #F28C0F;
+    --orange-mat : #ffa260;
     --red : rgb(175, 40, 17);
 
     /* 1rem = 16px */

@@ -51,11 +51,13 @@ export const bookingRouter = createTRPCRouter({
     return ctx.db.booking.findMany({
       where: {
         rideId: input.rideId,
-        userPassenger: {
-          id: ctx.session.user.id,
-      }},
-      });
-    }),
+        userId: ctx.session.user.id,
+      },
+      include: {
+        userPassenger: true
+      },
+    });
+  }),
 
 
   create: protectedProcedure
