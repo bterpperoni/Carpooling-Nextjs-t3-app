@@ -25,3 +25,5 @@ function ButtonGroup({ onClick, children }: ButtonProps) {
     </Button>
   );
 }
+
+export default ButtonGroup;

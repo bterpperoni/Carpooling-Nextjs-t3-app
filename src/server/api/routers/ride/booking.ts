@@ -87,6 +87,24 @@ export const bookingRouter = createTRPCRouter({
     }),
 
 
+  updateStatusToCheck: protectedProcedure
+    .input(
+      z.object({
+        bookingId: z.number()
+      })
+    ).mutation(async ({ ctx, input }) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return ctx.db.booking.update({
+        where: {
+          id: input.bookingId,
+        },
+        data: {
+          status: BookingStatus.CHECKED,
+        },
+      });
+    }),
+
+
   update: protectedProcedure
     .input(
       z.object({

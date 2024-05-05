@@ -310,7 +310,9 @@ export default function RideForm({
                     setSelectedSchool(sc.target.value);
                     setSelectedCampus(ca.target.value);
                     if (ca.target.value) {
-                      const campusAddress = getCampusAddressWithAbbr(ca.target.value);
+                      const campusAddress = getCampusAddressWithAbbr(
+                        ca.target.value,
+                      );
                       if (campusAddress) {
                         setDestination(campusAddress);
                       }

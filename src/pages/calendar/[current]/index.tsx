@@ -24,8 +24,24 @@ export default function currentRide() {
     { rideId: parseInt(rideId) ?? 0 },
     { enabled: sessionData?.user !== undefined },
   );
+
+  const { mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
+
+    // Access the map object
+    const mapRef = useMap();
+    // Define the state for the map loading
+    const [isMapLoaded, setIsMapLoaded] = useState(false);
+
   // Boolean to determine which passenger is there
   const [isPassengerSession, setIsPassengerSession] = useState(false);
+
+  // Update the passenger status to checked
+  async function handleUpdateStatusToChecked(bookingId: number) {
+
+    updateStatusToChecked({ bookingId: bookingId });
+    
+  
+  }
 
   useEffect(() => {
     if (userBooking && userBooking.length === 1) {
@@ -43,10 +59,7 @@ export default function currentRide() {
     }
   }, [passengers, userBooking, isPassengerSession, sessionData?.user.id]);
 
-  // Access the map object
-  const mapRef = useMap();
-  // Define the state for the map loading
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
+
 
   // Set the map options
   useEffect(() => {
@@ -92,13 +105,14 @@ export default function currentRide() {
                         ) ? (
                             <>
                             <Button
-                                className="text-bold easein-out
+                                className={`text-bold easein-out
                                             text-[1rem]
                                             m-2
                                             transform 
                                             border-2
                                             border-white 
-                                            bg-red-700 px-4 py-2
+                                            ${passenger.status === BookingStatus.CHECKED ? "bg-green-500" : "bg-red-500"}  
+                                            px-4 py-2
                                             leading-none text-white transition duration-100
                                             hover:-translate-y-1
                                             hover:scale-110
@@ -107,7 +121,12 @@ export default function currentRide() {
                                             hover:text-red-600
                                             hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
                                             rounded-lg
-                                            content-center"
+                                            content-center`}
+                              onClick={async () => {
+                                console.log(passenger.id);
+                              }
+                              }
+                            
                             >
                                 Confirmer votre participation
                             </Button>
