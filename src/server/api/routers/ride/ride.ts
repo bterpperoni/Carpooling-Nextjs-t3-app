@@ -78,6 +78,9 @@ export const rideRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       return ctx.db.ride.findUnique({
         where: { id: input.id },
+        include: {
+          driver: true
+        },
       });
     }),
 

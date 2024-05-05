@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
@@ -7,6 +8,8 @@ import Button from "$/lib/components/button/Button";
 import { useEffect, useState } from "react";
 import Map from "$/lib/components/map/Map";
 import { useMap } from "$/context/mapContext";
+import type { ContentBodyChecked } from "$/lib/types/types";
+import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
 
 export default function currentRide() {
   // Get session
@@ -24,6 +27,11 @@ export default function currentRide() {
     { rideId: parseInt(rideId) ?? 0 },
     { enabled: sessionData?.user !== undefined },
   );
+
+const { data: selectedRide } = api.ride.rideById.useQuery({ id: parseInt(rideId) ?? 0 }, { enabled: sessionData?.user !== undefined },);
+
+    // Fetch the notification creation function
+    const { mutate: createNotification } = api.notification.create.useMutation();
 
   const { mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
 
@@ -123,10 +131,44 @@ export default function currentRide() {
                                             rounded-lg
                                             content-center`}
                               onClick={async () => {
-                                console.log(passenger.id);
-                              }
-                              }
-                            
+                                                              
+                                  // set the ride informations
+                                  const bookingInformations: ContentBodyChecked = {
+                                    passengerOrRiderName: passenger.userId,
+                                    status: BookingStatus.CHECKED
+                                  };
+
+                                  // Set passengers name List
+                                  const listPassengers: {pasengerOrRiderId: string |undefined, passengerorRiderName: string | undefined}[] = [];
+                                  // Destruct passengers list 
+                                  passengers?.forEach((passenger) => {
+                                      // Add the passenger name to the list
+                                      listPassengers.push({pasengerOrRiderId: passenger.userId, passengerorRiderName: passenger.userPassenger.name});
+                                    });
+
+                                  listPassengers.push({pasengerOrRiderId: selectedRide?.driverId, passengerorRiderName: selectedRide?.driver.name});
+                                  
+                                  console.log("Liste des passagers", listPassengers);
+                                  console.log("Informations du trajet", bookingInformations);
+
+                                  // Save the ride start notification in the database for each passenger
+                                  listPassengers.map(async (notify) => {
+                                    if(notify.pasengerOrRiderId){
+                                      createNotification({
+                                      userId: notify.pasengerOrRiderId,
+                                      message: `${sessionData?.user.name} a indiqué qu'il est prêt pour le trajet`,
+                                      read: false,
+                                      });
+                                    }
+                                  });
+
+                                  // Update the passenger status to checked
+                                  await handleUpdateStatusToChecked(passenger.id);
+                                  // Notify the passengers
+                                  await notifyStatusChecked(bookingInformations, listPassengers.map((passenger) => passenger.passengerorRiderName));
+                                  location.reload();
+                                }
+                              }     
                             >
                                 Confirmer votre participation
                             </Button>

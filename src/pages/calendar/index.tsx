@@ -11,7 +11,7 @@ import type { Ride } from "@prisma/client";
 import type { RideInformationsProps, TypeReturnRideAsPassenger } from "$/lib/types/types";
 import Modal from "$/lib/components/containers/Modal";
 import Button from "$/lib/components/button/Button";
-import { notifyStartRide } from "$/hook/pusherNotifyRideStart";
+import { notifyStartRide } from "$/hook/pusher/rideStart";
 
 export default function Calendar() {
   // Get the user session

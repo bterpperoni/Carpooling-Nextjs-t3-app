@@ -8,13 +8,13 @@ export default async function Handler(
   res: NextApiResponse,
 ) {
 if (req.method === "POST") {
-    const { statusCheck, passengers } = req.body as {
+    const { statusCheck, passengersAndDriver } = req.body as {
         statusCheck: { passengerName: string, status: BookingStatus },
-        passengers: string[]
+        passengersAndDriver: string[]
     };
 
     try {  
-        await Promise.all(passengers.map(async (userId: string) => {
+        await Promise.all(passengersAndDriver.map(async (userId: string) => {
                 return await pusher.trigger(`passenger-channel-${userId}`, 'ride-started', {
                     message: `${statusCheck.passengerName} à indiqué qu'il est ${statusCheck.status}`
                 });
