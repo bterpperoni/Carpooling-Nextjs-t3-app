@@ -71,17 +71,29 @@ export default function Nav() {
         // Subscribe to the channel related the current user
         const channel = pusher.subscribe(`passenger-channel-${session.user.id}`);
         console.log("Channel subscribed: ", channel.name)
-        // Bind to the ride-started event & add the notification to the list
+        const channelDriver = pusher.subscribe(`driver-channel-${session.user.id}`);
+        console.log("Channel subscribed: ", channelDriver.name)
+        
         function handleNewNotification(data: Notification ){
           const newMessages = [...messages, data.message]
           setMessages(newMessages)
           alert(data.message);
         }
-      
-        channel.bind('ride-started', handleNewNotification);
 
+        
+        function handleNewNotificationDriver(data: Notification ){
+          const newMessages = [...messages, data.message]
+          setMessages(newMessages)
+          console.log("Notification: ", data.message);
+          alert(data.message);
+        }
+        // Bind to the ride-started event & add the notification to the list
+        channel.bind('ride-started', handleNewNotification);
+        channelDriver.bind('status-checked', handleNewNotificationDriver);
         return () => {
           channel.unbind('ride-started', handleNewNotification);
+          channelDriver.unbind('status-checked', handleNewNotificationDriver);
+          console.log("Channel unsubscribed: ", channelDriver.name);
           console.log("Channel unsubscribed: ", channel.name);
         }
     }
@@ -185,11 +197,13 @@ export default function Nav() {
                           unreadnotifications?.map((notification, index) => (
                             <Menu.Item key={index}>
                               {({ active }) => (
-                                <a 
-                                  className={classNames(active ? 'bg-gray-100' : '', 'border-b-2 border-gray-400 block px-4 py-2 text-sm text-gray-700')} 
-                                  onClick={() => handleNotificationRead(notification.id)}>
-                                  {notification.message}
-                                </a>
+                                <>
+                                  <a 
+                                    className={classNames(active ? 'bg-gray-100' : '', 'border-b-2 border-gray-400 block px-4 py-2 text-sm text-gray-700')} 
+                                    onClick={() => handleNotificationRead(notification.id)}>
+                                    {notification.message}
+                                  </a>
+                                </>
                               )}
                             </Menu.Item>
                           )): (

@@ -54,32 +54,32 @@ export default function currentRide() {
 
   ///
   
-  const pusher = usePusher();
-  // Notifications List  
-  const [notifications, setNotifications] = useState<string[]>([]);
+  // const pusher = usePusher();
+  // // Notifications List  
+  // const [messages, setMessages] = useState<string[]>([]);
   
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   if(sessionData && isPassengerSession === false){
+  //       // Subscribe to the channel related the current user
+  //       const channel = pusher.subscribe(`driver-channel-${currentRide?.driver.id}`);
+  //       console.log("Channel subscribed: ", channel.name);
+        
+  //       function handleNewNotification(data: Notification){
+  //         const newMessages = [...messages, data.message];
+  //         setMessages(newMessages);
+  //         alert(data.message);
+  //       }
 
-    function handleNewNotification(data: Notification){
-      const newNotifications = [...notifications, data.message];
-      setNotifications(newNotifications);
-      alert(data.message);
-    }
+  //       // Bind to the ride-started event & add the notification to the list
+  //       channel.bind('status-checked', handleNewNotification);
 
-    if(sessionData && isPassengerSession === false){
-        // Subscribe to the channel related the current user
-        const channel = pusher.subscribe(`driver-channel-${sessionData.user.id}`);
-        console.log("Channel subscribed: ", channel.name);
-        // Bind to the ride-started event & add the notification to the list
-        channel?.bind('status-checked', handleNewNotification);
-
-        return () => {
-          channel?.unbind('status-checked', handleNewNotification);
-          console.log("Channel unsubscribed: ", channel.name);
-        }
-    }
-  }, [sessionData, isPassengerSession, notifications]);
+  //       return () => {
+  //         channel.unbind('status-checked', handleNewNotification);
+  //         console.log("Channel unsubscribed: ", channel.name);
+  //       }
+  //   }
+  // }, [sessionData, isPassengerSession, currentRide, messages]);
 
   ///
   useEffect(() => {
@@ -115,17 +115,18 @@ export default function currentRide() {
                   key={passenger.id}
                   className={`
                     overflow-hidden w-full rounded-lg  shadow-sm justify-center flex flex-col lg:flex-row
-                    ${passenger.status === BookingStatus.CHECKED ? "bg-green-300 border-green-700" : "bg-[#C05856] border-red-700"} 
+                    ${passenger.status === BookingStatus.CHECKED ? "bg-green-500 text-gray-600 border-green-700" : "bg-[#C05856] border-red-700"} 
                     border-2
                   `}
                 >
                   <div className="p-2 flex flex-row md:flex-col">
                     <h2 className={`
-                      pr-2 pb-1 text-2xl text-left font-bold text-[1rem] md:text-xl lg:text-2xl text-white border-b-2 border-r-2 mb-4 h-fit w-fit
+                      ${passenger.status === BookingStatus.CHECKED ? "bg-green-600 border-green-700" : "bg-red-600"}
+                      rounded-lg p-2 pb-1 text-2xl text-center font-bold text-[1rem] md:text-xl lg:text-2xl text-white border-b-2 border-r-2 mb-4 h-fit w-fit
                     `}>
                       {passenger.userPassenger.name}
                     </h2>
-                    <p className="text-[0.85rem] text-white sm:ml-4 md:ml-0 ml-4 mt-2 text-center leading-none ">
+                    <p className={` rounded-lg ${passenger.status === BookingStatus.CHECKED ? "bg-green-500 text-green-50 border-green-700" : "bg-[#C05856] text-white border-red-700"} text-[0.85rem] sm:ml-4 md:ml-0 ml-4 h-max p-2 text-center relative top-[0.2rem] `}>
                       {passenger.pickupPoint}
                     </p>
                   </div>
@@ -162,7 +163,7 @@ export default function currentRide() {
                                       };
     
                                       // Set driver Name
-                                      const driverName = currentRide?.driver.name;
+                                      const driverName = currentRide.driver.name;
                                       
                                       console.log("Conducteur à notifier ", driverName);
                                       console.log("Informations du trajet", bookingInformations);
@@ -181,7 +182,7 @@ export default function currentRide() {
                                           read: false,
                                           });
                                       });
-                                      // location.reload();
+                                      location.assign(`/calendar/${rideId}`);
                                     }
                                   }
                               }     
@@ -207,7 +208,7 @@ export default function currentRide() {
                               </div>
                             )
                             : (
-                              <div className="bg-gray-200 p-2 rounded-lg m-2 bg-green-700 ">
+                              <div className="p-2 rounded-lg m-2 bg-green-700 ">
                                   <p className="text-[1rem] text-white leading-2">
                                       Passager prêt
                                   </p>
