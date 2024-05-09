@@ -13,7 +13,6 @@ import type { RideInformationsProps, TypeReturnRideAsPassenger } from "$/lib/typ
 import Modal from "$/lib/components/containers/Modal";
 import Button from "$/lib/components/button/Button";
 import { notifyStartRide } from "$/hook/pusher/rideStart";
-import { set } from "zod";
 
 export default function Calendar() {
   // Get the user session
@@ -57,6 +56,8 @@ export default function Calendar() {
 
   // State for managing grouped rides as driver
   const [groupedRidesAsDriver, setGroupedRidesAsDriver] = useState<GroupedRides>();
+  // State for managing grouped rides as passenger
+  const [groupedRidesAsPassenger, setGroupedRidesAsPassenger] = useState<GroupedRides>();
 
   // New date object
   // const today = new Date().toLocaleDateString();
@@ -88,10 +89,10 @@ export default function Calendar() {
     };
 
   useEffect(() => {
-
     setGroupedRidesAsDriver(groupRidesByDate(rideListAsDriver ?? []));
-    console.log("Grouped rides as driver", groupedRidesAsDriver?.[dayjs().format("2024-05-10")]);
-
+    setGroupedRidesAsPassenger(groupRidesByDate(rideListAsPassenger ?? []));
+    // console.log("Grouped rides as driver", groupedRidesAsDriver?.[dayjs().format("2024-05-10")]);
+    // console.log("Grouped rides as passenger", groupedRidesAsPassenger?.[dayjs().format("2024-05-09")]);
   }, [rideListAsDriver]);
 
   useEffect(() => {
@@ -237,7 +238,7 @@ export default function Calendar() {
                   })}
                   </>
                   ):(
-                    <p className="text-sm text-gray-400">Aucun trajet pour cette date</p>
+                    <p className={`${isToday ? "text-white" : "text-gray-600"}`}>Aucun trajet pour cette date</p>
                   )}
 
                 
@@ -264,80 +265,86 @@ export default function Calendar() {
                 <h4 className={`mb-2 text-xl font-semibold ${isToday ? "text-white" : "text-black"}`}>
                   {dayjs(date).format("DD/MM/YYYY")}
                 </h4>
-                {/* Check if the ride is available for the date */}
-                {groupRidesByDate(rideListAsPassenger ?? [])?.[dayjs(date).format("YYYY-MM-DD")]?.map(
-                  (
-                    ride: Ride & {
-                      driver: {
-                        name: string;
-                        email: string | null;
-                        image: string | null;
-                      };
-                    },
-                  ) => (
-                    <div
-                      key={ride.id}
-                      className={`${isToday ? "text-black" : "text-gray-400"} cursor-pointer mb-2 h-[45px] rounded-md bg-green-200 p-2 hover:bg-green-300 `}
-                      onClick={() => {
-                        if (ride) {
-                          const rideSelected = {
-                            ...ride,
-                            driver: {
-                              name: ride.driver.name,
-                              email: ride.driver.email ?? null,
-                              image: ride.driver.image ?? null,
-                            },
-                          };
-                          setSelectedRide(rideSelected);
-                          setCheckIfModalPassengerIsOpen(true);
-                        }
-                      }}
-                    >
-                      <p className="text-sm">
-                        {ride.departure} →{" "}
-                        {getCampusNameWithAddress(ride.destination) !== null
-                          ? getCampusNameWithAddress(ride.destination)
-                          : ride.destination}
-                      </p>
-                      {checkIfModalPassengerIsOpen && (
-                        <Modal
-                          ride={
-                            selectedRide as Ride & {
+                {groupedRidesAsPassenger?.[dayjs(date).format("YYYY-MM-DD")] !== undefined ? (
+                  <>
+                    {/* Check if the ride is available for the date */}
+                    {groupRidesByDate(rideListAsPassenger ?? [])?.[dayjs(date).format("YYYY-MM-DD")]?.map(
+                    (
+                      ride: Ride & {
+                        driver: {
+                          name: string;
+                          email: string | null;
+                          image: string | null;
+                        };
+                      },
+                    ) => (
+                      <div
+                        key={ride.id}
+                        className={`${isToday ? "text-black" : "text-gray-400"} cursor-pointer mb-2 h-[45px] rounded-md bg-green-200 p-2 hover:bg-green-300 `}
+                        onClick={() => {
+                          if (ride) {
+                            const rideSelected = {
+                              ...ride,
                               driver: {
-                                name: string;
-                                email: string | null;
-                                image: string | null;
-                              };
+                                name: ride.driver.name,
+                                email: ride.driver.email ?? null,
+                                image: ride.driver.image ?? null,
+                              },
+                            };
+                            setSelectedRide(rideSelected);
+                            setCheckIfModalPassengerIsOpen(true);
+                          }
+                        }}
+                      >
+                        <p className="text-sm">
+                          {ride.departure} →{" "}
+                          {getCampusNameWithAddress(ride.destination) !== null
+                            ? getCampusNameWithAddress(ride.destination)
+                            : ride.destination}
+                        </p>
+                        {checkIfModalPassengerIsOpen && (
+                          <Modal
+                            ride={
+                              selectedRide as Ride & {
+                                driver: {
+                                  name: string;
+                                  email: string | null;
+                                  image: string | null;
+                                };
+                              }
                             }
-                          }
-                          isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
-                          childrenToday={
-                            <Button
-                              className="mt-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700 mr-3"
-                              onClick={async () => {
-                                location.assign(`/calendar/${selectedRide?.id}/`);
-                              }}
-                            >
-                              Afficher le trajet en cours
-                            </Button>
-                          }
-                          isOpen={checkIfModalPassengerIsOpen}
-                          onClose={() => {
-                            setCheckIfModalPassengerIsOpen(false);
-                            setCheckIfModalDriverIsOpen(false);
-                            setSelectedRide(null);
-                          }}
-                        >
-                          <Button
-                            className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
-                            onClick={() => location.assign(`/rides/${selectedRide?.id}`)}
+                            isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
+                            childrenToday={
+                              <Button
+                                className="mt-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700 mr-3"
+                                onClick={async () => {
+                                  location.assign(`/calendar/${selectedRide?.id}/`);
+                                }}
+                              >
+                                Afficher le trajet en cours
+                              </Button>
+                            }
+                            isOpen={checkIfModalPassengerIsOpen}
+                            onClose={() => {
+                              setCheckIfModalPassengerIsOpen(false);
+                              setCheckIfModalDriverIsOpen(false);
+                              setSelectedRide(null);
+                            }}
                           >
-                            Voir le trajet
-                          </Button>
-                        </Modal>
-                      )}
-                    </div>
-                  ),
+                            <Button
+                              className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
+                              onClick={() => location.assign(`/rides/${selectedRide?.id}`)}
+                            >
+                              Voir le trajet
+                            </Button>
+                          </Modal>
+                        )}
+                      </div>
+                    ),
+                    )}
+                  </>
+                ):(
+                  <p className={`${isToday ? "text-white" : "text-gray-600"}`}>Aucun trajet pour cette date</p>
                 )}
               </div>
           )})}
