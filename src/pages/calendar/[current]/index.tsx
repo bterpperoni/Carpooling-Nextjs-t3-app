@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { useRouter } from "next/router";
-import { BookingStatus } from "@prisma/client";
+import { BookingStatus, NotificationType } from "@prisma/client";
 import Button from "$/lib/components/button/Button";
 import { useEffect, useState } from "react";
 import Map from "$/lib/components/map/Map";
@@ -111,74 +113,95 @@ const { data: selectedRide } = api.ride.rideById.useQuery({ id: parseInt(rideId)
                         userBooking?.find(
                             (user) => user.userId === passenger.userPassenger.id,
                         ) ? (
-                            <>
-                            <Button
-                                className={`text-bold easein-out
-                                            text-[1rem]
-                                            m-2
-                                            transform 
-                                            border-2
-                                            border-white 
-                                            ${passenger.status === BookingStatus.CHECKED ? "bg-green-500" : "bg-red-500"}  
-                                            px-4 py-2
-                                            leading-none text-white transition duration-100
-                                            hover:-translate-y-1
-                                            hover:scale-110
-                                            hover:border-red-200
-                                            hover:bg-white
-                                            hover:text-red-600
-                                            hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
-                                            rounded-lg
-                                            content-center`}
-                              onClick={async () => {
-                                                              
-                                  // set the ride informations
-                                  const bookingInformations: ContentBodyChecked = {
-                                    passengerOrRiderName: passenger.userId,
-                                    status: BookingStatus.CHECKED
-                                  };
+                          <>
+                            {passenger.status !== BookingStatus.CHECKED ? (
+                              <Button
+                              className={`text-bold easein-out
+                                          text-[1rem]
+                                          m-2
+                                          transform 
+                                          border-2
+                                          border-white 
+                                          bg-red-600 
+                                          px-4 py-2
+                                          leading-none text-white transition duration-100
+                                          hover:-translate-y-1
+                                          hover:scale-110
+                                          hover:border-red-200
+                                          hover:bg-white
+                                          hover:text-red-600
+                                          hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
+                                          rounded-lg
+                                          content-center`}
+                            onClick={async () => {
+                                                            
+                                // set the ride informations
+                                const bookingInformations: ContentBodyChecked = {
+                                  passengerOrRiderName: passenger.userId,
+                                  status: BookingStatus.CHECKED
+                                };
 
-                                  // Set passengers name List
-                                  const listPassengers: {pasengerOrRiderId: string |undefined, passengerorRiderName: string | undefined}[] = [];
-                                  // Destruct passengers list 
-                                  passengers?.forEach((passenger) => {
-                                      // Add the passenger name to the list
-                                      listPassengers.push({pasengerOrRiderId: passenger.userId, passengerorRiderName: passenger.userPassenger.name});
-                                    });
-
-                                  listPassengers.push({pasengerOrRiderId: selectedRide?.driverId, passengerorRiderName: selectedRide?.driver.name});
-                                  
-                                  console.log("Liste des passagers", listPassengers);
-                                  console.log("Informations du trajet", bookingInformations);
-
-                                  // Save the ride start notification in the database for each passenger
-                                  listPassengers.map(async (notify) => {
-                                    if(notify.pasengerOrRiderId){
-                                      createNotification({
-                                      userId: notify.pasengerOrRiderId,
-                                      message: `${sessionData?.user.name} a indiqué qu'il est prêt pour le trajet`,
-                                      read: false,
-                                      });
-                                    }
+                                // Set passengers name List
+                                const listPassengers: {pasengerOrRiderId: string |undefined, passengerorRiderName: string | undefined}[] = [];
+                                // Destruct passengers list 
+                                passengers?.forEach((passenger) => {
+                                    // Add the passenger name to the list
+                                    listPassengers.push({pasengerOrRiderId: passenger.userId, passengerorRiderName: passenger.userPassenger.name});
                                   });
 
-                                  // Update the passenger status to checked
-                                  await handleUpdateStatusToChecked(passenger.id);
-                                  // Notify the passengers
-                                  await notifyStatusChecked(bookingInformations, listPassengers.map((passenger) => passenger.passengerorRiderName));
-                                  location.reload();
-                                }
-                              }     
-                            >
-                                Confirmer votre participation
-                            </Button>
-                            </>
+                                listPassengers.push({pasengerOrRiderId: selectedRide?.driverId, passengerorRiderName: selectedRide?.driver.name});
+                                
+                                console.log("Liste des passagers", listPassengers);
+                                console.log("Informations du trajet", bookingInformations);
+
+                                // Save the ride start notification in the database for each passenger
+                                listPassengers.map(async (notify) => {
+                                  if(notify.pasengerOrRiderId){
+                                    createNotification({
+                                    userId: notify.pasengerOrRiderId,
+                                    message: `${sessionData?.user.name} a indiqué qu'il est prêt pour le trajet`,
+                                    type: NotificationType.RIDE,
+                                    read: false,
+                                    });
+                                  }
+                                });
+
+                                // Update the passenger status to checked
+                                await handleUpdateStatusToChecked(passenger.id);
+                                // Notify the passengers
+                                await notifyStatusChecked(bookingInformations, listPassengers.map((passenger) => passenger.passengerorRiderName));
+                                location.reload();
+                              }
+                            }     
+                          >
+                              Confirmer votre participation
+                          </Button>
+                          )
+                          : (
+                            <div className="bg-gray-200 p-2 rounded-lg m-2 bg-green-700 ">
+                                <p className="text-[1rem] text-white leading-2">
+                                    Passager prêt
+                                </p>
+                            </div>
+                          )}
+                          </>
                         ) : (
-                        <div className="bg-gray-200 p-2 rounded-lg m-2 bg-red-700 ">
-                            <p className="text-[1rem] text-white leading-2">
-                                Le passager n'est pas prêt
-                            </p>
-                        </div>
+                          <>
+                            {passenger.status !== BookingStatus.CHECKED ? (
+                              <div className="bg-gray-200 p-2 rounded-lg m-2 bg-red-600">
+                                <p className="text-[1rem] text-white leading-2">
+                                    Passager non prêt
+                                </p>
+                            </div>
+                          )
+                          : (
+                            <div className="bg-gray-200 p-2 rounded-lg m-2 bg-green-700 ">
+                                <p className="text-[1rem] text-white leading-2">
+                                    Passager prêt
+                                </p>
+                            </div>
+                          )}
+                          </>
                         )}
                     </div>
                 </div>

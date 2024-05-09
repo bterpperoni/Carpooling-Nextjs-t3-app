@@ -24,7 +24,7 @@ export type ContentBodyChecked = {
   passengerOrRiderName: string, status: BookingStatus
 };
 
-export   type TypeReturnRideAsPassenger = ({
+export type TypeReturnRideAsPassenger = ({
   driver: { name: string; email: string | null; image: string | null };
 } & Ride)[];
 

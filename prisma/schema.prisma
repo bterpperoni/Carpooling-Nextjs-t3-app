@@ -193,11 +193,21 @@ model PaypalTransaction {
   wallet    Wallet   @relation(fields: [walletId], references: [id])
 }
 
+// ------------------------------------------- NOTIFICATIONS ------------------------------------------------
+
 model Notifications {
   id        Int      @id @default(autoincrement())
   userId    String
   message   String
+  type      NotificationType
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
   userNotified      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum NotificationType {
+  RIDE
+  WALLET
+  GROUP
+  USER
 }

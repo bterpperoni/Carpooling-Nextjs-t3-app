@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { DistanceMatrixPromise } from "$/lib/types/types";
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
 export async function calculateDistance(origin: string, destination: string): Promise<DistanceMatrixPromise> {
@@ -74,7 +73,8 @@ export async function displayRoute(
 }
 
 /*
-// Implementation of the calculateDetour function to check if a passenger can be included in a ride without exceeding the maximum detour distance.
+// Implementation of the calculateDetour function to check if a passenger can be included in a ride without exceeding 
+// the maximum detour distance.
 // The function takes the origin, destination, waypoint, maximum detour distance, and departure time as parameters.
 // It returns a boolean indicating if the passenger can be included.
 */
@@ -87,7 +87,7 @@ export const calculateDetour = async (origin: string, destination: string, waypo
     destination: destination,
     travelMode: google.maps.TravelMode.DRIVING,
     drivingOptions: {
-      departureTime: (dayjs(departureTime)).toDate() ?? new Date(),
+      departureTime: departureTime,
       trafficModel: google.maps.TrafficModel.BEST_GUESS,
     }, 
   });

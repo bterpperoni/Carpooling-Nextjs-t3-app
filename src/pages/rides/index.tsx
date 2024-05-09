@@ -69,7 +69,7 @@ const AllRides: React.FC = () => {
               <div className="col-span-1 flex items-center justify-center">
                 <p className="m-4 rounded-full border-2 border-white px-4 py-2 text-base text-white">
                   <label htmlFor="SliderDsiplay" className="mx-2">
-                    Type d'affichage : {checked ? "Liste" : "Carte"}
+                    Type d'affichage : {checked ? "Carte" : "Liste" }
                   </label>
                   <Slider check={handleCheck} checked={checked} />
                 </p>
@@ -98,7 +98,7 @@ const AllRides: React.FC = () => {
             </Button>
           </div>
           {/* ------------------------------------- display list --------------------------------------------- */}
-          {checked && (
+          {!checked && (
             <>
               <div className="h-box m-6 w-auto border-fuchsia-700 bg-white text-fuchsia-700">
                 {rideList?.map((ride) => (
@@ -113,7 +113,7 @@ const AllRides: React.FC = () => {
             </>
           )}
           {/* -------------------------------------- display map ---------------------------------------------- */}
-          {!checked && (
+          {checked && (
             <>
               <Map 
                 zoom={zoom} 

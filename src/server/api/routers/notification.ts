@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -8,6 +9,7 @@ import {
   protectedProcedure,
   // publicProcedure,
 } from "$/server/api/trpc";
+import { NotificationType } from "@prisma/client";
 
 export const notificationRouter = createTRPCRouter({
     notificationList: protectedProcedure.query(async ({ ctx }) => {
@@ -37,6 +39,7 @@ export const notificationRouter = createTRPCRouter({
         z.object({
             userId: z.string(),
             message: z.string(),
+            type: z.nativeEnum(NotificationType),
             read: z.boolean(),
         })
         )
@@ -45,6 +48,7 @@ export const notificationRouter = createTRPCRouter({
             data: {
                 userId: input.userId,
                 message: input.message,
+                type: input.type,
                 read: input.read,
                 createdAt: new Date()
             },

@@ -296,7 +296,7 @@ export default function Group() {
                           <div className="flex w-[50%] flex-row">
                             <Button
                               onClick={() =>
-                                push(`/users/${member.userName}/profile`)
+                                push(`/users/${member.userName}`)
                               }
                               className=" m-2 
                                         h-max 

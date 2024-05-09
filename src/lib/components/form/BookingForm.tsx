@@ -125,10 +125,6 @@ export default function BookingForm({
     setTotalTime(parseFloat(timeInMinutes.toFixed(0)));
     setTotalDistance(parseFloat(distanceInKm.toFixed(2)));
 
-
-    console.log("Total distance including WayPoint : \n ", distanceToWaypointInKm.toFixed(2), "km +", distanceToDestinationInKm.toFixed(2), "km = ", totalDistanceIncludingWaypoint.toFixed(2), "km");
-    console.log("Distance total without waypoint : ", totalDistance, "km \n Temps total : ", totalTime, "min");
-
     setDistanceToPassengerInKm(distanceToWaypointInKm);
     setDistanceToDestinationInKm(distanceToDestinationInKm);
   }
