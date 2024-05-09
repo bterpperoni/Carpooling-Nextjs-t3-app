@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-floating-promises */
@@ -12,8 +13,8 @@ import Map from "$/lib/components/map/Map";
 import { useMap } from "$/context/mapContext";
 import type { BookingInformationsProps, Notification } from "$/lib/types/types";
 import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
-import Pusher from "pusher-js";
 import { toast } from "react-toastify";
+import { usePusher } from "$/context/pusherContext";
 
 export default function currentRide() {
   // Get session
@@ -53,9 +54,12 @@ export default function currentRide() {
   }
 
   ///
+  
+  const pusher = usePusher();
+
   // Notifications List  
   const [notifications, setNotifications] = useState<string[]>([]);
-  
+
   useEffect(() => {
 
     function handleNewNotification(data: Notification){
@@ -65,22 +69,13 @@ export default function currentRide() {
     }
 
     if(sessionData && isPassengerSession === false){
-        const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
-          forceTLS: true,
-          cluster: "eu",
-        });
-    
         // Subscribe to the channel related the current user
         const channel = pusher.subscribe(`driver-channel-${sessionData.user.id}`);
         // Bind to the ride-started event & add the notification to the list
-
-      
-        channel.bind('status-checked', handleNewNotification);
+        channel?.bind('status-checked', handleNewNotification);
 
         return () => {
-          channel.unbind('status-checked', handleNewNotification);
-          channel.unsubscribe();
-          pusher.disconnect();
+          channel?.unbind('status-checked', handleNewNotification);
         }
     }
   }, [sessionData]);
@@ -101,135 +96,135 @@ export default function currentRide() {
   ///
 
   return (
-    <LayoutMain>
-      <div className="flex flex-col items-center">
-        <h2 className="mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
-          Trajets en cours
-        </h2>
-      </div>
-      <div className="m-auto mt-6 min-h-screen w-[95%] rounded-lg bg-[var(--purple-g3)]">
-        <div className="mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 lg:px-8">
-          <h2 className="m-auto w-max border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl">
-            {" "}
-            Passagers pour ce trajet{" "}
+      <LayoutMain>
+        <div className="flex flex-col items-center">
+          <h2 className="mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
+            Trajets en cours
           </h2>
-          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {passengers?.map((passenger) => (
-            <div
-                key={passenger.id}
-                className={`
-                  overflow-hidden w-full rounded-lg  shadow-sm justify-center flex flex-col lg:flex-row
-                  ${passenger.status === BookingStatus.CHECKED ? "bg-green-300 border-green-700" : "bg-[#C05856] border-red-700"} 
-                  border-2
-                `}
-              >
-                <div className="p-2 flex flex-row md:flex-col">
-                  <h2 className={`
-                    pr-2 pb-1 text-2xl text-left font-bold text-[1rem] md:text-xl lg:text-2xl text-white border-b-2 border-r-2 mb-4 h-fit w-fit
-                  `}>
-                    {passenger.userPassenger.name}
-                  </h2>
-                  <p className="text-[0.85rem] text-white sm:ml-4 md:ml-0 ml-4 mt-2 text-center leading-none ">
-                    {passenger.pickupPoint}
-                  </p>
-                </div>
-                    <div className="flex justify-center items-start rounded-sm z-1">
-                        {isPassengerSession && userBooking?.find((user) => user.userId === passenger.userPassenger.id) ? (
-                          <>
-                            {passenger.status !== BookingStatus.CHECKED ? (
-                              <Button
-                                className={`text-bold easein-out
-                                            text-[1rem]
-                                            m-2
-                                            transform 
-                                            border-2
-                                            border-white 
-                                            bg-red-600 
-                                            px-4 py-2
-                                            leading-none text-white transition duration-100
-                                            hover:-translate-y-1
-                                            hover:scale-110
-                                            hover:border-red-200
-                                            hover:bg-white
-                                            hover:text-red-600
-                                            hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
-                                            rounded-lg
-                                            content-center`}
-                                onClick={async () => {          
-                                  if(currentRide && sessionData)                 
-                                  {
-                                    // set the ride informations
-                                    const bookingInformations: BookingInformationsProps = {
-                                      driverName: currentRide.driver.name,
-                                      passengerName: passenger.userPassenger.name,
-                                      status: BookingStatus.CHECKED
-                                    };
-  
-                                    // Set driver Name
-                                    const driverName = currentRide?.driver.name;
-                                    
-                                    console.log("Conducteur à notifier ", driverName);
-                                    console.log("Informations du trajet", bookingInformations);
-  
-  
-                                    // Update the passenger status to checked
-                                    await handleUpdateStatusToChecked(passenger.id);
-                                    // Notify the passengers
-                                    await notifyStatusChecked(bookingInformations).then(() => {
-                                      console.log("Notification envoyée");
-                                      createNotification({
-                                        toUserId: currentRide.driver.id,
-                                        fromUserId: passenger.userPassenger.id,
-                                        message: `${passenger.userPassenger.id} a indiqué qu'il est prêt à partir ! 🚗🎉`,
-                                        type: NotificationType.RIDE,
-                                        read: false,
-                                        });
-                                    });
-                                    // location.reload();
+        </div>
+        <div className="m-auto mt-6 min-h-screen w-[95%] rounded-lg bg-[var(--purple-g3)]">
+          <div className="mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+            <h2 className="m-auto w-max border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl">
+              {" "}
+              Passagers pour ce trajet{" "}
+            </h2>
+            <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {passengers?.map((passenger) => (
+              <div
+                  key={passenger.id}
+                  className={`
+                    overflow-hidden w-full rounded-lg  shadow-sm justify-center flex flex-col lg:flex-row
+                    ${passenger.status === BookingStatus.CHECKED ? "bg-green-300 border-green-700" : "bg-[#C05856] border-red-700"} 
+                    border-2
+                  `}
+                >
+                  <div className="p-2 flex flex-row md:flex-col">
+                    <h2 className={`
+                      pr-2 pb-1 text-2xl text-left font-bold text-[1rem] md:text-xl lg:text-2xl text-white border-b-2 border-r-2 mb-4 h-fit w-fit
+                    `}>
+                      {passenger.userPassenger.name}
+                    </h2>
+                    <p className="text-[0.85rem] text-white sm:ml-4 md:ml-0 ml-4 mt-2 text-center leading-none ">
+                      {passenger.pickupPoint}
+                    </p>
+                  </div>
+                      <div className="flex justify-center items-start rounded-sm z-1">
+                          {isPassengerSession && userBooking?.find((user) => user.userId === passenger.userPassenger.id) ? (
+                            <>
+                              {passenger.status !== BookingStatus.CHECKED ? (
+                                <Button
+                                  className={`text-bold easein-out
+                                              text-[1rem]
+                                              m-2
+                                              transform 
+                                              border-2
+                                              border-white 
+                                              bg-red-600 
+                                              px-4 py-2
+                                              leading-none text-white transition duration-100
+                                              hover:-translate-y-1
+                                              hover:scale-110
+                                              hover:border-red-200
+                                              hover:bg-white
+                                              hover:text-red-600
+                                              hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
+                                              rounded-lg
+                                              content-center`}
+                                  onClick={async () => {          
+                                    if(currentRide && sessionData)                 
+                                    {
+                                      // set the ride informations
+                                      const bookingInformations: BookingInformationsProps = {
+                                        driverName: currentRide.driver.name,
+                                        passengerName: passenger.userPassenger.name,
+                                        status: BookingStatus.CHECKED
+                                      };
+    
+                                      // Set driver Name
+                                      const driverName = currentRide?.driver.name;
+                                      
+                                      console.log("Conducteur à notifier ", driverName);
+                                      console.log("Informations du trajet", bookingInformations);
+    
+    
+                                      // Update the passenger status to checked
+                                      await handleUpdateStatusToChecked(passenger.id);
+                                      // Notify the passengers
+                                      await notifyStatusChecked(bookingInformations).then(() => {
+                                        console.log("Notification envoyée");
+                                        createNotification({
+                                          toUserId: currentRide.driver.id,
+                                          fromUserId: passenger.userPassenger.id,
+                                          message: `${passenger.userPassenger.id} a indiqué qu'il est prêt à partir ! 🚗🎉`,
+                                          type: NotificationType.RIDE,
+                                          read: false,
+                                          });
+                                      });
+                                      // location.reload();
+                                    }
                                   }
-                                }
-                            }     
-                          >
-                              Confirmer votre participation
-                          </Button>
-                          )
-                          : (
-                            <div className="bg-gray-200 p-2 rounded-lg m-2 bg-green-700 ">
-                                <p className="text-[1rem] text-white leading-2">
-                                    Passager prêt
-                                </p>
-                            </div>
+                              }     
+                            >
+                                Confirmer votre participation
+                            </Button>
+                            )
+                            : (
+                              <div className="bg-gray-200 p-2 rounded-lg m-2 bg-green-700 ">
+                                  <p className="text-[1rem] text-white leading-2">
+                                      Passager prêt
+                                  </p>
+                              </div>
+                            )}
+                            </>
+                          ) : (
+                            <>
+                              {passenger.status !== BookingStatus.CHECKED ? (
+                                <div className="bg-gray-200 p-2 rounded-lg m-2 bg-red-600">
+                                  <p className="text-[1rem] text-white leading-2">
+                                      Passager non prêt
+                                  </p>
+                              </div>
+                            )
+                            : (
+                              <div className="bg-gray-200 p-2 rounded-lg m-2 bg-green-700 ">
+                                  <p className="text-[1rem] text-white leading-2">
+                                      Passager prêt
+                                  </p>
+                              </div>
+                            )}
+                            </>
                           )}
-                          </>
-                        ) : (
-                          <>
-                            {passenger.status !== BookingStatus.CHECKED ? (
-                              <div className="bg-gray-200 p-2 rounded-lg m-2 bg-red-600">
-                                <p className="text-[1rem] text-white leading-2">
-                                    Passager non prêt
-                                </p>
-                            </div>
-                          )
-                          : (
-                            <div className="bg-gray-200 p-2 rounded-lg m-2 bg-green-700 ">
-                                <p className="text-[1rem] text-white leading-2">
-                                    Passager prêt
-                                </p>
-                            </div>
-                          )}
-                          </>
-                        )}
-                    </div>
-                </div>
-            ))}
-          </div>
-          <div className="mt-8">
-            <Map zoom={12} onMapLoad={async () => {
-                setIsMapLoaded(true);
-            }} />
+                      </div>
+                  </div>
+              ))}
+            </div>
+            <div className="mt-8">
+              <Map zoom={12} onMapLoad={async () => {
+                  setIsMapLoaded(true);
+              }} />
+            </div>
           </div>
         </div>
-      </div>
-    </LayoutMain>
+      </LayoutMain>
   );
 }

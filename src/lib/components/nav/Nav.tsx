@@ -15,8 +15,6 @@ import { api } from '$/utils/api'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-
 const navigation = [
   { name: 'Home', href: '/', current: false },
   { name: 'Rides', href: '/rides', current: false },
@@ -101,6 +99,7 @@ export default function Nav() {
   // }, [notifications]);
 
   return (
+  
     <Disclosure as="nav" className="bg-gray-800 fixed top-0 w-full z-1">
     {({ open }: { open: boolean }) => (
         <>

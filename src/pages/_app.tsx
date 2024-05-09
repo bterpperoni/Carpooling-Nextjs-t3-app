@@ -7,7 +7,15 @@ import {api} from "$/utils/api";
 import {ApiKeyProvider} from "$/context/apiContext";
 import { StrictMode } from "react";
 import { MapProvider } from '$/context/mapContext';
+import { PusherProvider } from "$/context/pusherContext";
+import Pusher from "pusher-js";
 
+const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+    cluster: "eu",
+    forceTLS: true
+  });
+
+  
 
 const Carheh: AppType<{ session: Session | null }> = ({
     Component,
@@ -15,13 +23,15 @@ const Carheh: AppType<{ session: Session | null }> = ({
 }) => {
     return (
         <StrictMode>
-            <ApiKeyProvider>
-                <MapProvider>
-                    <SessionProvider session={session}>
-                        <Component {...pageProps} />
-                    </SessionProvider>
-                </MapProvider>
-            </ApiKeyProvider>
+            <PusherProvider pusher={ pusher }>
+                <ApiKeyProvider>
+                        <MapProvider>
+                            <SessionProvider session={session}>
+                                    <Component {...pageProps} />
+                            </SessionProvider>
+                        </MapProvider>
+                </ApiKeyProvider>
+            </PusherProvider>
         </StrictMode>
     );
 };
