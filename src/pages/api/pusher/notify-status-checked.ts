@@ -14,7 +14,7 @@ export default async function Handler(
         const bookingInformations: BookingInformationsProps = req.body;
 
         try {  
-            await pusher.trigger(`driver-channel-${bookingInformations.driverName}`, 'status-checked', {
+            await pusher.trigger(`driver-channel-${bookingInformations.driverId}`, 'status-checked', {
                 message: `${bookingInformations.passengerName} à indiqué qu'il est prêt à partir ! 🚗🎉`
             });   
             res.status(200).json({ success: true });

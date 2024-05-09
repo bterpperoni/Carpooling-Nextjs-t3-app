@@ -21,7 +21,7 @@ export type InputProps = {
 }
 
 export type BookingInformationsProps = {
-  driverName: string, 
+  driverId: string;
   passengerName: string,
   status: BookingStatus
 };

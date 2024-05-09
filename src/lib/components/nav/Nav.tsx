@@ -9,11 +9,11 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
-import Pusher from 'pusher-js';
 import type { Notification } from '$/lib/types/types'
 import { api } from '$/utils/api'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { usePusher } from '$/context/pusherContext'
 
 const navigation = [
   { name: 'Home', href: '/', current: false },
@@ -61,35 +61,30 @@ export default function Nav() {
   }, [unreadnotifications]);
 
 
+  // Get pusher instance
+  const pusher = usePusher();
 
   // Notifications List  
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  
+  const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
     if(session){
-      onload = () => {
-        const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
-          cluster: "eu",
-          forceTLS: true
-        });
-    
         // Subscribe to the channel related the current user
         const channel = pusher.subscribe(`passenger-channel-${session.user.id}`);
+        console.log("Channel subscribed: ", channel.name)
         // Bind to the ride-started event & add the notification to the list
-        function handleNewNotification(data: Notification){
-          setNotifications((prev) => [...prev, data]);
-          toast(notifications[0]?.message, { autoClose: 4000 });
+        function handleNewNotification(data: Notification ){
+          const newMessages = [...messages, data.message]
+          setMessages(newMessages)
+          alert(data.message);
         }
       
         channel.bind('ride-started', handleNewNotification);
 
-        onbeforeunload = () => {
+        return () => {
           channel.unbind('ride-started', handleNewNotification);
-          channel.unsubscribe();
-          pusher.disconnect();
+          console.log("Channel unsubscribed: ", channel.name);
         }
-      }
     }
   }, [session?.user.id])
 

@@ -10,11 +10,13 @@ import { BookingStatus, NotificationType } from "@prisma/client";
 import Button from "$/lib/components/button/Button";
 import { useEffect, useState } from "react";
 import Map from "$/lib/components/map/Map";
-import { useMap } from "$/context/mapContext";
+// import { useMap } from "$/context/mapContext";
 import type { BookingInformationsProps, Notification } from "$/lib/types/types";
 import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
 import { toast } from "react-toastify";
 import { usePusher } from "$/context/pusherContext";
+import { Toast } from "node_modules/react-toastify/dist/components";
+import { ToastProps } from "node_modules/react-toastify/dist/types";
 
 export default function currentRide() {
   // Get session
@@ -42,10 +44,10 @@ export default function currentRide() {
 
   const { mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
 
-    // Access the map object
-    const mapRef = useMap();
-    // Define the state for the map loading
-    const [isMapLoaded, setIsMapLoaded] = useState(false);
+    // // Access the map object
+    // const mapRef = useMap();
+    // // Define the state for the map loading
+    // const [isMapLoaded, setIsMapLoaded] = useState(false);
 
 
   // Update the passenger status to checked
@@ -56,29 +58,38 @@ export default function currentRide() {
   ///
   
   const pusher = usePusher();
-
   // Notifications List  
   const [notifications, setNotifications] = useState<string[]>([]);
+  
 
   useEffect(() => {
 
     function handleNewNotification(data: Notification){
       const newNotifications = [...notifications, data.message];
       setNotifications(newNotifications);
-      toast(newNotifications, { autoClose: 4000 });
+      toast(data.message, { 
+        autoClose: 4000,
+        position: "top-right",
+        style: {
+          backgroundColor: 'blue',
+          color: 'white'
+        }
+      });
     }
 
     if(sessionData && isPassengerSession === false){
         // Subscribe to the channel related the current user
         const channel = pusher.subscribe(`driver-channel-${sessionData.user.id}`);
+        console.log("Channel subscribed: ", channel.name);
         // Bind to the ride-started event & add the notification to the list
         channel?.bind('status-checked', handleNewNotification);
 
         return () => {
           channel?.unbind('status-checked', handleNewNotification);
+          console.log("Channel unsubscribed: ", channel.name);
         }
     }
-  }, [sessionData]);
+  }, [sessionData, isPassengerSession, notifications]);
 
   ///
   useEffect(() => {
@@ -155,7 +166,7 @@ export default function currentRide() {
                                     {
                                       // set the ride informations
                                       const bookingInformations: BookingInformationsProps = {
-                                        driverName: currentRide.driver.name,
+                                        driverId: currentRide.driver.id,
                                         passengerName: passenger.userPassenger.name,
                                         status: BookingStatus.CHECKED
                                       };
@@ -175,7 +186,7 @@ export default function currentRide() {
                                         createNotification({
                                           toUserId: currentRide.driver.id,
                                           fromUserId: passenger.userPassenger.id,
-                                          message: `${passenger.userPassenger.id} a indiqué qu'il est prêt à partir ! 🚗🎉`,
+                                          message: `${passenger.userPassenger.name} a indiqué qu'il est prêt à partir ! 🚗🎉`,
                                           type: NotificationType.RIDE,
                                           read: false,
                                           });
@@ -220,7 +231,7 @@ export default function currentRide() {
             </div>
             <div className="mt-8">
               <Map zoom={12} onMapLoad={async () => {
-                  setIsMapLoaded(true);
+                  // setIsMapLoaded(true);
               }} />
             </div>
           </div>
