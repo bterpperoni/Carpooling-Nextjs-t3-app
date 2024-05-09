@@ -47,27 +47,24 @@ const { data: selectedRide } = api.ride.rideById.useQuery({ id: parseInt(rideId)
 
   // Update the passenger status to checked
   async function handleUpdateStatusToChecked(bookingId: number) {
-
     updateStatusToChecked({ bookingId: bookingId });
-    
-  
   }
 
-  useEffect(() => {
-    if (userBooking && userBooking.length === 1) {
-      const userActualPassenger = userBooking?.find(
-        (passenger) => passenger.userId === sessionData?.user.id,
-      );
-      console.log("User actual passenger:", userActualPassenger);
-      if (userActualPassenger?.userId === sessionData?.user.id) {
+  // Check if the user is a passenger
+  const userActualPassenger = userBooking?.find(
+    (user) => user.userPassenger.id === sessionData?.user?.id
+  );
+
+  useEffect(() => {      
+
+      if (userActualPassenger?.userPassenger.id === sessionData?.user?.id) {
         setIsPassengerSession(true);
       } else {
         setIsPassengerSession(false);
       }
-      // Check if the user is passenger
-      console.log("User is passenger:", isPassengerSession);
-    }
-  }, [passengers, userBooking, isPassengerSession, sessionData?.user.id]);
+
+      
+  }, [userBooking]);
 
 
 
@@ -95,16 +92,20 @@ const { data: selectedRide } = api.ride.rideById.useQuery({ id: parseInt(rideId)
             {passengers?.map((passenger) => (
             <div
                 key={passenger.id}
-                className={`overflow-hidden w-full rounded-lg bg-[var(--purple-g3)] shadow-sm justify-center flex flex-col md:flex-row
-                            ${passenger.status === BookingStatus.CHECKED ? "border-green-500" : "border-red-500"} 
-                            border-2`}
+                className={`
+                  overflow-hidden w-full rounded-lg  shadow-sm justify-center flex flex-col lg:flex-row
+
+                  ${passenger.status === BookingStatus.CHECKED ? "bg-green-500 border-green-700" : "bg-red-500 border-red-700"} 
+                  border-2
+                `}
               >
                 <div className="p-2 flex flex-row md:flex-col">
-                  <h2 className="pr-2 pb-1 border-red-500 text-2xl text-left font-bold 
-                                 text-white border-b-2 border-r-2 mb-4 h-fit w-fit">
+                  <h2 className={`
+                    pr-2 pb-1 text-2xl text-left font-bold text-[1rem] md:text-xl lg:text-2xl text-white border-b-2 border-r-2 mb-4 h-fit w-fit
+                  `}>
                     {passenger.userPassenger.name}
                   </h2>
-                  <p className="text-[0.85rem] text-white sm:ml-4 md:ml-0 ml-4 mt-2 text-center leading-none">
+                  <p className="text-[0.85rem] text-white sm:ml-4 md:ml-0 ml-4 mt-2 text-center leading-none ">
                     {passenger.pickupPoint}
                   </p>
                 </div>

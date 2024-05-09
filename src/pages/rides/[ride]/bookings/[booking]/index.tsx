@@ -126,26 +126,34 @@ export default function BookingDetails() {
               </div>
             </div>
           )}
-          <div className="my-5 flex h-full w-auto flex-row justify-between">
+
+          {/* 
+          
+///
+                                      Display the buttons to update or delete the booking
+             
+          ///
+          */}
+          <div className="flex h-full w-auto flex-row justify-between">
             <Button
               className=" mb-4 
-                                mt-3 
-                                h-max 
-                                rounded-md 
-                                border-2 
-                                bg-blue-500 
-                                px-3 
-                                py-2 text-white 
-                                hover:border-2 
-                                hover:border-blue-500
-                                hover:bg-white hover:text-blue-500"
+                          mr-2
+                          mt-3 
+                          h-max 
+                          rounded-md 
+                          bg-blue-500 
+                          px-3 
+                          py-2 text-white 
+                          hover:border-2 
+                          hover:border-blue-500
+                          hover:bg-white hover:text-blue-500"
               onClick={() =>
                 location.assign(
                   `/rides/${fetchedRide?.id}/bookings/${id}/update`,
                 )
               }
             >
-              Modifier votre réservation
+              Modifier la réservation
             </Button>
             <Button
               onClick={() =>

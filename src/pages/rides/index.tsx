@@ -2,13 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import LayoutMain from "../../lib/components/layout/LayoutMain";
+import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import Slider from "$/lib/components/button/Slider";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
-import RideCard from "$/lib/components/containers/RideCard";
+import RideCard from "$/lib/components/containers/rides/RideCard";
 import { useRouter } from "next/router";
 import Button from "$/lib/components/button/Button";
 import { useMap } from "$/context/mapContext";

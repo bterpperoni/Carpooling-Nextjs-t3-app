@@ -24,9 +24,9 @@ export type ContentBodyChecked = {
   passengerOrRiderName: string, status: BookingStatus
 };
 
-export type TypeReturnRideAsPassenger = ({
+export type TypeReturnRideAsPassenger = (Ride & {
   driver: { name: string; email: string | null; image: string | null };
-} & Ride)[];
+});
 
 export type ApiResponse = { success: boolean, message?: string };
 

@@ -38,7 +38,7 @@ const Modal: React.FC<ModalProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 m-4 flex items-center justify-center bg-black bg-opacity-50 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
           onClick={(e) => e.stopPropagation()}
         >
           <motion.div
@@ -61,19 +61,19 @@ const Modal: React.FC<ModalProps> = ({
               alt="Image du conducteur"
               className="mt-4 rounded-full"
             />
-            <div className="flex justify-between">
-              <Button
-                className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
-                onClick={onClose}
-              >
-                Fermer
-              </Button>
-              <div>
+            <div className="flex justify-between flex-col w-full">
+              <div className="flex flex-row">
                 {isToday && (
                 childrenToday
                 )}
                 {children}
               </div>
+              <Button
+                className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700 mr-4 w-full h-max"
+                onClick={onClose}
+              >
+                Fermer
+              </Button>
             </div>
           </motion.div>
         </motion.div>

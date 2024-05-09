@@ -66,10 +66,11 @@ export default function Group() {
             <div className="flex h-max w-[90vw] flex-col items-center bg-white pb-8">
               <div className=" flex flex-row items-center">
                 <div
-                  className="mx-4 
-                                               cursor-pointer rounded-full border-2 
-                                               border-black p-2 
-                                               hover:border-[var(--pink-g1)]"
+                  className="
+                    mx-4 
+                    cursor-pointer rounded-full border-2 
+                    border-black p-2 
+                    hover:border-[var(--pink-g1)]"
                 >
                   {/* ---------------------------------------------- Icon infos ----------------------------------------------------- */}
                   <Infos
@@ -89,22 +90,24 @@ export default function Group() {
                     onClick={() =>
                       push(`/social/groups/${id as string}/create-ride`)
                     }
-                    className=" m-4 
-                                                    rounded-full 
-                                                    border-2 bg-[var(--purple-g2)] px-3 py-2 text-3xl text-white
-                                                    hover:bg-[var(--pink-g1)]"
+                    className=" 
+                      m-4 
+                      rounded-full 
+                      border-2 bg-[var(--purple-g2)] px-3 py-2 text-3xl text-white
+                      hover:bg-[var(--pink-g1)]"
                   >
                     +
                   </Button>
                 </div>
               </div>
               <div
-                className="h-[75vh] 
-                                            w-[75vw] 
-                                            overflow-y-scroll 
-                                            border-2 
-                                            border-[var(--purple-g2)]
-                                            text-[var(--purple-g2)]"
+                className="
+                  h-[75vh] 
+                  w-[75vw] 
+                  overflow-y-scroll 
+                  border-2 
+                  border-[var(--purple-g2)]
+                  text-[var(--purple-g2)]"
               >
                 {rides?.map((ride) => (
                   <div key={ride.id} className="border-b-2">
@@ -143,15 +146,16 @@ export default function Group() {
                         </div>
                         <Button
                           onClick={() => push(`/rides/${ride.id}`)}
-                          className=" m-2 
-                                      rounded-md 
-                                      border-2 
-                                      border-[var(--pink-g1)] 
-                                      bg-[var(--purple-g2)]    
-                                      px-3 
-                                      py-2 text-white
-                                      hover:bg-white 
-                                      hover:text-[var(--pink-g1)]"
+                          className=" 
+                            m-2 
+                            rounded-md 
+                            border-2 
+                            border-[var(--pink-g1)] 
+                            bg-[var(--purple-g2)]    
+                            px-3 
+                            py-2 text-white
+                            hover:bg-white 
+                            hover:text-[var(--pink-g1)]"
                         >
                           Voir le trajet
                         </Button>
@@ -184,16 +188,18 @@ export default function Group() {
                   <Button
                     type="button"
                     onClick={() => setIsInfos(false)}
-                    className="rounded-md border-2 border-[var(--pink-g1)] 
-                                                    bg-[var(--purple-g2)] px-3 py-2 text-white hover:bg-[var(--pink-g1)]"
+                    className="
+                      rounded-md border-2 border-[var(--pink-g1)] 
+                      bg-[var(--purple-g2)] px-3 py-2 text-white hover:bg-[var(--pink-g1)]"
                   >
                     Retour
                   </Button>
                   {group?.createdBy === sessionData.user.name ? (
                     <Button
                       onClick={() => setIsEditing(true)}
-                      className="rounded-md border-2 border-[var(--pink-g1)] 
-                                                        bg-[var(--purple-g2)] px-3 py-2 text-white hover:bg-[var(--pink-g1)]"
+                      className="
+                        rounded-md border-2 border-[var(--pink-g1)] 
+                        bg-[var(--purple-g2)] px-3 py-2 text-white hover:bg-[var(--pink-g1)]"
                     >
                       Modifier
                     </Button>
@@ -298,36 +304,38 @@ export default function Group() {
                               onClick={() =>
                                 push(`/users/${member.userName}`)
                               }
-                              className=" m-2 
-                                        h-max 
-                                        rounded-md 
-                                        border-2 
-                                        border-[var(--pink-g1)]    
-                                        bg-[var(--purple-g2)] 
-                                        px-3 py-2
-                                        text-[12px]
-                                        text-white 
-                                        hover:bg-white 
-                                        hover:text-[var(--pink-g1)]
-                                        sm:text-xl"
+                              className=" 
+                                m-2 
+                                h-max 
+                                rounded-md 
+                                border-2 
+                                border-[var(--pink-g1)]    
+                                bg-[var(--purple-g2)] 
+                                px-3 py-2
+                                text-[12px]
+                                text-white 
+                                hover:bg-white 
+                                hover:text-[var(--pink-g1)]
+                                sm:text-xl"
                             >
                               Profil
                             </Button>
                             {member.userName === sessionData.user.name ? (
                               <Button
                                 onClick={() => handleDelete(member.id)}
-                                className=" m-2 
-                                            h-max 
-                                            rounded-md 
-                                            border-2 
-                                            border-[var(--pink-g1)]    
-                                            bg-[var(--purple-g2)] 
-                                            px-3 py-2
-                                            text-[12px] 
-                                            text-white
-                                            hover:bg-white
-                                            hover:text-[var(--pink-g1)]
-                                            sm:text-xl"
+                                className=" 
+                                  m-2 
+                                  h-max 
+                                  rounded-md 
+                                  border-2 
+                                  border-[var(--pink-g1)]    
+                                  bg-[var(--purple-g2)] 
+                                  px-3 py-2
+                                  text-[12px] 
+                                  text-white
+                                  hover:bg-white
+                                  hover:text-[var(--pink-g1)]
+                                  sm:text-xl"
                               >
                                 Quitter
                               </Button>
@@ -336,18 +344,19 @@ export default function Group() {
                                 {group?.createdBy === sessionData.user.name ? (
                                   <Button
                                     onClick={() => handleExclude(member.id)}
-                                    className=" m-2 
-                                                h-max 
-                                                rounded-md 
-                                                border-2 
-                                                border-[var(--pink-g1)]
-                                                bg-[var(--purple-g2)]
-                                                px-3    
-                                                py-2 
-                                                text-[12px] text-white
-                                                hover:bg-white
-                                                hover:text-[var(--pink-g1)]
-                                                sm:text-xl"
+                                    className=" 
+                                      m-2 
+                                      h-max 
+                                      rounded-md 
+                                      border-2 
+                                      border-[var(--pink-g1)]
+                                      bg-[var(--purple-g2)]
+                                      px-3    
+                                      py-2 
+                                      text-[12px] text-white
+                                      hover:bg-white
+                                      hover:text-[var(--pink-g1)]
+                                      sm:text-xl"
                                   >
                                     Exclure
                                   </Button>
@@ -379,16 +388,17 @@ export default function Group() {
         <LayoutMain>
           <h1>Not Connected, Please Sign in</h1>
           <Button
-            className=" m-4 
-                        rounded-full 
-                        bg-white/10 
-                        px-10 
-                        py-3 
-                        font-semibold 
-                        text-white 
-                        no-underline 
-                        transition 
-                        hover:bg-white/20"
+            className=" 
+              m-4 
+              rounded-full 
+              bg-white/10 
+              px-10 
+              py-3 
+              font-semibold 
+              text-white 
+              no-underline 
+              transition 
+              hover:bg-white/20"
             onClick={() => void signIn()}
           >
             Sign in
