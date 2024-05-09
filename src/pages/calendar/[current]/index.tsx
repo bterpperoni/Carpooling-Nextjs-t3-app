@@ -10,8 +10,10 @@ import Button from "$/lib/components/button/Button";
 import { useEffect, useState } from "react";
 import Map from "$/lib/components/map/Map";
 import { useMap } from "$/context/mapContext";
-import type { ContentBodyChecked } from "$/lib/types/types";
+import type { BookingInformationsProps, Notification } from "$/lib/types/types";
 import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
+import Pusher from "pusher-js";
+import { toast } from "react-toastify";
 
 export default function currentRide() {
   // Get session
@@ -29,11 +31,13 @@ export default function currentRide() {
     { rideId: parseInt(rideId) ?? 0 },
     { enabled: sessionData?.user !== undefined },
   );
+  // Boolean to determine which passenger is there
+  const [isPassengerSession, setIsPassengerSession] = useState(false);
 
-const { data: selectedRide } = api.ride.rideById.useQuery({ id: parseInt(rideId) ?? 0 }, { enabled: sessionData?.user !== undefined },);
+  const { data: currentRide } = api.ride.rideById.useQuery({ id: parseInt(rideId) ?? 0 }, { enabled: sessionData?.user !== undefined },);
 
-    // Fetch the notification creation function
-    const { mutate: createNotification } = api.notification.create.useMutation();
+  // Fetch the notification creation function
+  const { mutate: createNotification } = api.notification.create.useMutation();
 
   const { mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
 
@@ -42,38 +46,59 @@ const { data: selectedRide } = api.ride.rideById.useQuery({ id: parseInt(rideId)
     // Define the state for the map loading
     const [isMapLoaded, setIsMapLoaded] = useState(false);
 
-  // Boolean to determine which passenger is there
-  const [isPassengerSession, setIsPassengerSession] = useState(false);
 
   // Update the passenger status to checked
   async function handleUpdateStatusToChecked(bookingId: number) {
     updateStatusToChecked({ bookingId: bookingId });
   }
 
-  // Check if the user is a passenger
-  const userActualPassenger = userBooking?.find(
-    (user) => user.userPassenger.id === sessionData?.user?.id
-  );
+  ///
+  // Notifications List  
+  const [notifications, setNotifications] = useState<string[]>([]);
+  
+  useEffect(() => {
 
-  useEffect(() => {      
+    function handleNewNotification(data: Notification){
+      const newNotifications = [...notifications, data.message];
+      setNotifications(newNotifications);
+      toast(newNotifications, { autoClose: 4000 });
+    }
 
+    if(sessionData && isPassengerSession === false){
+        const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+          forceTLS: true,
+          cluster: "eu",
+        });
+    
+        // Subscribe to the channel related the current user
+        const channel = pusher.subscribe(`driver-channel-${sessionData.user.id}`);
+        // Bind to the ride-started event & add the notification to the list
+
+      
+        channel.bind('status-checked', handleNewNotification);
+
+        return () => {
+          channel.unbind('status-checked', handleNewNotification);
+          channel.unsubscribe();
+          pusher.disconnect();
+        }
+    }
+  }, [sessionData]);
+
+  ///
+  useEffect(() => {
+      // Check if the user is a passenger
+      const userActualPassenger = userBooking?.find(
+        (user) => user.userPassenger.id === sessionData?.user?.id
+      );
       if (userActualPassenger?.userPassenger.id === sessionData?.user?.id) {
         setIsPassengerSession(true);
       } else {
         setIsPassengerSession(false);
       }
-
-      
   }, [userBooking]);
 
-
-
-  // Set the map options
-  useEffect(() => {
-    if (isMapLoaded) {
-      console.log("Map is loaded", mapRef.current);
-    }
-  }, [isMapLoaded]);
+  ///
 
   return (
     <LayoutMain>
@@ -84,7 +109,7 @@ const { data: selectedRide } = api.ride.rideById.useQuery({ id: parseInt(rideId)
       </div>
       <div className="m-auto mt-6 min-h-screen w-[95%] rounded-lg bg-[var(--purple-g3)]">
         <div className="mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 lg:px-8">
-          <h2 className="m-auto w-max border-y-2 border-gray-400 text-gray-600 md:text-3xl lg:text-4xl">
+          <h2 className="m-auto w-max border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl">
             {" "}
             Passagers pour ce trajet{" "}
           </h2>
@@ -94,8 +119,7 @@ const { data: selectedRide } = api.ride.rideById.useQuery({ id: parseInt(rideId)
                 key={passenger.id}
                 className={`
                   overflow-hidden w-full rounded-lg  shadow-sm justify-center flex flex-col lg:flex-row
-
-                  ${passenger.status === BookingStatus.CHECKED ? "bg-green-500 border-green-700" : "bg-red-500 border-red-700"} 
+                  ${passenger.status === BookingStatus.CHECKED ? "bg-green-300 border-green-700" : "bg-[#C05856] border-red-700"} 
                   border-2
                 `}
               >
@@ -110,69 +134,60 @@ const { data: selectedRide } = api.ride.rideById.useQuery({ id: parseInt(rideId)
                   </p>
                 </div>
                     <div className="flex justify-center items-start rounded-sm z-1">
-                        {isPassengerSession &&
-                        userBooking?.find(
-                            (user) => user.userId === passenger.userPassenger.id,
-                        ) ? (
+                        {isPassengerSession && userBooking?.find((user) => user.userId === passenger.userPassenger.id) ? (
                           <>
                             {passenger.status !== BookingStatus.CHECKED ? (
                               <Button
-                              className={`text-bold easein-out
-                                          text-[1rem]
-                                          m-2
-                                          transform 
-                                          border-2
-                                          border-white 
-                                          bg-red-600 
-                                          px-4 py-2
-                                          leading-none text-white transition duration-100
-                                          hover:-translate-y-1
-                                          hover:scale-110
-                                          hover:border-red-200
-                                          hover:bg-white
-                                          hover:text-red-600
-                                          hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
-                                          rounded-lg
-                                          content-center`}
-                            onClick={async () => {
-                                                            
-                                // set the ride informations
-                                const bookingInformations: ContentBodyChecked = {
-                                  passengerOrRiderName: passenger.userId,
-                                  status: BookingStatus.CHECKED
-                                };
-
-                                // Set passengers name List
-                                const listPassengers: {pasengerOrRiderId: string |undefined, passengerorRiderName: string | undefined}[] = [];
-                                // Destruct passengers list 
-                                passengers?.forEach((passenger) => {
-                                    // Add the passenger name to the list
-                                    listPassengers.push({pasengerOrRiderId: passenger.userId, passengerorRiderName: passenger.userPassenger.name});
-                                  });
-
-                                listPassengers.push({pasengerOrRiderId: selectedRide?.driverId, passengerorRiderName: selectedRide?.driver.name});
-                                
-                                console.log("Liste des passagers", listPassengers);
-                                console.log("Informations du trajet", bookingInformations);
-
-                                // Save the ride start notification in the database for each passenger
-                                listPassengers.map(async (notify) => {
-                                  if(notify.pasengerOrRiderId){
-                                    createNotification({
-                                    userId: notify.pasengerOrRiderId,
-                                    message: `${sessionData?.user.name} a indiqué qu'il est prêt pour le trajet`,
-                                    type: NotificationType.RIDE,
-                                    read: false,
+                                className={`text-bold easein-out
+                                            text-[1rem]
+                                            m-2
+                                            transform 
+                                            border-2
+                                            border-white 
+                                            bg-red-600 
+                                            px-4 py-2
+                                            leading-none text-white transition duration-100
+                                            hover:-translate-y-1
+                                            hover:scale-110
+                                            hover:border-red-200
+                                            hover:bg-white
+                                            hover:text-red-600
+                                            hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
+                                            rounded-lg
+                                            content-center`}
+                                onClick={async () => {          
+                                  if(currentRide && sessionData)                 
+                                  {
+                                    // set the ride informations
+                                    const bookingInformations: BookingInformationsProps = {
+                                      driverName: currentRide.driver.name,
+                                      passengerName: passenger.userPassenger.name,
+                                      status: BookingStatus.CHECKED
+                                    };
+  
+                                    // Set driver Name
+                                    const driverName = currentRide?.driver.name;
+                                    
+                                    console.log("Conducteur à notifier ", driverName);
+                                    console.log("Informations du trajet", bookingInformations);
+  
+  
+                                    // Update the passenger status to checked
+                                    await handleUpdateStatusToChecked(passenger.id);
+                                    // Notify the passengers
+                                    await notifyStatusChecked(bookingInformations).then(() => {
+                                      console.log("Notification envoyée");
+                                      createNotification({
+                                        toUserId: currentRide.driver.id,
+                                        fromUserId: passenger.userPassenger.id,
+                                        message: `${passenger.userPassenger.id} a indiqué qu'il est prêt à partir ! 🚗🎉`,
+                                        type: NotificationType.RIDE,
+                                        read: false,
+                                        });
                                     });
+                                    // location.reload();
                                   }
-                                });
-
-                                // Update the passenger status to checked
-                                await handleUpdateStatusToChecked(passenger.id);
-                                // Notify the passengers
-                                await notifyStatusChecked(bookingInformations, listPassengers.map((passenger) => passenger.passengerorRiderName));
-                                location.reload();
-                              }
+                                }
                             }     
                           >
                               Confirmer votre participation
@@ -211,7 +226,6 @@ const { data: selectedRide } = api.ride.rideById.useQuery({ id: parseInt(rideId)
           <div className="mt-8">
             <Map zoom={12} onMapLoad={async () => {
                 setIsMapLoaded(true);
-
             }} />
           </div>
         </div>

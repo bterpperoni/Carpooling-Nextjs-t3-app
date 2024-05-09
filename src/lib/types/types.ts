@@ -20,8 +20,10 @@ export type InputProps = {
         classLabel?: string;
 }
 
-export type ContentBodyChecked = {
-  passengerOrRiderName: string, status: BookingStatus
+export type BookingInformationsProps = {
+  driverName: string, 
+  passengerName: string,
+  status: BookingStatus
 };
 
 export type TypeReturnRideAsPassenger = (Ride & {
@@ -36,3 +38,7 @@ export type DistanceMatrixPromise = {
   distance: number;
   duration: number;
 };
+
+export type Notification = {
+  message: string;
+}

@@ -20,7 +20,7 @@ export const notificationRouter = createTRPCRouter({
         .query(async ({ ctx }) => {
         return ctx.db.notifications.findMany({
             where: { 
-                userId: ctx.session.user.id, 
+                toUserId: ctx.session.user.id, 
                 read: false 
             },
         });
@@ -37,7 +37,8 @@ export const notificationRouter = createTRPCRouter({
     create: protectedProcedure
         .input(
         z.object({
-            userId: z.string(),
+            toUserId: z.string().nullable(),
+            fromUserId: z.string(),
             message: z.string(),
             type: z.nativeEnum(NotificationType),
             read: z.boolean(),
@@ -46,7 +47,8 @@ export const notificationRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
         return ctx.db.notifications.create({
             data: {
-                userId: input.userId,
+                toUserId: input.toUserId,
+                fromUserId: input.fromUserId,
                 message: input.message,
                 type: input.type,
                 read: input.read,

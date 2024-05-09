@@ -67,7 +67,8 @@ model User {
   groupCreated       Group[]       @relation("GroupCreatedBy")
   groupMembers       GroupMember[] 
   wallet             Wallet[]     
-  notifications      Notifications[]
+  notified          Notifications[] @relation("userNotified")
+  notifying         Notifications[] @relation("userNotifying")
 }
 
 enum UserRole {
@@ -196,13 +197,15 @@ model PaypalTransaction {
 // ------------------------------------------- NOTIFICATIONS ------------------------------------------------
 
 model Notifications {
-  id        Int      @id @default(autoincrement())
-  userId    String
-  message   String
-  type      NotificationType
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
-  userNotified      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          Int      @id @default(autoincrement())
+  fromUserId  String?
+  toUserId    String?
+  message     String
+  type        NotificationType
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  userNotified      User?    @relation("userNotified", fields: [toUserId], references: [id], onDelete: Cascade)
+  userNotifying     User?     @relation("userNotifying", fields: [fromUserId], references: [id], onDelete: Cascade)
 }
 
 enum NotificationType {

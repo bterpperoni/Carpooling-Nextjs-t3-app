@@ -10,7 +10,12 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import Pusher from 'pusher-js';
+import type { Notification } from '$/lib/types/types'
 import { api } from '$/utils/api'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 const navigation = [
   { name: 'Home', href: '/', current: false },
@@ -38,11 +43,6 @@ export default function Nav() {
   }
   , [navigation])
 
-  // Notification type
-  type Notification = {
-    message: string;
-  }
-
   // Get the list of unread notifications
   const { data: unreadnotifications } = api.notification.unreadNotificationListByUser.useQuery(undefined,
     { enabled: session?.user !== undefined }
@@ -55,32 +55,6 @@ export default function Nav() {
     location.assign(`/calendar/`);
   }
 
-  // Notifications List  
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  
-
-  useEffect(() => {
-    if(session){
-      const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
-        cluster: "eu",
-      });
-  
-      // Subscribe to the channel related the current user
-      const channel = pusher.subscribe(`passenger-channel-${session.user.id}`);
-      // Bind to the ride-started event & add the notification to the list
-      const handleNewNotification = (data: Notification) => {
-        setNotifications((prevNotifications) => prevNotifications ? [...prevNotifications, data] : [data]);
-      };
-    
-      channel.bind('ride-started', handleNewNotification);
-
-      return () => {
-        channel.unbind('ride-started', handleNewNotification);
-        channel.unsubscribe();
-      };
-    }
-  }, [session?.user.id])
-
   // Display the list of unread notifications
   useEffect(() => {
     if (unreadnotifications) {
@@ -88,9 +62,43 @@ export default function Nav() {
     }
   }, [unreadnotifications]);
 
+
+
+  // Notifications List  
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  
+
   useEffect(() => {
-    console.log("Notifications: ", notifications);
-  }, [notifications]);
+    if(session){
+      onload = () => {
+        const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+          cluster: "eu",
+          forceTLS: true
+        });
+    
+        // Subscribe to the channel related the current user
+        const channel = pusher.subscribe(`passenger-channel-${session.user.id}`);
+        // Bind to the ride-started event & add the notification to the list
+        function handleNewNotification(data: Notification){
+          setNotifications((prev) => [...prev, data]);
+          toast(notifications[0]?.message, { autoClose: 4000 });
+        }
+      
+        channel.bind('ride-started', handleNewNotification);
+
+        onbeforeunload = () => {
+          channel.unbind('ride-started', handleNewNotification);
+          channel.unsubscribe();
+          pusher.disconnect();
+        }
+      }
+    }
+  }, [session?.user.id])
+
+
+  // useEffect(() => {
+  //   console.log("Notifications: ", notifications);
+  // }, [notifications]);
 
   return (
     <Disclosure as="nav" className="bg-gray-800 fixed top-0 w-full z-1">

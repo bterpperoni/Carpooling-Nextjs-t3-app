@@ -5,6 +5,9 @@ import {
   getCampusNameWithAddress,
 } from "$/utils/data/school";
 
+// -----------------------------------------------------------------------------------------------------
+// ------------------------------ Notify passengers when ride has started ------------------------------
+
 export default async function Handler(
   req: NextApiRequest,
   res: NextApiResponse,

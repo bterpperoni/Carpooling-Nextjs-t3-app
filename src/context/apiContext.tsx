@@ -22,13 +22,11 @@ export const ApiKeyProvider: React.FC<ApiKeyProviderProps> = ({ children }) => {
 };
 // ---------------------------------------------------------
 
-const useApiKey = (): ApiKeyType => {
+export const useApiKey = (): ApiKeyType => {
     const apiKey = useContext(ApiKeyContext);
     
     if (apiKey === undefined) {
       throw new Error("useApiKey must be used within a ApiKeyProvider");
     }
     return apiKey;
-  };
-  
-export { useApiKey };
+};

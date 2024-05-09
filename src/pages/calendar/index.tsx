@@ -122,19 +122,21 @@ async function notifyPassenger(ride:
           listPassengers.push({passengerId: passenger.userId, passengerName: passenger.userPassenger.name});
         });
 
-      // Save the ride start notification in the database for each passenger
-      listPassengers.map(async ({passengerId}) => {
-        createNotification({
-                userId: passengerId,
-                message: `Le trajet avec ${sessionData?.user.name} à destination de ${getCampusNameWithAddress(rideInformations.destination) !== null ? getCampusNameWithAddress(rideInformations.destination): rideInformations.destination} a commencé ! 🚗🎉`,
-                type: NotificationType.RIDE,
-                read: false
-        });
-      });
+      
 
       // Notify the passengers that the ride has started
       await notifyStartRide(rideInformations, listPassengers.map(({passengerId}) => passengerId)).then(() => {
           console.log("Les passagers ont été notifiés");
+          // Save the ride start notification in the database for each passenger
+          listPassengers.map(async ({passengerId}) => {
+            createNotification({
+                toUserId: passengerId,
+                fromUserId: sessionData?.user.id ?? "",
+                message: `Le trajet avec ${sessionData?.user.name} à destination de ${getCampusNameWithAddress(rideInformations.destination) !== null ? getCampusNameWithAddress(rideInformations.destination): rideInformations.destination} a commencé ! 🚗🎉`,
+                type: NotificationType.RIDE,
+                read: false
+            });
+          });
           // Redirect to the ride page after 2 seconds
           setTimeout(() => {
             location.assign(`/calendar/${ride.id}`);

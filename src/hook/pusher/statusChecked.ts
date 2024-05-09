@@ -1,19 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { ApiResponse, ContentBodyChecked } from "$/lib/types/types";
+import type { ApiResponse, BookingInformationsProps } from "$/lib/types/types";
 import axios from "axios";
 
 
 
 
-export const notifyStatusChecked = async (bookingUpdate: ContentBodyChecked, passengersAndDriver: (string | undefined)[]): Promise<void> => {
+export const notifyStatusChecked = async (bookingUpdate: BookingInformationsProps): Promise<void> => {
 
-    const { bookingInfos, passengersAndDriverList } = { bookingInfos: { bookingUpdate }, passengersAndDriverList: passengersAndDriver };
+    const bookingInfos = bookingUpdate;
     try {
         const response = await axios.post<ApiResponse>('/api/pusher/notify-status-checked', {
-          bookingInfos,
-          passengersAndDriverList
+          bookingInfos
         });
-        
+
         console.log('Succès:', response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
