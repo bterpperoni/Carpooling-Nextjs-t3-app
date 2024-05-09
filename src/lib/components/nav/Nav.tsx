@@ -11,7 +11,6 @@ import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import type { Notification } from '$/lib/types/types'
 import { api } from '$/utils/api'
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { usePusher } from '$/context/pusherContext'
 

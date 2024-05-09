@@ -13,10 +13,7 @@ import Map from "$/lib/components/map/Map";
 // import { useMap } from "$/context/mapContext";
 import type { BookingInformationsProps, Notification } from "$/lib/types/types";
 import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
-import { toast } from "react-toastify";
 import { usePusher } from "$/context/pusherContext";
-import { Toast } from "node_modules/react-toastify/dist/components";
-import { ToastProps } from "node_modules/react-toastify/dist/types";
 
 export default function currentRide() {
   // Get session
@@ -67,14 +64,7 @@ export default function currentRide() {
     function handleNewNotification(data: Notification){
       const newNotifications = [...notifications, data.message];
       setNotifications(newNotifications);
-      toast(data.message, { 
-        autoClose: 4000,
-        position: "top-right",
-        style: {
-          backgroundColor: 'blue',
-          color: 'white'
-        }
-      });
+      alert(data.message);
     }
 
     if(sessionData && isPassengerSession === false){
