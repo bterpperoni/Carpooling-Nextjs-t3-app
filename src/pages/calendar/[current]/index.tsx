@@ -46,17 +46,15 @@ export default function currentRide() {
 
   ///
   const pusher = usePusher();
-  // Notifications List  
-  const [messages, setMessages] = useState<string[]>([]);
   
   useEffect(() => {
     if(sessionData && isPassengerSession === false){
-        // Subscribe to the channel related the current user
-        const channel = pusher.subscribe(`user-channel-${sessionData.user.id}`);
+        // Subscribe to the channel related the current driver
+        const channel = pusher.subscribe(`driver-channel-${sessionData.user.id}`);
         console.log("Channel subscribed: ", channel.name);
         
         function handleNewNotification(data: Notification){
-          alert(data);
+          alert(data.message);
         }
 
         // Bind to the ride-started event & add the notification to the list
@@ -67,7 +65,7 @@ export default function currentRide() {
           console.log("Channel unsubscribed: ", channel.name);
         }
     }
-  }, [sessionData, isPassengerSession, currentRide, messages]);
+  }, [sessionData, isPassengerSession, currentRide]);
 
 ///
     // // Access the map object

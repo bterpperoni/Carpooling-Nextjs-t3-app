@@ -17,7 +17,7 @@ if (req.method === "POST") {
 
     try {  
         await Promise.all(passengers.map(async (userId: string) => {
-                return await pusher.trigger(`user-channel-${userId}`, 'ride-started', {
+                return await pusher.trigger(`passenger-channel-${userId}`, 'ride-started', {
                     message: `Le trajet avec ${rideInfos.driverId} à destination de ${getCampusNameWithAddress(rideInfos.destination) !== null ? getCampusNameWithAddress(rideInfos.destination): rideInfos.destination} a commencé ! 🚗🎉`
                 });
             }));

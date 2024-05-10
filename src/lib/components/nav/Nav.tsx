@@ -69,7 +69,7 @@ export default function Nav() {
   useEffect(() => {
     if(session){
         // Subscribe to the channel related the current user
-        const channel = pusher.subscribe(`user-channel-${session.user.id}`);
+        const channel = pusher.subscribe(`passenger-channel-${session.user.id}`);
         console.log("Channel subscribed: ", channel.name)
         
         function handleNewNotification(data: Notification ){
