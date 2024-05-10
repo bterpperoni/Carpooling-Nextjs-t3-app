@@ -1,4 +1,4 @@
-import type { BookingStatus, Ride } from "@prisma/client";
+import type { Ride } from "@prisma/client";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ChangeEvent } from "react";
 
 export type Children = {
@@ -20,11 +20,7 @@ export type InputProps = {
         classLabel?: string;
 }
 
-export type BookingInformationsProps = {
-  driverId: string;
-  passengerName: string,
-  status: BookingStatus
-};
+export type BookingInformationsProps = { driverId: string, passengerName: string };
 
 export type TypeReturnRideAsPassenger = (Ride & {
   driver: { name: string; email: string | null; image: string | null };
@@ -32,7 +28,7 @@ export type TypeReturnRideAsPassenger = (Ride & {
 
 export type ApiResponse = { success: boolean, message?: string };
 
-export type RideInformationsProps = { rideId: number; driverId: string; destination: string}
+export type RideInformationsProps = { rideId: number, driverId: string, destination: string }
 
 export type DistanceMatrixPromise = {
   distance: number;

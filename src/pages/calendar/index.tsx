@@ -99,51 +99,49 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
   // Fetch the notification creation function
   const { mutate: createNotification } = api.notification.create.useMutation();
 
-async function notifyPassenger(ride: 
-      Ride & {
-      driver: { 
-        name: string; 
-        email: string | null; 
-        image: string | null 
-      };
-    }) {
-      // set the ride informations
-      const rideInformations: RideInformationsProps = {
-        rideId: ride.id,
-        driverId: ride.driver.name ?? "",
-        destination: ride.destination
-      };
+    async function notifyPassenger(ride: 
+        Ride & {
+        driver: { 
+          name: string; 
+          email: string | null; 
+          image: string | null 
+        };
+      }) {
+        // set the ride informations
+        const rideInformations: RideInformationsProps = {
+          rideId: ride.id,
+          driverId: ride.driver.name ?? "",
+          destination: ride.destination
+        };
 
-      // Set passengers name List
-      const listPassengers: {passengerId: string, passengerName: string}[] = [];
-      // Destruct passengers list 
-      passengersDetail?.forEach((passenger) => {
-          // Add the passenger name to the list
-          listPassengers.push({passengerId: passenger.userId, passengerName: passenger.userPassenger.name});
-        });
-
-      
-
-      // Notify the passengers that the ride has started
-      await notifyStartRide(rideInformations, listPassengers.map(({passengerId}) => passengerId)).then(() => {
-          console.log("Les passagers ont été notifiés");
-          // Save the ride start notification in the database for each passenger
-          listPassengers.map(async ({passengerId}) => {
-            createNotification({
-                toUserId: passengerId,
-                fromUserId: sessionData?.user.id ?? "",
-                message: `Le trajet avec ${sessionData?.user.name} à destination de ${getCampusNameWithAddress(rideInformations.destination) !== null ? getCampusNameWithAddress(rideInformations.destination): rideInformations.destination} a commencé ! 🚗🎉`,
-                type: NotificationType.RIDE,
-                read: false
-            });
+        // Set passengers name List
+        const listPassengers: {passengerId: string, passengerName: string}[] = [];
+        // Destruct passengers list 
+        passengersDetail?.forEach((passenger) => {
+            // Add the passenger name to the list
+            listPassengers.push({passengerId: passenger.userId, passengerName: passenger.userPassenger.name});
           });
-          // Redirect to the ride page after 2 seconds
-          setTimeout(() => {
-            location.assign(`/calendar/${ride.id}`);
-          }, 2000);
-      }).catch((error) => {
-          console.error("Erreur lors de la notification des passagers", error);
-      });
+
+        // Notify the passengers that the ride has started
+        await notifyStartRide(rideInformations, listPassengers.map(({passengerId}) => passengerId)).then(() => {
+            console.log("Les passagers ont été notifiés");
+            // Save the ride start notification in the database for each passenger
+            listPassengers.map(async ({passengerId}) => {
+              createNotification({
+                  toUserId: passengerId,
+                  fromUserId: sessionData?.user.id ?? "",
+                  message: `Le trajet avec ${sessionData?.user.name} à destination de ${getCampusNameWithAddress(rideInformations.destination) !== null ? getCampusNameWithAddress(rideInformations.destination): rideInformations.destination} a commencé ! 🚗🎉`,
+                  type: NotificationType.RIDE,
+                  read: false
+              });
+            });
+            // Redirect to the ride page after 2 seconds
+            setTimeout(() => {
+              location.assign(`/calendar/${ride.id}`);
+            }, 2000);
+        }).catch((error) => {
+            console.error("Erreur lors de la notification des passagers", error);
+        });
 
     }
 

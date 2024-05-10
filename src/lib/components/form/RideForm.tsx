@@ -161,12 +161,11 @@ export default function RideForm({
       if (!ride) {
         if (!isRideReturn && timeReturn) {
           if (
-            timeReturn?.isBefore(timeDeparture) &&
+            timeReturn?.isBefore(timeDeparture) ||
             (timeReturn?.diff(timeDeparture, "hour") ?? 0) < 2
           ) {
-            setTimeReturn(dayjs(timeDeparture).add(2, "hour"));
             alert(
-              "L'heure de retour doit au moins 2h après l'heure de départ, celle-ci ont été automatiquement modifiées",
+              "L'heure de retour doit au moins 2h après l'heure de départ",
             );
           }
         }
@@ -205,9 +204,8 @@ export default function RideForm({
           timeReturn?.isBefore(timeDeparture) &&
           (timeReturn?.diff(timeDeparture, "hour") ?? 0) < 2
         ) {
-          setTimeReturn(dayjs(timeDeparture).add(2, "hour"));
           alert(
-            "L'heure de retour doit au moins 2h après l'heure de départ, celle-ci ont été automatiquement modifiées",
+            "L'heure de retour doit au moins 2h après l'heure de départ",
           );
         } else {
           const tmpTimeReturn = timeReturn ? timeReturn.toDate() : null;
@@ -279,14 +277,15 @@ export default function RideForm({
                   );
                 }
               }}
-              className=" my-2 
-                          w-[75%] 
-                          border-2
-                          border-[var(--purple-g1)] bg-[var(--purple-g3)]
-                          p-2
-                          text-xl
-                          text-white 
-                          md:w-[75%] md:text-2xl"
+              className=" 
+                my-2 
+                w-[75%] 
+                border-2
+                border-[var(--purple-g1)] bg-[var(--purple-g3)]
+                p-2
+                text-xl
+                text-white 
+                md:w-[75%] md:text-2xl"
               id="departure"
             />
           </div>

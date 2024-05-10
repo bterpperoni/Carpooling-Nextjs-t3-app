@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { useRouter } from "next/router";
 import { BookingStatus, NotificationType } from "@prisma/client";
+import type { Booking, User } from "@prisma/client";
 import Button from "$/lib/components/button/Button";
 import { useEffect, useState } from "react";
 import Map from "$/lib/components/map/Map";
@@ -39,47 +40,78 @@ export default function currentRide() {
   // Fetch the notification creation function
   const { mutate: createNotification } = api.notification.create.useMutation();
 
-  const { mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
+  const { data: updatedStatusChecked ,mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
 
+  const [isUpdated, setIsUpdated] = useState(false);
+
+  ///
+  const pusher = usePusher();
+  // Notifications List  
+  const [messages, setMessages] = useState<string[]>([]);
+  
+  useEffect(() => {
+    if(sessionData && isPassengerSession === false){
+        // Subscribe to the channel related the current user
+        const channel = pusher.subscribe(`user-channel-${sessionData.user.id}`);
+        console.log("Channel subscribed: ", channel.name);
+        
+        function handleNewNotification(data: Notification){
+          alert(data);
+        }
+
+        // Bind to the ride-started event & add the notification to the list
+        channel.bind('status-checked', handleNewNotification);
+
+        return () => {
+          channel.unbind('status-checked', handleNewNotification);
+          console.log("Channel unsubscribed: ", channel.name);
+        }
+    }
+  }, [sessionData, isPassengerSession, currentRide, messages]);
+
+///
     // // Access the map object
     // const mapRef = useMap();
     // // Define the state for the map loading
-    // const [isMapLoaded, setIsMapLoaded] = useState(false);
+    // const [isMapLoaded, setIsMapLoaded] = useState(false);  
 
+    const currentPassenger: ({userPassenger: User } & Booking) | undefined = 
+    userBooking?.find((user) => user.userId === sessionData?.user?.id);
 
-  // Update the passenger status to checked
-  async function handleUpdateStatusToChecked(bookingId: number) {
-    updateStatusToChecked({ bookingId: bookingId });
-  }
+    async function handleNotifyStatusChecked() {        
 
-  ///
-  
-  // const pusher = usePusher();
-  // // Notifications List  
-  // const [messages, setMessages] = useState<string[]>([]);
-  
-
-  // useEffect(() => {
-  //   if(sessionData && isPassengerSession === false){
-  //       // Subscribe to the channel related the current user
-  //       const channel = pusher.subscribe(`driver-channel-${currentRide?.driver.id}`);
-  //       console.log("Channel subscribed: ", channel.name);
+      if(currentRide && sessionData && currentPassenger?.userPassenger.name)                 
+      {
+        // set the ride informations
+        const bookingInformations: BookingInformationsProps = {
+          driverId: currentRide.driver.id,
+          passengerName: currentPassenger.userPassenger.name,
+        };
         
-  //       function handleNewNotification(data: Notification){
-  //         const newMessages = [...messages, data.message];
-  //         setMessages(newMessages);
-  //         alert(data.message);
-  //       }
+        console.log("Conducteur à notifier: ", bookingInformations.driverId);
+        console.log("Nom du passager: ", bookingInformations.passengerName);
+        
+        // Notify the passengers
+        await notifyStatusChecked(bookingInformations);
+        createNotification({
+          toUserId: currentRide.driver.id,
+          fromUserId: sessionData.user.id,
+          message: `${sessionData.user.name} a indiqué qu'il est prêt à partir ! 🚗🎉`,
+          type: NotificationType.RIDE,
+          read: false,
+          });
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 2000);
+      }
+    }
 
-  //       // Bind to the ride-started event & add the notification to the list
-  //       channel.bind('status-checked', handleNewNotification);
+  useEffect(() => {
 
-  //       return () => {
-  //         channel.unbind('status-checked', handleNewNotification);
-  //         console.log("Channel unsubscribed: ", channel.name);
-  //       }
-  //   }
-  // }, [sessionData, isPassengerSession, currentRide, messages]);
+    if(isUpdated){
+      void handleNotifyStatusChecked();
+    }
+  }, [isUpdated]);
 
   ///
   useEffect(() => {
@@ -152,39 +184,11 @@ export default function currentRide() {
                                               hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
                                               rounded-lg
                                               content-center`}
-                                  onClick={async () => {          
-                                    if(currentRide && sessionData)                 
-                                    {
-                                      // set the ride informations
-                                      const bookingInformations: BookingInformationsProps = {
-                                        driverId: currentRide.driver.id,
-                                        passengerName: passenger.userPassenger.name,
-                                        status: BookingStatus.CHECKED
-                                      };
-    
-                                      // Set driver Name
-                                      const driverName = currentRide.driver.name;
-                                      
-                                      console.log("Conducteur à notifier ", driverName);
-                                      console.log("Informations du trajet", bookingInformations);
-    
-    
-                                      // Update the passenger status to checked
-                                      await handleUpdateStatusToChecked(passenger.id);
-                                      // Notify the passengers
-                                      await notifyStatusChecked(bookingInformations).then(() => {
-                                        console.log("Notification envoyée");
-                                        createNotification({
-                                          toUserId: currentRide.driver.id,
-                                          fromUserId: passenger.userPassenger.id,
-                                          message: `${passenger.userPassenger.name} a indiqué qu'il est prêt à partir ! 🚗🎉`,
-                                          type: NotificationType.RIDE,
-                                          read: false,
-                                          });
-                                      });
-                                      location.assign(`/calendar/${rideId}`);
-                                    }
-                                  }
+                                  onClick={async () => {
+                                    // Update the passenger status to checked
+                                    // updateStatusToChecked({bookingId: passenger.id});
+                                    setIsUpdated(true);
+                                  } 
                               }     
                             >
                                 Confirmer votre participation

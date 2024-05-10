@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { RideInformationsProps, ApiResponse } from "$/lib/types/types";
 import axios from "axios";
 
@@ -12,7 +11,7 @@ export const notifyStartRide = async ({rideId, driverId, destination}: RideInfor
           passengers
         });
         
-        console.log('Succès:', response.data);
+        console.log('Succès:', response);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error('Erreur Axios:', error.response?.data);

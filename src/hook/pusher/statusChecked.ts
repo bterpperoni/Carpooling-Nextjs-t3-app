@@ -1,22 +1,23 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiResponse, BookingInformationsProps } from "$/lib/types/types";
 import axios from "axios";
 
 
 
 
-export const notifyStatusChecked = async (bookingUpdate: BookingInformationsProps): Promise<void> => {
+export const notifyStatusChecked = async ({driverId, passengerName}: BookingInformationsProps): Promise<void> => {
 
-    const bookingInfos = bookingUpdate;
+   const { bookingInfos } = { bookingInfos: { driverId: driverId, passengerName: passengerName }}; 
+   
     try {
         const response = await axios.post<ApiResponse>('/api/pusher/notify-status-checked', {
           bookingInfos
         });
 
-        console.log('Succès:', response.data);
+        console.log('Succès:', response);
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          console.error('Erreur Axios:', error.response?.data);
+          console.log(error.response)
+          console.error('Erreur Axios:', error);
         } else {
           console.error('Erreur inconnue:', error);
         }

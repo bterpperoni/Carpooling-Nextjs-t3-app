@@ -122,13 +122,13 @@ export default function Detail() {
                     onClick={handleEditClick}
                     className="rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
                   >
-                    Modifier le trajet
+                    Modifier
                   </Button>
                   <Button
                     onClick={handleDelete}
                     className="rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600"
                   >
-                    Supprimer le trajet
+                    Supprimer
                   </Button>
                 </div>
               </>

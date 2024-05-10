@@ -23,15 +23,15 @@ const Carheh: AppType<{ session: Session | null }> = ({
 }) => {
     return (
         <StrictMode>
-            <PusherProvider pusher={ pusher }>
-                <ApiKeyProvider>
+            <SessionProvider session={session}>
+                <PusherProvider pusher={ pusher }>
+                    <ApiKeyProvider>
                         <MapProvider>
-                            <SessionProvider session={session}>
-                                    <Component {...pageProps} />
-                            </SessionProvider>
+                            <Component {...pageProps} />
                         </MapProvider>
-                </ApiKeyProvider>
-            </PusherProvider>
+                    </ApiKeyProvider>
+                </PusherProvider>
+            </SessionProvider>
         </StrictMode>
     );
 };

@@ -69,10 +69,8 @@ export default function Nav() {
   useEffect(() => {
     if(session){
         // Subscribe to the channel related the current user
-        const channel = pusher.subscribe(`passenger-channel-${session.user.id}`);
+        const channel = pusher.subscribe(`user-channel-${session.user.id}`);
         console.log("Channel subscribed: ", channel.name)
-        const channelDriver = pusher.subscribe(`driver-channel-${session.user.id}`);
-        console.log("Channel subscribed: ", channelDriver.name)
         
         function handleNewNotification(data: Notification ){
           const newMessages = [...messages, data.message]
@@ -80,21 +78,26 @@ export default function Nav() {
           alert(data.message);
         }
 
+        // const channelDriver = pusher.subscribe(`passenger-channel-${session.user.id}`);
+        // console.log("Channel subscribed: ", channelDriver.name)
         
-        function handleNewNotificationDriver(data: Notification ){
-          const newMessages = [...messages, data.message]
-          setMessages(newMessages)
-          console.log("Notification: ", data.message);
-          alert(data.message);
-        }
+        // function handleNewNotificationDriver(data: Notification ){
+        //   const newMessages = [...messages, data.message]
+        //   setMessages(newMessages)
+        //   console.log("Notification: ", data.message);
+        //   alert(data.message);
+        // }
+        // Bind to the ride-started event & add the notification to the list
+        // channelDriver.bind('status-checked', handleNewNotificationDriver);
+
         // Bind to the ride-started event & add the notification to the list
         channel.bind('ride-started', handleNewNotification);
-        channelDriver.bind('status-checked', handleNewNotificationDriver);
+         
         return () => {
           channel.unbind('ride-started', handleNewNotification);
-          channelDriver.unbind('status-checked', handleNewNotificationDriver);
-          console.log("Channel unsubscribed: ", channelDriver.name);
           console.log("Channel unsubscribed: ", channel.name);
+          // channelDriver.unbind('status-checked', handleNewNotificationDriver);
+          // console.log("Channel unsubscribed: ", channelDriver.name);
         }
     }
   }, [session?.user.id])
