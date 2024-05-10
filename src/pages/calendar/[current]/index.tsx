@@ -42,8 +42,6 @@ export default function currentRide() {
 
   const { data: updatedStatusChecked ,mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
 
-  const [isUpdated, setIsUpdated] = useState(false);
-
   ///
   const pusher = usePusher();
   
@@ -98,18 +96,17 @@ export default function currentRide() {
           type: NotificationType.RIDE,
           read: false,
           });
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 2000);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       }
     }
 
   useEffect(() => {
-
-    if(isUpdated){
+    if(updatedStatusChecked){
       void handleNotifyStatusChecked();
     }
-  }, [isUpdated]);
+  }, [updatedStatusChecked]);
 
   ///
   useEffect(() => {
@@ -184,8 +181,7 @@ export default function currentRide() {
                                               content-center`}
                                   onClick={async () => {
                                     // Update the passenger status to checked
-                                    // updateStatusToChecked({bookingId: passenger.id});
-                                    setIsUpdated(true);
+                                    updateStatusToChecked({bookingId: passenger.id});
                                   } 
                               }     
                             >
