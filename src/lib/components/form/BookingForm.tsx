@@ -1,10 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { useApiKey } from "$/context/apiContext";
 import Autocomplete from "react-google-autocomplete";
 import { useRouter } from "next/dist/client/router";
@@ -12,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
-import { calculateDetour, calculateDistance } from "$/hook/distanceMatrix";
+import { calculateDetourEligibility, calculateDistance } from "$/hook/distanceMatrix";
 import type { Booking, Ride } from "@prisma/client";
 import { loadGooglePlacesApi } from "$/context/asyncLoadApiContext";
 
@@ -27,12 +20,9 @@ export default function BookingForm({
   // ________________________________ STATE ________________________________
   const apiKey = useApiKey();
 
-  // Get id from url
-  const { query, push } = useRouter();
   // Session recovery
   const { data: sessionData } = useSession();
 
-  const rideIdQuery = query.ride as string;
   //  Max distance driver can go to pick up passenger
   const maxDistanceDetour = ride?.maxDetourDist ?? 0;
   // Distance in kilometers between driver departure and passenger destination
@@ -164,7 +154,7 @@ export default function BookingForm({
         origin &&
         ((destinationBooking ?? destPickup) !== null)
       ) {
-        await calculateDetour(
+        await calculateDetourEligibility(
           origin,
           destination,
           [destinationBooking ?? destPickup],
@@ -208,7 +198,6 @@ export default function BookingForm({
           defaultValue={booking?.pickupPoint ?? ""}
           apiKey={apiKey}
           options={options}
-          async
           libraries={["places"]}
           onPlaceSelected={async (place) => {
             setDestinationBooking(place.formatted_address ?? "");

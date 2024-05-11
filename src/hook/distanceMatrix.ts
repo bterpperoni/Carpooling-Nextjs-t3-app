@@ -81,7 +81,7 @@ export async function displayRoute(
 // The function takes the origin, destination, waypoint, maximum detour distance, and departure time as parameters.
 // It returns a boolean indicating if the passenger can be included.
 */
-export const calculateDetour = async (origin: string, destination: string, waypoints: string[], maxDetourDistance: number, departureTime: Date) => {
+export const calculateDetourEligibility = async (origin: string, destination: string, waypoints: string[], maxDetourDistance: number, departureTime: Date) => {
 
   const directionsService = new window.google.maps.DirectionsService;
   // Direct route between origin and destination
@@ -96,7 +96,6 @@ export const calculateDetour = async (origin: string, destination: string, waypo
   });
   // Total Distance of the direct route
   const directDistance = directRoute?.routes[0]?.legs[0]?.distance?.value ?? 0;
- 
   
   // Prepare the waypoints for the detour route
   const formattedWaypoints = waypoints.map(waypoint => ({
@@ -132,29 +131,31 @@ export const calculateDetour = async (origin: string, destination: string, waypo
   }
 };
 
-export const setPolilines = (map: google.maps.Map, origin: google.maps.LatLngLiteral, way_points: string[], destination: google.maps.LatLngLiteral) => {
+export const setPolilines =async (map: google.maps.Map | null, origin: string, way_points: string[], destination: string): Promise<void> => {
   
-  const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
-  
-  useEffect(() => {
-    const directionsService = new window.google.maps.DirectionsService();
+    const directionsService = new window.google.maps.DirectionsService;
     
-    void directionsService.route({
+    await directionsService.route({
       optimizeWaypoints: true,
       origin: origin,
       destination: destination,
       waypoints: way_points.map(waypoint => ({ location: waypoint, stopover: true })),
       travelMode: window.google.maps.TravelMode.DRIVING,
     }
-    , (result, status) => {
+    , (result: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
       if (status === window.google.maps.DirectionsStatus.OK) {
-        setDirections(result);
-        const directionsRenderer = new window.google.maps.DirectionsRenderer();
+        const directionsRenderer = new window.google.maps.DirectionsRenderer;
         directionsRenderer.setMap(map);
-        directionsRenderer.setDirections(directions);
+        directionsRenderer.setOptions({
+          polylineOptions: {
+            strokeColor: "red",
+            strokeOpacity: 0.5
+          },
+        });
+        directionsRenderer.setDirections(result);
       } else {
         console.log("Error getting directions: ", status,"\n", result);
       }
     });
-  },[origin, way_points, destination]);
+
 };

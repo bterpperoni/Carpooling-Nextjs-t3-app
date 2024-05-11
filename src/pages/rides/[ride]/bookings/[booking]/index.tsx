@@ -37,8 +37,6 @@ export default function BookingDetails() {
     { enabled: sessionData?.user !== undefined },
   );
 
-
-
   // Delete booking
   const { mutate: deleteBooking } = api.booking.delete.useMutation();
 
@@ -67,14 +65,8 @@ export default function BookingDetails() {
       if ((departureLatLng && destinationLatLng) !== undefined) {
         console.log("Booking verified :", fetchedBooking);
         console.log("Ride verified :", fetchedRide);
-        console.log(
-        "Departure : ",
-        departureLatLng,
-        "\nDestination: ",
-        destinationLatLng,
-        );
     }}
-  }, [fetchedBooking, isMapLoaded]);
+  }, [fetchedBooking, fetchedRide]);
 
   
   if (sessionData) {

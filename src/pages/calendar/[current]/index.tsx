@@ -15,6 +15,8 @@ import Map from "$/lib/components/map/Map";
 import type { BookingInformationsProps, Notification } from "$/lib/types/types";
 import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
 import { usePusher } from "$/context/pusherContext";
+import { calculateDistance, setPolilines } from "$/hook/distanceMatrix";
+import { useMap } from "$/context/mapContext";
 
 export default function currentRide() {
   // Get session
@@ -22,7 +24,7 @@ export default function currentRide() {
   // Get rideId from url
   const { query } = useRouter();
   const rideId = query.current as string;
-  // Fetch the passengers details
+  // Fetch the passengers details and here details ride
   const { data: passengers } = api.booking.bookingByRideId.useQuery(
       { rideId: parseInt(rideId) ?? 0 },
       { enabled: sessionData?.user !== undefined },
@@ -67,9 +69,12 @@ export default function currentRide() {
 
 ///
     // // Access the map object
-    // const mapRef = useMap();
+    const mapRef = useMap();
     // // Define the state for the map loading
-    // const [isMapLoaded, setIsMapLoaded] = useState(false);  
+    const [isMapLoaded, setIsMapLoaded] = useState(false);  
+
+
+    ///
 
     const currentPassenger: ({userPassenger: User } & Booking) | undefined = 
     userBooking?.find((user) => user.userId === sessionData?.user?.id);
@@ -122,6 +127,27 @@ export default function currentRide() {
   }, [userBooking]);
 
   ///
+  const actualPassenger = userBooking?.find((user) => user.userId === sessionData?.user?.id);
+  const [timeToWayPoint, setTimeToWayPoint] = useState<number>(0);
+  const [distanceToWayPoint, setDistanceToWayPoint] = useState<number>(0);
+
+useEffect(() => {
+  async function calculTimeToWayPoint(){
+    if(currentRide && actualPassenger){
+      /* ----DISTANCE TOTAL FROM ORIGIN TO DESTINATION --- */
+      const distanceInMeters = await calculateDistance(currentRide.departure, actualPassenger.pickupPoint);
+      const distanceInKm = distanceInMeters.distance / 1000;
+      const timeInMinutes = distanceInMeters.duration / 60;
+      setDistanceToWayPoint(distanceInKm);
+      setTimeToWayPoint(timeInMinutes);
+    }
+  }
+
+  void calculTimeToWayPoint();
+}, [currentRide, actualPassenger]);
+
+
+  ///
 
   return (
       <LayoutMain>
@@ -161,38 +187,47 @@ export default function currentRide() {
                           {isPassengerSession && userBooking?.find((user) => user.userId === passenger.userPassenger.id) ? (
                             <>
                               {passenger.status !== BookingStatus.CHECKED ? (
-                                <Button
-                                  className={`text-bold easein-out
-                                              text-[1rem]
-                                              m-2
-                                              transform 
-                                              border-2
-                                              border-white 
-                                              bg-red-600 
-                                              px-4 py-2
-                                              leading-none text-white transition duration-100
-                                              hover:-translate-y-1
-                                              hover:scale-110
-                                              hover:border-red-200
-                                              hover:bg-white
-                                              hover:text-red-600
-                                              hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
-                                              rounded-lg
-                                              content-center`}
-                                  onClick={async () => {
-                                    // Update the passenger status to checked
-                                    updateStatusToChecked({bookingId: passenger.id});
-                                  } 
-                              }     
-                            >
-                                Confirmer votre participation
-                            </Button>
+                                <>
+                                  <Button
+                                    className={`text-bold easein-out
+                                                text-[1rem]
+                                                m-2
+                                                transform 
+                                                border-2
+                                                border-white 
+                                                bg-red-600 
+                                                px-4 py-2
+                                                leading-none text-white transition duration-100
+                                                hover:-translate-y-1
+                                                hover:scale-110
+                                                hover:border-red-200
+                                                hover:bg-white
+                                                hover:text-red-600
+                                                hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
+                                                rounded-lg
+                                                content-center`}
+                                    onClick={async () => {
+                                      // Update the passenger status to checked
+                                      updateStatusToChecked({bookingId: passenger.id});
+                                    } 
+                                }     
+                              >
+                                  Confirmer votre participation
+                              </Button>
+                            </>
                             )
                             : (
-                              <div className="bg-gray-200 p-2 rounded-lg m-2 bg-green-700 ">
-                                  <p className="text-[1rem] text-white leading-2">
-                                      Passager prêt
-                                  </p>
+                              <div className="flex flex-col">
+                                  <div className="flex flex-col justify-center items-center">
+                                    <p className={` rounded-lg ${passenger.status === BookingStatus.CHECKED ? "bg-green-500 text-green-50 border-green-700" : "bg-[#C05856] text-white border-red-700"} text-[0.85rem] sm:ml-4 md:ml-0 ml-4 h-max p-2 text-center relative top-[0.2rem] `}>
+                                      Temps de trajet : {timeToWayPoint.toFixed(0)} minutes pour {distanceToWayPoint.toFixed(2)} km
+                                    </p>
+                                  </div>
+                                  <div className="bg-gray-200 p-2 rounded-lg m-2 bg-green-700 ">
+                                      <p className="text-[1rem] text-white leading-2">
+                                          Passager prêt
+                                      </p>
+                                  </div>
                               </div>
                             )}
                             </>
@@ -204,8 +239,7 @@ export default function currentRide() {
                                       Passager non prêt
                                   </p>
                               </div>
-                            )
-                            : (
+                            ) : (
                               <div className="p-2 rounded-lg m-2 bg-green-700 ">
                                   <p className="text-[1rem] text-white leading-2">
                                       Passager prêt
@@ -219,8 +253,21 @@ export default function currentRide() {
               ))}
             </div>
             <div className="mt-8">
+              <div className="text-lg text-white mb-4">
+                Nous sommes le {currentRide?.departureDateTime.toLocaleDateString()}
+              </div>
+              <div className="text-lg text-white mb-4">
+                Départ à {currentRide?.departureDateTime.toLocaleTimeString()}
+              </div>
               <Map zoom={12} onMapLoad={async () => {
-                  // setIsMapLoaded(true);
+                  setIsMapLoaded(true);
+                  if(passengers && currentRide){
+                    const wayPoints: string[] = passengers.map((passenger) => passenger.pickupPoint);
+                    if(isMapLoaded){
+                      console.log("Waypoints: ", wayPoints);
+                      setPolilines(mapRef.current, currentRide.departure, wayPoints, currentRide.destination);
+                    }
+                  }
               }} />
             </div>
           </div>

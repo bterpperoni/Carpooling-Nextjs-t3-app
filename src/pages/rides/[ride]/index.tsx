@@ -35,6 +35,8 @@ export default function Detail() {
     { enabled: sessionData?.user !== undefined },
   );
 
+  ///
+
   // Set if ride can be edited
   const canEdit = sessionData?.user?.id === ride?.driverId;
   // Get booking id
@@ -50,6 +52,8 @@ export default function Detail() {
     lng: ride?.destinationLongitude!,
   };
 
+  ///
+
   // Access the map object
   const mapRef = useMap();
   
@@ -58,7 +62,8 @@ export default function Detail() {
 
   // Map options
   const zoom = 13;
-  /* -------------------------------------------------------------------------------------------- */
+
+///
 
   // Redirect to update ride page
   const handleEditClick = () => {
