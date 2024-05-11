@@ -185,7 +185,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
 
 ///
 */}     
-      <div className="m-1 rounded-lg bg-white p-4 shadow-lg overflow-hidden">
+      <div className="m-1 rounded-lg bg-white p-2 shadow-lg overflow-hidden">
         <h3 className="mb-4 text-2xl font-semibold text-[var(--pink-g1)]">
           Trajets en tant que conducteur
         </h3>
@@ -217,6 +217,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                               box-border
                               cursor-pointer 
                               mb-2
+                              w-auto
                               rounded-md 
                               bg-blue-200 
                               border-2
@@ -246,7 +247,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
 */}
                               <CalendarCard 
                                 ride={ride} 
-                                onClick={function (): void { console.log("No problem") } }
+                                onClick={() => console.log("No problem")}
                                 isDriver={true}
                               />
 {/* 

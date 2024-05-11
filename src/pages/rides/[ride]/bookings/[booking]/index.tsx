@@ -148,7 +148,7 @@ export default function BookingDetails() {
                           hover:border-blue-500
                           hover:bg-white hover:text-blue-500"
               onClick={() =>
-                location.assign(
+                location.replace(
                   `/rides/${fetchedRide?.id}/bookings/${id}/update`,
                 )
               }

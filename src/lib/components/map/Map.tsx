@@ -8,7 +8,6 @@ import Error from "next/error";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useMap } from "$/context/mapContext";
 import type { Ride } from "@prisma/client";
-import { loadAsyncGoogleApi } from '$/context/asyncLoadApiContext';
 
 declare global {
   interface Window {

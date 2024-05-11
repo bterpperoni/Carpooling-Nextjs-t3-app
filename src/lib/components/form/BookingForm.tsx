@@ -14,7 +14,8 @@ import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
 import { calculateDetour, calculateDistance } from "$/hook/distanceMatrix";
 import type { Booking, Ride } from "@prisma/client";
-import { loadAsyncGoogleApi } from "$/context/asyncLoadApiContext";
+import { loadGooglePlacesApi } from "$/context/asyncLoadApiContext";
+
 
 export default function BookingForm({
   ride,
@@ -25,7 +26,7 @@ export default function BookingForm({
 }) {
   // ________________________________ STATE ________________________________
   const apiKey = useApiKey();
-  const google = loadAsyncGoogleApi();
+
   // Get id from url
   const { query, push } = useRouter();
   // Session recovery
@@ -67,6 +68,21 @@ export default function BookingForm({
   // Price for fuel per kilometer
   const fuelPrice = 0.12;
 
+  const googlePlacesLoad = loadGooglePlacesApi().then((google) => {
+    return { google }; 
+  }).catch((err) => {
+    console.log(err);
+    return null;
+  });
+  
+  useEffect(() => {
+    if (google.maps.places.PlacesService) {
+      console.log("Google places api loaded", googlePlacesLoad);
+    }else{
+      console.log("Google places api not loaded", googlePlacesLoad);
+    }
+  }, [googlePlacesLoad]);
+  
   // Options for autocomplete
   const options = {
     componentRestrictions: { country: "be" },

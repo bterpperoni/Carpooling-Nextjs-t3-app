@@ -9,7 +9,7 @@ import { StrictMode } from "react";
 import { MapProvider } from '$/context/mapContext';
 import { PusherProvider } from "$/context/pusherContext";
 import Pusher from "pusher-js";
-import { AsyncLoadPlacesProvider } from '../context/asyncLoadApiContext';
+import { AsyncLoadPlacesProvider } from '$/context/asyncLoadApiContext';
 
 const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
     cluster: "eu",

@@ -21,7 +21,7 @@ import {
   getCampusLatLng,
 } from "$/utils/data/school";
 import Infos from "$/lib/components/button/Infos";
-import { loadAsyncGoogleApi } from "$/context/asyncLoadApiContext";
+import { loadGooglePlacesApi } from "$/context/asyncLoadApiContext";
 
 export default function RideForm({
   ride,
@@ -34,7 +34,17 @@ export default function RideForm({
 }) {
   const { data: sessionData } = useSession();
   const apiKey = useApiKey();
-  const google = loadAsyncGoogleApi();
+  const google = loadGooglePlacesApi();
+
+  useEffect(() => {
+    if (google === undefined) {
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }else{
+      console.log({ google });
+    }
+  }, [apiKey]);
   // Address of departure and destination from google autocomplete
   const address: {
     departure: google.maps.places.PlaceResult | null;

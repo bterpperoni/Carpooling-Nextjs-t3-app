@@ -35,12 +35,6 @@ export const AsyncLoadPlacesProvider = ({ children}: AsyncLoadApiProviderProps) 
     });
   }, []);
 
-  useEffect(() => {
-    if (googleApi) {
-        console.log("Google API loaded");
-        }
-    }, [googleApi]);
-
 ///
   return (
     <GoogleApiContext.Provider value={googleApi}>
@@ -50,7 +44,7 @@ export const AsyncLoadPlacesProvider = ({ children}: AsyncLoadApiProviderProps) 
 };
 
 // ------------------------REACT Hook---------------------------------
-export const loadAsyncGoogleApi = (): GoogleApiContextType => {
+export const loadGooglePlacesApi = async (): Promise<GoogleApiContextType> => {
   const googleApi = useContext(GoogleApiContext);
 
   if (googleApi === null) {
