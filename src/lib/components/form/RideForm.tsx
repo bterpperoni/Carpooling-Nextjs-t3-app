@@ -1,10 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import Autocomplete from "react-google-autocomplete";
 import DateTimeSelect from "./DateTimeSelect";
 import Button from "$/lib/components/button/Button";
@@ -149,7 +145,7 @@ export default function RideForm({
 
   /* _______________________ USEFFECT FOR TEST & REDIRECT WHEN CREATING/UPDATING A RIDE _________________________ */
   useEffect(() => {
-    if (rideCreated || updatedride) {
+    if (rideCreated ?? updatedride) {
       window.location.href = `/rides/${rideCreated?.id ?? updatedride?.id}`;
     }
   }, [rideCreated, updatedride]);
@@ -227,7 +223,7 @@ export default function RideForm({
             maxDistance: maxDistance ?? ride.maxDetourDist,
             type: isRideReturn ? "RETOUR" : "ALLER",
             status: dateDeparture?.isSame(dayjs())
-              ? RideStatus.IN_PROGRESS
+              ? RideStatus.IN_PROGRESS_FORTH
               : ride.status,
           });
         }
@@ -294,7 +290,7 @@ export default function RideForm({
             {/* Input & Dropdown to select school */}
             <div className="m-0 p-2 ">
               <p className="text-[1.25rem] text-[var(--pink-g1)]">
-                A quel établissement vous rendez-vous ?
+                Où vous rendez-vous ?
               </p>
               {schoolInDropdown ? (
                 <Dropdown
@@ -357,14 +353,15 @@ export default function RideForm({
                           );
                         }
                       }}
-                      className=" my-2 
-                                                                w-[75%] 
-                                                                border-2
-                                                                border-[var(--purple-g1)] bg-[var(--purple-g3)]
-                                                                p-2
-                                                                text-xl 
-                                                                text-white 
-                                                                md:w-[75%] md:text-2xl"
+                      className=" 
+                        my-2 
+                        w-[75%] 
+                        border-2
+                        border-[var(--purple-g1)] bg-[var(--purple-g3)]
+                        p-2
+                        text-xl 
+                        text-white 
+                        md:w-[75%] md:text-2xl"
                       id="destination"
                     />
                   </div>

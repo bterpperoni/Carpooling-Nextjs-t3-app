@@ -31,7 +31,6 @@ const Dropdown: React.FC<DropdownProps> = ({ data, styleDropdown, colorLabel, on
 
   return (
     <div className={`${styleDropdown}`}>
-      <label className={`block text-xl mb-2 ${colorLabel}`}>Ecole :</label>
       <select
         className="border p-2 w-full rounded-md"
         onChange={handleSchoolChange}

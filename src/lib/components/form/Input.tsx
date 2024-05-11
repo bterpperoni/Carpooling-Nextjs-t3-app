@@ -1,4 +1,4 @@
-import type { InputProps } from '$/lib/types/types';
+import type { InputProps } from '$/lib/types/interfaces';
 import React from 'react';
 
 const Input: React.FC<InputProps> = ({ label, classInput, type, value, onChange, placeholder, classLabel }) => {

@@ -42,3 +42,13 @@ export interface DropdownProps {
   export interface PaypalTokenResponse {
     access_token: string;
   }
+
+  export interface InputProps {
+    label: string;
+    type: string;
+    value: string | number | readonly string[] | undefined;
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    placeholder?: string;
+    classInput?: string;
+    classLabel?: string;
+}

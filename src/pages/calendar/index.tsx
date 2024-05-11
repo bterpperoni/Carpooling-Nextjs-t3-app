@@ -9,10 +9,11 @@ import { api } from "$/utils/api";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 import { NotificationType, RideStatus, type Ride } from "@prisma/client";
-import type { RideInformationsProps, TypeReturnRideAsPassenger } from "$/lib/types/types";
+import type { RideInformationsProps, TypeRideAsPassenger } from "$/lib/types/types";
 import Modal from "$/lib/components/containers/Modal";
 import Button from "$/lib/components/button/Button";
 import { notifyStartRide } from "$/hook/pusher/rideStart";
+import CalendarCard from '$/lib/components/containers/rides/CalendarCard';
 
 export default function Calendar() {
   // Get the user session
@@ -33,6 +34,8 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
         image: string | null;
       };
     }| null>(null);
+
+    const [ rideForCalendar, setRideForCalendar ] = useState<Ride | undefined>();
 
     // Fetch the passengers details
     const { data: passengersDetail, refetch: refetchPassengersDetails } = api.booking.bookingByRideId.useQuery(
@@ -76,7 +79,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
   });
 
   // Type definition for grouping rides by date
-  type GroupedRides = Record<string, Ride[] & TypeReturnRideAsPassenger[]> ;
+  type GroupedRides = Record<string, Ride[] & TypeRideAsPassenger[]> ;
 
   // Function to group rides by their departure date
   const groupRidesByDate = (rideList: Ride[]): GroupedRides => {
@@ -105,12 +108,12 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
           name: string; 
           email: string | null; 
           image: string | null 
-        };
+        } | null;
       }) {
         // set the ride informations
         const rideInformations: RideInformationsProps = {
           rideId: ride.id,
-          driverId: ride.driver.name ?? "",
+          driverId: ride.driver?.name ?? "",
           destination: ride.destination
         };
 
@@ -153,16 +156,15 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
   }, [rideListAsDriver]);
 
   useEffect(() => {
-    if(selectedRide !== undefined){
+    if(selectedRide !== undefined || rideForCalendar !== null){
       void refetchPassengersDetails();
     }
-  }, [selectedRide, passengersDetail]);
+  }, [selectedRide, passengersDetail, rideForCalendar]);
 
   useEffect(() => {
     if(updatedRideStatus && selectedRide !== null){
       // Notify the passengers that the ride has started
-        void notifyPassenger(selectedRide as Ride & {
-          driver: { name: string; email: string | null; image: string | null };
+        void notifyPassenger(selectedRide as Ride & { driver: { name: string; email: string | null; image: string | null };
         });
     }
   }, [updatedRideStatus, selectedRide]);
@@ -185,8 +187,8 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
 
 ///
 */}     
-      <div className="m-4 rounded-lg bg-white p-4 shadow-lg">
-        <h3 className="mb-4 text-2xl font-semibold text-fuchsia-700">
+      <div className="m-1 rounded-lg bg-white p-4 shadow-lg overflow-hidden">
+        <h3 className="mb-4 text-2xl font-semibold text-[var(--pink-g1)]">
           Trajets en tant que conducteur
         </h3>
         <div className="grid grid-rows-7  gap-4">
@@ -197,7 +199,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                 key={index}
                 className={`  
                   border-2
-                  border-gray-300 col-span-1 rounded-lg p-2 shadow ${isToday ? "bg-[var(--pink-g0)]" : "bg-gray-100"}`}
+                  border-gray-300 col-span-1 rounded-lg p-2 px-3 shadow ${isToday ? "bg-[var(--pink-g0)]" : "bg-gray-100"}`}
               >
                 <h4
                   className={`mb-2 text-xl font-semibold ${isToday ? "text-white" : "text-black"}`}
@@ -220,7 +222,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                               rounded-md 
                               bg-blue-200 
                               border-2
-                              border-blue-500
+                              border-blue-400
                               p-2 
                               hover:bg-blue-200
                             `}
@@ -239,12 +241,22 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                               }
                             }}
                           >
-                            <p className="text-sm">
-                              {ride.departure} →{" "}
-                              {getCampusNameWithAddress(ride.destination) !== null
-                                ? getCampusNameWithAddress(ride.destination)
-                                : ride.destination}
-                            </p>
+                            <div>
+
+{/* 
+                              ///
+*/}
+                              <CalendarCard 
+                                ride={ride} 
+                                onClick={function (): void { console.log("No problem") } }
+                                isDriver={true}
+                                isForth={true}
+                                isOneWay={false}
+                              />
+{/* 
+                              ///
+*/}
+                            </div>
                             {checkIfModalDriverIsOpen && (
                               <Modal
                                 ride={
@@ -265,7 +277,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                                     onClick={async () => {
                                       if (selectedRide) {
                                       // Update the ride status to IN_PROGRESS 
-                                        updateRideStatus({id: selectedRide.id, status: RideStatus.IN_PROGRESS});
+                                        updateRideStatus({id: selectedRide.id, status: RideStatus.IN_PROGRESS_FORTH});
                                       }
                                     }}
                                   >
@@ -338,10 +350,10 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                           email: string | null;
                           image: string | null;
                         };
-                      },
+                      } | null,
                     ) => (
                       <div
-                        key={ride.id}
+                        key={ride?.id}
                         className={`
                           ${isToday ? "text-black" : "text-gray-600"} 
                           box-content 
@@ -364,17 +376,26 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                                 image: ride.driver.image ?? null,
                               },
                             };
+                            setRideForCalendar(ride);
                             setSelectedRide(rideSelected);
                             setCheckIfModalPassengerIsOpen(true);
                           }
                         }}
                       >
-                        <p className="text-sm">
-                          {ride.departure} →{" "}
-                          {getCampusNameWithAddress(ride.destination) !== null
-                            ? getCampusNameWithAddress(ride.destination)
-                            : ride.destination}
-                        </p>
+                        <div>
+{/* 
+                              ///
+*/}
+                              <CalendarCard 
+                                ride={rideForCalendar} 
+                                onClick={function (): void { console.log("No problem") } }
+                                isDriver={false}
+                                isForth={true}
+                                isOneWay={false}
+                              />
+{/* 
+                              ///
+*/}                     </div>
                         {checkIfModalPassengerIsOpen && (
                           <Modal
                             ride={
@@ -388,7 +409,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                             }
                             isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
                             childrenToday={
-                              (selectedRide?.status === RideStatus.IN_PROGRESS) && (
+                              (selectedRide?.status === RideStatus.IN_PROGRESS_FORTH) && (
                               <Button
                                 className="mt-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700 mr-3"
                                 onClick={async () => {

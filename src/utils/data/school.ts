@@ -36,7 +36,7 @@ export const data ={
         "pays": "Belgique",
         "campus": [
           {
-            "campus_ref": "Plaine de Nimy",
+            "campus_ref": "Pl. de Nimy",
             "campus_name": "Campus Plaine de Nimy",
             "address": "Chaussée de Binche 159, 7000 Mons",
             "location": {
@@ -150,6 +150,19 @@ export const getCampusNameWithAddress = (str: string) => {
   return null;
 }
 
+export const getCampusAbbrWithAddress = (str: string) => {
+  for (const school of data.school) {
+    for (const campus of school.campus) {
+        if (campus.address === str) {
+            // console.log(campus.campus_ref);
+            const campusAbbr = school.reference + ' - ' + campus.campus_ref;
+            return campusAbbr;
+        }
+    }
+  }
+  return null;
+}
+
 export const getCampusLatLng = (str: string) => {
   for (const school of data.school) {
     for (const campus of school.campus) {
@@ -163,7 +176,19 @@ export const getCampusLatLng = (str: string) => {
   } return { lat: 0, lng: 0};
 }
 
-export const formatStrAddress = (str: string) => {
-  const address = str.split(',', 2);
-  return address;
+// Format the address to "street, city"
+export const formatAddress = (address: string) => {
+  const parts = address.split(',');
+  if(parts[0] && parts[1]?.split(' ')[1]){
+    // set street
+    const street = parts[0];
+    // Second part splitted is the city and postal code '7000 Mons'
+    const cityParts = parts[1].split(' ');
+    // set city
+    const city = cityParts[2];
+    if(city){
+      return `${street}, ${city.trim()}`;
+    }
+  }
 }
+

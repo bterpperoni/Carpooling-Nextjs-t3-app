@@ -3,7 +3,7 @@
 import type { RideCardProps } from "$/lib/types/interfaces";
 import { getCampusNameWithAddress } from "$/utils/data/school";
 
-const rideCard: React.FC<RideCardProps> = ({ ride, goToRide } : RideCardProps) => {
+const rideCard: React.FC<RideCardProps> = ({ ride, goToRide }) => {
 
   return (
     <div className="ride-card-container cursor-pointer" onClick={goToRide}>

@@ -4,7 +4,7 @@
 import { getCampusNameWithAddress } from "$/utils/data/school";
 import type { Ride } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
-import { formatStrAddress } from "../../../utils/data/school";
+import { formatAddress } from "$/utils/data/school";
 import Button from "$/lib/components/button/Button";
 
 interface ModalProps {
@@ -47,7 +47,7 @@ const Modal: React.FC<ModalProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             <h4 className="mb-4 text-xl font-semibold">
-              {formatStrAddress(ride.departure)} →{" "}
+              {formatAddress(ride.departure)} →{" "}
               {getCampusNameWithAddress(ride.destination) !== null
                 ? getCampusNameWithAddress(ride.destination)
                 : ride.destination}
