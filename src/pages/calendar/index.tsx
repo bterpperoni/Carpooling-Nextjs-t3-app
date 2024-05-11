@@ -32,8 +32,8 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
         name: string | null;
         email: string | null;
         image: string | null;
-      };
-    }| null>(null);
+      } | null;
+    } | null>(null);
 
     const [ rideForCalendar, setRideForCalendar ] = useState<Ride | undefined>();
 
@@ -153,7 +153,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
   useEffect(() => {
     setGroupedRidesAsDriver(groupRidesByDate(rideListAsDriver ?? []));
     setGroupedRidesAsPassenger(groupRidesByDate(rideListAsPassenger ?? []));
-  }, [rideListAsDriver]);
+  }, [rideListAsDriver, rideListAsPassenger]);
 
   useEffect(() => {
     if(selectedRide !== undefined || rideForCalendar !== null){
@@ -316,7 +316,6 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
             )})};
         </div>
       </div>
-
 {/*
 
 ///
@@ -344,13 +343,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                     {/* Check if the ride is available for the date */}
                     {groupRidesByDate(rideListAsPassenger ?? [])?.[dayjs(date).format("YYYY-MM-DD")]?.map(
                     (
-                      ride: Ride & {
-                        driver: {
-                          name: string;
-                          email: string | null;
-                          image: string | null;
-                        };
-                      } | null,
+                      ride: Ride & TypeRideAsPassenger | null,
                     ) => (
                       <div
                         key={ride?.id}
@@ -367,7 +360,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                           hover:bg-green-400 
                         `}
                         onClick={() => {
-                          if (ride) {
+                          if (ride && ride.driver !== null) {
                             const rideSelected = {
                               ...ride,
                               driver: {
@@ -376,7 +369,6 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                                 image: ride.driver.image ?? null,
                               },
                             };
-                            setRideForCalendar(ride);
                             setSelectedRide(rideSelected);
                             setCheckIfModalPassengerIsOpen(true);
                           }
@@ -387,7 +379,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                               ///
 */}
                               <CalendarCard 
-                                ride={rideForCalendar} 
+                                ride={ride} 
                                 onClick={function (): void { console.log("No problem") } }
                                 isDriver={false}
                                 isForth={true}

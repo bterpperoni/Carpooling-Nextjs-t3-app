@@ -10,7 +10,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ ride, isDriver, isForth, is
 
     if(ride){
         return (
-        <div className="flex flex-row justify-between w-max border-y-2 border-gray-300">
+        <div className="flex flex-row justify-between w-max border-gray-300">
           <div className='flex flex-col items-center flex-start'>
             <div className="flex flex-row items-center">
                 <div className="relative top-3 flex flex-row">

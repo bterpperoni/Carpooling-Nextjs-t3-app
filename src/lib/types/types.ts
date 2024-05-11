@@ -11,7 +11,7 @@ export type ButtonProps = {
 } & ButtonHTMLAttributes<HTMLButtonElement> & AnchorHTMLAttributes<HTMLAnchorElement>
 
 export type TypeRideAsPassenger = Ride & {
-  driver: { name: string; email: string | null; image: string | null };
+  driver: { name: string; email: string | null; image: string | null } | null;
 } | null;
 
 export type ApiResponse = { success: boolean, message?: string };
@@ -30,7 +30,7 @@ export type RideInformationsProps = { rideId: number, driverId: string, destinat
 export type BookingInformationsProps = { driverId: string, passengerName: string };
 
 export type CalendarCardProps = { 
-  ride: Ride | undefined,
+  ride: Ride | null,
   bookings?: Booking[],
   isDriver?: boolean,
   isForth?: boolean,
