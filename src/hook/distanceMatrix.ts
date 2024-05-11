@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { DistanceMatrixPromise } from "$/lib/types/types";
 import { useEffect, useState } from "react";
 
+
 export async function calculateDistance(origin: string, destination: string): Promise<DistanceMatrixPromise> {
+
   return new Promise((resolve, reject) => {
     try {
       const service = new window.google.maps.DistanceMatrixService();
@@ -18,9 +21,9 @@ export async function calculateDistance(origin: string, destination: string): Pr
           },
         },
         (response, status) => {
-          if (status === google.maps.DistanceMatrixStatus.OK) {
+          if (status === "OK") {
             if (response?.rows[0]?.elements[0]  && response.rows.length > 0  ) {
-              if (response.rows[0].elements[0].distance.value !== undefined) {
+              if (response.rows[0].elements[0].distance !== undefined) {
                 const distance = response.rows[0].elements[0].distance.value;
                 const duration = response.rows[0].elements[0].duration_in_traffic.value;
                 resolve({distance: distance, duration: duration});

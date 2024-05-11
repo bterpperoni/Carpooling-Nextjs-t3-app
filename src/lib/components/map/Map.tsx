@@ -8,6 +8,7 @@ import Error from "next/error";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useMap } from "$/context/mapContext";
 import type { Ride } from "@prisma/client";
+import { loadAsyncGoogleApi } from '$/context/asyncLoadApiContext';
 
 declare global {
   interface Window {
@@ -30,6 +31,7 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad  }) => {
     lat: 50.4637089,
     lng: 3.956881,
   };
+
   // Access the map object
   const mapRef = useMap();
   // Reference to the map container
@@ -44,8 +46,7 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad  }) => {
       version: "weekly",
       region: "BE",
       retries: 3,
-      language: "fr",
-      id: "routes-loader"
+      language: "fr"
     });
 
     let map: google.maps.Map;

@@ -5,13 +5,33 @@ import { CgArrowLongDownE, CgArrowLongUpE } from "react-icons/cg";
 import { PiSeatbeltFill } from "react-icons/pi";
 import { FaArrowRightToBracket, FaArrowRightFromBracket } from "react-icons/fa6";
 import { formatAddress, getCampusAbbrWithAddress } from "$/utils/data/school";
+import { useEffect, useState } from "react";
 
-const CalendarCard: React.FC<CalendarCardProps> = ({ ride, isDriver, isForth, isOneWay }) => { 
+const CalendarCard: React.FC<CalendarCardProps> = ({ ride, isDriver}) => {
+
+    const [isForth, setIsForth] = useState<boolean>(); 
+    const [isOneWay, setIsOneWay] = useState<boolean>();
+
+    useEffect(() => {
+        if(ride && ride.status !== "IN_PROGRESS_BACK"){
+            setIsForth(true);
+        }else{
+            setIsForth(false);
+        }
+    }, [isForth, ride]);
+
+    useEffect(() => {
+        if(ride && ride.type === "ALLER"){
+            setIsOneWay(true);
+        }else{
+            setIsOneWay(false);
+        }
+    }, [isOneWay, ride]);
 
     if(ride){
         return (
         <div className="flex flex-row justify-between w-max border-gray-300">
-          <div className='flex flex-col items-center flex-start'>
+          <div className='flex flex-col mx-auto items-center flex-start'>
             <div className="flex flex-row items-center">
                 <div className="relative top-3 flex flex-row">
                     {isDriver ? (
@@ -27,16 +47,17 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ ride, isDriver, isForth, is
                 </div>
                 <h3 className="font-bold text-[14px] text-left">{formatAddress(ride.departure)}</h3>
                 {isOneWay ? (
-                    <CgArrowLongDownE className=' md:h-[30px] h-[16px] md:w-[30px] w-[16px]' />
+                    <div className="flex flex-row items-center relative top-3 ">
+                        <CgArrowLongDownE className='text-gray-700 h-[30px] ml-2 w-[30px] ' />
+                    </div>
                 ):(
                     <div className="flex flex-row items-center relative top-3">
                         <CgArrowLongDownE className='text-gray-700 ml-2  h-[30px] w-[30px]' />
                         <CgArrowLongUpE className='text-gray-700 relative right-4  h-[30px] w-[30px]' />
-                    </div>
-                    
+                    </div>    
                 )}
             </div> 
-            <h3 className="font-bold text-[14px] text-right">{getCampusAbbrWithAddress(ride.destination)}</h3>
+            <h3 className=" font-bold text-[14px] text-right">{getCampusAbbrWithAddress(ride.destination)}</h3>
           </div>
         </div>
         );

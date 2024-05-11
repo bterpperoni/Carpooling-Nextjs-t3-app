@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
 import { calculateDetour, calculateDistance } from "$/hook/distanceMatrix";
 import type { Booking, Ride } from "@prisma/client";
+import { loadAsyncGoogleApi } from "$/context/asyncLoadApiContext";
 
 export default function BookingForm({
   ride,
@@ -24,6 +25,7 @@ export default function BookingForm({
 }) {
   // ________________________________ STATE ________________________________
   const apiKey = useApiKey();
+  const google = loadAsyncGoogleApi();
   // Get id from url
   const { query, push } = useRouter();
   // Session recovery

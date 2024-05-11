@@ -21,6 +21,7 @@ import {
   getCampusLatLng,
 } from "$/utils/data/school";
 import Infos from "$/lib/components/button/Infos";
+import { loadAsyncGoogleApi } from "$/context/asyncLoadApiContext";
 
 export default function RideForm({
   ride,
@@ -33,6 +34,7 @@ export default function RideForm({
 }) {
   const { data: sessionData } = useSession();
   const apiKey = useApiKey();
+  const google = loadAsyncGoogleApi();
   // Address of departure and destination from google autocomplete
   const address: {
     departure: google.maps.places.PlaceResult | null;
@@ -59,6 +61,7 @@ export default function RideForm({
   const [timeReturn, setTimeReturn] = useState<Dayjs | null>(
     ride?.returnTime ? dayjs(ride.returnTime) : null,
   );
+  
 
   // Latitude and longitude of departure and destination
   const [departureLatitude, setDepartureLatitude] = useState<number>();

@@ -35,8 +35,6 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
       } | null;
     } | null>(null);
 
-    const [ rideForCalendar, setRideForCalendar ] = useState<Ride | undefined>();
-
     // Fetch the passengers details
     const { data: passengersDetail, refetch: refetchPassengersDetails } = api.booking.bookingByRideId.useQuery(
       { rideId: selectedRide?.id ?? 0},
@@ -156,10 +154,10 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
   }, [rideListAsDriver, rideListAsPassenger]);
 
   useEffect(() => {
-    if(selectedRide !== undefined || rideForCalendar !== null){
+    if(selectedRide !== undefined){
       void refetchPassengersDetails();
     }
-  }, [selectedRide, passengersDetail, rideForCalendar]);
+  }, [ selectedRide, passengersDetail ]);
 
   useEffect(() => {
     if(updatedRideStatus && selectedRide !== null){
@@ -250,8 +248,6 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                                 ride={ride} 
                                 onClick={function (): void { console.log("No problem") } }
                                 isDriver={true}
-                                isForth={true}
-                                isOneWay={false}
                               />
 {/* 
                               ///
@@ -382,8 +378,6 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                                 ride={ride} 
                                 onClick={function (): void { console.log("No problem") } }
                                 isDriver={false}
-                                isForth={true}
-                                isOneWay={false}
                               />
 {/* 
                               ///

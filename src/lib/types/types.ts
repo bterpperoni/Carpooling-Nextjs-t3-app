@@ -33,7 +33,5 @@ export type CalendarCardProps = {
   ride: Ride | null,
   bookings?: Booking[],
   isDriver?: boolean,
-  isForth?: boolean,
-  isOneWay?: boolean,
   onClick: () => void
 };

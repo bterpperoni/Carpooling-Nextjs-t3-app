@@ -15,7 +15,7 @@ interface ApiKeyProviderProps {
 
 const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
-// ----------------------------REACT COMPONENT---------------
+// ----------------------------REACT Provider---------------
 export const ApiKeyProvider: React.FC<ApiKeyProviderProps> = ({ children }) => {
 
     return <ApiKeyContext.Provider value={apiKey}>{children}</ApiKeyContext.Provider>;
