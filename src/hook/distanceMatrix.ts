@@ -147,7 +147,7 @@ export const setPolilines =async (map: google.maps.Map | null, origin: string, w
               fillOpacity: 0.8,
               strokeWeight: 1,
               strokeColor: "white"
-            },
+            }, 
             optimized: true
           },
           polylineOptions: {
