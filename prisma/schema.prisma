@@ -87,6 +87,7 @@ model Ride {
   departureLatitude    Float
   departureLongitude   Float
   departureDateTime    DateTime 
+  arrivalDateTime      DateTime
   destination          String
   destinationLatitude  Float
   destinationLongitude Float

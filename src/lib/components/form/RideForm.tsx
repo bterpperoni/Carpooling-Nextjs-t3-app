@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -71,6 +72,8 @@ export default function RideForm({
   const [timeReturn, setTimeReturn] = useState<Dayjs | null>(
     ride?.returnTime ? dayjs(ride.returnTime) : null,
   );
+
+  const [arrivalTime, setArrivalTime] = useState<Dayjs | null>(ride?.arrivalDateTime ? dayjs(ride?.arrivalDateTime) : null);
   
 
   // Latitude and longitude of departure and destination
@@ -468,11 +471,11 @@ export default function RideForm({
               }}
             />
           </div>
-          <div className="my-4 ml-4 w-[90%] border-b-2 border-[var(--pink-g1)] pb-4">
+          {/* <div className="my-4 ml-4 w-[90%] border-b-2 border-[var(--pink-g1)] pb-4">
             <div className="mb-3 flex flex-row items-center text-[1.25rem] text-[var(--pink-g1)]">
               Quel distance êtes-vous prêt à parcourir pour aller chercher un
               passager ?
-              {/* ---------------------------------------------- Icon infos -------------------------------------------- */}
+               ---------------------------------------------- Icon infos -------------------------------------------- 
               <Infos
                 wIcon={25}
                 hIcon={25}
@@ -485,7 +488,7 @@ export default function RideForm({
                   )
                 }
               />
-              {/* ------------------------------------------------------------------------------------------------- */}
+               ------------------------------------------------------------------------------------------------- 
               <p className="ml-4 rounded-full border-2 bg-white p-1 text-center text-[1.25rem] text-gray-600">
                 {maxDistance}
               </p>
@@ -500,7 +503,39 @@ export default function RideForm({
                 setMaxDistance(e.target.valueAsNumber);
               }}
             />
-          </div>
+          </div> */}
+          <div>
+              <div className="relative left-2 mx-2 w-[90%] border-2 border-[var(--pink-g1)] p-2 border-b-2 border-[var(--pink-g1)] mb-4">
+                <p className="m-2 text-[20px] text-white">
+                  A quelle heure devez-vous être en cours ?
+                </p>
+                <DateTimeSelect
+                  defaultDate={
+                    ride?.returnTime?.toDateString()
+                      ? dayjs(ride.returnTime.toDateString())
+                      : dateDeparture
+                  }
+                  defaultTime={
+                    ride?.returnTime?.toDateString()
+                      ? dayjs(ride?.departureDateTime)
+                          .set("hour", ride?.returnTime?.getHours())
+                          .set("minute", ride?.returnTime?.getMinutes())
+                      : null
+                  }
+                  labelexpTime="H. D'ARRIVEE"
+                  labelexp="HEURE D'ARRIVEE"
+                  disableDate={false}
+                  disableTime={false}
+                  handleChangeDate={() => {
+                    console.log("No date to set for return time");
+                  }}
+                  handleChangeTime={(time) => {
+                    setTimeReturn(time);
+                  }}
+                  justTime={true}
+                />
+              </div>
+            </div>
         </div>
         {/* Defines if the ride is a simple or return */}
         <div className="col-span-1 mb-4 ">
@@ -566,7 +601,7 @@ export default function RideForm({
             onClick={handleClick}
           >
             {" "}
-            Modifier{" "}
+            Enregistrer les modifications{" "}
           </Button>
         ) : (
           <Button
