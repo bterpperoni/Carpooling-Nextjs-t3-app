@@ -21,7 +21,8 @@ export const rideRouter = createTRPCRouter({
         driver: {
           select:
           {
-            name: true
+            name: true,
+            image: true,
           }
         }}
     });

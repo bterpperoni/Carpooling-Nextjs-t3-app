@@ -81,18 +81,14 @@ export async function displayRoute(
 // The function takes the origin, destination, waypoint, maximum detour distance, and departure time as parameters.
 // It returns a boolean indicating if the passenger can be included.
 */
-export const calculateDetourEligibility = async (origin: string, destination: string, waypoints: string[], maxDetourDistance: number, departureTime: Date) => {
+export const calculateDetourEligibility = async (origin: string, destination: string, waypoints: string[], maxDetourDistance: number) => {
 
   const directionsService = new window.google.maps.DirectionsService;
   // Direct route between origin and destination
   const directRoute = await directionsService.route({
     origin: origin,
     destination: destination,
-    travelMode: google.maps.TravelMode.DRIVING,
-    drivingOptions: {
-      departureTime: departureTime,
-      trafficModel: google.maps.TrafficModel.BEST_GUESS,
-    }, 
+    travelMode: google.maps.TravelMode.DRIVING
   });
   // Total Distance of the direct route
   const directDistance = directRoute?.routes[0]?.legs[0]?.distance?.value ?? 0;
@@ -107,11 +103,7 @@ export const calculateDetourEligibility = async (origin: string, destination: st
     origin: origin,
     destination: destination,
     waypoints: formattedWaypoints,
-    travelMode: google.maps.TravelMode.DRIVING,
-    drivingOptions: {
-      departureTime: departureTime,
-      trafficModel: google.maps.TrafficModel.BEST_GUESS,
-    }, 
+    travelMode: google.maps.TravelMode.DRIVING
   });
 
   // Total Distance of the detour route

@@ -16,6 +16,7 @@ export interface School {
   }
 
 export interface RideCardProps {
+  driverImg: string;
   ride: Ride;
   driver?: string;
   goToRide: () => void;

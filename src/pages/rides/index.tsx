@@ -106,6 +106,7 @@ const AllRides: React.FC = () => {
                     key={ride.id}
                     ride={ride}
                     driver={ride.driver.name}
+                    driverImg={ride.driver.image ?? "/avatar.png"}
                     goToRide={() => handleClick(ride.id)}
                   />
                 ))}

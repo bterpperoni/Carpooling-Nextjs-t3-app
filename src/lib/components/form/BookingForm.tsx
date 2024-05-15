@@ -65,14 +65,6 @@ export default function BookingForm({
     return null;
   });
   
-  useEffect(() => {
-    if (google.maps.places.PlacesService) {
-      console.log("Google places api loaded", googlePlacesLoad);
-    }else{
-      console.log("Google places api not loaded", googlePlacesLoad);
-    }
-  }, [googlePlacesLoad]);
-  
   // Options for autocomplete
   const options = {
     componentRestrictions: { country: "be" },
@@ -154,12 +146,12 @@ export default function BookingForm({
         origin &&
         ((destinationBooking ?? destPickup) !== null)
       ) {
+        // const maxTime = ride?.departureDateTime.getHours() * 60;
         await calculateDetourEligibility(
           origin,
           destination,
           [destinationBooking ?? destPickup],
-          maxDistanceDetour,
-          ride.departureDateTime,
+          maxDistanceDetour
         ).then((result) => {
           setBookingEligible(result);
         }).catch((err) => {

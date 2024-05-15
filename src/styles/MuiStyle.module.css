@@ -3,7 +3,7 @@
 .MuiButtonText {
     background-color: var(--purple-g3)!important;
     color: white!important;
-    font-size: 1.5rem!important;
+    font-size: 1rem!important;
     font-weight: bold!important;
     border: 1px solid var(--pink-g1)!important;
     padding: 10px!important;

@@ -12,6 +12,8 @@ import RideDetail from "$/lib/components/containers/rides/RideDetail";
 import { displayRoute } from "$/hook/distanceMatrix";
 import { useMap } from "$/context/mapContext";
 import { RiEditFill, RiDeleteBin6Fill } from "react-icons/ri";
+import { MdAddBox } from "react-icons/md";
+import { GoMoveToEnd } from "react-icons/go";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of ride ------------------------------------------------------
@@ -24,6 +26,11 @@ export default function Detail() {
   const id = query.ride;
   // Session recovery
   const { data: sessionData } = useSession();
+  // Get all bookings for this ride
+  const { data: bookings } = api.booking.bookingByRideId.useQuery(
+    { rideId: parseInt(id as string) },
+    { enabled: sessionData?.user !== undefined }
+  );
   // Get ride by id
   const { data: ride } = api.ride.rideById.useQuery(
     { id: parseInt(id as string) },
@@ -139,29 +146,40 @@ export default function Detail() {
                 </div>
               </>
               ) : (
-                <div className="my-4">
-                  {userBooking && userBooking.length === 0 ? (
+                <div className="my-4 flex justify-end ">
+                  {bookings && bookings.length < ride.maxPassengers ? (
                     <>
-                      <Button
-                        className="mb-4 rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 mb-6"
+                    {userBooking && userBooking.length === 0 ? (
+                      <div 
+                        className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
                         onClick={() =>
-                          window.location.assign(`/rides/${id as string}/bookings/create`)
-                        }
+                            window.location.assign(`/rides/${id as string}/bookings/create`)
+                          }
                       >
-                        Créer une réservation
-                      </Button>
+                        <MdAddBox
+                          className="h-[2rem] w-[2rem] p-1 mr-1 "
+                        />
+                        <span>Réserver</span>
+                      </div>
+                    ): (
+                      <>
+                        <MdAddBox
+                          className="h-[2rem] w-[2rem]  p-1 mr-1 cursor-not-allowed"
+                        />
+                        <span className="text-blue-500">Aucune place disponible</span>
+                      </>
+                    )}
                     </>
                   ) : (
-                    <>
-                      <Button
-                        className="mb-4 rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
+                    <div className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer">
+                      <span>Voir ma réservation</span>
+                      <GoMoveToEnd
+                        className="h-[2rem] w-[2rem] p-1 mr-1"
                         onClick={() =>
                           window.location.assign(`/rides/${id as string}/bookings/${bookingId}`)
                         }
-                      >
-                        Voir ma réservation
-                      </Button>
-                    </>
+                      />
+                    </div>
                   )}
                 </div>
               )}
