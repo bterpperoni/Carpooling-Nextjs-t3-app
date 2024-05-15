@@ -105,7 +105,7 @@ const AllRides: React.FC = () => {
                   <RideCard
                     key={ride.id}
                     ride={ride}
-                    driver={ride.driverId}
+                    driver={ride.driver.name}
                     goToRide={() => handleClick(ride.id)}
                   />
                 ))}

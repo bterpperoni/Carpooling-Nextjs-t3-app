@@ -92,7 +92,7 @@ model Ride {
   destinationLatitude  Float
   destinationLongitude Float
   maxPassengers        Int        
-  maxDetourDist        Int
+  maxDetourDist        Int?
   distance             String?        
   type                 RideType   @default(ALLER)
   returnTime           DateTime?

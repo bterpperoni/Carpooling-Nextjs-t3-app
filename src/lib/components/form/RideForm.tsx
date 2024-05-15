@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -184,7 +186,7 @@ export default function RideForm({
 
         if (departure && destination) {
           // Check if the date of return is after the date of departure
-          if (dateDeparture) {
+          if (dateDeparture && arrivalTime && dateDeparture.isBefore(arrivalTime)) {
             // Check if the time of return is after the time of departure and at least 2 hours after
             createride({
               driverId: sessionData.user.id,
@@ -192,6 +194,7 @@ export default function RideForm({
               departureLatitude: departureLatitude ?? 0,
               departureLongitude: departureLongitude ?? 0,
               departureDateTime: dateDeparture.toDate(),
+              arrivalDateTime: arrivalTime.toDate(),
               destination: destination,
               destinationLatitude: destinationLatitude ?? 0,
               destinationLongitude: destinationLongitude ?? 0,
@@ -229,6 +232,7 @@ export default function RideForm({
             departureLongitude: departureLongitude ?? ride.departureLongitude,
             departureDateTime:
               dateDeparture?.toDate() ?? ride.departureDateTime,
+            arrivalDateTime: arrivalTime?.toDate() ?? ride.arrivalDateTime,
             destination: destination ?? ride.destination,
             destinationLatitude:
               destinationLatitude ?? ride.destinationLatitude,
@@ -343,9 +347,9 @@ export default function RideForm({
                     <label
                       htmlFor="destination"
                       className="mb-1 
-                                                                  mr-2 
-                                                                  text-[1.25rem] 
-                                                                  text-[var(--pink-g1)] md:text-2xl"
+                                mr-2 
+                                text-[1.25rem] 
+                                text-[var(--pink-g1)] md:text-2xl"
                     >
                       Entrez l'adresse
                     </label>
@@ -511,15 +515,15 @@ export default function RideForm({
                 </p>
                 <DateTimeSelect
                   defaultDate={
-                    ride?.returnTime?.toDateString()
-                      ? dayjs(ride.returnTime.toDateString())
+                    ride?.arrivalDateTime.toDateString()
+                      ? dayjs(ride.arrivalDateTime.toDateString())
                       : dateDeparture
                   }
                   defaultTime={
-                    ride?.returnTime?.toDateString()
+                    ride?.arrivalDateTime?.toDateString()
                       ? dayjs(ride?.departureDateTime)
-                          .set("hour", ride?.returnTime?.getHours())
-                          .set("minute", ride?.returnTime?.getMinutes())
+                          .set("hour", ride?.arrivalDateTime?.getHours())
+                          .set("minute", ride?.arrivalDateTime?.getMinutes())
                       : null
                   }
                   labelexpTime="H. D'ARRIVEE"
@@ -530,7 +534,7 @@ export default function RideForm({
                     console.log("No date to set for return time");
                   }}
                   handleChangeTime={(time) => {
-                    setTimeReturn(time);
+                    setArrivalTime(time);
                   }}
                   justTime={true}
                 />

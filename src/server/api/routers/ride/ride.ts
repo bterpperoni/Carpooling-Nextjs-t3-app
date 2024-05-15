@@ -17,6 +17,13 @@ export const rideRouter = createTRPCRouter({
       where: {
         isForGroup: false,
       },
+      include: {
+        driver: {
+          select:
+          {
+            name: true
+          }
+        }}
     });
     return rideList;
   }),
