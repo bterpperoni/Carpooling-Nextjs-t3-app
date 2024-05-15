@@ -119,7 +119,7 @@ export default function Detail() {
                   Détails du trajet
                 </h2>
             </div>
-          <RideDetail ride={ride}>
+          <RideDetail ride={ride} driver={ride.driver.name} imageDriver={ride.driver.image ?? ""}>
             {canEdit ? (
               <>
                 <div className="my-4 flex justify-between">

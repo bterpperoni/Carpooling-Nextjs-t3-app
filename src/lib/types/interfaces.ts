@@ -1,4 +1,4 @@
-import type { Ride } from "@prisma/client";
+import type { Booking, Ride } from "@prisma/client";
 import type { ChangeEvent } from "react";
 
 export interface Campus {
@@ -23,6 +23,8 @@ export interface RideCardProps {
 
 export interface RideDetailsProps {
   ride: Ride;
+  driver: string;
+  imageDriver: string;
   children?: React.ReactNode;
   isActualUserride?: boolean;
 }

@@ -181,7 +181,9 @@ export const formatAddress = (address: string) => {
   const parts = address.split(',');
   if(parts[0] && parts[1]?.split(' ')[1]){
     // set street
-    const street = parts[0];
+    const streetParts = parts[0].split(' ');
+    streetParts.pop();
+    const street = streetParts.join(' ');
     // Second part splitted is the city and postal code '7000 Mons'
     const cityParts = parts[1].split(' ');
     // set city
