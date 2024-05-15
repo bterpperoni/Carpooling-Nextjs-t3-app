@@ -11,6 +11,7 @@ import LayoutMain from "$/lib/components/layout/LayoutMain";
 import RideDetail from "$/lib/components/containers/rides/RideDetail";
 import { displayRoute } from "$/hook/distanceMatrix";
 import { useMap } from "$/context/mapContext";
+import { RiEditFill, RiDeleteBin6Fill } from "react-icons/ri";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of ride ------------------------------------------------------
@@ -122,19 +123,19 @@ export default function Detail() {
           <RideDetail ride={ride} driver={ride.driver.name} imageDriver={ride.driver.image ?? ""}>
             {canEdit ? (
               <>
-                <div className="my-4 flex justify-between">
-                  <Button
+                <div className="my-4 flex justify-end">
+                  <RiEditFill
                     onClick={handleEditClick}
-                    className="rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
+                    className="h-[2rem] w-[2rem] p-1 hover:border-gray-500 border-2 border-blue-500 mr-2 text-blue-500 hover:text-gray-500 cursor-pointer"
                   >
-                    Modifier
-                  </Button>
-                  <Button
+                    Modifier votre trajet
+                  </RiEditFill>
+                  <RiDeleteBin6Fill 
                     onClick={handleDelete}
-                    className="rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600"
+                    className="h-[2rem] w-[2rem] p-1 hover:border-gray-500 border-2 border-red-500 text-red-500 hover:text-gray-500 cursor-pointer"
                   >
                     Supprimer
-                  </Button>
+                  </RiDeleteBin6Fill>
                 </div>
               </>
               ) : (

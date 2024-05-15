@@ -90,8 +90,8 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children, driver, imageD
       </div>
       <div className="flex items-center flex-row text-white mb-2">
       {ride.type === RideType.RETOUR && ride.returnTime && (
-          <div className="ride-info flex flex-row justify-between">
-              <GiBackwardTime className="h-[2.25rem] w-[2.25rem] mr-2 text-[var(--pink-g1)] "/>
+          <div className="ride-info flex flex-row items-center">
+              <GiBackwardTime className="h-[2rem] w-[2rem] mr-2 text-[var(--pink-g1)] "/>
               <div>
                   {ride.returnTime.toLocaleTimeString()}
               </div>

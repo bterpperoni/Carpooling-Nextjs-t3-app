@@ -614,7 +614,7 @@ export default function RideForm({
             onClick={handleClick}
           >
             {" "}
-            Enregistrer{" "}
+            Publier le trajet{" "}
           </Button>
         )}
         <Button
