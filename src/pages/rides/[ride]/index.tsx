@@ -5,7 +5,6 @@ import { useRouter } from "next/dist/client/router";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { api } from "$/utils/api";
-import Button from "$/lib/components/button/Button";
 import Map from "$/lib/components/map/Map";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import RideDetail from "$/lib/components/containers/rides/RideDetail";

@@ -132,13 +132,24 @@ export const setPolilines =async (map: google.maps.Map | null, origin: string, w
       origin: origin,
       destination: destination,
       waypoints: way_points.map(waypoint => ({ location: waypoint, stopover: true })),
-      travelMode: window.google.maps.TravelMode.DRIVING,
+      travelMode: window.google.maps.TravelMode.DRIVING
     }
     , (result: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
       if (status === window.google.maps.DirectionsStatus.OK) {
         const directionsRenderer = new window.google.maps.DirectionsRenderer;
         directionsRenderer.setMap(map);
         directionsRenderer.setOptions({
+          markerOptions: {
+            icon: {
+              path: window.google.maps.SymbolPath.CIRCLE,
+              scale: 8,
+              fillColor: "red",
+              fillOpacity: 0.8,
+              strokeWeight: 1,
+              strokeColor: "white"
+            },
+            optimized: true
+          },
           polylineOptions: {
             strokeColor: "red",
             strokeOpacity: 0.5

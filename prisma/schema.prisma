@@ -135,6 +135,7 @@ enum BookingStatus {
   CREATED
   UPDATED
   CHECKED
+  ONBOARD
   COMPLETED
   CANCELLED
 }
