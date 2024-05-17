@@ -24,7 +24,7 @@ import {
   getCampusLatLng,
 } from "$/utils/data/school";
 import Infos from "$/lib/components/button/Infos";
-import { loadGooglePlacesApi } from "$/context/asyncLoadApiContext";
+
 
 export default function RideForm({
   ride,
@@ -37,17 +37,7 @@ export default function RideForm({
 }) {
   const { data: sessionData } = useSession();
   const apiKey = useApiKey();
-  const google = loadGooglePlacesApi();
 
-  useEffect(() => {
-    if (google === undefined) {
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }else{
-      console.log({ google });
-    }
-  }, [apiKey]);
   // Address of departure and destination from google autocomplete
   const address: {
     departure: google.maps.places.PlaceResult | null;
@@ -475,11 +465,10 @@ export default function RideForm({
               }}
             />
           </div>
-          {/* <div className="my-4 ml-4 w-[90%] border-b-2 border-[var(--pink-g1)] pb-4">
+          <div className="my-4 ml-4 w-[90%] border-b-2 border-[var(--pink-g1)] pb-4">
             <div className="mb-3 flex flex-row items-center text-[1.25rem] text-[var(--pink-g1)]">
-              Quel distance êtes-vous prêt à parcourir pour aller chercher un
-              passager ?
-               ---------------------------------------------- Icon infos -------------------------------------------- 
+              Quel détour êtes-vous prêt à parcourir pour aller chercher un passager ?
+              {/* ---------------------------------------------- Icon infos --------------------------------------------  */}
               <Infos
                 wIcon={25}
                 hIcon={25}
@@ -492,7 +481,7 @@ export default function RideForm({
                   )
                 }
               />
-               ------------------------------------------------------------------------------------------------- 
+              {/* -------------------------------------------------------------------------------------------------  */}
               <p className="ml-4 rounded-full border-2 bg-white p-1 text-center text-[1.25rem] text-gray-600">
                 {maxDistance}
               </p>
@@ -507,7 +496,7 @@ export default function RideForm({
                 setMaxDistance(e.target.valueAsNumber);
               }}
             />
-          </div> */}
+          </div>
           <div>
               <div className="relative left-2 mx-2 w-[90%] border-2 border-[var(--pink-g1)] p-2 border-b-2 border-[var(--pink-g1)] mb-4">
                 <p className="m-2 text-[20px] text-white">

@@ -17,10 +17,24 @@ import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
 import { usePusher } from "$/context/pusherContext";
 import { calculateDistance, setPolilines } from "$/hook/distanceMatrix";
 import { useMap } from "$/context/mapContext";
+import { loadGooglePlacesApi } from "$/context/asyncLoadApiContext";
 
 export default function currentRide() {
   // Get session
   const { data: sessionData } = useSession();
+
+  const google = loadGooglePlacesApi();
+
+  useEffect(() => {
+    if (google === undefined) {
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }else{
+      console.log({ google });
+    }
+  }, []);
+
   // Get rideId from url
   const { query } = useRouter();
   const rideId = query.current as string;
@@ -156,7 +170,12 @@ useEffect(() => {
             Trajets en cours
           </h2>
         </div>
-        <div className="m-auto mt-6 min-h-screen w-[95%] rounded-lg bg-[var(--purple-g3)]">
+        <div className="text-center">
+          <div className="text-lg text-white mb-4">
+            Départ à {currentRide?.departureDateTime.toLocaleTimeString()}
+          </div>
+        </div>
+        <div className="m-auto mt-2 min-h-screen w-[95%] rounded-lg bg-[var(--purple-g3)]">
           <div className="mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 lg:px-8">
             <h2 className="m-auto w-max border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl">
               {" "}
@@ -244,31 +263,6 @@ useEffect(() => {
                                   <p className="text-[1rem] text-white leading-2">
                                       Passager prêt
                                   </p>
-                                  <Button
-                                    className={`text-bold easein-out
-                                                text-[1rem]
-                                                m-2
-                                                transform 
-                                                border-2
-                                                border-white 
-                                                bg-red-600 
-                                                px-4 py-2
-                                                leading-none text-white transition duration-100
-                                                hover:-translate-y-1
-                                                hover:scale-110
-                                                hover:border-red-200
-                                                hover:bg-white
-                                                hover:text-red-600
-                                                hover:shadow-[0_0.5em_0.5em_-0.4em_#ffa260]
-                                                rounded-lg
-                                                content-center`}
-                                    onClick={async () => {
-                                      console.log("Passenger ready to go")
-                                    } 
-                                  }     
-                                >
-                                    Confirmer le ramassage
-                                </Button>
                               </div>
                             )}
                             </>
@@ -278,12 +272,7 @@ useEffect(() => {
               ))}
             </div>
             <div className="mt-8">
-              <div className="text-lg text-white mb-4">
-                Nous sommes le {currentRide?.departureDateTime.toLocaleDateString()}
-              </div>
-              <div className="text-lg text-white mb-4">
-                Départ à {currentRide?.departureDateTime.toLocaleTimeString()}
-              </div>
+
               <Map zoom={12} onMapLoad={async () => {
                   setIsMapLoaded(true);
                   if(passengers && currentRide){

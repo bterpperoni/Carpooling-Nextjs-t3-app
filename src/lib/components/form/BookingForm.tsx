@@ -19,10 +19,52 @@ export default function BookingForm({
 }) {
   // ________________________________ STATE ________________________________
   const apiKey = useApiKey();
-
+  
   // Session recovery
   const { data: sessionData } = useSession();
 
+  // Address of departure (got from 'ride' object)
+  const origin = ride?.departure ?? "";
+  // Address of destination (got from 'ride' object)
+  const destination = ride?.destination ?? "";
+  // Address of pickup point (got from booking object)
+  const destPickup: string[] = [];
+
+  // Fetch the passengers details and here details ride
+  const { data: passengers } = api.booking.bookingByRideId.useQuery(
+    { rideId: ride?.id ?? 0},
+    { enabled: sessionData?.user !== undefined },
+  );
+
+  // Address of pickup point + Latitude and Longitude (got from Autocomplete)
+  const [destinationBooking, setDestinationBooking] = useState<string | null>(
+    null,
+  );
+  const [destinationLatitude, setDestinationLatitude] = useState<number | null>(
+    null,
+  );
+  const [destinationLongitude, setDestinationLongitude] = useState<number | null>(null);
+
+
+  // Get all pickup points
+  useEffect(() => {
+    console.log("Destination booking" , destinationBooking);
+    passengers?.forEach((passenger) => {
+        if(destPickup.includes(passenger.pickupPoint) === false){
+          destPickup.push(passenger.pickupPoint);
+        }
+    });
+    if(destPickup.length > (passengers?.length ?? 1)){
+      destPickup.pop();
+    }
+    if(destinationBooking !== null){
+      destPickup.push(destinationBooking);
+    }
+    console.log("Way Points: " , destPickup);
+    void setTimeAndDistanceWithWayPoint();
+  }, [passengers, destinationBooking]);
+
+  
   //  Max distance driver can go to pick up passenger
   const maxDistanceDetour = ride?.maxDetourDist ?? 0;
   // Distance in kilometers between driver departure and passenger destination
@@ -40,30 +82,9 @@ export default function BookingForm({
 
   // Is booking eligible
   const [bookingEligible, setBookingEligible] = useState<boolean>(false);
-  // Address of departure (got from 'ride' object)
-  const origin = ride?.departure ?? "";
-  // Address of destination (got from 'ride' object)
-  const destination = ride?.destination ?? "";
-  // Address of pickup point (got from booking object)
-  const destPickup = booking?.pickupPoint ?? "";
-  // Address of pickup point + Latitude and Longitude (got from Autocomplete)
-  const [destinationBooking, setDestinationBooking] = useState<string | null>(
-    null,
-  );
-  const [destinationLatitude, setDestinationLatitude] = useState<number | null>(
-    null,
-  );
-  const [destinationLongitude, setDestinationLongitude] = useState<number | null>(null);
 
   // Price for fuel per kilometer
   const fuelPrice = 0.12;
-
-  const googlePlacesLoad = loadGooglePlacesApi().then((google) => {
-    return { google }; 
-  }).catch((err) => {
-    console.log(err);
-    return null;
-  });
   
   // Options for autocomplete
   const options = {
@@ -84,12 +105,14 @@ export default function BookingForm({
   function handleClick() {
     if (sessionData) {
       if (booking) {
+        const pickupPoint = destPickup.findIndex((dest) => dest === destinationBooking) !== -1 ? destinationBooking : null;
+
         // ------------------- Update booking -------------------
         updateBooking({
           id: booking.id,
           rideId: ride?.id ?? 0,
           userId: sessionData.user.id,
-          pickupPoint: destinationBooking ?? destPickup,
+          pickupPoint: (pickupPoint ?? booking.pickupPoint),
           pickupLatitude: destinationLatitude ?? booking.pickupLatitude,
           pickupLongitude: destinationLongitude ?? booking.pickupLongitude,
           price: priceRide?.toString() ?? booking.price,
@@ -111,13 +134,11 @@ export default function BookingForm({
   }
 
   async function setTimeAndDistanceWithWayPoint() {
-    const distanceToWaypoint = await calculateDistance(origin, destinationBooking ?? destPickup);
+    const distanceToWaypoint = await calculateDistance(origin, destinationBooking ?? "");
     const distanceToWaypointInKm = distanceToWaypoint.distance / 1000;
-    const distanceToDestination = await calculateDistance(destinationBooking ?? destPickup, destination);
+    const distanceToDestination = await calculateDistance(destinationBooking ?? "", destination);
     const distanceToDestinationInKm = distanceToDestination.distance / 1000;
     const totalDistanceIncludingWaypoint = distanceToWaypointInKm + distanceToDestinationInKm;
-    // Price calculation
-    setPriceRide((totalDistanceIncludingWaypoint * fuelPrice).toFixed(2));
     /* ----DISTANCE TOTAL FROM ORIGIN TO DESTINATION --- */
     const distanceInMeters = await calculateDistance(origin, destination);
     const distanceInKm = distanceInMeters.distance / 1000;
@@ -129,13 +150,12 @@ export default function BookingForm({
     setDistanceToDestinationInKm(distanceToDestinationInKm);
   }
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   if(destinationBooking ?? destPickup !== null){
+  //     void setTimeAndDistanceWithWayPoint();
+  //   }
 
-    if(destinationBooking ?? destPickup !== null){
-      void setTimeAndDistanceWithWayPoint();
-    }
-
-  }, [destinationBooking, destPickup, origin, totalDistance]);
+  // }, [destinationBooking, destPickup, origin, totalDistance]);
 
 
 
@@ -150,17 +170,19 @@ export default function BookingForm({
         await calculateDetourEligibility(
           origin,
           destination,
-          [destinationBooking ?? destPickup],
+          destPickup,
           maxDistanceDetour
         ).then((result) => {
-          setBookingEligible(result);
+          setBookingEligible(result.eligibility);
+              // Price calculation
+          setPriceRide((result.detourDifference * fuelPrice).toFixed(2));
         }).catch((err) => {
           console.log(err);
         });
       }
     }
     void checkEligibility();
-  }, [destinationBooking, destPickup]);
+  }, [destinationBooking]);
 
     // Redirect to ride page when booking is created
     useEffect(() => {
@@ -192,7 +214,8 @@ export default function BookingForm({
           options={options}
           libraries={["places"]}
           onPlaceSelected={async (place) => {
-            setDestinationBooking(place.formatted_address ?? "");
+            if(place.formatted_address !== undefined)
+            setDestinationBooking(place.formatted_address);
             if (
               place.geometry?.location?.lat() &&
               place.geometry?.location?.lng()

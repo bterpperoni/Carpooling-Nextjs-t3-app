@@ -115,11 +115,11 @@ export const calculateDetourEligibility = async (origin: string, destination: st
   if ((detourDifference) <= maxDetourDistance * 1000) {
     console.log("Vous êtes éligible au trajet");
     console.log("Le détour est de ", detourDifference/1000, "km et le détour maximum est de ", maxDetourDistance, "km.");
-    return true;
+    return { detourDifference: detourDifference/1000, eligibility: true};
   } else {
     console.log("Le détour est trop important, veuillez vous rapprocher un peu ou trouver un autre trajet.");
     console.log("Le détour est de ", detourDifference/1000, "km et le détour maximum est de ", maxDetourDistance, "km.");
-    return false;
+    return { detourDifference: detourDifference/1000, eligibility: true};
   }
 };
 
@@ -147,7 +147,7 @@ export const setPolilines =async (map: google.maps.Map | null, origin: string, w
               fillOpacity: 0.8,
               strokeWeight: 1,
               strokeColor: "white"
-            }, 
+            },
             optimized: true
           },
           polylineOptions: {

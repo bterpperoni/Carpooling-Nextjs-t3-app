@@ -146,9 +146,9 @@ export default function Detail() {
               </>
               ) : (
                 <div className="my-4 flex justify-end ">
-                  {bookings && bookings.length < ride.maxPassengers ? (
+                  {userBooking && userBooking.length === 0  ? (
                     <>
-                    {userBooking && userBooking.length === 0 ? (
+                    {bookings && bookings.length < ride.maxPassengers ? (
                       <div 
                         className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
                         onClick={() =>
@@ -170,13 +170,15 @@ export default function Detail() {
                     )}
                     </>
                   ) : (
-                    <div className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer">
+                    <div 
+                      className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
+                      onClick={() =>
+                        window.location.assign(`/rides/${id as string}/bookings/${bookingId}`)
+                      }
+                      >
                       <span>Voir ma réservation</span>
                       <GoMoveToEnd
                         className="h-[2rem] w-[2rem] p-1 mr-1"
-                        onClick={() =>
-                          window.location.assign(`/rides/${id as string}/bookings/${bookingId}`)
-                        }
                       />
                     </div>
                   )}

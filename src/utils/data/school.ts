@@ -1,3 +1,4 @@
+import { number } from "zod";
 
 export const data ={
     "school": [
@@ -181,15 +182,13 @@ export const formatAddress = (address: string) => {
   const parts = address.split(',');
   if(parts[0] && parts[1]?.split(' ')[1]){
     // set street
-    const streetParts = parts[0].split(' ');
-    streetParts.pop();
-    const street = streetParts.join(' ');
+    const streetParts = parts[0];
     // Second part splitted is the city and postal code '7000 Mons'
     const cityParts = parts[1].split(' ');
     // set city
     const city = cityParts[2];
     if(city){
-      return `${street}, ${city.trim()}`;
+      return `${streetParts}, ${city.trim()}`;
     }
   }
 }
