@@ -1,4 +1,4 @@
-import type { Booking, BookingStatus, Ride } from "@prisma/client";
+import type { Booking, BookingStatus, Ride, User } from "@prisma/client";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 
 export type Children = {
@@ -35,13 +35,20 @@ export type CalendarCardProps = {
   isDriver?: boolean,
   onClick: () => void
 };
+
 export type SortedBookingProps = { 
-  passenger: {id: string, name: string, image: string },
-  order: number,
-  pickupPoint: string,
-  toNext: {distanceToNext: number, durationToNext: number},
-  date: { departureDateTime: Date, arrivalDateTime: Date, returnDateTime: Date}
-  price: number,
+  id: string | undefined,
+  baseIndex: number| undefined,
+  pickupPoint: string | undefined,
+  toNext: {distanceToNext: number| undefined, durationToNext: number| undefined},
+  date: { departureDateTime: Date| undefined, arrivalDateTime: Date| undefined, returnDateTime: Date| undefined}
+  price: number| undefined,
   status: BookingStatus
+}
+
+export type OrderBookingProps = {
+  baseIndex: number,
+  sortedIndex: number,
+  booking: Booking | undefined,
 }
 

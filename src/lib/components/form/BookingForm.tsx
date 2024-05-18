@@ -1,13 +1,11 @@
 import { useApiKey } from "$/context/apiContext";
 import Autocomplete from "react-google-autocomplete";
-import { useRouter } from "next/dist/client/router";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
 import { calculateDetourEligibility, calculateDistance } from "$/hook/distanceMatrix";
 import type { Booking, Ride } from "@prisma/client";
-import { loadGooglePlacesApi } from "$/context/asyncLoadApiContext";
 
 
 export default function BookingForm({

@@ -15,15 +15,16 @@ import Button from "$/lib/components/button/Button";
 import { useEffect, useState } from "react";
 import Map from "$/lib/components/map/Map";
 // import { useMap } from "$/context/mapContext";
-import type { BookingInformationsProps, Notification, SortedBookingProps } from "$/lib/types/types";
+import type { BookingInformationsProps, Notification, OrderBookingProps, SortedBookingProps } from "$/lib/types/types";
 import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
 import { usePusher } from "$/context/pusherContext";
 import { calculateDistance, setPolilines } from "$/hook/distanceMatrix";
 import { useMap } from "$/context/mapContext";
-import { GiTrafficLightsRed, GiTrafficLightsGreen, GiConfirmed } from "react-icons/gi";
+import { GiTrafficLightsRed, GiTrafficLightsGreen, GiConfirmed, GiCancel } from "react-icons/gi";
 import { FaCircle, FaCircleDot, FaClock, FaHouseChimney } from "react-icons/fa6";
 import { RiSchoolFill } from "react-icons/ri";
 import { formatAddress, getCampusNameWithAddress } from "$/utils/data/school";
+import { check } from "prettier";
 
 export default function currentRide() {
   // Get session
@@ -58,11 +59,32 @@ export default function currentRide() {
 
   const { data: updatedStatusChecked, mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
 
+  const [totalTime, setTotalTime] = useState<number | null>(0);
+
+  // async function setTimeAndDistanceWithWayPoint() {
+  //   const distanceToWaypoint = await calculateDistance(currentRide?.departure ?? "", sortedBookings[0]?.pickupPoint ?? "");
+  //   const timeInMinutes = distanceToWaypoint.duration / 60;
+  //   setTotalTime(parseFloat(timeInMinutes.toFixed(2)));
+  //   console.log("Total time: ", totalTime);
+  // }
+
+  useEffect(() => {
+    if(totalTime) {
+      console.log("Total time: ", totalTime/60);
+    }
+  }, [totalTime]);
+
+  
+
   ///
 
-  const optimizedLegsOrder: google.maps.DirectionsRoute[] | undefined = [];
+  const optimizedLegsOrder: google.maps.DirectionsLeg[] = [];
 
-  const [sortedBookings, setSortedBookings] = useState<SortedBookingProps[]>([]);
+  const waypoints_order: number[]  = [];
+
+  const orderBookings: OrderBookingProps[] = []; 
+
+  const [orderBooking, setOrderBooking] = useState<OrderBookingProps[]>([]);
 
   ///
   // // Access the map object
@@ -83,7 +105,6 @@ export default function currentRide() {
     if (sessionData && isPassengerSession === false) {
       // Subscribe to the channel related the current driver
       const channel = pusher.subscribe(`driver-channel-${sessionData.user.id}`);
-      console.log("Channel subscribed: ", channel.name);
 
       function handleNewNotification(data: Notification) {
         alert(data.message);
@@ -94,7 +115,6 @@ export default function currentRide() {
 
       return () => {
         channel.unbind('status-checked', handleNewNotification);
-        console.log("Channel unsubscribed: ", channel.name);
       }
     }
   }, [sessionData, isPassengerSession, currentRide]);
@@ -142,7 +162,6 @@ export default function currentRide() {
       const schoolSplitted: string[] | undefined = school ? school.split(" - ") : undefined;
       setSchoolName(schoolSplitted ? schoolSplitted[0]! : "");
       setCampusName(schoolSplitted ? schoolSplitted[1]! : "");
-      console.log("School name: ", schoolName);
     }
   }
     , [currentRide]);
@@ -163,26 +182,9 @@ export default function currentRide() {
 
 
   ///
-  useEffect(() => {
-    if (isMapLoaded) {
-      // Display the optimized legs
-      console.log("Optimized legs: ", optimizedLegsOrder);
-      optimizedLegsOrder.map((optimizedLeg) => {
-        if (userBooking) {
-          const mapOptimizedLegsToSortedBookings: SortedBookingProps = {
-            passenger: { id: userBooking.userId, name: userBooking.userPassenger.name, image: userBooking.userPassenger.image ?? "/images/logo.png" },
-            order: optimizedLeg.waypoint_order.find((order) => order === currentBookingWithUserDetails?.findIndex((index) => index.id === userBooking.id)) ?? 0,
-            pickupPoint: "",
-            toNext: { distanceToNext: 0, durationToNext: 0 },
-            date: { departureDateTime: new Date(), arrivalDateTime: new Date(), returnDateTime: new Date() },
-            price: 0,
-            status: BookingStatus.CHECKED
-          }
-        }
-
-      })
-    }
-  }, [isMapLoaded]);
+  // useEffect(() => {
+    
+  // }, [isMapLoaded, optimizedLegsOrder, orderBookings, sortedBookings]);
 
   ///
 
@@ -210,6 +212,15 @@ export default function currentRide() {
             <div key={passenger.id} className="flex flex-row p-2">
               <div className={`flex flex-row ${passenger.status === BookingStatus.CHECKED ? "bg-green-500" : "bg-red-500"} h-max my-auto border-2 p-2 rounded-lg w-max py-2`}>
                 {/*  */}
+                {passenger.status === BookingStatus.CHECKED ? (
+                  <GiConfirmed
+                  className="text-[2rem] p-1  rounded-full bg-green-500 text-white"
+                  />
+                ) : (
+                  <GiCancel
+                  className="text-[2rem] p-1  rounded-full bg-red-500 text-white"
+                  />
+                )}
               </div>
               <div
                 className={`
@@ -245,12 +256,10 @@ export default function currentRide() {
                         {passenger.status !== BookingStatus.CHECKED ? (
                           <div className="flex w-full flex-row items-center justify-between">
                             <div className="text-[1rem] text-white">
-                              <GiTrafficLightsRed
-                                className="text-[2rem] m-2 rounded-full bg-[var(--purple-g3)] text-red-500 "
-                              />
+                              {/* empty div */}
                             </div>
                             <div 
-                              className=" hover:transform hover:bg-red-700 hover:border-red-700 hover:text-white cursor-pointer
+                              className="flex ml-4 w-full justify-end hover:transform hover:bg-red-700 hover:border-red-700 hover:text-white cursor-pointer
                                           cursor pointer pr-max px-2 flex flex-row itmes-center text-white py-1 rounded-lg bg-red-500"
                                onClick={async () => {
                                   // Update the passenger status to checked
@@ -262,16 +271,13 @@ export default function currentRide() {
                                 />
                                 <div className="my-auto">
                                   Confirmer
-                              </div>
+                                </div>
                             </div>
-
                           </div>
                         ) :
                           (
-                            <div className="p-2 rounded-lg m-2 ">
-                              <GiTrafficLightsGreen
-                                className="text-[2rem] m-2 rounded-full bg-[var(--purple-g3)] text-green-500 "
-                              />
+                            <div className="p-2 bg-green-500 text-white rounded-lg m-2 ">
+                              Prêt
                             </div>
                           )
                         }
@@ -288,10 +294,8 @@ export default function currentRide() {
                           </div>
                         </div>
                       ) : (
-                        <div className="p-2 rounded-lg m-2 ">
-                          <GiTrafficLightsGreen
-                            className="text-[2rem] m-2 rounded-full bg-[var(--purple-g3)] text-green-500 "
-                          />
+                        <div className="p-2 bg-green-500 text-white rounded-lg m-2 ">
+                              Prêt
                         </div>
                       )}
                     </div>
@@ -307,61 +311,32 @@ export default function currentRide() {
           ///
           */}
 
-        <div className="mt-6  border-2 border-[var(--pink-g1)]">
-          <div className="flex flex-row ml-2">
-            <div className="flex flex-col items-center mt-4">
-              <FaCircleDot className="text-[var(--pink-g1)]" />
-              <div className="border-l-4 border-[var(--pink-g1)] border-dashed h-32"></div>
-              <FaCircle className="text-[var(--pink-g1)]" />
-            </div>
-            <div className="pb-2 m-2 text-white h-40 inline-flex flex-col">
-              <div className="mb-11">
-                <div className="flex flex-row ml-1 items-center mb-2">
-                  <FaHouseChimney className="h-[2rem] w-[2rem] mr-2 text-[var(--pink-g1)]" />
-                  <div>
-                    {formatAddress(currentRide?.departure ?? "")}
-                  </div>
-                </div>
-                <div>
-                  <div className="flex flex-row items-center justify-center">
-                    <FaClock className="h-[1.25rem] w-[1.25rem] mb-[3px] mr-2 text-[var(--pink-g1)]" />
-                    {currentRide?.departureDateTime.toLocaleTimeString()}
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div className="mt-9">
-                  <div className="flex flex-row ml-1 items-center mb-2">
-                    <FaHouseChimney className="h-[2rem] w-[2rem] mr-2 text-[var(--pink-g1)]" />
-                    <div>
-                      {formatAddress(currentRide?.departure ?? "")}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex flex-row items-center justify-center">
-                      <FaClock className="h-[1.25rem] w-[1.25rem] mb-[3px] mr-2 text-[var(--pink-g1)]" />
-                      {currentRide?.departureDateTime.toLocaleTimeString()}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* 
-          
-          ///
-          */}
-        </div>
         <div className="mt-8">
           <Map zoom={10} onMapLoad={async () => {
+            setIsMapLoaded(true);
             if (currentRide) {
               if (checkedBookings) {
                 const wayPoints: string[] = checkedBookings.map((checkedBooking) => checkedBooking.pickupPoint);
+                
                 const sortPolylines = await setPolilines(mapRef.current, currentRide.departure, wayPoints, currentRide.destination);
-                optimizedLegsOrder.push(sortPolylines.routes[0]!);
-                if (optimizedLegsOrder.length > 0) {
-                  setIsMapLoaded(true);
-                }
+                sortPolylines.routes[0] && sortPolylines.routes[0].legs.forEach((leg) => {
+                  optimizedLegsOrder.push(leg);
+                });
+
+                setTotalTime(optimizedLegsOrder[0]?.duration?.value ?? 0);
+                
+                sortPolylines.routes[0]?.waypoint_order.forEach((order) => {
+                  waypoints_order.push(order);
+                });
+               
+                waypoints_order.forEach((sortedIndex, index) => {
+                const orderBooking: OrderBookingProps = {
+                  baseIndex: index,
+                  sortedIndex: sortedIndex,
+                  booking: checkedBookings ? checkedBookings[index] : undefined,
+                  };
+                  orderBookings.push(orderBooking);
+                });
               }
             }
           }}
