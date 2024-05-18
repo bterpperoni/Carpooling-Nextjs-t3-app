@@ -39,6 +39,23 @@ export const bookingRouter = createTRPCRouter({
       },
     });
   }),
+
+  bookingCheckedByRideId: protectedProcedure
+  .input(
+    z.object({
+      rideId: z.number(),
+    })
+  ).query(async ({ ctx, input }) => {
+    return ctx.db.booking.findMany({
+      where: {
+        rideId: input.rideId,
+        status: BookingStatus.CHECKED
+      },
+      include: {
+        userPassenger: true
+      },
+    });
+  }),
     
 
   // Get a complete booking for a specific ride by a specific userName

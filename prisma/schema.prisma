@@ -109,7 +109,7 @@ model Booking {
   pickupPoint        String
   pickupLatitude     Float
   pickupLongitude    Float
-  distanceofDetour   Float?
+  distanceWithDetour Float?
   price              String
   status             BookingStatus @default(CREATED)
   driverRating       Int?     

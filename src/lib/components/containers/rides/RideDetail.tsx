@@ -6,10 +6,9 @@ import type { RideDetailsProps } from "$/lib/types/interfaces";
 import React from 'react';
 import { formatAddress, getCampusNameWithAddress } from "$/utils/data/school";
 import { RideType } from "@prisma/client";
-import { FaClock, FaLongArrowAltDown } from "react-icons/fa";
+import { FaClock } from "react-icons/fa";
 import { MdDateRange } from "react-icons/md";
 import { RiSchoolFill } from "react-icons/ri";
-import { PiSteeringWheelFill } from "react-icons/pi";
 import { GiBackwardTime } from "react-icons/gi";
 import { FaUsers, FaCircle, FaCircleDot, FaHouseChimney } from "react-icons/fa6";
 
@@ -46,6 +45,9 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children, driver, imageD
             {ride.maxPassengers} passagers
           </div>
         </div>
+        {/* 
+        ///
+        */}
         <div className="flex flex-row justify-center">
           <div className="flex flex-col items-center mt-4">
             <FaCircleDot className="text-[var(--pink-g1)]" />
@@ -86,8 +88,8 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children, driver, imageD
                 </div>
               </div>
             </div>
+          </div>
         </div>
-      </div>
       <div className="flex items-center flex-row text-white mb-2">
       {ride.type === RideType.RETOUR && ride.returnTime && (
           <div className="ride-info flex flex-row items-center">

@@ -4,7 +4,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { DistanceMatrixPromise } from "$/lib/types/types";
-import { useEffect, useState } from "react";
 
 
 export async function calculateDistance(origin: string, destination: string): Promise<DistanceMatrixPromise> {
@@ -130,7 +129,7 @@ export const setPolilines = async (map: google.maps.Map | null, origin: string, 
     const directionsService = new window.google.maps.DirectionsService;
     const bounds = new google.maps.LatLngBounds();
 
-    await directionsService.route({
+    return await directionsService.route({
       optimizeWaypoints: true,
       origin: origin,
       destination: destination,
@@ -170,7 +169,7 @@ export const setPolilines = async (map: google.maps.Map | null, origin: string, 
                 strokeColor:  colors[0]
               },
               label: {
-                text: result.routes[0].legs.length > 1 ? "1" : "",
+                text: "1",
                 color: "black",
                 fontSize: "12px",
                 fontWeight: "bold",
