@@ -201,7 +201,6 @@ export const setPolilines = async (map: google.maps.Map | null, origin: string, 
             });
 
             ///
-
           markerDepartureBig.setMap(map);
           markerDepartureLittle.setMap(map);
           markerDestinationBig.setMap(map);
@@ -249,11 +248,13 @@ export const setPolilines = async (map: google.maps.Map | null, origin: string, 
                 const points = step.path;
                 points.forEach((point) => {
                   polyline.getPath().push(point);
+                  bounds.extend(point);
                 });
               });
               polyline.setMap(map);
             }
           });
+          map?.fitBounds(bounds);
           }
       } else {
         console.log("Error getting directions: ", status,"\n", result);
