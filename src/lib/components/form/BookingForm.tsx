@@ -45,15 +45,17 @@ export default function BookingForm({
   );
   const [destinationLongitude, setDestinationLongitude] = useState<number | null>(null);
 
-
   // Get all pickup points
   useEffect(() => {
-    console.log("Destination booking" , destinationBooking);
     passengers?.forEach((passenger) => {
         if(destPickup.includes(passenger.pickupPoint) === false){
           destPickup.push(passenger.pickupPoint);
         }
+        if(passenger.pickupPoint === booking?.pickupPoint){
+          destPickup.pop();
+        }
     });
+    
     if(destPickup.length > (passengers?.length ?? 1)){
       destPickup.pop();
     }
@@ -105,14 +107,13 @@ export default function BookingForm({
   function handleClick() {
     if (sessionData) {
       if (booking) {
-        const pickupPoint = destPickup.findIndex((dest) => dest === destinationBooking) !== -1 ? destinationBooking : null;
-
+        console.log("Pickup point: ", destinationBooking);
         // ------------------- Update booking -------------------
         updateBooking({
           id: booking.id,
           rideId: ride?.id ?? 0,
           userId: sessionData.user.id,
-          pickupPoint: (pickupPoint ?? booking.pickupPoint),
+          pickupPoint: destinationBooking ?? booking.pickupPoint,
           pickupLatitude: destinationLatitude ?? booking.pickupLatitude,
           pickupLongitude: destinationLongitude ?? booking.pickupLongitude,
           price: priceRide?.toString() ?? booking.price,
@@ -138,7 +139,6 @@ export default function BookingForm({
     const distanceToWaypointInKm = distanceToWaypoint.distance / 1000;
     const distanceToDestination = await calculateDistance(destinationBooking ?? "", destination);
     const distanceToDestinationInKm = distanceToDestination.distance / 1000;
-    const totalDistanceIncludingWaypoint = distanceToWaypointInKm + distanceToDestinationInKm;
     /* ----DISTANCE TOTAL FROM ORIGIN TO DESTINATION --- */
     const distanceInMeters = await calculateDistance(origin, destination);
     const distanceInKm = distanceInMeters.distance / 1000;
@@ -174,6 +174,7 @@ export default function BookingForm({
           maxDistanceDetour
         ).then((result) => {
           setBookingEligible(result.eligibility);
+          console.log("Eligibility: ", result.eligibility);
               // Price calculation
           setPriceRide((result.detourDifference * fuelPrice).toFixed(2));
         }).catch((err) => {

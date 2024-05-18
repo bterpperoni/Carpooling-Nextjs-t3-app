@@ -44,11 +44,11 @@ export const AsyncLoadPlacesProvider = ({ children}: AsyncLoadApiProviderProps) 
 };
 
 // ------------------------REACT Hook---------------------------------
-export const loadGooglePlacesApi = async (): Promise<GoogleApiContextType> => {
+export const loadGooglePlacesApi = (): Promise<GoogleApiContextType> => {
   const googleApi = useContext(GoogleApiContext);
 
   if (googleApi === null) {
     throw new Error({title: "useGoogleApi must be used within a GoogleApiProvider", statusCode: 404});
   }
-  return googleApi;
+  return Promise.resolve(googleApi);
 };

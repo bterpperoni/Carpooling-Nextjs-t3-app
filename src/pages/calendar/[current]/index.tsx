@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/prefer-for-of */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -17,23 +19,10 @@ import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
 import { usePusher } from "$/context/pusherContext";
 import { calculateDistance, setPolilines } from "$/hook/distanceMatrix";
 import { useMap } from "$/context/mapContext";
-import { loadGooglePlacesApi } from "$/context/asyncLoadApiContext";
 
 export default function currentRide() {
   // Get session
   const { data: sessionData } = useSession();
-
-  const google = loadGooglePlacesApi();
-
-  useEffect(() => {
-    if (google === undefined) {
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }else{
-      console.log({ google });
-    }
-  }, []);
 
   // Get rideId from url
   const { query } = useRouter();
@@ -56,7 +45,8 @@ export default function currentRide() {
   // Fetch the notification creation function
   const { mutate: createNotification } = api.notification.create.useMutation();
 
-  const { data: updatedStatusChecked ,mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
+  const { data: updatedStatusChecked, mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
+
 
   ///
   const pusher = usePusher();
@@ -273,16 +263,18 @@ useEffect(() => {
             </div>
             <div className="mt-8">
 
-              <Map zoom={12} onMapLoad={async () => {
+              <Map zoom={10} onMapLoad={async () => {
                   setIsMapLoaded(true);
                   if(passengers && currentRide){
+                    
                     const wayPoints: string[] = passengers.map((passenger) => passenger.pickupPoint);
                     if(isMapLoaded){
                       console.log("Waypoints: ", wayPoints);
                       setPolilines(mapRef.current, currentRide.departure, wayPoints, currentRide.destination);
                     }
                   }
-              }} />
+              }}
+              />
             </div>
           </div>
         </div>
