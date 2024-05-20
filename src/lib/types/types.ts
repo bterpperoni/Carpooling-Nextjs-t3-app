@@ -42,7 +42,7 @@ export type SortedBookingProps = {
   from: string | undefined,
   to: string | undefined,
   fromInfos: {distanceFromPrevious: number| undefined, durationFromPrevious: number| undefined},
-  date: { departureDateTime: Date| undefined, arrivalDateTime: Date| undefined, returnDateTime: Date| undefined}
+  date: { departureDateTime: Date| undefined, arrivalDateTime: Date| undefined}
   price: string | undefined,
 }
 

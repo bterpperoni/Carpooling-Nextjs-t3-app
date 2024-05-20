@@ -127,12 +127,13 @@ export const calculateDetourEligibility = async (origin: string, destination: st
   }
 };
 
-export const setPolilines = async (map: google.maps.Map | null, origin: string, way_points: string[], destination: string): Promise<google.maps.DirectionsRoute | undefined> => {
-  
-    const directionsService = new window.google.maps.DirectionsService;
-    const bounds = new google.maps.LatLngBounds();
+export const getPolylines = async (map: google.maps.Map | null, origin: string, way_points: string[], destination: string): Promise<google.maps.DirectionsRoute | undefined> => {
+  const directionsService = new window.google.maps.DirectionsService;
+  const bounds = new google.maps.LatLngBounds();
 
-    const route: google.maps.DirectionsResult = await directionsService.route({
+
+  return new Promise((resolve, reject) => {
+    void directionsService.route({
       optimizeWaypoints: true,
       origin: origin,
       destination: destination,
@@ -141,8 +142,8 @@ export const setPolilines = async (map: google.maps.Map | null, origin: string, 
     }
     , (result: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
       if (status === window.google.maps.DirectionsStatus.OK) {
-       
-        const colors = ["#e122f3", "#FF0000", "#0000FF", "#FFFF00"];
+        if(result?.routes[0]?.legs.length) {
+          const colors = ["#e122f3", "#FF0000", "#0000FF", "#FFFF00"];
 
         if(result?.routes[0]?.legs.length) {
 
@@ -258,10 +259,33 @@ export const setPolilines = async (map: google.maps.Map | null, origin: string, 
           });
           map?.fitBounds(bounds);
           }
+          resolve(result.routes[0]);
+        }
       } else {
         console.log("Error getting directions: ", status,"\n", result);
-        return null;
+        reject();
       }
     });
-    return route.routes[0];
+  });
+}
+
+export const setPolylines = async (map: google.maps.Map | null, origin: string, way_points: string[], destination: string): Promise<void> => {
+  
+    const directionsService = new window.google.maps.DirectionsService;
+
+    await directionsService.route({
+      optimizeWaypoints: true,
+      origin: origin,
+      destination: destination,
+      waypoints: way_points.map(waypoint => ({ location: waypoint, stopover: true })),
+      travelMode: window.google.maps.TravelMode.DRIVING
+    }
+    , (result: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
+      if (status === window.google.maps.DirectionsStatus.OK) {
+       
+        
+      } else {
+        console.log("Error getting directions: ", status,"\n", result);
+      }
+    });
 };

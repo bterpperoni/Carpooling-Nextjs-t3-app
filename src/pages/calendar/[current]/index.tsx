@@ -7,25 +7,23 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import LayoutMain from "$/lib/components/layout/LayoutMain";
+import CalendarCardDetail from "$/lib/components/containers/rides/CalendarCardDetail";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { useRouter } from "next/router";
 import { BookingStatus, NotificationType } from "@prisma/client";
-import Button from "$/lib/components/button/Button";
 import { useEffect, useState } from "react";
 import Map from "$/lib/components/map/Map";
 // import { useMap } from "$/context/mapContext";
 import type { BookingInformationsProps, Notification, OrderBookingProps, SortedBookingProps } from "$/lib/types/types";
 import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
 import { usePusher } from "$/context/pusherContext";
-import { calculateDistance, setPolilines } from "$/hook/distanceMatrix";
+import { calculateDistance, getPolylines, setPolylines } from "$/hook/distanceMatrix";
 import { useMap } from "$/context/mapContext";
-import { GiTrafficLightsRed, GiTrafficLightsGreen, GiConfirmed, GiCancel } from "react-icons/gi";
-import { FaCircle, FaCircleDot, FaClock, FaHouseChimney } from "react-icons/fa6";
-import { RiSchoolFill } from "react-icons/ri";
-import { formatAddress, getCampusNameWithAddress } from "$/utils/data/school";
-import { check } from "prettier";
-import dayjs from "dayjs";
+import { GiConfirmed, GiCancel } from "react-icons/gi";
+import { getCampusNameWithAddress } from "$/utils/data/school";
+import { resolve } from "path";
+
 
 export default function currentRide() {
   // Get session
@@ -155,16 +153,9 @@ export default function currentRide() {
 
   // const waypoints_order: number[]  = [];
 
-  const bookingOrdered: SortedBookingProps[] = []; 
+  const sortedBookings: SortedBookingProps[] = []; 
 
-  // const [orderBooking, setOrderBooking] = useState<OrderBookingProps[]>([]);
-
-  // useEffect(() => {
-  //   if (routeResult) {
-  //     routeResult
-  //   }
-  // }, [routeResult]);
-
+  const [stb, setStb] = useState<SortedBookingProps[] | undefined>();
 
   ///
   useEffect(() => {
@@ -191,9 +182,12 @@ export default function currentRide() {
   }
 
   ///
+
   useEffect(() => {
-    console.log("sortPolylines", bookingOrdered);
-  }, [bookingOrdered]);
+    if(sortedBookings){
+      setStb(sortedBookings);
+    }
+  }, [isMapLoaded]);
 
   ///
 
@@ -323,42 +317,58 @@ export default function currentRide() {
           {" "}
           Route{" "}
         </h2>
+          <div className="">
+            {stb?.map((x) =>
+            { 
+              return (
+              <CalendarCardDetail
+                key={x.sortedId}
+                address={x.from} 
+                time={x.date.departureDateTime}/>
+            )})}
+           
+          </div>
           <Map zoom={10} onMapLoad={async () => {
             if (currentRide) {
               if (checkedBookings) {
                 const wayPoints: string[] = checkedBookings.map((checkedBooking) => checkedBooking.pickupPoint);
-                
-                const sortPolylines = await setPolilines(mapRef.current, currentRide.departure, wayPoints, currentRide.destination);
-                // sortPolylines.routes[0] && sortPolylines.routes[0].legs.forEach((leg) => {
-                //   optimizedLegsOrder.push(leg);
-                // });
-                
+                const route = await getPolylines(mapRef.current, currentRide.departure, wayPoints, currentRide.destination).
+                then((result) => {
+                  return result;
+                }).catch((error) => {
+                  console.log("Error: ", error);
+                });
 
-                if(sortPolylines){
-                  sortPolylines.legs.forEach((leg, index) => {
-                    const infosByLeg: SortedBookingProps = {
-                      sortedId: index.toString(),
-                      baseIndex: index,
+                if(route) {
+                  route.legs.forEach((leg, index) => {
+                    const addLeg: SortedBookingProps = {
+                      sortedId: leg.end_address,
+                      baseIndex: 0,
                       from: leg.start_address,
                       to: leg.end_address,
-                      fromInfos: {distanceFromPrevious: leg.distance?.value, durationFromPrevious: leg.duration?.value},
-                      date: {
-                        departureDateTime: currentRide.departureDateTime, 
-                        arrivalDateTime: 
+                      fromInfos: { distanceFromPrevious: leg?.distance?.value, durationFromPrevious: leg?.duration?.value },
+                      date: { 
+                        departureDateTime: 
                           addTimeWithMinutes(
-                            bookingOrdered[index-1]?.date.arrivalDateTime?.toLocaleTimeString() ?? currentRide.departureDateTime.toLocaleTimeString(), 
-                            leg.duration?.value! / 60),
-                        returnDateTime: currentRide.returnTime ?? undefined,
+                            sortedBookings[index-1]?.date.arrivalDateTime?.toLocaleTimeString() 
+                              ?? 
+                            currentRide.departureDateTime.toLocaleTimeString(), (leg?.duration?.value ?? 0)/60),
+                        arrivalDateTime: addTimeWithMinutes(
+                          sortedBookings[index-1]?.date.arrivalDateTime?.toLocaleTimeString() 
+                            ?? 
+                          currentRide.departureDateTime.toLocaleTimeString(), (leg?.duration?.value ?? 0)/60)
                       },
-                      price: userBooking?.price,
+                      price: "0",
                     };
-                    bookingOrdered.push(infosByLeg);
-                  
+                    sortedBookings.push(addLeg);
+                    console.log("Sorted bookings: ", sortedBookings);
                   });
-              }
-            }}}}
+                  setIsMapLoaded(true);
+                }
+            }}
+          }}
           />
-        </div>
+        </div> 
       </div>
     </LayoutMain>
   );
