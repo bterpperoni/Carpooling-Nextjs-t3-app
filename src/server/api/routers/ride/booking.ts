@@ -121,6 +121,24 @@ export const bookingRouter = createTRPCRouter({
       });
     }),
 
+    updatePriceRide: protectedProcedure
+    .input(
+      z.object({
+        bookingId: z.number(),
+        price: z.string(),
+      })
+    ).mutation(async ({ ctx, input }) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return ctx.db.booking.update({
+        where: {
+          id: input.bookingId,
+        },
+        data: {
+          price: input.price,
+        },
+      });
+    }),
+
 
   update: protectedProcedure
     .input(

@@ -37,13 +37,13 @@ export type CalendarCardProps = {
 };
 
 export type SortedBookingProps = { 
-  id: string | undefined,
+  sortedId: string | undefined,
   baseIndex: number| undefined,
-  pickupPoint: string | undefined,
-  toNext: {distanceToNext: number| undefined, durationToNext: number| undefined},
+  from: string | undefined,
+  to: string | undefined,
+  fromInfos: {distanceFromPrevious: number| undefined, durationFromPrevious: number| undefined},
   date: { departureDateTime: Date| undefined, arrivalDateTime: Date| undefined, returnDateTime: Date| undefined}
-  price: number| undefined,
-  status: BookingStatus
+  price: string | undefined,
 }
 
 export type OrderBookingProps = {

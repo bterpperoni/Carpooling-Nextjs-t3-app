@@ -175,6 +175,20 @@ export default function BookingForm({
           console.log("Eligibility: ", result.eligibility);
               // Price calculation
           setPriceRide((result.detourDifference * fuelPrice).toFixed(2));
+          passengers?.forEach((passenger) => { 
+            if(passenger.userId !== sessionData?.user.id){
+              updateBooking({
+                id: passenger.id,
+                rideId: ride?.id ?? 0,
+                userId: passenger.userId,
+                pickupPoint: passenger.pickupPoint,
+                pickupLatitude: passenger.pickupLatitude,
+                pickupLongitude: passenger.pickupLongitude,
+                price: priceRide?.toString() ?? passenger.price,
+                status: "UPDATED",
+              });
+            }
+           });
         }).catch((err) => {
           console.log(err);
         });
@@ -208,11 +222,10 @@ export default function BookingForm({
         </label>
         {/* This autocomplete will be used as destination to calcul distance from driver departure to this address */}
         <Autocomplete
-          defaultValue={booking?.pickupPoint ?? ""}
+          defaultValue={ride?.destination}
           apiKey={apiKey}
           options={options}
-          libraries={["places"]}
-          onPlaceSelected={async (place) => {
+          onPlaceSelected={(place) => {
             if(place.formatted_address !== undefined)
             setDestinationBooking(place.formatted_address);
             if (
@@ -222,6 +235,7 @@ export default function BookingForm({
               setDestinationLatitude(place.geometry.location.lat());
               setDestinationLongitude(place.geometry.location.lng());
             }
+            console.log("Destination: ", place);
           }}
           className="my-2 
                     w-[75%] 

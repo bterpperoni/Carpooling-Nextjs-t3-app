@@ -7,6 +7,7 @@ import type { RideInformationsProps } from "$/lib/types/types";
 
 // -----------------------------------------------------------------------------------------------------
 // ------------------------------ Notify passengers when ride has started ------------------------------
+// -----------------------------------------------------------------------------------------------------
 
 export default async function Handler(
   req: NextApiRequest,

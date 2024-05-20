@@ -25,6 +25,7 @@ import { FaCircle, FaCircleDot, FaClock, FaHouseChimney } from "react-icons/fa6"
 import { RiSchoolFill } from "react-icons/ri";
 import { formatAddress, getCampusNameWithAddress } from "$/utils/data/school";
 import { check } from "prettier";
+import dayjs from "dayjs";
 
 export default function currentRide() {
   // Get session
@@ -33,6 +34,11 @@ export default function currentRide() {
   // Get rideId from url
   const { query } = useRouter();
   const rideId = query.current as string;
+  // // Access the map object
+  const mapRef = useMap();
+  // // Define the state for the map loading
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
+  
   // Fetch the passengers details and here details ride
   const { data: passengers } = api.booking.bookingByRideId.useQuery(
     { rideId: parseInt(rideId) ?? 0 },
@@ -67,30 +73,6 @@ export default function currentRide() {
   //   setTotalTime(parseFloat(timeInMinutes.toFixed(2)));
   //   console.log("Total time: ", totalTime);
   // }
-
-  useEffect(() => {
-    if(totalTime) {
-      console.log("Total time: ", totalTime/60);
-    }
-  }, [totalTime]);
-
-  
-
-  ///
-
-  const optimizedLegsOrder: google.maps.DirectionsLeg[] = [];
-
-  const waypoints_order: number[]  = [];
-
-  const orderBookings: OrderBookingProps[] = []; 
-
-  const [orderBooking, setOrderBooking] = useState<OrderBookingProps[]>([]);
-
-  ///
-  // // Access the map object
-  const mapRef = useMap();
-  // // Define the state for the map loading
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
 
   ///
@@ -167,6 +149,21 @@ export default function currentRide() {
     , [currentRide]);
 
 
+  ///
+
+  // const [routeResult, setRouteResult] = useState<google.maps.DirectionsRoute | undefined>(undefined);
+
+  // const waypoints_order: number[]  = [];
+
+  const bookingOrdered: SortedBookingProps[] = []; 
+
+  // const [orderBooking, setOrderBooking] = useState<OrderBookingProps[]>([]);
+
+  // useEffect(() => {
+  //   if (routeResult) {
+  //     routeResult
+  //   }
+  // }, [routeResult]);
 
 
   ///
@@ -180,11 +177,23 @@ export default function currentRide() {
     }
   }, [userBooking]);
 
+  ///
+  function addTimeWithMinutes(time: string, minutes: number) {
+    const timeParts = time.split(":");
+    const date = new Date();
+    date.setHours(parseInt(timeParts[0]!));
+    date.setMinutes(parseInt(timeParts[1]!));
+    date.setMinutes(date.getMinutes() + minutes);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const mins = date.getMinutes().toString().padStart(2, "0");
+
+    return date;
+  }
 
   ///
-  // useEffect(() => {
-    
-  // }, [isMapLoaded, optimizedLegsOrder, orderBookings, sortedBookings]);
+  useEffect(() => {
+    console.log("sortPolylines", bookingOrdered);
+  }, [bookingOrdered]);
 
   ///
 
@@ -205,20 +214,20 @@ export default function currentRide() {
       <div className="m-2 min-h-screen w-max-full rounded-lg bg-[var(--purple-g3)]">
         <h2 className=" w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl">
           {" "}
-          Passagers pour ce trajet{" "}
+          Passagers{" "}
         </h2>
         <div className="">
           {passengers?.map((passenger) => (
             <div key={passenger.id} className="flex flex-row p-2">
-              <div className={`flex flex-row ${passenger.status === BookingStatus.CHECKED ? "bg-green-500" : "bg-red-500"} h-max my-auto border-2 p-2 rounded-lg w-max py-2`}>
+              <div className={`flex flex-row ${passenger.status === BookingStatus.CHECKED ? "bg-green-500" : "bg-red-500"} my-auto border-2 p-1 rounded-lg w-max`}>
                 {/*  */}
                 {passenger.status === BookingStatus.CHECKED ? (
                   <GiConfirmed
-                  className="text-[2rem] p-1  rounded-full bg-green-500 text-white"
+                  className="text-[2rem] rounded-full bg-green-500 text-white"
                   />
                 ) : (
                   <GiCancel
-                  className="text-[2rem] p-1  rounded-full bg-red-500 text-white"
+                  className="text-[2rem] rounded-full bg-red-500 text-white"
                   />
                 )}
               </div>
@@ -287,10 +296,8 @@ export default function currentRide() {
                     <div>
                       {passenger.status !== BookingStatus.CHECKED ? (
                         <div className="">
-                          <div className="text-[1rem] text-white leading-2">
-                            <GiTrafficLightsRed
-                              className="text-[2rem] m-2 rounded-full bg-[var(--purple-g3)] text-red-500 "
-                            />
+                          <div className="p-2 bg-red-500 text-white rounded-lg m-2 ">
+                              Pas Prêt
                           </div>
                         </div>
                       ) : (
@@ -312,37 +319,46 @@ export default function currentRide() {
           */}
 
         <div className="mt-8">
+        <h2 className=" w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl mb-2">
+          {" "}
+          Route{" "}
+        </h2>
           <Map zoom={10} onMapLoad={async () => {
-            setIsMapLoaded(true);
             if (currentRide) {
               if (checkedBookings) {
                 const wayPoints: string[] = checkedBookings.map((checkedBooking) => checkedBooking.pickupPoint);
                 
                 const sortPolylines = await setPolilines(mapRef.current, currentRide.departure, wayPoints, currentRide.destination);
-                sortPolylines.routes[0] && sortPolylines.routes[0].legs.forEach((leg) => {
-                  optimizedLegsOrder.push(leg);
-                });
-
-                setTotalTime(optimizedLegsOrder[0]?.duration?.value ?? 0);
+                // sortPolylines.routes[0] && sortPolylines.routes[0].legs.forEach((leg) => {
+                //   optimizedLegsOrder.push(leg);
+                // });
                 
-                sortPolylines.routes[0]?.waypoint_order.forEach((order) => {
-                  waypoints_order.push(order);
-                });
-               
-                waypoints_order.forEach((sortedIndex, index) => {
-                const orderBooking: OrderBookingProps = {
-                  baseIndex: index,
-                  sortedIndex: sortedIndex,
-                  booking: checkedBookings ? checkedBookings[index] : undefined,
-                  };
-                  orderBookings.push(orderBooking);
-                });
+
+                if(sortPolylines){
+                  sortPolylines.legs.forEach((leg, index) => {
+                    const infosByLeg: SortedBookingProps = {
+                      sortedId: index.toString(),
+                      baseIndex: index,
+                      from: leg.start_address,
+                      to: leg.end_address,
+                      fromInfos: {distanceFromPrevious: leg.distance?.value, durationFromPrevious: leg.duration?.value},
+                      date: {
+                        departureDateTime: currentRide.departureDateTime, 
+                        arrivalDateTime: 
+                          addTimeWithMinutes(
+                            bookingOrdered[index-1]?.date.arrivalDateTime?.toLocaleTimeString() ?? currentRide.departureDateTime.toLocaleTimeString(), 
+                            leg.duration?.value! / 60),
+                        returnDateTime: currentRide.returnTime ?? undefined,
+                      },
+                      price: userBooking?.price,
+                    };
+                    bookingOrdered.push(infosByLeg);
+                  
+                  });
               }
-            }
-          }}
+            }}}}
           />
         </div>
-
       </div>
     </LayoutMain>
   );

@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { DistanceMatrixPromise } from "$/lib/types/types";
+import { error } from "console";
 
 
 export async function calculateDistance(origin: string, destination: string): Promise<DistanceMatrixPromise> {
@@ -52,14 +53,16 @@ export async function displayRoute(
   directionsRenderer: google.maps.DirectionsRenderer,
   origin: google.maps.LatLngLiteral,
   destination: google.maps.LatLngLiteral,
+  waypoints?: string[]
 ): Promise<void> {
   console.log("Origin: ", origin, "\nDestination: ", destination);
 
-  directionsService.route(
+  await directionsService.route(
       {
         origin: origin,
         destination: destination,
-        travelMode: google.maps.TravelMode.DRIVING
+        travelMode: google.maps.TravelMode.DRIVING,
+        waypoints: waypoints?.map((waypoint) => ({ location: waypoint, stopover: true }))
       },
       (
         result: google.maps.DirectionsResult | null,
@@ -124,12 +127,12 @@ export const calculateDetourEligibility = async (origin: string, destination: st
   }
 };
 
-export const setPolilines = async (map: google.maps.Map | null, origin: string, way_points: string[], destination: string) => {
+export const setPolilines = async (map: google.maps.Map | null, origin: string, way_points: string[], destination: string): Promise<google.maps.DirectionsRoute | undefined> => {
   
     const directionsService = new window.google.maps.DirectionsService;
     const bounds = new google.maps.LatLngBounds();
 
-    return await directionsService.route({
+    const route: google.maps.DirectionsResult = await directionsService.route({
       optimizeWaypoints: true,
       origin: origin,
       destination: destination,
@@ -257,6 +260,8 @@ export const setPolilines = async (map: google.maps.Map | null, origin: string, 
           }
       } else {
         console.log("Error getting directions: ", status,"\n", result);
+        return null;
       }
     });
+    return route.routes[0];
 };

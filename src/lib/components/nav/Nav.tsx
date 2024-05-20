@@ -109,7 +109,7 @@ export default function Nav() {
 
   return (
   
-    <Disclosure as="nav" className="bg-gray-800 fixed top-0 w-full z-1">
+    <Disclosure as="nav" className="bg-gray-800 absolute top-0 w-full z-1">
     {({ open }: { open: boolean }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">

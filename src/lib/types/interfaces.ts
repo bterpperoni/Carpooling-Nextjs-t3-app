@@ -1,4 +1,4 @@
-import type { Booking, Ride } from "@prisma/client";
+import type { Ride } from "@prisma/client";
 import type { ChangeEvent } from "react";
 
 export interface Campus {
