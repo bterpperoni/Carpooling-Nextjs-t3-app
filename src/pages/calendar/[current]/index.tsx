@@ -120,8 +120,8 @@ export default function currentRide() {
         read: false,
       });
       setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+        window.location.assign(`/calendar/${rideId}`); 
+      }, 1000);
     }
   }
 
@@ -175,19 +175,17 @@ export default function currentRide() {
     date.setHours(parseInt(timeParts[0]!));
     date.setMinutes(parseInt(timeParts[1]!));
     date.setMinutes(date.getMinutes() + minutes);
-    const hours = date.getHours().toString().padStart(2, "0");
-    const mins = date.getMinutes().toString().padStart(2, "0");
-
+    date.setSeconds(0);
     return date;
   }
 
   ///
 
+  const [isCheckedBooking, setIsCheckedBooking] = useState(false);
+
   useEffect(() => {
-    if(sortedBookings){
-      setStb(sortedBookings);
-    }
-  }, [isMapLoaded]);
+    setStb(sortedBookings);
+  },[checkedBookings]);
 
   ///
 
@@ -313,21 +311,25 @@ export default function currentRide() {
           */}
 
         <div className="mt-8">
-        <h2 className=" w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl mb-2">
+        <h2 className=" w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl mb-4">
           {" "}
-          Route{" "}
+          Détails du trajet{" "}
         </h2>
-          <div className="">
-            {stb?.map((x) =>
-            { 
-              return (
+          <div className="mb-4">
+            {stb?.map((booking) => (
               <CalendarCardDetail
-                key={x.sortedId}
-                address={x.from} 
-                time={x.date.departureDateTime}/>
-            )})}
-           
-          </div>
+                key={booking.sortedId}
+                address={booking.from} 
+                time={booking.date.departureDateTime}
+                isDestination={false}
+              />
+            ))}
+           <CalendarCardDetail
+              address={stb?.[stb.length-1]?.to ?? currentRide?.destination}
+              time={stb?.[stb.length-1]?.date.arrivalDateTime ?? undefined}
+              isDestination={true}
+           />
+           </div>
           <Map zoom={10} onMapLoad={async () => {
             if (currentRide) {
               if (checkedBookings) {
@@ -338,8 +340,7 @@ export default function currentRide() {
                 }).catch((error) => {
                   console.log("Error: ", error);
                 });
-
-                if(route) {
+                if(route && checkedBookings) {
                   route.legs.forEach((leg, index) => {
                     const addLeg: SortedBookingProps = {
                       sortedId: leg.end_address,
@@ -348,11 +349,7 @@ export default function currentRide() {
                       to: leg.end_address,
                       fromInfos: { distanceFromPrevious: leg?.distance?.value, durationFromPrevious: leg?.duration?.value },
                       date: { 
-                        departureDateTime: 
-                          addTimeWithMinutes(
-                            sortedBookings[index-1]?.date.arrivalDateTime?.toLocaleTimeString() 
-                              ?? 
-                            currentRide.departureDateTime.toLocaleTimeString(), (leg?.duration?.value ?? 0)/60),
+                        departureDateTime:sortedBookings[index-1]?.date.arrivalDateTime ?? currentRide.departureDateTime,
                         arrivalDateTime: addTimeWithMinutes(
                           sortedBookings[index-1]?.date.arrivalDateTime?.toLocaleTimeString() 
                             ?? 
@@ -363,9 +360,9 @@ export default function currentRide() {
                     sortedBookings.push(addLeg);
                     console.log("Sorted bookings: ", sortedBookings);
                   });
-                  setIsMapLoaded(true);
                 }
             }}
+            setIsMapLoaded(true);
           }}
           />
         </div> 

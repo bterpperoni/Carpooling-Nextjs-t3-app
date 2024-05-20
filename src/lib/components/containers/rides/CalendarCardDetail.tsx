@@ -7,10 +7,11 @@ type CcardProps = {
     address: string | undefined;
     time: Date | undefined;
     children?: React.ReactNode;
+    isDestination?: boolean;
 }
 
 
-export default function CalendarCardDetail({address, time, children}: CcardProps){
+export default function CalendarCardDetail({address, time, isDestination, children}: CcardProps){
     return(
         <div className="flex flex-col">
           <div className="border-2 border-[var(--pink-g1)] p-2 text-white">
@@ -24,16 +25,18 @@ export default function CalendarCardDetail({address, time, children}: CcardProps
               <div>
                 <div className="flex flex-row items-center justify-start">
                   <FaClock className="h-[1.25rem] w-[1.25rem] mb-[3px] mr-2 ml-2 text-[var(--pink-g1)]" />
-                  {time?.toLocaleTimeString()}
+                  {time?.toLocaleTimeString() ?? "Appuyez pour afficher les détails"}
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center m-1">
-            <FaCircleDot className="text-[var(--pink-g1)]" />
-                <div className="border-l-4 border-[var(--pink-g1)] border-dashed h-24"></div>
-            <FaCircle className="text-[var(--pink-g1)]" />
-          </div>
+          {!isDestination && (
+            <div className="flex flex-col items-center m-1">
+              <FaCircleDot className="text-[var(--pink-g1)]" />
+                <div className="border-l-4 border-[var(--pink-g1)] border-dashed h-12"></div>
+              <FaCircle className="text-[var(--pink-g1)]" />
+            </div>
+          )}
         </div>
     )
 }
