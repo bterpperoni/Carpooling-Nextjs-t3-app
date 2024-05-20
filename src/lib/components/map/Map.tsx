@@ -8,6 +8,7 @@ import Error from "next/error";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useMap } from "$/context/mapContext";
 import type { Ride } from "@prisma/client";
+import { customGoogleMap } from "$/styles/customGoogleMaps";
 
 declare global {
   interface Window {
@@ -56,7 +57,8 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad  }) => {
         center: center ?? position,
         zoom: zoom ?? 12,
         clickableIcons: true,
-        mapId: `map-${(Math.random() * 999).toFixed(0)}`
+        mapId: `map-${(Math.random() * 999).toFixed(0)}`,
+        styles: customGoogleMap
       });
       // Set the map object in the context
       mapRef.current = map;

@@ -23,6 +23,7 @@ import { useMap } from "$/context/mapContext";
 import { GiConfirmed, GiCancel } from "react-icons/gi";
 import { getCampusNameWithAddress } from "$/utils/data/school";
 import { resolve } from "path";
+import { data } from '../../../utils/data/school';
 
 
 export default function currentRide() {
@@ -63,6 +64,8 @@ export default function currentRide() {
 
   const { data: updatedStatusChecked, mutate: updateStatusToChecked } = api.booking.updateStatusToCheck.useMutation();
 
+  const { data: updatedStatusCompleted, mutate: updateStatusToCompleted } = api.booking.updateStatusToCompleted.useMutation();
+
   const [totalTime, setTotalTime] = useState<number | null>(0);
 
   // async function setTimeAndDistanceWithWayPoint() {
@@ -71,7 +74,6 @@ export default function currentRide() {
   //   setTotalTime(parseFloat(timeInMinutes.toFixed(2)));
   //   console.log("Total time: ", totalTime);
   // }
-
 
   ///
 
@@ -130,6 +132,8 @@ export default function currentRide() {
       void handleNotifyStatusChecked();
     }
   }, [updatedStatusChecked]);
+
+
 
   ///
 
@@ -199,7 +203,7 @@ export default function currentRide() {
       <div className="m-2 min-h-screen w-max-full rounded-lg bg-[var(--purple-g3)]">
         <h2 className=" w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl">
           {" "}
-          Status du(des) passager(s){" "}
+          Passager(s){" "}
         </h2>
         <div className="">
           {passengers?.map((passenger) => (
@@ -218,7 +222,7 @@ export default function currentRide() {
               </div>
               <div
                 className={`
-                    overflow-hidden w-auto w-min-[40%] bg-[var(--purple-g3)] shadow-sm justify-end flex flex-row lg:flex-row
+                    w-auto w-min-[40%] bg-[var(--purple-g3)] shadow-sm justify-end flex flex-row lg:flex-row
                   `}
               >
                 <div className="pl-2 flex items-center flex-row md:flex-col">
@@ -247,11 +251,8 @@ export default function currentRide() {
                   {isPassengerSession && userBooking?.userId === passenger.userId ? (
                     <div>
                       <div>
-                        {passenger.status !== BookingStatus.CHECKED ? (
+                        {userBooking.status !== BookingStatus.CHECKED ? (
                           <div className="flex w-full flex-row items-center justify-between">
-                            <div className="text-[1rem] text-white">
-                              {/* empty div */}
-                            </div>
                             <div 
                               className="flex ml-4 w-full justify-end hover:transform hover:bg-red-700 hover:border-red-700 hover:text-white cursor-pointer
                                           cursor pointer pr-max px-2 flex flex-row itmes-center text-white py-1 rounded-lg bg-red-500"
@@ -268,30 +269,32 @@ export default function currentRide() {
                                 </div>
                             </div>
                           </div>
-                        ) :
-                          (
-                            <div className="p-2 bg-green-500 text-white rounded-lg m-2 ">
-                              Prêt
-                            </div>
-                          )
-                        }
+                        ):
+                        (null)}
                       </div>
-                    </div>
-                  ) : (
-                    <div>
-                      {passenger.status !== BookingStatus.CHECKED ? (
+                      {passenger.status === BookingStatus.CHECKED ? (
                         <div className="">
-                          <div className="p-2 bg-red-500 text-white rounded-lg m-2 ">
-                              Pas Prêt
-                          </div>
+                        <div 
+                              className="flex mx-2 w-full justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
+                                          cursor-pointer pr-max px-2 flex flex-row itmes-center text-white py-1 rounded-lg bg-green-500"
+                               onClick={async () => {
+                                  // Update the passenger status to checked
+                                  updateStatusToCompleted({ bookingId: passenger.id });
+                                  console.log("Booking: ", passenger);
+                                }
+                                }>
+                                <GiConfirmed
+                                className="text-[2rem] p-1  rounded-full bg-green-500 text-white"
+                                />
+                                <div className="my-auto mx-auto">
+                                  Terminer
+                                </div>
+                            </div>
                         </div>
-                      ) : (
-                        <div className="p-2 bg-green-500 text-white rounded-lg m-2 ">
-                              Prêt
-                        </div>
-                      )}
+                      ):
+                      (null)}
                     </div>
-                  )}
+                  ) : ( null)}
                 </div>
               </div>
             </div>
@@ -308,7 +311,7 @@ export default function currentRide() {
           {" "}
           Détails du trajet{" "}
         </h2>
-        <div className="mb-4 cursor-pointer" onClick={() => setIsCheckedBooking(!isCheckedBooking)}>
+        <div className="mb-4 cursor-pointer hover:border-y-2 hover:border-[var(--pink-g1)] p-1" onClick={() => setIsCheckedBooking(!isCheckedBooking)}>
           {isCheckedBooking ? (
             <div className="">
             {stb?.map((booking) => (
@@ -329,6 +332,7 @@ export default function currentRide() {
             <CalendarCardDetail
               address={undefined}
               time={undefined}
+              children={"Voir les détails"}
               isDestination={true}
           />
           )}

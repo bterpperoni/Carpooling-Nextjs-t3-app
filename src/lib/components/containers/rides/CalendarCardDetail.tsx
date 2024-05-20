@@ -3,7 +3,7 @@ import { FaCircle, FaClock } from "react-icons/fa";
 import { FaCircleDot, FaHouseChimney } from "react-icons/fa6";
 
 
-type CcardProps = {
+type CalendarCardDetailsProps = {
     address: string | undefined;
     time: Date | undefined;
     children?: React.ReactNode;
@@ -11,7 +11,7 @@ type CcardProps = {
 }
 
 
-export default function CalendarCardDetail({address, time, isDestination, children}: CcardProps){
+export default function CalendarCardDetail({address, time, isDestination, children}: CalendarCardDetailsProps){
     return(
         <div className="flex flex-col">
           <div className="border-2 border-[var(--pink-g1)] p-2 text-white">
@@ -25,7 +25,7 @@ export default function CalendarCardDetail({address, time, isDestination, childr
               <div>
                 <div className="flex flex-row items-center justify-start">
                   <FaClock className="h-[1.25rem] w-[1.25rem] mb-[3px] mr-2 ml-2 text-[var(--pink-g1)]" />
-                  {time?.toLocaleTimeString() ?? "Appuyez pour afficher les détails"}
+                  {time?.toLocaleTimeString() ?? children}
                 </div>
               </div>
             </div>

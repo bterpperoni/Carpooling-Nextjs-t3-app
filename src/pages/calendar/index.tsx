@@ -187,17 +187,15 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
 */}     
       <div className="m-1 rounded-lg bg-white p-2 shadow-lg overflow-hidden">
         <h3 className="mb-4 text-2xl font-semibold text-[var(--pink-g1)]">
-          Trajets en tant que conducteur
+          Conducteur
         </h3>
-        <div className="grid grid-rows-7  gap-4">
+        <div className="flex flex-col">
           {next7DaysDate.map((date, index) => {
             const isToday = dayjs(date).isSame(dayjs(), "day");
             return (
               <div
                 key={index}
-                className={`  
-                  border-2
-                  border-gray-300 col-span-1 rounded-lg p-2 px-3 shadow ${isToday ? "bg-[var(--pink-g0)]" : "bg-gray-100"}`}
+                className={`h-max my-2 border-2 border-gray-300  rounded-lg p-2 px-3 shadow ${isToday ? "bg-[var(--pink-g0)]" : "bg-gray-100"}`}
               >
                 <h4
                   className={`mb-2 text-xl font-semibold ${isToday ? "text-white" : "text-black"}`}
@@ -266,8 +264,6 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                                   }
                                 }
                                 isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
-
-                                ///
                                 childrenToday={
                                   <Button
                                     className="mt-4 w-full rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700 mr-3"
@@ -281,8 +277,6 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                                     Démarrer
                                   </Button>
                                 }
-
-                                ///
                                 isOpen={checkIfModalDriverIsOpen}
                                 onClose={() => {
                                   setCheckIfModalDriverIsOpen(false);
@@ -316,21 +310,21 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
 {/*
 
 ///
-       ---------------------------------------------- as Passenger ----------------------------------------------- 
+       ---------------------------------------------- as Booking----------------------------------------------- 
 
 ///
 */}
-      <div className="m-4 rounded-lg bg-white p-4 shadow-lg">
+      <div className="m-4 rounded-lg bg-white p-4 shadow-lg overflow-hidden">
         <h3 className="mb-4 text-2xl font-semibold text-fuchsia-700">
-          Trajets en tant que passager
+          Passager
         </h3>
-        <div className="grid grid-rows-7 gap-4">
+        <div className="flex flex-col">
           {next7DaysDate.map((date, index) => {
             const isToday = dayjs(date).isSame(dayjs(), "day");
             return (
               <div
                 key={index}
-                className={`col-span-1 rounded-lg p-2 shadow ${isToday ? "bg-[var(--pink-g0)]" : "bg-gray-100"}`}
+                className={`my-2 h-max rounded-lg p-2 shadow ${isToday ? "bg-[var(--pink-g0)]" : "bg-gray-100"}`}
               >
                 <h4 className={`mb-2 text-xl font-semibold ${isToday ? "text-white" : "text-black"}`}>
                   {dayjs(date).format("dddd DD/MM")}

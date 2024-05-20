@@ -26,7 +26,6 @@ const SlideButton: React.FC<{ check: () => void; checked: boolean; }> = ({ check
           display: inline-block;
           width: 60px;
           height: 34px;
-          z-index:3!important;
         }
         
         .switch input { 

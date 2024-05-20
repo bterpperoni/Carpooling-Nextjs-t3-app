@@ -126,6 +126,29 @@ export default function RideForm({
     }
   }, [dateDeparture, timeDeparture, ride]);
 
+  /* _______________________ USEFFECT FOR SET ARRIVAL DATE_________________________________________ ________________________ */
+
+  useEffect(() => {
+    if (dateDeparture) {
+      // if the user has selected a time for the departure date
+      if (arrivalTime) {
+        // CREATING A RIDE: set the date of departure with the time selected
+        setArrivalTime(
+          dayjs(dateDeparture)
+            .set("hour", arrivalTime.hour())
+            .set("minute", arrivalTime.minute()),
+        );
+      } else {
+        // UPDATING A RIDE: else set the date of departure with the time of the ride
+        setArrivalTime(
+          dayjs(dateDeparture)
+            .set("hour", ride?.arrivalDateTime?.getHours() ?? 0)
+            .set("minute", ride?.arrivalDateTime?.getMinutes() ?? 0),
+        );
+      }
+    }
+  }, [dateDeparture, arrivalTime, ride]);
+
   /* _______________________ USEFFECT FOR CHECK IF RIDE IS PRESENT & SET MAXBOOKING + MAXDETOURDIST ________________________ */
   useEffect(() => {
     if (ride) {
@@ -149,96 +172,98 @@ export default function RideForm({
       }
       return;
     }
-  }, [timeReturn, dateDeparture]);
+  }, [timeReturn, timeDeparture, dateDeparture]);
 
   /* _______________________ USEFFECT FOR TEST & REDIRECT WHEN CREATING/UPDATING A RIDE _________________________ */
   useEffect(() => {
     if (rideCreated ?? updatedride) {
-      window.location.href = `/rides/${rideCreated?.id ?? updatedride?.id}`;
+      window.location.assign(`/rides/${rideCreated?.id ?? updatedride?.id}`);
     }
   }, [rideCreated, updatedride]);
 
   // Submit a new ride or update an existing ride
-  function handleClick() {
-    if (sessionData) {
-      // ------------------- Create ride -------------------
-      if (!ride) {
-        if (!isRideReturn && timeReturn) {
+  function handleClick(event: React.FormEvent) {
+    event.preventDefault();
+    try {
+
+      if (sessionData) {
+        // ------------------- Create ride -------------------
+        if (!ride) {
+          if (!isRideReturn && timeReturn) {
+            if (
+              timeReturn?.isBefore(timeDeparture) ||
+              (timeReturn?.diff(timeDeparture, "hour") ?? 0) < 2
+            ) {
+              console.log(
+                "L'heure de retour doit au moins 2h après l'heure de départ",
+              );
+            }
+          }
+          console.log("Session data: ", dateDeparture, arrivalTime, dateDeparture?.isBefore(arrivalTime));
+          if (departure && destination) {
+            // Check if the date of return is after the date of departure
+            if (dateDeparture && arrivalTime && dateDeparture.isBefore(arrivalTime)) {
+              // Check if the time of return is after the time of departure and at least 2 hours after
+              createride({
+                driverId: sessionData.user.id,
+                departure: departure,
+                departureLatitude: departureLatitude ?? 0,
+                departureLongitude: departureLongitude ?? 0,
+                departureDateTime: dateDeparture.toDate(),
+                arrivalDateTime: arrivalTime.toDate(),
+                destination: destination,
+                destinationLatitude: destinationLatitude ?? 0,
+                destinationLongitude: destinationLongitude ?? 0,
+                returnTime: timeReturn?.toDate() ?? null,
+                maxBookings: maxBooking ?? 2,
+                maxDetour: maxDistance ?? 10,
+                type: isRideReturn ? "RETOUR" : "ALLER",
+                isForGroup: isForGroup ?? false,
+                groupId: groupId ?? null,
+              });
+            }
+          }
+        }
+        // ------------------- Update ride -------------------
+        if (ride) {
           if (
-            timeReturn?.isBefore(timeDeparture) ||
+            timeReturn?.isBefore(timeDeparture) &&
             (timeReturn?.diff(timeDeparture, "hour") ?? 0) < 2
           ) {
             alert(
               "L'heure de retour doit au moins 2h après l'heure de départ",
             );
-          }
-        }
-
-        if (departure && destination) {
-          // Check if the date of return is after the date of departure
-          if (dateDeparture && arrivalTime && dateDeparture.isBefore(arrivalTime)) {
-            // Check if the time of return is after the time of departure and at least 2 hours after
-            createride({
-              driverId: sessionData.user.id,
-              departure: departure,
-              departureLatitude: departureLatitude ?? 0,
-              departureLongitude: departureLongitude ?? 0,
-              departureDateTime: dateDeparture.toDate(),
-              arrivalDateTime: arrivalTime.toDate(),
-              destination: destination,
-              destinationLatitude: destinationLatitude ?? 0,
-              destinationLongitude: destinationLongitude ?? 0,
-              returnTime: timeReturn?.toDate() ?? null,
-              maxBookings: maxBooking ?? 2,
-              maxDetour: maxDistance ?? 10,
+          } else {
+            const tmpTimeReturn = timeReturn ? timeReturn.toDate() : null;
+            updateride({
+              id: ride.id,
+              driverId: ride.driverId,
+              departure: departure ?? ride.departure,
+              departureLatitude: departureLatitude ?? ride.departureLatitude,
+              departureLongitude: departureLongitude ?? ride.departureLongitude,
+              departureDateTime:
+                dateDeparture?.toDate() ?? ride.departureDateTime,
+              arrivalDateTime: arrivalTime?.toDate() ?? ride.arrivalDateTime,
+              destination: destination ?? ride.destination,
+              destinationLatitude:
+                destinationLatitude ?? ride.destinationLatitude,
+              destinationLongitude:
+                destinationLongitude ?? ride.destinationLongitude,
+              returnTime: tmpTimeReturn ?? ride.returnTime,
+              maxBookings: maxBooking ?? ride.maxPassengers,
+              maxDistance: maxDistance ?? ride.maxDetourDist,
               type: isRideReturn ? "RETOUR" : "ALLER",
-              isForGroup: isForGroup ?? false,
-              groupId: groupId ?? null,
+              status: dateDeparture?.isSame(dayjs())
+                ? RideStatus.IN_PROGRESS_FORTH
+                : ride.status,
             });
           }
-        } else {
-          alert(
-            "An error occurred while creating the ride, please check the form and try again.",
-          );
-          return;
         }
       }
-      // ------------------- Update ride -------------------
-      if (ride) {
-        if (
-          timeReturn?.isBefore(timeDeparture) &&
-          (timeReturn?.diff(timeDeparture, "hour") ?? 0) < 2
-        ) {
-          alert(
-            "L'heure de retour doit au moins 2h après l'heure de départ",
-          );
-        } else {
-          const tmpTimeReturn = timeReturn ? timeReturn.toDate() : null;
-          updateride({
-            id: ride.id,
-            driverId: ride.driverId,
-            departure: departure ?? ride.departure,
-            departureLatitude: departureLatitude ?? ride.departureLatitude,
-            departureLongitude: departureLongitude ?? ride.departureLongitude,
-            departureDateTime:
-              dateDeparture?.toDate() ?? ride.departureDateTime,
-            arrivalDateTime: arrivalTime?.toDate() ?? ride.arrivalDateTime,
-            destination: destination ?? ride.destination,
-            destinationLatitude:
-              destinationLatitude ?? ride.destinationLatitude,
-            destinationLongitude:
-              destinationLongitude ?? ride.destinationLongitude,
-            returnTime: tmpTimeReturn ?? ride.returnTime,
-            maxBookings: maxBooking ?? ride.maxPassengers,
-            maxDistance: maxDistance ?? ride.maxDetourDist,
-            type: isRideReturn ? "RETOUR" : "ALLER",
-            status: dateDeparture?.isSame(dayjs())
-              ? RideStatus.IN_PROGRESS_FORTH
-              : ride.status,
-          });
-        }
-      }
+    }catch (error) {
+      console.error("An error occurred while creating or updating the ride", error);
     }
+    event.preventDefault();
   }
 
   // Used to defines is the ride is simple or return isRideReturn const
@@ -252,15 +277,15 @@ export default function RideForm({
   };
 
   return (
-    <>
-      <div className="m-auto flex w-auto flex-col items-center justify-center bg-[var(--purple-g3)]">
+    <form onSubmit={handleClick} className="m-2 ">
+      <div className="m-auto flex w-auto rounded-lg flex-col items-center justify-center bg-[var(--purple-g3)]">
         {/* First step of the form -> Departure & Destination */}
         <div className="my-8 border-2 border-[var(--purple-g1)]">
           {/* Set up departure */}
-          <div className=" m-2 flex flex-col border-b-2 border-[var(--pink-g1)] p-2 sm:flex-row sm:items-center">
+          <div className=" m-2 flex flex-col border-b-2 border-[var(--purple-g1)] p-2 sm:flex-row sm:items-center">
             <label
               htmlFor="departure"
-              className="mb-1 mr-4 text-xl text-[var(--pink-g1)] md:text-2xl"
+              className="mb-1 mr-4 text-xl text-white md:text-2xl"
             >
               D'où partez-vous ?
             </label>
@@ -287,7 +312,7 @@ export default function RideForm({
                 my-2 
                 w-[75%] 
                 border-2
-                border-[var(--purple-g1)] bg-[var(--purple-g3)]
+                border-[var(--pink-g1)] bg-[var(--purple-g3)]
                 p-2
                 text-xl
                 text-white 
@@ -296,11 +321,11 @@ export default function RideForm({
             />
           </div>
           {/* Set up destination */}
-          <div className="m-1 flex flex-col border-b-2 border-[var(--pink-g1)] p-2">
+          <div className="m-1 flex flex-col border-b-2 border-[var(--purple-g1)] p-2">
             {/* Input & Dropdown to select school */}
             <div className="m-0 p-2 ">
-              <p className="text-[1.25rem] text-[var(--pink-g1)]">
-                Où vous rendez-vous ?
+              <p className="text-[1.25rem] text-white">
+                Où allez-vous ?
               </p>
               {schoolInDropdown ? (
                 <Dropdown
@@ -380,7 +405,7 @@ export default function RideForm({
               {schoolInDropdown ? (
                 <>
                   <Button
-                    className="cursor-pointer border-gray-600 hover:border-b-2"
+                    className="cursor-pointer border-b-2 border-[var(--purple-g3)] hover:border-gray-600"
                     onClick={() => setSchoolInDropdown(false)}
                   >
                     Vous ne trouvez pas le vôtre ?
@@ -399,22 +424,22 @@ export default function RideForm({
             </div>
           </div>
           {/* Set up date & time */}
-          <div className="m-2 flex flex-col border-b-2 border-[var(--pink-g1)] p-2">
+          <div className="m-2 flex flex-col border-b-2 border-[var(--purple-g1)] p-2">
             <div className="mb-2 flex cursor-pointer flex-row items-center">
               <label
                 htmlFor="destination"
-                className="mb-1 mr-4 text-xl text-[var(--pink-g1)] md:text-2xl"
+                className="mb-1 mr-4 text-xl text-white md:text-2xl"
               >
                 Quand partez-vous ?
               </label>
               {/* ---------------------------------------------- Icon infos -------------------------------------------- */}
               <Infos
-                wIcon={25}
-                hIcon={25}
+                wIcon={15}
+                hIcon={15}
                 handleInfos={() =>
                   alert(
-                    "Attention : L'heure que vous entrez correspondra à l'heure où vous devrez avoir ramassé le dernier passager \n" +
-                      "L'heure réelle de démarrage sera calculée en fonction des passagers et de la distance à parcourir jusque l'établissement.",
+                    "ATTENTION : Entrez une heure de départ qui vous permettra d'arriver à l'heure à votre destination. \n" +
+                    "Ex. Si le temps de trajet est de 30 minutes, prévoyez de partir 1h avant l'heure de début de cours. \n"
                   )
                 }
               />
@@ -447,8 +472,8 @@ export default function RideForm({
             />
           </div>
           {/* Defines maximum number of booking */}
-          <div className="my-4 ml-4 w-[90%] border-b-2 border-[var(--pink-g1)] pb-4">
-            <div className="mb-3 flex flex-row items-center text-[1.25rem] text-[var(--pink-g1)]">
+          <div className="my-4 ml-4 w-[90%] border-b-2 border-[var(--purple-g1)] pb-4">
+            <div className="mb-3 flex flex-row items-center text-[1.25rem] text-white">
               Combien avez-vous de places disponibles ?
               <p className="ml-4 rounded-full border-2 bg-white p-1 text-gray-600">
                 {maxBooking ?? ride?.maxPassengers}
@@ -465,40 +490,42 @@ export default function RideForm({
               }}
             />
           </div>
-          <div className="my-4 ml-4 w-[90%] border-b-2 border-[var(--pink-g1)] pb-4">
-            <div className="mb-3 flex flex-row items-center text-[1.25rem] text-[var(--pink-g1)]">
-              Quel détour êtes-vous prêt à parcourir pour aller chercher un passager ?
+          <div className="my-2 ml-4 w-[90%] border-b-2 border-[var(--purple-g1)] pb-4">
+            <div className="m-2 text-left flex flex-row items-start text-[1.25rem] text-white">
+              Indiquez la distance que vous ne souhaitez pas dépasser 
+              {/* -------------------------------------------------------------------------------------------------  */}
+              <p className="ml-4 rounded-full border-2 bg-white p-1 text-center text-[1.25rem] text-gray-600 mr-2">
+                {maxDistance}
+                <span className="ml-1 text-base">Kms</span>
+              </p>
               {/* ---------------------------------------------- Icon infos --------------------------------------------  */}
               <Infos
-                wIcon={25}
-                hIcon={25}
+                wIcon={15}
+                hIcon={15}
                 handleInfos={() =>
                   alert(
-                    "Attention : La distance affichée correspond à la distance que vous acceptez de parcourir pour UN passager. \n" +
-                      "Il est primordial que vous puissiez respecter votre engagement auprès de vos passagers. Veillez donc à sélectionner \n" +
-                      "une distance qui vous convient ! Noter que la distance est en 'kilomètres (Kms)' \n" +
-                      "Les utilisateurs qui rentrent dans les conditions pourront souscrire directement à votre trajet.",
+                    ""+
+                      "ATTENTION : Indiquez une distance que vous pourrez assumer ! \n" +
+                      "Ne pas respecter les conditions peut entrainer une interdiction de poster un trajet.",
                   )
                 }
               />
-              {/* -------------------------------------------------------------------------------------------------  */}
-              <p className="ml-4 rounded-full border-2 bg-white p-1 text-center text-[1.25rem] text-gray-600">
-                {maxDistance}
-              </p>
             </div>
-            <input
-              type="range"
-              min={1}
-              max={70}
-              value={maxDistance}
-              className="ds-range ds-range-accent"
-              onChange={function (e: ChangeEvent<HTMLInputElement>): void {
-                setMaxDistance(e.target.valueAsNumber);
-              }}
-            />
-          </div>
+            <div className="flex flex-col">
+                <input
+                  type="range"
+                  min={1}
+                  max={100}
+                  value={maxDistance}
+                  className="ds-range ds-range-accent"
+                  onChange={function (e: ChangeEvent<HTMLInputElement>): void {
+                    setMaxDistance(e.target.valueAsNumber);
+                  }}
+                />
+              </div>
+            </div>
           <div>
-              <div className="relative left-2 mx-2 w-[90%] border-2 border-[var(--pink-g1)] p-2 border-b-2 border-[var(--pink-g1)] mb-4">
+              <div className="relative left-2 mx-2 w-[90%] border-2 border-[var(--pink-g1)] p-2 border-b-2 border-[var(--purple-g1)] mb-4">
                 <p className="m-2 text-[20px] text-white">
                   A quelle heure devez-vous être en cours ?
                 </p>
@@ -591,7 +618,6 @@ export default function RideForm({
           <Button
             type="submit"
             className={`${MuiStyle.MuiButtonText} w-max`}
-            onClick={handleClick}
           >
             {" "}
             Enregistrer les modifications{" "}
@@ -600,7 +626,6 @@ export default function RideForm({
           <Button
             type="submit"
             className={`${MuiStyle.MuiButtonText} w-max`}
-            onClick={handleClick}
           >
             {" "}
             Publier le trajet{" "}
@@ -617,6 +642,6 @@ export default function RideForm({
           Annuler
         </Button>
       </div>
-    </>
+    </form>
   );
 }

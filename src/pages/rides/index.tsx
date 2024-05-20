@@ -34,6 +34,7 @@ const AllRides: React.FC = () => {
   const { data: rideList } = api.ride.rideList.useQuery(undefined, {
     enabled: sessionData?.user !== undefined,
   });
+  
 
   // Used to display the list of rides or the map
   const [checked, setChecked] = useState(false);
@@ -41,6 +42,9 @@ const AllRides: React.FC = () => {
   const handleCheck = () => {
     setChecked(!checked);
   };
+
+
+
   
   // Access the map object
   const mapRef = useMap();
@@ -59,20 +63,20 @@ const AllRides: React.FC = () => {
       <LayoutMain>
         <div className="bg-[var(--purple-g3)]">
           <div className="mt-2 flex flex-col items-center">
-            <div className="border-b-t-2 border-0 border-white">
+            <div className="border-b-t-2 flex flex-row border-0 border-white">
               <div
                 className="mx-12 mb-4 rounded-[5%] border-y-2 border-fuchsia-700 
                            bg-[var(--purple-g3)] p-4 text-center text-xl text-fuchsia-700 md:text-2xl"
               >
                 <p>Trouver un trajet</p>
               </div>
-              <div className="col-span-1 flex items-center justify-center">
-                <p className="m-4 rounded-full border-2 border-white px-4 py-2 text-base text-white">
-                  <label htmlFor="SliderDsiplay" className="mx-2">
-                    Type d'affichage : {checked ? "Carte" : "Liste" }
-                  </label>
+              <div className="col-span-1 right-1 w-max bottom-5 absolute  flex items-center justify-center">
+                <div className="m-4 rounded-full z-1 my-auto px-4 py-2 text-base text-white">
                   <Slider check={handleCheck} checked={checked} />
-                </p>
+                  <div className={`mx-2 absolute -top-3  ${!checked ? "text-[var(--pink-g1)] font-bold" : "text-white"}`}>
+                    {checked ? "Carte" : "Liste"}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -92,7 +96,7 @@ const AllRides: React.FC = () => {
             <Button
               onClick={() => (window.location.href = "/rides/create")}
               className="col-span-1 w-max rounded-full border-2 
-                                           border-[var(--pink-g1)] bg-[var(--purple-g3)] px-3 py-2 text-base text-white hover:bg-[var(--pink-g1)]"
+                        border-[var(--pink-g1)] bg-[var(--purple-g3)] px-3 py-2 text-base text-white hover:bg-[var(--pink-g1)]"
             >
               Proposer un trajet
             </Button>
@@ -100,7 +104,7 @@ const AllRides: React.FC = () => {
           {/* ------------------------------------- display list --------------------------------------------- */}
           {!checked && (
             <>
-              <div className="h-box m-6 w-auto border-fuchsia-700 bg-white text-fuchsia-700">
+              <div className="h-box my-4 w-auto border-fuchsia-700 bg-white text-fuchsia-700">
                 {rideList?.map((ride) => (
                   <RideCard
                     key={ride.id}
