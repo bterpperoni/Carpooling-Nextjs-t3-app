@@ -196,17 +196,10 @@ export default function currentRide() {
           Trajets en cours
         </h2>
       </div>
-      <div className="text-center">
-        <div className="text-lg flex flex-col text-white mb-4">
-          <div className="text-left ml-4"><span className="text-[var(--pink-g1)]">Départ prévu à </span>{currentRide?.departureDateTime.toLocaleTimeString()}</div>
-          <div className="text-left ml-4"><span className="text-[var(--pink-g1)]">Arrivée vers</span> {currentRide?.arrivalDateTime.toLocaleTimeString()}</div>
-        </div>
-
-      </div>
       <div className="m-2 min-h-screen w-max-full rounded-lg bg-[var(--purple-g3)]">
         <h2 className=" w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl">
           {" "}
-          Passagers{" "}
+          Status du(des) passager(s){" "}
         </h2>
         <div className="">
           {passengers?.map((passenger) => (
@@ -315,7 +308,9 @@ export default function currentRide() {
           {" "}
           Détails du trajet{" "}
         </h2>
-          <div className="mb-4">
+        <div className="mb-4 cursor-pointer" onClick={() => setIsCheckedBooking(!isCheckedBooking)}>
+          {isCheckedBooking ? (
+            <div className="">
             {stb?.map((booking) => (
               <CalendarCardDetail
                 key={booking.sortedId}
@@ -324,12 +319,21 @@ export default function currentRide() {
                 isDestination={false}
               />
             ))}
-           <CalendarCardDetail
+          <CalendarCardDetail
               address={stb?.[stb.length-1]?.to ?? currentRide?.destination}
               time={stb?.[stb.length-1]?.date.arrivalDateTime ?? undefined}
               isDestination={true}
-           />
-           </div>
+          />
+          </div>
+          ):(
+            <CalendarCardDetail
+              address={undefined}
+              time={undefined}
+              isDestination={true}
+          />
+          )}
+        </div>
+          
           <Map zoom={10} onMapLoad={async () => {
             if (currentRide) {
               if (checkedBookings) {
