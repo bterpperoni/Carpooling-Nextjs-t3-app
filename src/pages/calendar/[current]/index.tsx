@@ -281,6 +281,7 @@ export default function currentRide() {
                                   // Update the passenger status to checked
                                   updateStatusToCompleted({ bookingId: passenger.id });
                                   console.log("Booking: ", passenger);
+                                  window.location.assign(`/calendar/`);
                                 }
                                 }>
                                 <GiConfirmed
