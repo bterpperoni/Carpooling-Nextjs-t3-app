@@ -18,12 +18,10 @@ import Map from "$/lib/components/map/Map";
 import type { BookingInformationsProps, Notification, OrderBookingProps, SortedBookingProps } from "$/lib/types/types";
 import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
 import { usePusher } from "$/context/pusherContext";
-import { calculateDistance, getPolylines, setPolylines } from "$/hook/distanceMatrix";
+import { getPolylines } from "$/hook/distanceMatrix";
 import { useMap } from "$/context/mapContext";
 import { GiConfirmed, GiCancel } from "react-icons/gi";
 import { getCampusNameWithAddress } from "$/utils/data/school";
-import { resolve } from "path";
-import { data } from '../../../utils/data/school';
 
 
 export default function currentRide() {
@@ -48,6 +46,8 @@ export default function currentRide() {
     { rideId: parseInt(rideId) ?? 0 },
     { enabled: sessionData?.user !== undefined },
   );
+
+  
 
   // Fetch all checked bookings for the current ride
   const { data: checkedBookings } = api.booking.bookingCheckedByRideId.useQuery(
@@ -208,9 +208,9 @@ export default function currentRide() {
         <div className="">
           {passengers?.map((passenger) => (
             <div key={passenger.id} className="flex flex-row p-2">
-              <div className={`flex flex-row ${passenger.status === BookingStatus.CHECKED ? "bg-green-500" : "bg-red-500"} my-auto border-2 p-1 rounded-lg w-max`}>
+              <div className={`flex flex-row ${passenger.status === BookingStatus.CHECKED || passenger.status === BookingStatus.COMPLETED ? "bg-green-500" : "bg-red-500"} my-auto border-2 p-1 rounded-lg w-max`}>
                 {/*  */}
-                {passenger.status === BookingStatus.CHECKED ? (
+                {passenger.status === BookingStatus.CHECKED || passenger.status === BookingStatus.COMPLETED ? (
                   <GiConfirmed
                   className="text-[2rem] rounded-full bg-green-500 text-white"
                   />
@@ -226,7 +226,7 @@ export default function currentRide() {
                   `}
               >
                 <div className="pl-2 flex items-center flex-row md:flex-col">
-                  <div className={`flex flex-row ${passenger.status === BookingStatus.CHECKED ? "border-green-500" : "border-red-500"} border-2 p-2 rounded-lg w-max py-2`}>
+                  <div className={`flex flex-row ${passenger.status === BookingStatus.CHECKED || passenger.status === BookingStatus.COMPLETED ? "border-green-500" : "border-red-500"} border-2 p-2 rounded-lg w-max py-2`}>
                     <img
                       src={passenger.userPassenger.image ?? "/images/logo.png"}
                       alt="profil pic of the passenger"
@@ -251,7 +251,7 @@ export default function currentRide() {
                   {isPassengerSession && userBooking?.userId === passenger.userId ? (
                     <div>
                       <div>
-                        {userBooking.status !== BookingStatus.CHECKED ? (
+                        {userBooking.status == BookingStatus.CREATED || userBooking.status == BookingStatus.UPDATED ? (
                           <div className="flex w-full flex-row items-center justify-between">
                             <div 
                               className="flex ml-4 w-full justify-end hover:transform hover:bg-red-700 hover:border-red-700 hover:text-white cursor-pointer
@@ -270,30 +270,32 @@ export default function currentRide() {
                             </div>
                           </div>
                         ):
-                        (null)}
+                        (null)
+                        }
                       </div>
                       {passenger.status === BookingStatus.CHECKED ? (
                         <div className="">
-                        <div 
-                              className="flex mx-2 w-full justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
+                          <div
+                            className="flex mx-2 w-full justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
                                           cursor-pointer pr-max px-2 flex flex-row itmes-center text-white py-1 rounded-lg bg-green-500"
-                               onClick={async () => {
-                                  // Update the passenger status to checked
-                                  updateStatusToCompleted({ bookingId: passenger.id });
-                                  console.log("Booking: ", passenger);
-                                  window.location.assign(`/calendar/`);
-                                }
-                                }>
-                                <GiConfirmed
-                                className="text-[2rem] p-1  rounded-full bg-green-500 text-white"
-                                />
-                                <div className="my-auto mx-auto">
-                                  Terminer
-                                </div>
+                            onClick={async () => {
+                              // Update the passenger status to checked
+                              updateStatusToCompleted({ bookingId: passenger.id });
+                              console.log("Booking: ", passenger);
+                              window.location.assign(`/`);
+                            }
+                            }>
+                            <GiConfirmed
+                              className="text-[2rem] p-1  rounded-full bg-green-500 text-white"
+                            />
+                            <div className="my-auto mx-auto">
+                              Terminer
                             </div>
+                          </div>
                         </div>
-                      ):
-                      (null)}
+                      ) :
+                      (null)
+                      }
                     </div>
                   ) : ( null)}
                 </div>

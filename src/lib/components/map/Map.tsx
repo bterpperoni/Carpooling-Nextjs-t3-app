@@ -57,7 +57,6 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad  }) => {
         center: center ?? position,
         zoom: zoom ?? 12,
         clickableIcons: true,
-        mapId: `map-${(Math.random() * 999).toFixed(0)}`,
         styles: customGoogleMap
       });
       // Set the map object in the context
