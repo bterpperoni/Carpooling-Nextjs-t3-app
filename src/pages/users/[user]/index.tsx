@@ -8,11 +8,13 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
-import Dropdown from '../../../lib/components/dropdown/Dropdown';
+import Dropdown from '$/lib/components/dropdown/Dropdown';
 import { data } from "$/utils/data/school";
 import Button from "$/lib/components/button/Button";
 import { UserRole } from "@prisma/client";
-
+import { Loader } from "@googlemaps/js-api-loader";
+import Error from "next/error";
+import Autocomplete from "react-google-autocomplete";
 
 export default function User() {
   // Get user id from url 
@@ -26,15 +28,48 @@ export default function User() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState<string>('');
   const [editedEmail, setEditedEmail] = useState<string>('');
+  const [editedAddress, setEditedAddress] = useState<string>('');
+
+  // Load the Google Maps API
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  // Load the Google Maps API when the component is mounted
+  useEffect(() => {
+    if (!apiKey) throw new Error({ title: "API key is not defined", statusCode: 404 });
+
+    // Initialize the loader of the Google Maps API
+    const loader = new Loader({
+      apiKey: apiKey,
+      version: "weekly",
+      region: "BE",
+      retries: 3,
+      language: "fr"
+    });
+
+    void loader.importLibrary("places").then((google) => {
+      if(google === null) throw new Error({ title: "Google Places API not loaded", statusCode: 404 });
+      setIsLoaded(true);
+    });
+  });
+
+   // Options for autocomplete
+   const options = {
+    componentRestrictions: { country: "be" },
+    strictBounds: false,
+    types: ["address"],
+  };
 
   // Update user state
   const { data: updatedUser, mutate: updateUser } = api.user.update.useMutation();
   // Enable edit mode & set user data from form fields 
   const handleEditClick = () => {
     setIsEditing(true);
-    if(user?.name && user?.email) {
+    if(user?.name && user?.email && user?.address) {
       setEditedName(user.name);
       setEditedEmail(user.email);
+      setEditedAddress(user.address);
     }
   };
   // Save user data & disable edit mode
@@ -43,7 +78,8 @@ export default function User() {
     updateUser({
       id: user?.id ?? '',
       name: editedName ,
-      email: editedEmail
+      email: editedEmail,
+      address: editedAddress,
     });
     setIsEditing(false);
   };
@@ -110,6 +146,12 @@ export default function User() {
                             {editedEmail ? editedEmail : user.email}
                           </div>
                         </div>
+                        <div className="mt-4 flex flex-col items-center">
+                          <label htmlFor="address" className="w-full text-center border-b-2 text-xl md:text-2xl text-black">Email :</label>
+                          <div id="address" className="mt-1">
+                            {editedAddress ? editedAddress : user.address}
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <>
@@ -129,6 +171,27 @@ export default function User() {
                           placeholder="Votre email"
                           classInput="mt-2"
                         />
+                        {isLoaded && (
+                          <Autocomplete
+                          defaultValue={user.address ?? ''}
+                          apiKey={apiKey}
+                          options={options}
+                          onPlaceSelected={(place) => {
+                            if(place.formatted_address !== undefined)
+                            setEditedAddress(place.formatted_address);
+                            console.log("Destination: ", place);
+                          }}
+                          className="my-2 
+                                    w-[75%] 
+                                    border-2
+                                    border-[var(--purple-g1)] bg-[var(--purple-g3)]
+                                    p-2
+                                    text-xl 
+                                    text-white 
+                                    md:w-[75%] md:text-2xl"
+                          id="destination"
+                        />
+                    )}
                       </>
                     )}
                     </div>

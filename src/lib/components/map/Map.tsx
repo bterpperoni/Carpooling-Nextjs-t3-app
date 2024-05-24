@@ -7,12 +7,6 @@ import { useMap } from "$/context/mapContext";
 import type { Ride } from "@prisma/client";
 import { customGoogleMap } from "$/styles/customGoogleMaps";
 
-declare global {
-  interface Window {
-    initMap: () => void;
-  }
-}
-
 type MapProps = {
   center?: google.maps.LatLngLiteral;
   zoom?: number;

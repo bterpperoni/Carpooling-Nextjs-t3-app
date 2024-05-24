@@ -5,13 +5,15 @@
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import Slider from "$/lib/components/button/Slider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import RideCard from "$/lib/components/containers/rides/RideCard";
 import { useRouter } from "next/router";
 import Button from "$/lib/components/button/Button";
 import { useMap } from "$/context/mapContext";
+import { geocode } from "$/hook/geocoding";
+import Loading from "$/lib/components/error/Loading";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display all rides -----------------------------------------------------------------------
@@ -46,19 +48,19 @@ const AllRides: React.FC = () => {
   };
   
 
-      // loader.importLibrary("marker").then(({ AdvancedMarkerElement }) => {
-    //   // The marker, positioned at
-    //   new AdvancedMarkerElement({
-    //     position: position,
-    //     map: map,
-    //     title: `Trajet n°${ride?.id}`
-    //   });
-    // });
+
+
+
 
   
   // Access the map object
   const mapRef = useMap();
 
+  if(sessionData?.user.address === undefined) return (
+    <LayoutMain>
+      <Loading />
+    </LayoutMain>
+  );
   return (
     <>
       <LayoutMain>
@@ -102,7 +104,8 @@ const AllRides: React.FC = () => {
           {!checked && (
             <>
               <div className="h-box my-4 w-auto border-fuchsia-700 bg-white text-fuchsia-700">
-                {rideList?.map((ride) => (
+                {
+                rideList?.map((ride) => (
                   <RideCard
                     key={ride.id}
                     ride={ride}

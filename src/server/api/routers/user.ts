@@ -53,7 +53,8 @@ export const userRouter = createTRPCRouter({
       { 
         id: z.string(), 
         name: z.string(), 
-        email: z.string().email().nullable(),     
+        email: z.string().email().nullable(),  
+        address: z.string().nullable(),   
       }))
     .mutation(async ({ ctx, input }) => {
       // simulate a slow db call
@@ -64,6 +65,7 @@ export const userRouter = createTRPCRouter({
         data: {
           name: input.name,
           email: input.email,
+          address: input.address,
         },
       });
     }),

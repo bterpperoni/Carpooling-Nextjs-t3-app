@@ -55,9 +55,8 @@ model User {
   image              String?
   birthDate          DateTime?
   address            String?
-  locality           String?
-  zip                Int?
   campus             String?
+  phone              String?
   role               UserRole      @default(USER) 
   rating             Int           @default(0)
   accounts           Account[]
