@@ -158,6 +158,7 @@ export default function currentRide() {
   }
     , [currentRide]);
 
+    console.log("Current ride: ", completedBookings);
 
   ///
 
@@ -168,6 +169,7 @@ export default function currentRide() {
   const sortedBookings: SortedBookingProps[] = []; 
 
   const [stb, setStb] = useState<SortedBookingProps[] | undefined>();
+  console.log("Checked bookings: ", completedBookings?.length, sortedBookings?.length)
 
   ///
   useEffect(() => {
@@ -308,7 +310,7 @@ export default function currentRide() {
               </div>
             </div>
           ))}
-          {completedBookings?.length === passengers?.length && !isPassengerSession ? (
+          {(completedBookings?.length ?? 1) > sortedBookings.length && !isPassengerSession ? (
           <div className="flex flex-col items-center my-2 justify-center">
             <div
               className="flex w-max justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
