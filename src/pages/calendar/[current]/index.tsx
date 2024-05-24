@@ -86,6 +86,12 @@ export default function currentRide() {
   const pusher = usePusher();
 
   useEffect(() => {
+    if(updatedStatusCompleted){
+      void window.location.assign('/calendar/');
+    }
+}, [updatedStatusCompleted]);
+
+  useEffect(() => {
     if (sessionData && isPassengerSession === false) {
       // Subscribe to the channel related the current driver
       const channel = pusher.subscribe(`driver-channel-${sessionData.user.id}`);
@@ -124,7 +130,7 @@ export default function currentRide() {
         read: false,
       });
       setTimeout(() => {
-        window.location.assign(`/calendar/${rideId}`); 
+        window.location.reload(); 
       }, 1000);
     }
   }
@@ -201,30 +207,9 @@ export default function currentRide() {
         <h2 className="mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
           Trajets en cours
         </h2>
-        {completedBookings?.length === passengers?.length && !isPassengerSession ? (
-          <div className="flex flex-col items-center">
-            <div
-              className="flex ml-4 w-full justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
-                                          cursor pointer pr-max px-2 flex flex-row itmes-center text-white py-1 rounded-lg bg-green-500"
-              onClick={() => startTransition(() => {
-                    updateRideStatus({ id: parseInt(rideId) });   
-                    window.location.assign("/calendar");             
-                }
-            )}
-              >
-              <GiConfirmed
-                className="text-[2rem] p-1  rounded-full bg-green-500 text-white"
-              />
-              <div className="my-auto">
-                Marquer comme terminé
-              </div>
-              {isPending && <Loader />}
-            </div>
-          </div>
-            ):(null)}
       </div>
       <div className="m-2 min-h-screen w-max-full rounded-lg bg-[var(--purple-g3)]">
-        <h2 className=" w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl">
+        <h2 className="mb-2 w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl">
           {" "}
           Passager(s){" "}
         </h2>
@@ -323,6 +308,27 @@ export default function currentRide() {
               </div>
             </div>
           ))}
+          {completedBookings?.length === passengers?.length && !isPassengerSession ? (
+          <div className="flex flex-col items-center my-2 justify-center">
+            <div
+              className="flex w-max justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
+                                          cursor pointer pr-max px-2 flex flex-row itmes-center text-white py-1 rounded-lg bg-green-500"
+              onClick={() => startTransition(() => {
+                    updateRideStatus({ id: parseInt(rideId) });   
+                    window.location.assign("/calendar");             
+                }
+            )}
+              >
+              <GiConfirmed
+                className="text-[2rem] p-1  rounded-full bg-green-500 text-white"
+              />
+              <div className="my-auto mb-2 text-left">
+                Marquer comme terminé
+              </div>
+              {isPending && <Loader />}
+            </div>
+          </div>
+            ):(null)}
         </div>
 
         {/* 

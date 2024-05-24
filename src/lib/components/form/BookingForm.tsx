@@ -1,3 +1,4 @@
+'use  server';
 import { useApiKey } from "$/context/apiContext";
 import Autocomplete from "react-google-autocomplete";
 import { useSession } from "next-auth/react";
