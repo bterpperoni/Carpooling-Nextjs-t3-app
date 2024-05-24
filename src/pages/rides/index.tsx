@@ -5,7 +5,7 @@
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import Slider from "$/lib/components/button/Slider";
-import { useEffect, useState } from "react";
+import { useState, useTransition } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import RideCard from "$/lib/components/containers/rides/RideCard";
@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import Button from "$/lib/components/button/Button";
 import { useMap } from "$/context/mapContext";
 import { geocode } from "$/hook/geocoding";
-import Loading from "$/lib/components/error/Loading";
+import Loading from "$/lib/components/error/Loader";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display all rides -----------------------------------------------------------------------
@@ -38,7 +38,7 @@ const AllRides: React.FC = () => {
   });
 
   const [filterValue, setFilterValue] = useState("all");
-  
+
 
   // Used to display the list of rides or the map
   const [checked, setChecked] = useState(true);
@@ -46,83 +46,77 @@ const AllRides: React.FC = () => {
   const handleCheck = () => {
     setChecked(!checked);
   };
-  
 
+  const [isPending, startTransition] = useTransition();
 
-
-
-
-  
   // Access the map object
   const mapRef = useMap();
 
-  if(sessionData?.user.address === undefined) return (
+  if (sessionData !== undefined) return (
     <LayoutMain>
-      <Loading />
-    </LayoutMain>
-  );
-  return (
-    <>
-      <LayoutMain>
-        <div className="bg-[var(--purple-g3)]">
-          <div className="mt-2 flex flex-col items-center">
-            <div className="border-b-t-2 flex flex-row border-0 border-white">
-              <div
-                className="mx-12 mb-4 rounded-[5%] border-y-2 border-fuchsia-700 
+      {isPending ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="bg-[var(--purple-g3)]">
+            <div className="mt-2 flex flex-col items-center">
+              <div className="border-b-t-2 flex flex-row border-0 border-white">
+                <div
+                  className="mx-12 mb-4 rounded-[5%] border-y-2 border-fuchsia-700 
                            bg-[var(--pink-g1)] p-4 text-center text-xl text-white md:text-2xl"
-              >
-                <p>Trouver un trajet</p>
-              </div>
-              <div className="bg-[var(--purple-g3)] rounded-full col-span-1 p-1  right-1 w-max bottom-5 fixed  flex items-center justify-center">    
+                >
+                  <p>Trouver un trajet</p>
+                </div>
+                <div className="bg-[var(--purple-g3)] rounded-full col-span-1 p-1  right-1 w-max bottom-5 fixed  flex items-center justify-center">
                   <Slider textLbl={checked ? "Carte" : "Liste"} check={handleCheck} checked={checked} />
-               
+
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="block flex-col">
-          <div className="m-2 grid grid-flow-col grid-cols-2 items-center justify-items-center gap-12">
-            <div className="col-span-1 ml-6">
-              <span className="mr-2 text-sm text-xl text-fuchsia-700">
-                Filtres
-              </span>
-              <select className="rounded-md border px-3 py-2" onChange={(option) => console.log('option : ', option.target.value)}>
-                <option value="all">Tout</option>
-                <option value="active">Destinations</option>
-                <option value="inactive">Départs</option>
-              </select>
-            </div>
-            <Button
-              onClick={() => (window.location.href = "/rides/create")}
-              className="col-span-1 w-max rounded-full border-2 
+          <div className="block flex-col">
+            <div className="m-2 grid grid-flow-col grid-cols-2 items-center justify-items-center gap-12">
+              <div className="col-span-1 ml-6">
+                <span className="mr-2 text-sm text-xl text-fuchsia-700">
+                  Filtres
+                </span>
+                <select className="rounded-md border px-3 py-2" onChange={(option) => console.log('option : ', option.target.value)}>
+                  <option value="all">Tout</option>
+                  <option value="active">Destinations</option>
+                  <option value="inactive">Départs</option>
+                </select>
+              </div>
+              <Button
+                onClick={() => (window.location.href = "/rides/create")}
+                className="col-span-1 w-max rounded-full border-2 
                         border-[var(--pink-g1)] bg-[var(--purple-g3)] px-3 py-2 text-base text-white hover:bg-[var(--pink-g1)]"
-            >
-              Proposer un trajet
-            </Button>
-          </div>
-          {/* ------------------------------------- display list --------------------------------------------- */}
-          {!checked && (
-            <>
-              <div className="h-box my-4 w-auto border-fuchsia-700 bg-white text-fuchsia-700">
-                {
-                rideList?.map((ride) => (
-                  <RideCard
-                    key={ride.id}
-                    ride={ride}
-                    driver={ride.driver.name}
-                    driverImg={ride.driver.image ?? "/avatar.png"}
-                    goToRide={() => handleClick(ride.id)}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-          {/* -------------------------------------- display map ---------------------------------------------- */}
-          {checked && (
-            <>
-              <Map
-                center={center}
-                onMapLoad={() => {
+              >
+                Proposer un trajet
+              </Button>
+            </div>
+            {/* ------------------------------------- display list --------------------------------------------- */}
+            {!checked && (
+              <>
+                <div className="h-box my-4 w-auto border-fuchsia-700 bg-white text-fuchsia-700">
+                  {
+                    rideList?.map((ride) => (
+                      <RideCard
+                        key={ride.id}
+                        ride={ride}
+                        driver={ride.driver.name}
+                        driverImg={ride.driver.image ?? "/avatar.png"}
+                        goToRide={() => startTransition(() => handleClick(ride.id))}
+                      />
+                    ))}
+                </div>
+              </>
+            )}
+            {/* -------------------------------------- display map ---------------------------------------------- */}
+            {checked && (
+              <>
+                <Map
+                  center={center}
+                  onMapLoad={() => {
                     // The marker, positioned at
                     rideList?.map((ride) => {
                       const marker = new google.maps.Marker({
@@ -134,21 +128,22 @@ const AllRides: React.FC = () => {
                           fillColor: "yellow",
                           fillOpacity: 1,
                           strokeWeight: 2,
-                          strokeColor:  "black"
+                          strokeColor: "black"
                         },
                         title: `${ride.driver.name} - Départ : ${ride.departure}`,
                         clickable: true
                       });
                       marker.addListener("click", () => handleClick(ride.id));
                     });
-                }}
-              >
-              </Map>
-            </>
-          )}
-        </div>
-      </LayoutMain>
-    </>
+                  }}
+                >
+                </Map>
+              </>
+            )}
+          </div>
+        </>
+      )}
+    </LayoutMain>
   );
 };
 

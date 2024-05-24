@@ -1,6 +1,4 @@
-import React from "react";
-
-const Loading: React.FC = () => {
+export default function LoaderSPinner(){
   return (
     <div className="flex flex-col space-y-4 h-screen w-screen items-center justify-center">
       <svg
@@ -27,5 +25,3 @@ const Loading: React.FC = () => {
     </div>
   );
 };
-
-export default Loading;

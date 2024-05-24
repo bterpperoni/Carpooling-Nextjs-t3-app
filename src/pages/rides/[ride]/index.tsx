@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { useRouter } from "next/dist/client/router";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { api } from "$/utils/api";
 import Map from "$/lib/components/map/Map";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
@@ -13,7 +13,7 @@ import { useMap } from "$/context/mapContext";
 import { RiEditFill, RiDeleteBin6Fill } from "react-icons/ri";
 import { MdAddBox } from "react-icons/md";
 import { GoMoveToEnd } from "react-icons/go";
-
+import LoaderSpinner from "$/lib/components/error/LoaderSpinner";
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display details of ride ------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------ */
@@ -70,6 +70,8 @@ export default function Detail() {
   // Map options
   const zoom = 13;
 
+
+
 ///
 
   // Redirect to update ride page
@@ -100,17 +102,14 @@ export default function Detail() {
     }
   }, [rideDeleted]);
 
-  if (!ride)
+  if(sessionData)
     return (
-      <div className="m-4 m-6 w-screen text-center text-3xl text-white">
-        ride not found
-      </div>
-    );
-  return (
-    <>
       <LayoutMain>
-        {/* ------------------------------------Card with ride details--------------------------------------------------- */}
-        <>
+        {!ride ? (
+          <LoaderSpinner />
+        ) : (
+          ride && 
+          <>
           <div className="flex flex-col items-center">
               <h2 className=" md:text-4xl 
                                 text-2xl 
@@ -126,7 +125,7 @@ export default function Detail() {
                   Détails du trajet
                 </h2>
             </div>
-          <RideDetail ride={ride} driver={ride.driver.name} imageDriver={ride.driver.image ?? ""}>
+          <RideDetail ride={ride} driver={ride?.driver.name} imageDriver={ride?.driver.image ?? ""}>
             {canEdit ? (
               <>
                 <div className="my-4 flex justify-end">
@@ -146,7 +145,7 @@ export default function Detail() {
               </>
               ) : (
                 <div className="my-4 flex justify-end ">
-                  {userBooking && userBooking.length === 0  ? (
+                  {userBooking && ride?.maxPassengers && userBooking.length === 0  ? (
                     <>
                     {bookings && bookings.length < ride.maxPassengers ? (
                       <div 
@@ -203,7 +202,107 @@ export default function Detail() {
               }}/>
           </RideDetail>
         </>
+        )}
       </LayoutMain>
-    </>
-  );
+    );
+  // return (
+  //   <>
+  //     <LayoutMain>
+  //       {/* ------------------------------------Card with ride details--------------------------------------------------- */}
+  //       <>
+  //         <div className="flex flex-col items-center">
+  //             <h2 className=" md:text-4xl 
+  //                               text-2xl 
+  //                               font-bold 
+  //                               mb-4 mt-4  
+  //                               w-[fit-content]
+  //                               text-center 
+  //                               text-white
+  //                               border-y-2
+  //                               border-fuchsia-700
+  //                               p-4
+  //                               rounded-[12.5%]">
+  //                 Détails du trajet
+  //               </h2>
+  //           </div>
+  //         <RideDetail ride={ride} driver={ride.driver.name} imageDriver={ride.driver.image ?? ""}>
+  //           {canEdit ? (
+  //             <>
+  //               <div className="my-4 flex justify-end">
+  //                 <RiEditFill
+  //                   onClick={handleEditClick}
+  //                   className="h-[2rem] w-[2rem] p-1 hover:border-gray-500 border-2 border-blue-500 mr-2 text-blue-500 hover:text-gray-500 cursor-pointer"
+  //                 >
+  //                   Modifier votre trajet
+  //                 </RiEditFill>
+  //                 <RiDeleteBin6Fill 
+  //                   onClick={handleDelete}
+  //                   className="h-[2rem] w-[2rem] p-1 hover:border-gray-500 border-2 border-red-500 text-red-500 hover:text-gray-500 cursor-pointer"
+  //                 >
+  //                   Supprimer
+  //                 </RiDeleteBin6Fill>
+  //               </div>
+  //             </>
+  //             ) : (
+  //               <div className="my-4 flex justify-end ">
+  //                 {userBooking && userBooking.length === 0  ? (
+  //                   <>
+  //                   {bookings && bookings.length < ride.maxPassengers ? (
+  //                     <div 
+  //                       className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
+  //                       onClick={() =>
+  //                           window.location.assign(`/rides/${id as string}/bookings/create`)
+  //                         }
+  //                     >
+  //                       <MdAddBox
+  //                         className="h-[2rem] w-[2rem] p-1 mr-1 "
+  //                       />
+  //                       <span>Réserver</span>
+  //                     </div>
+  //                   ): (
+  //                     <>
+  //                       <MdAddBox
+  //                         className="h-[2rem] w-[2rem]  p-1 mr-1 cursor-not-allowed"
+  //                       />
+  //                       <span className="text-blue-500">Aucune place disponible</span>
+  //                     </>
+  //                   )}
+  //                   </>
+  //                 ) : (
+  //                   <div 
+  //                     className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
+  //                     onClick={() =>
+  //                       window.location.assign(`/rides/${id as string}/bookings/${bookingId}`)
+  //                     }
+  //                     >
+  //                     <span>Voir ma réservation</span>
+  //                     <GoMoveToEnd
+  //                       className="h-[2rem] w-[2rem] p-1 mr-1"
+  //                     />
+  //                   </div>
+  //                 )}
+  //               </div>
+  //             )}
+  //             <Map zoom={zoom} onMapLoad={async () => {
+  //                   setIsMapLoaded(true);
+  //                   if(isMapLoaded){
+  //                     // Create the directions service & renderer
+  //                     const directionsService = new google.maps.DirectionsService();
+  //                     const directionsRenderer = new google.maps.DirectionsRenderer(
+  //                       { map: mapRef.current }
+  //                     );
+  //                     // Display the route
+  //                     void displayRoute(
+  //                       directionsService,
+  //                       directionsRenderer,
+  //                       departureLatLng,
+  //                       destinationLatLng,
+  //                     );
+  //                   }
+  //             }}/>
+  //         </RideDetail>
+  //       </>
+  //     </LayoutMain>
+  //   </>
+  // );
 }

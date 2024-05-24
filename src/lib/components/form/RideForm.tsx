@@ -14,12 +14,13 @@ import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import type { ChangeEvent } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Autocomplete from "react-google-autocomplete";
 import Dropdown from "../dropdown/Dropdown";
 import DateTimeSelect from "./DateTimeSelect";
 import Error from "next/error";
 import { Loader } from "@googlemaps/js-api-loader";
+import Loader1 from "$/lib/components/error/Loader";
 
 
 export default function RideForm({
@@ -33,7 +34,7 @@ export default function RideForm({
 }) {
   const { data: sessionData } = useSession();
   const apiKey = useApiKey();
-
+  const [isPending, startTransition] = useTransition();
   // Address of departure and destination from google autocomplete
   const address: {
     departure: google.maps.places.PlaceResult | null;
@@ -102,7 +103,8 @@ export default function RideForm({
     ride?.maxPassengers ?? 2,
   );
 
-  const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
+  const [isOpenWarningDeparture, setIsOpenWarningDeparture] = useState<boolean>(false);
+  const [isOpenWarningDistance, setIsOpenWarningDistance] = useState<boolean>(false);
 
   // Maximum distance to pick up a passenger
   const [maxDistance, setMaxDistance] = useState<number>(
@@ -297,7 +299,7 @@ export default function RideForm({
 
   return (
     
-    <form onSubmit={handleClick} className="m-2 ">
+    <form onSubmit={(event) => { startTransition(() => handleClick(event))}} className="m-2 ">
       <div className="m-auto flex w-auto rounded-lg flex-col items-center justify-center bg-[var(--purple-g3)]">
         {/* First step of the form -> Departure & Destination */}
         <div className="my-8 border-2 border-[var(--purple-g1)]">
@@ -447,56 +449,65 @@ export default function RideForm({
           </div>
           {/* Set up date & time */}
           <div className="m-2 flex flex-col border-b-2 border-[var(--purple-g1)] p-2">
-            <div className="mb-2 flex cursor-pointer flex-row items-center">
-              <label
-                htmlFor="destination"
-                className="mb-1 mr-4 text-xl text-white md:text-2xl"
-              >
-                Quand partez-vous ?
-              </label>
-              {/* ---------------------------------------------- Icon infos -------------------------------------------- */}
-              <Infos
-                wIcon={15}
-                hIcon={15}
-                handleInfos={() =>
-                  setIsOpenWarning(!isOpenWarning)
-                }
-              />
-              {isOpenWarning && (
-                <div className="fixed card w-96 bg-base-100 shadow-xl image-full">
-                <div className="card-body">
-                    "ATTENTION : Entrez une heure de départ qui vous permettra d'arriver à l'heure à votre destination. \n" +
-                    "Ex. Si le temps de trajet est de 30 minutes, prévoyez de partir 1h avant l'heure de début de cours. \n"
+            <div className="mb-2 flex cursor-pointer flex-col">
+              <div className="flex flex-row items-center">
+                <label
+                  htmlFor="destination"
+                  className="mb-1 mr-4 text-xl text-white md:text-2xl"
+                >
+                  Quand partez-vous ?
+                </label>
+                {/* ---------------------------------------------- Icon infos -------------------------------------------- */}
+                <Infos
+                  wIcon={15}
+                  hIcon={15}
+                  handleInfos={() =>
+                    setIsOpenWarningDeparture(!isOpenWarningDeparture)
+                  }
+                />
+              </div>
+              
+              {isOpenWarningDeparture ? (
+                <div 
+                  className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center"
+                  onClick={() => setIsOpenWarningDeparture(false)}
+                >
+                <div className=" m-4 bg-white p-2 text-black">
+                    Entrez une heure de départ qui vous permettra d'arriver à l'heure à votre destination.
+                    Ex. Si le temps de trajet est de 30 minutes, prévoyez de partir 1h avant l'heure de début de cours.
                 </div>
               </div>
+              ):
+              (
+                <DateTimeSelect
+                  defaultDate={
+                    ride?.departureDateTime?.toDateString()
+                      ? dayjs(ride.departureDateTime?.toDateString())
+                      : null
+                  }
+                  defaultTime={
+                    ride?.departureDateTime?.toDateString()
+                      ? dayjs(ride?.departureDateTime)
+                        .set("hour", ride?.departureDateTime?.getHours())
+                        .set("minute", ride?.departureDateTime?.getMinutes())
+                      : null
+                  }
+                  labelexpTime="H. DE DEPART"
+                  labelexp="DATE DE DEPART"
+                  disableDate={false}
+                  disableTime={false}
+                  handleChangeDate={(date) => {
+                    setDateDeparture(date);
+                  }}
+                  handleChangeTime={(time) => {
+                    setTimeDeparture(time);
+                  }}
+                  justTime={false}
+                />
               )}
               {/* ------------------------------------------------------------------------------------------------- */}
             </div>
-            <DateTimeSelect
-              defaultDate={
-                ride?.departureDateTime?.toDateString()
-                  ? dayjs(ride.departureDateTime?.toDateString())
-                  : null
-              }
-              defaultTime={
-                ride?.departureDateTime?.toDateString()
-                  ? dayjs(ride?.departureDateTime)
-                    .set("hour", ride?.departureDateTime?.getHours())
-                    .set("minute", ride?.departureDateTime?.getMinutes())
-                  : null
-              }
-              labelexpTime="H. DE DEPART"
-              labelexp="DATE DE DEPART"
-              disableDate={false}
-              disableTime={false}
-              handleChangeDate={(date) => {
-                setDateDeparture(date);
-              }}
-              handleChangeTime={(time) => {
-                setTimeDeparture(time);
-              }}
-              justTime={false}
-            />
+            
           </div>
           {/* Defines maximum number of booking */}
           <div className="my-4 ml-4 w-[90%] border-b-2 border-[var(--purple-g1)] pb-4">
@@ -529,14 +540,21 @@ export default function RideForm({
               <Infos
                 wIcon={15}
                 hIcon={15}
-                handleInfos={() =>
-                  alert(
-                    "" +
-                    "ATTENTION : Indiquez une distance que vous pourrez assumer ! \n" +
-                    "Ne pas respecter les conditions peut entrainer une interdiction de poster un trajet.",
-                  )
-                }
+                handleInfos={() => {
+                  setIsOpenWarningDistance(!isOpenWarningDistance);
+                }}
               />
+              {isOpenWarningDistance && (
+              <div 
+                className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center"
+                onClick={() => setIsOpenWarningDistance(false)}
+              >
+                <div className=" m-4 bg-white p-2 text-black">
+                  Indiquez une distance que vous pourrez assumer !
+                  Ne pas respecter les conditions peut entrainer une interdiction de poster un trajet.
+                </div>
+              </div>
+              )}
             </div>
             <div className="flex flex-col">
               <input
@@ -650,6 +668,7 @@ export default function RideForm({
             Enregistrer les modifications{" "}
           </Button>
         ) : (
+          <>
           <Button
             type="submit"
             className={`${MuiStyle.MuiButtonText} w-max`}
@@ -657,7 +676,10 @@ export default function RideForm({
             {" "}
             Publier le trajet{" "}
           </Button>
+          {isPending && <Loader1 />}
+          </>
         )}
+        
         <Button
           className="w-max rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600"
           onClick={() =>

@@ -119,7 +119,7 @@ export default function GroupForm({ group, cancelButtonHandler }:
                                     <label className="text-black text-left mr-2">
                                         Privé
                                     </label>
-                                    <Slider check={handleCheck} checked={isPrivate} />
+                                    <Slider textLbl='' check={handleCheck} checked={isPrivate} />
                                     <label className="text-black text-left ml-2">
                                         Public
                                     </label>
