@@ -102,7 +102,6 @@ export default function Detail() {
     }
   }, [rideDeleted]);
 
-  if(sessionData)
     return (
       <LayoutMain>
         {!ride ? (
@@ -111,17 +110,7 @@ export default function Detail() {
           ride && 
           <>
           <div className="flex flex-col items-center">
-              <h2 className=" md:text-4xl 
-                                text-2xl 
-                                font-bold 
-                                mb-4 mt-4  
-                                w-[fit-content]
-                                text-center 
-                                text-white
-                                border-y-2
-                                border-fuchsia-700
-                                p-4
-                                rounded-[12.5%]">
+              <h2 className=" mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
                   Détails du trajet
                 </h2>
             </div>
@@ -205,104 +194,4 @@ export default function Detail() {
         )}
       </LayoutMain>
     );
-  // return (
-  //   <>
-  //     <LayoutMain>
-  //       {/* ------------------------------------Card with ride details--------------------------------------------------- */}
-  //       <>
-  //         <div className="flex flex-col items-center">
-  //             <h2 className=" md:text-4xl 
-  //                               text-2xl 
-  //                               font-bold 
-  //                               mb-4 mt-4  
-  //                               w-[fit-content]
-  //                               text-center 
-  //                               text-white
-  //                               border-y-2
-  //                               border-fuchsia-700
-  //                               p-4
-  //                               rounded-[12.5%]">
-  //                 Détails du trajet
-  //               </h2>
-  //           </div>
-  //         <RideDetail ride={ride} driver={ride.driver.name} imageDriver={ride.driver.image ?? ""}>
-  //           {canEdit ? (
-  //             <>
-  //               <div className="my-4 flex justify-end">
-  //                 <RiEditFill
-  //                   onClick={handleEditClick}
-  //                   className="h-[2rem] w-[2rem] p-1 hover:border-gray-500 border-2 border-blue-500 mr-2 text-blue-500 hover:text-gray-500 cursor-pointer"
-  //                 >
-  //                   Modifier votre trajet
-  //                 </RiEditFill>
-  //                 <RiDeleteBin6Fill 
-  //                   onClick={handleDelete}
-  //                   className="h-[2rem] w-[2rem] p-1 hover:border-gray-500 border-2 border-red-500 text-red-500 hover:text-gray-500 cursor-pointer"
-  //                 >
-  //                   Supprimer
-  //                 </RiDeleteBin6Fill>
-  //               </div>
-  //             </>
-  //             ) : (
-  //               <div className="my-4 flex justify-end ">
-  //                 {userBooking && userBooking.length === 0  ? (
-  //                   <>
-  //                   {bookings && bookings.length < ride.maxPassengers ? (
-  //                     <div 
-  //                       className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
-  //                       onClick={() =>
-  //                           window.location.assign(`/rides/${id as string}/bookings/create`)
-  //                         }
-  //                     >
-  //                       <MdAddBox
-  //                         className="h-[2rem] w-[2rem] p-1 mr-1 "
-  //                       />
-  //                       <span>Réserver</span>
-  //                     </div>
-  //                   ): (
-  //                     <>
-  //                       <MdAddBox
-  //                         className="h-[2rem] w-[2rem]  p-1 mr-1 cursor-not-allowed"
-  //                       />
-  //                       <span className="text-blue-500">Aucune place disponible</span>
-  //                     </>
-  //                   )}
-  //                   </>
-  //                 ) : (
-  //                   <div 
-  //                     className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
-  //                     onClick={() =>
-  //                       window.location.assign(`/rides/${id as string}/bookings/${bookingId}`)
-  //                     }
-  //                     >
-  //                     <span>Voir ma réservation</span>
-  //                     <GoMoveToEnd
-  //                       className="h-[2rem] w-[2rem] p-1 mr-1"
-  //                     />
-  //                   </div>
-  //                 )}
-  //               </div>
-  //             )}
-  //             <Map zoom={zoom} onMapLoad={async () => {
-  //                   setIsMapLoaded(true);
-  //                   if(isMapLoaded){
-  //                     // Create the directions service & renderer
-  //                     const directionsService = new google.maps.DirectionsService();
-  //                     const directionsRenderer = new google.maps.DirectionsRenderer(
-  //                       { map: mapRef.current }
-  //                     );
-  //                     // Display the route
-  //                     void displayRoute(
-  //                       directionsService,
-  //                       directionsRenderer,
-  //                       departureLatLng,
-  //                       destinationLatLng,
-  //                     );
-  //                   }
-  //             }}/>
-  //         </RideDetail>
-  //       </>
-  //     </LayoutMain>
-  //   </>
-  // );
 }

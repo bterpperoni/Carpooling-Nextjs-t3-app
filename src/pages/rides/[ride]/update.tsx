@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import LoaderSpinner from "$/lib/components/error/LoaderSpinner";
 import UpdateTripForm from "$/lib/components/form/RideForm";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
@@ -20,22 +21,15 @@ export default function UpdateRide() {
     // Get ride by id
     const {data: ride} = api.ride.rideById.useQuery({id: parseInt(rideId as string)}, {enabled: sessionData?.user !== undefined});
 
-    if(!ride) return <div className="text-white m-6 text-3xl m-4 w-screen text-center">ride not found</div>
+    if(!ride) return 
+    <LayoutMain>
+        <LoaderSpinner />
+    </LayoutMain>
     return (
         <LayoutMain>
             {/* ------------------------------------Form to update the ride--------------------------------------------------- */}
             <div className="flex flex-col items-center">
-                <h2 className=" md:text-4xl 
-                                text-2xl 
-                                font-bold 
-                                mb-4 mt-4  
-                                w-[fit-content]
-                                text-center 
-                                text-white
-                                border-y-2
-                                border-fuchsia-700
-                                p-4
-                                rounded-[12.5%]">
+                <h2 className="mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
                     Modifier votre trajet
                 </h2>
                 <UpdateTripForm ride={ride} />

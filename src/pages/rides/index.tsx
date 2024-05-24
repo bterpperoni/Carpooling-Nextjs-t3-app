@@ -37,6 +37,7 @@ const AllRides: React.FC = () => {
     enabled: sessionData?.user !== undefined,
   });
 
+  const userAddress = sessionData?.user?.address;
   const [filterValue, setFilterValue] = useState("all");
 
 
@@ -80,7 +81,7 @@ const AllRides: React.FC = () => {
                 <span className="mr-2 text-sm text-xl text-fuchsia-700">
                   Filtres
                 </span>
-                <select className="rounded-md border px-3 py-2" onChange={(option) => console.log('option : ', option.target.value)}>
+                <select className="rounded-md border px-3 py-2" onChange={(option) => setFilterValue(option.target.value)}>
                   <option value="all">Tout</option>
                   <option value="active">Destinations</option>
                   <option value="inactive">Départs</option>
@@ -119,6 +120,7 @@ const AllRides: React.FC = () => {
                   onMapLoad={() => {
                     // The marker, positioned at
                     rideList?.map((ride) => {
+                      if(filterValue === "all") {
                       const marker = new google.maps.Marker({
                         position: { lat: ride.departureLatitude, lng: ride.departureLongitude },
                         map: mapRef.current,
@@ -134,6 +136,24 @@ const AllRides: React.FC = () => {
                         clickable: true
                       });
                       marker.addListener("click", () => handleClick(ride.id));
+                    }else if(filterValue === "inactive"){
+                      const marker = new google.maps.Marker({
+                        position: { lat: ride.destinationLatitude, lng: ride.destinationLongitude },
+                        map: mapRef.current,
+                        icon: {
+                          path: window.google.maps.SymbolPath.CIRCLE,
+                          scale: 12,
+                          fillColor: "green",
+                          fillOpacity: 1,
+                          strokeWeight: 2,
+                          strokeColor: "black"
+                        },
+                        title: `${ride.driver.name} - Destination : ${ride.destination}`,
+                        clickable: true
+                      });
+                      marker.addListener("click", () => handleClick(ride.id));
+                    }
+                      
                     });
                   }}
                 >

@@ -660,6 +660,7 @@ export default function RideForm({
       <div className="flex flex-col items-center">
         {/* Submit */}
         {ride ? (
+          <div className="flex flex-row items-center">
           <Button
             type="submit"
             className={`${MuiStyle.MuiButtonText} w-max`}
@@ -667,8 +668,10 @@ export default function RideForm({
             {" "}
             Enregistrer les modifications{" "}
           </Button>
+          {isPending && <Loader1 className="mb-2" />}
+          </div>
         ) : (
-          <>
+          <div className="flex flex-row items-center">
           <Button
             type="submit"
             className={`${MuiStyle.MuiButtonText} w-max`}
@@ -676,8 +679,8 @@ export default function RideForm({
             {" "}
             Publier le trajet{" "}
           </Button>
-          {isPending && <Loader1 />}
-          </>
+          {isPending && <Loader1 className="mb-2" />}
+          </div>
         )}
         
         <Button

@@ -15,6 +15,7 @@ import { UserRole } from "@prisma/client";
 import { Loader } from "@googlemaps/js-api-loader";
 import Error from "next/error";
 import Autocomplete from "react-google-autocomplete";
+import LoaderSPinner from '../../../lib/components/error/LoaderSpinner';
 
 export default function User() {
   // Get user id from url 
@@ -142,13 +143,13 @@ export default function User() {
                         </div>
                         <div className="mt-4 flex flex-col items-center">
                           <label htmlFor="email" className="w-full text-center border-b-2 text-xl md:text-2xl text-black">Email :</label>
-                          <div id="email" className="mt-1">
+                          <div id="email" className="mt-3">
                             {editedEmail ? editedEmail : user.email}
                           </div>
                         </div>
                         <div className="mt-4 flex flex-col items-center">
-                          <label htmlFor="address" className="w-full text-center border-b-2 text-xl md:text-2xl text-black">Email :</label>
-                          <div id="address" className="mt-1">
+                          <label htmlFor="address" className="w-full text-center border-b-2 text-xl md:text-2xl text-black">Addresse :</label>
+                          <div id="address" className="mt-3">
                             {editedAddress ? editedAddress : user.address}
                           </div>
                         </div>
@@ -158,46 +159,42 @@ export default function User() {
                         <Input
                           label="Username :"
                           type="text"
-                          value={editedName}
+                          value={editedName ?? user.name}
                           onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedName(e.target.value)}
-                          placeholder="Votre nom"
-                          classInput="mt-2"
+                          placeholder="Votre nom d'utilisateur"
+                          classInput="mt-2 p-1"
                         />
                         <Input
                           label="Email :"
                           type="email"
-                          value={editedEmail}
+                          value={editedEmail ?? user.email}
                           onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedEmail(e.target.value)}
                           placeholder="Votre email"
-                          classInput="mt-2"
+                          classInput="mt-2 p-1"
                         />
                         {isLoaded && (
-                          <Autocomplete
-                          defaultValue={user.address ?? ''}
-                          apiKey={apiKey}
-                          options={options}
-                          onPlaceSelected={(place) => {
-                            if(place.formatted_address !== undefined)
-                            setEditedAddress(place.formatted_address);
-                            console.log("Destination: ", place);
-                          }}
-                          className="my-2 
-                                    w-[75%] 
-                                    border-2
-                                    border-[var(--purple-g1)] bg-[var(--purple-g3)]
-                                    p-2
-                                    text-xl 
-                                    text-white 
-                                    md:w-[75%] md:text-2xl"
-                          id="destination"
-                        />
+                          <div className="flex flex-col items-center ">
+                            <label htmlFor="address" className="text-black text-center mx-auto text-lg mt-1  border-b-2 w-full mx-auto border-gray-300 mb-2">Addresse :</label>
+                            <Autocomplete
+                              id="address"
+                              defaultValue={user.address ?? ''}
+                              apiKey={apiKey}
+                              options={options}
+                              onPlaceSelected={(place) => {
+                                if(place.formatted_address !== undefined)
+                                setEditedAddress(place.formatted_address);
+                                console.log("Destination: ", place);
+                              }}
+                              className=" p-1 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 text-center"
+                            />
+                          </div>
                     )}
                       </>
                     )}
                     </div>
                   </div>
               </div>
-              <div className="mt-4 flex justify-center">
+              <div className="mt-2 flex justify-center">
                 {sessionData.user.name === user.name ? (
                   <>
                     {isEditing ? (
@@ -298,7 +295,7 @@ export default function User() {
   return (
     <>
       <LayoutMain>
-            <h1>Not Connected, <p>Please Sign in</p></h1> 
+            <LoaderSPinner />
       </LayoutMain> 
     </>
   );
