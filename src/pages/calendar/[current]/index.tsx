@@ -12,7 +12,7 @@ import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import { useRouter } from "next/router";
 import { BookingStatus, NotificationType } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Map from "$/lib/components/map/Map";
 // import { useMap } from "$/context/mapContext";
 import type { BookingInformationsProps, Notification, OrderBookingProps, SortedBookingProps } from "$/lib/types/types";
@@ -22,6 +22,7 @@ import { getPolylines } from "$/hook/distanceMatrix";
 import { useMap } from "$/context/mapContext";
 import { GiConfirmed, GiCancel } from "react-icons/gi";
 import { getCampusNameWithAddress } from "$/utils/data/school";
+import Loader from "$/lib/components/error/Loader";
 
 
 export default function currentRide() {
@@ -54,6 +55,11 @@ export default function currentRide() {
     { rideId: parseInt(rideId) ?? 0 },
     { enabled: sessionData?.user !== undefined },
   );
+
+  const { data: completedBookings } = api.booking.bookingCompletedByRideId.useQuery(
+    { rideId: parseInt(rideId) ?? 0 },
+    { enabled: sessionData?.user !== undefined },
+  );
   // Boolean to determine which passenger is there
   const [isPassengerSession, setIsPassengerSession] = useState(false);
 
@@ -66,14 +72,10 @@ export default function currentRide() {
 
   const { data: updatedStatusCompleted, mutate: updateStatusToCompleted } = api.booking.updateStatusToCompleted.useMutation();
 
-  const [totalTime, setTotalTime] = useState<number | null>(0);
+  const { data: updatedRideStatus, mutate: updateRideStatus } = api.ride.updateStatusToComplete.useMutation();
 
-  // async function setTimeAndDistanceWithWayPoint() {
-  //   const distanceToWaypoint = await calculateDistance(currentRide?.departure ?? "", sortedBookings[0]?.pickupPoint ?? "");
-  //   const timeInMinutes = distanceToWaypoint.duration / 60;
-  //   setTotalTime(parseFloat(timeInMinutes.toFixed(2)));
-  //   console.log("Total time: ", totalTime);
-  // }
+  const [isPending, startTransition] = useTransition();
+
 
   ///
 
@@ -199,6 +201,27 @@ export default function currentRide() {
         <h2 className="mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
           Trajets en cours
         </h2>
+        {completedBookings?.length === passengers?.length && !isPassengerSession ? (
+          <div className="flex flex-col items-center">
+            <div
+              className="flex ml-4 w-full justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
+                                          cursor pointer pr-max px-2 flex flex-row itmes-center text-white py-1 rounded-lg bg-green-500"
+              onClick={() => startTransition(() => {
+                    updateRideStatus({ id: parseInt(rideId) });   
+                    window.location.assign("/calendar");             
+                }
+            )}
+              >
+              <GiConfirmed
+                className="text-[2rem] p-1  rounded-full bg-green-500 text-white"
+              />
+              <div className="my-auto">
+                Marquer comme terminé
+              </div>
+              {isPending && <Loader />}
+            </div>
+          </div>
+            ):(null)}
       </div>
       <div className="m-2 min-h-screen w-max-full rounded-lg bg-[var(--purple-g3)]">
         <h2 className=" w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl">
@@ -281,8 +304,6 @@ export default function currentRide() {
                             onClick={async () => {
                               // Update the passenger status to checked
                               updateStatusToCompleted({ bookingId: passenger.id });
-                              console.log("Booking: ", passenger);
-                              window.location.assign(`/`);
                             }
                             }>
                             <GiConfirmed

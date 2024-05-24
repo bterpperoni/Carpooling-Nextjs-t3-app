@@ -10,10 +10,9 @@ import {  useState, useTransition } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import RideCard from "$/lib/components/containers/rides/RideCard";
-import { useRouter } from "next/router";
 import Button from "$/lib/components/button/Button";
 import { useMap } from "$/context/mapContext";
-import Loading from "$/lib/components/error/Loader";
+import Loader from "$/lib/components/error/Loader";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display all rides -----------------------------------------------------------------------
@@ -22,14 +21,16 @@ const AllRides: React.FC = () => {
   // Map settings
   const center = { lat: 50.463727, lng: 3.938247 };
 
+  const [isPending, startTransition] = useTransition();
+
   // Session recovery
   const { data: sessionData } = useSession();
-  // Router
-  const router = useRouter();
+  
+
 
   // Redirect to ride page when clicking on a marker or a card ride
   const handleClick = (id: number) => {
-    void router.push(`/rides/${id}`);
+    window.location.assign(`/rides/${id}`);
   };
 
   // Get all rides
@@ -39,7 +40,8 @@ const AllRides: React.FC = () => {
 
   // Get user by id
   const {data: userAddress} = api.user.userAddressById.useQuery({id: sessionData?.user.id ?? ""}, {enabled: sessionData?.user !== undefined});
-  const userLocation: google.maps.LatLng | null = (userAddress ? new google.maps.LatLng(userAddress.addressLatitude ?? 0, userAddress.addressLongitude ?? 0) : null);
+  
+  const userLocation: {lat: number | undefined | null, lng: number | undefined | null} = {lat: userAddress?.addressLatitude, lng: userAddress?.addressLongitude};
   const [filterValue, setFilterValue] = useState("departure");
 
 console.log(rideList);
@@ -51,15 +53,13 @@ console.log(rideList);
     setChecked(!checked);
   };
 
-  const [isPending, startTransition] = useTransition();
-
   // Access the map object
   const mapRef = useMap();
 
   if (sessionData !== undefined) return (
     <LayoutMain>
       {isPending ? (
-        <Loading />
+        <Loader />
       ) : (
         <>
           <div className="bg-[var(--purple-g3)]">
@@ -118,7 +118,7 @@ console.log(rideList);
               </>
             )}
             {/* -------------------------------------- display map ---------------------------------------------- */}
-            {checked && (
+            {(checked && !isPending) && (
               <>
                 <Map
                   center={center}
@@ -126,7 +126,10 @@ console.log(rideList);
                     // The marker, positioned at
                     if(userLocation) {
                       new google.maps.Marker({
-                        position: userLocation,
+                        position: {
+                          lat: userLocation?.lat ?? 0, 
+                          lng: userLocation?.lng ?? 0, 
+                        },
                         map: mapRef.current,
                         icon: {
                           path: window.google.maps.SymbolPath.CIRCLE,
@@ -134,13 +137,16 @@ console.log(rideList);
                           fillColor: "blue",
                           fillOpacity: 1,
                           strokeWeight: 2,
-                          strokeColor: "black"
+                          strokeColor: "black",
                         },
                         title: "Votre position",
-                        clickable: false
+                        clickable: false,
                       });
                       new google.maps.Marker({
-                        position: userLocation,
+                        position: {
+                          lat: userLocation?.lat ?? 0, 
+                          lng: userLocation?.lng ?? 0, 
+                        },
                         map: mapRef.current,
                         icon: {
                           path: window.google.maps.SymbolPath.CIRCLE,
@@ -170,7 +176,7 @@ console.log(rideList);
                         title: `${ride.driver.name} - Départ : ${ride.departure}`,
                         clickable: true
                       });
-                      marker.addListener("click", () => handleClick(ride.id));
+                      marker.addListener("click", () => startTransition(() => handleClick(ride.id)));
                       mapRef.current?.setZoom(9);
                     }else if(filterValue === "destinations"){
                       const marker = new google.maps.Marker({
@@ -187,7 +193,7 @@ console.log(rideList);
                         title: `${ride.driver.name} - Destination : ${ride.destination}`,
                         clickable: true
                       });
-                      marker.addListener("click", () => handleClick(ride.id));
+                      marker.addListener("click", () => startTransition(() => handleClick(ride.id)));
                       mapRef.current?.setZoom(12);
                     }
                       

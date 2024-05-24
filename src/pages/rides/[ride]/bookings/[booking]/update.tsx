@@ -24,17 +24,7 @@ export default function UpdateBooking() {
         return (
         <LayoutMain>
             <div className="flex flex-col items-center">
-                <h2 className=" md:text-4xl 
-                                text-2xl 
-                                font-bold 
-                                mb-4 mt-4  
-                                w-[fit-content]
-                                text-center 
-                                text-white
-                                border-y-2
-                                border-fuchsia-700
-                                p-4
-                                rounded-[12.5%]">
+            <h2 className=" mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
                     Modifier votre réservation
                 </h2>
                 <BookingForm ride={rideForBooking ?? undefined} booking={bookingToUpdate ?? undefined} />

@@ -73,19 +73,7 @@ export default function BookingDetails() {
     return (
       <LayoutMain>
         <div className="flex flex-col items-center">
-          <h2
-            className=" mb-4 
-                        mt-4 
-                        w-[fit-content] 
-                        rounded-[12.5%] border-y-2  
-                        border-fuchsia-700
-                        p-4 
-                        text-center
-                        text-2xl
-                        font-bold
-                        text-white
-                        md:text-4xl"
-          >
+          <h2 className="mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
             Détails de la réservation
           </h2>
         </div>
@@ -145,7 +133,7 @@ export default function BookingDetails() {
                 )
               }
             >
-              Modifier la réservation
+              Modifier
             </Button>
             <Button
               onClick={() =>
@@ -172,7 +160,7 @@ export default function BookingDetails() {
                          hover:bg-white
                          hover:text-red-500"
             >
-              Supprimer la réservation
+              Supprimer
             </Button>
           </div>
           <Map zoom={zoom} onMapLoad={async () => {
@@ -195,9 +183,10 @@ export default function BookingDetails() {
           }} />
           <style jsx>{`
             .ride-details-container {
-              background-color: #ffffff;
+              background-color: var(--purple-g3);
               border: 2px solid #e0e0e0;
               border-radius: 10px;
+              color: white;
               padding: 20px;
               margin: 20px;
               box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -206,7 +195,7 @@ export default function BookingDetails() {
             .ride-info {
               font-size: 1rem;
               margin-bottom: 5px;
-              border-bottom: 2px solid #1e1b1b;
+              border-bottom: 2px solid #ffffff;
             }
 
             .label {

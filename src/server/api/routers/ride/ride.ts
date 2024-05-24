@@ -137,6 +137,19 @@ export const rideRouter = createTRPCRouter({
       });
     }),
 
+  updateStatusToComplete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      // simulate a slow db call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return ctx.db.ride.update({
+        where: { id: input.id },
+        data: {
+          status: RideStatus.COMPLETED,
+        },
+      });
+    }),
+
   update: protectedProcedure
     .input(
       z.object({
