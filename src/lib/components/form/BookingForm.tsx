@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
 import { calculateDetourEligibility, calculateDistance } from "$/hook/distanceMatrix";
 import type { Booking, Ride } from "@prisma/client";
+import { AsyncLoadPlacesProvider } from "$/context/asyncLoadApiContext";
 
 
 export default function BookingForm({
@@ -208,7 +209,7 @@ export default function BookingForm({
 
   // ________________________________ RENDER ________________________________
   return (
-    <>
+    <AsyncLoadPlacesProvider>
       <div className="mt-2 flex w-[90vw] flex-col p-2 md:flex-row">
         <p className="text-gray-400 md:text-2xl"></p>
         <label
@@ -352,6 +353,6 @@ export default function BookingForm({
       >
         Annuler
       </Button>
-    </>
+    </AsyncLoadPlacesProvider>
   );
 }

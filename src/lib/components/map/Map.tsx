@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-floating-promises */
+
 import React, { useEffect, useRef } from "react";
 import { useApiKey } from "$/context/apiContext";
 import Error from "next/error";
@@ -24,7 +21,7 @@ type MapProps = {
   onMapLoad?: () => void;
 };
 
-const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad  }) => {
+const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad }) => {
   const apiKey = useApiKey();
 
   const position = {
@@ -51,7 +48,7 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad  }) => {
 
     let map: google.maps.Map;
     // Load the library and create the map 
-    loader.importLibrary("maps").then(({ Map }) => {
+    void loader.importLibrary("maps").then(({ Map }) => {
       // The map object
       map = new Map(mapContainerRef.current!, {
         center: center ?? position,
@@ -62,7 +59,7 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad  }) => {
       // Set the map object in the context
       mapRef.current = map;
 
-      if(onMapLoad) {
+      if (onMapLoad) {
         onMapLoad();
       }
 

@@ -1,29 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import Autocomplete from "react-google-autocomplete";
-import DateTimeSelect from "./DateTimeSelect";
-import Button from "$/lib/components/button/Button";
-import type { Dayjs } from "dayjs";
-import dayjs from "dayjs";
-import { useSession } from "next-auth/react";
-import { api } from "$/utils/api";
-import type { ChangeEvent } from "react";
-import { useEffect, useState } from "react";
 import { useApiKey } from "$/context/apiContext";
-import MuiStyle from "$/styles/MuiStyle.module.css";
-import { RideStatus, RideType, type Ride } from "@prisma/client";
+import Button from "$/lib/components/button/Button";
+import Infos from "$/lib/components/button/Infos";
 import Slider from "$/lib/components/button/Slider";
-import Dropdown from "../dropdown/Dropdown";
+import MuiStyle from "$/styles/MuiStyle.module.css";
+import { api } from "$/utils/api";
 import {
   data,
   getCampusAddressWithAbbr,
   getCampusLatLng,
 } from "$/utils/data/school";
-import Infos from "$/lib/components/button/Infos";
+import { RideStatus, RideType, type Ride } from "@prisma/client";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+import { useSession } from "next-auth/react";
+import type { ChangeEvent } from "react";
+import { useEffect, useState } from "react";
+import Autocomplete from "react-google-autocomplete";
+import Dropdown from "../dropdown/Dropdown";
+import DateTimeSelect from "./DateTimeSelect";
+import { AsyncLoadPlacesProvider } from "$/context/asyncLoadApiContext";
 
 
 export default function RideForm({
@@ -66,7 +61,7 @@ export default function RideForm({
   );
 
   const [arrivalTime, setArrivalTime] = useState<Dayjs | null>(ride?.arrivalDateTime ? dayjs(ride?.arrivalDateTime) : null);
-  
+
 
   // Latitude and longitude of departure and destination
   const [departureLatitude, setDepartureLatitude] = useState<number>();
@@ -84,6 +79,8 @@ export default function RideForm({
   const [maxBooking, setMaxBooking] = useState<number>(
     ride?.maxPassengers ?? 2,
   );
+
+  const [isOpenWarning, setIsOpenWarning] = useState<boolean>(false);
 
   // Maximum distance to pick up a passenger
   const [maxDistance, setMaxDistance] = useState<number>(
@@ -260,7 +257,7 @@ export default function RideForm({
           }
         }
       }
-    }catch (error) {
+    } catch (error) {
       console.error("An error occurred while creating or updating the ride", error);
     }
     event.preventDefault();
@@ -277,6 +274,7 @@ export default function RideForm({
   };
 
   return (
+    <AsyncLoadPlacesProvider>
     <form onSubmit={handleClick} className="m-2 ">
       <div className="m-auto flex w-auto rounded-lg flex-col items-center justify-center bg-[var(--purple-g3)]">
         {/* First step of the form -> Departure & Destination */}
@@ -437,12 +435,17 @@ export default function RideForm({
                 wIcon={15}
                 hIcon={15}
                 handleInfos={() =>
-                  alert(
-                    "ATTENTION : Entrez une heure de départ qui vous permettra d'arriver à l'heure à votre destination. \n" +
-                    "Ex. Si le temps de trajet est de 30 minutes, prévoyez de partir 1h avant l'heure de début de cours. \n"
-                  )
+                  setIsOpenWarning(!isOpenWarning)
                 }
               />
+              {isOpenWarning && (
+                <div className="fixed card w-96 bg-base-100 shadow-xl image-full">
+                <div className="card-body">
+                    "ATTENTION : Entrez une heure de départ qui vous permettra d'arriver à l'heure à votre destination. \n" +
+                    "Ex. Si le temps de trajet est de 30 minutes, prévoyez de partir 1h avant l'heure de début de cours. \n"
+                </div>
+              </div>
+              )}
               {/* ------------------------------------------------------------------------------------------------- */}
             </div>
             <DateTimeSelect
@@ -454,8 +457,8 @@ export default function RideForm({
               defaultTime={
                 ride?.departureDateTime?.toDateString()
                   ? dayjs(ride?.departureDateTime)
-                      .set("hour", ride?.departureDateTime?.getHours())
-                      .set("minute", ride?.departureDateTime?.getMinutes())
+                    .set("hour", ride?.departureDateTime?.getHours())
+                    .set("minute", ride?.departureDateTime?.getMinutes())
                   : null
               }
               labelexpTime="H. DE DEPART"
@@ -492,7 +495,7 @@ export default function RideForm({
           </div>
           <div className="my-2 ml-4 w-[90%] border-b-2 border-[var(--purple-g1)] pb-4">
             <div className="m-2 text-left flex flex-row items-start text-[1.25rem] text-white">
-              Indiquez la distance que vous ne souhaitez pas dépasser 
+              Indiquez la distance que vous ne souhaitez pas dépasser
               {/* -------------------------------------------------------------------------------------------------  */}
               <p className="ml-4 rounded-full border-2 bg-white p-1 text-center text-[1.25rem] text-gray-600 mr-2">
                 {maxDistance}
@@ -504,58 +507,58 @@ export default function RideForm({
                 hIcon={15}
                 handleInfos={() =>
                   alert(
-                    ""+
-                      "ATTENTION : Indiquez une distance que vous pourrez assumer ! \n" +
-                      "Ne pas respecter les conditions peut entrainer une interdiction de poster un trajet.",
+                    "" +
+                    "ATTENTION : Indiquez une distance que vous pourrez assumer ! \n" +
+                    "Ne pas respecter les conditions peut entrainer une interdiction de poster un trajet.",
                   )
                 }
               />
             </div>
             <div className="flex flex-col">
-                <input
-                  type="range"
-                  min={1}
-                  max={100}
-                  value={maxDistance}
-                  className="ds-range ds-range-accent"
-                  onChange={function (e: ChangeEvent<HTMLInputElement>): void {
-                    setMaxDistance(e.target.valueAsNumber);
-                  }}
-                />
-              </div>
+              <input
+                type="range"
+                min={1}
+                max={100}
+                value={maxDistance}
+                className="ds-range ds-range-accent"
+                onChange={function (e: ChangeEvent<HTMLInputElement>): void {
+                  setMaxDistance(e.target.valueAsNumber);
+                }}
+              />
             </div>
+          </div>
           <div>
-              <div className="relative left-2 mx-2 w-[90%] border-2 border-[var(--pink-g1)] p-2 border-b-2 border-[var(--purple-g1)] mb-4">
-                <p className="m-2 text-[20px] text-white">
-                  A quelle heure devez-vous être en cours ?
-                </p>
-                <DateTimeSelect
-                  defaultDate={
-                    ride?.arrivalDateTime.toDateString()
-                      ? dayjs(ride.arrivalDateTime.toDateString())
-                      : dateDeparture
-                  }
-                  defaultTime={
-                    ride?.arrivalDateTime?.toDateString()
-                      ? dayjs(ride?.departureDateTime)
-                          .set("hour", ride?.arrivalDateTime?.getHours())
-                          .set("minute", ride?.arrivalDateTime?.getMinutes())
-                      : null
-                  }
-                  labelexpTime="H. D'ARRIVEE"
-                  labelexp="HEURE D'ARRIVEE"
-                  disableDate={false}
-                  disableTime={false}
-                  handleChangeDate={() => {
-                    console.log("No date to set for return time");
-                  }}
-                  handleChangeTime={(time) => {
-                    setArrivalTime(time);
-                  }}
-                  justTime={true}
-                />
-              </div>
+            <div className="relative left-2 mx-2 w-[90%] border-2 border-[var(--pink-g1)] p-2 border-b-2 border-[var(--purple-g1)] mb-4">
+              <p className="m-2 text-[20px] text-white">
+                A quelle heure devez-vous être en cours ?
+              </p>
+              <DateTimeSelect
+                defaultDate={
+                  ride?.arrivalDateTime.toDateString()
+                    ? dayjs(ride.arrivalDateTime.toDateString())
+                    : dateDeparture
+                }
+                defaultTime={
+                  ride?.arrivalDateTime?.toDateString()
+                    ? dayjs(ride?.departureDateTime)
+                      .set("hour", ride?.arrivalDateTime?.getHours())
+                      .set("minute", ride?.arrivalDateTime?.getMinutes())
+                    : null
+                }
+                labelexpTime="H. D'ARRIVEE"
+                labelexp="HEURE D'ARRIVEE"
+                disableDate={false}
+                disableTime={false}
+                handleChangeDate={() => {
+                  console.log("No date to set for return time");
+                }}
+                handleChangeTime={(time) => {
+                  setArrivalTime(time);
+                }}
+                justTime={true}
+              />
             </div>
+          </div>
         </div>
         {/* Defines if the ride is a simple or return */}
         <div className="col-span-1 mb-4 ">
@@ -592,8 +595,8 @@ export default function RideForm({
                 defaultTime={
                   ride?.returnTime?.toDateString()
                     ? dayjs(ride?.departureDateTime)
-                        .set("hour", ride?.returnTime?.getHours())
-                        .set("minute", ride?.returnTime?.getMinutes())
+                      .set("hour", ride?.returnTime?.getHours())
+                      .set("minute", ride?.returnTime?.getMinutes())
                     : null
                 }
                 labelexpTime="H. DE DEPART"
@@ -643,5 +646,6 @@ export default function RideForm({
         </Button>
       </div>
     </form>
+    </AsyncLoadPlacesProvider>
   );
 }

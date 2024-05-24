@@ -31,7 +31,9 @@ export const AsyncLoadPlacesProvider = ({ children}: AsyncLoadApiProviderProps) 
     });
 
     void loader.importLibrary("places").then((google) => {
+      if(google === null) throw new Error({ title: "Google Places API not loaded", statusCode: 404 });
       setGoogleApi(google);
+      console.log("Google Places API loaded");
     });
   }, []);
 

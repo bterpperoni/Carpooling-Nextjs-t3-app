@@ -44,7 +44,6 @@ const AllRides: React.FC = () => {
   };
 
 
-
   
   // Access the map object
   const mapRef = useMap();
@@ -66,17 +65,13 @@ const AllRides: React.FC = () => {
             <div className="border-b-t-2 flex flex-row border-0 border-white">
               <div
                 className="mx-12 mb-4 rounded-[5%] border-y-2 border-fuchsia-700 
-                           bg-[var(--purple-g3)] p-4 text-center text-xl text-fuchsia-700 md:text-2xl"
+                           bg-[var(--pink-g1)] p-4 text-center text-xl text-white md:text-2xl"
               >
                 <p>Trouver un trajet</p>
               </div>
-              <div className="col-span-1 right-1 w-max bottom-5 absolute  flex items-center justify-center">
-                <div className="m-4 rounded-full z-1 my-auto px-4 py-2 text-base text-white">
-                  <Slider check={handleCheck} checked={checked} />
-                  <div className={`mx-2 absolute -top-3  ${!checked ? "text-[var(--pink-g1)] font-bold" : "text-white"}`}>
-                    {checked ? "Carte" : "Liste"}
-                  </div>
-                </div>
+              <div className="bg-[var(--purple-g3)] rounded-full col-span-1 p-1  right-1 w-max bottom-5 fixed  flex items-center justify-center">    
+                  <Slider textLbl={checked ? "Carte" : "Liste"} check={handleCheck} checked={checked} />
+               
               </div>
             </div>
           </div>

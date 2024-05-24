@@ -15,11 +15,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { usePusher } from '$/context/pusherContext'
 
 const navigation = [
-  { name: 'Home', href: '/', current: false },
-  { name: 'Rides', href: '/rides', current: false },
-  { name: 'Wallet', href: '/wallet', current: false },
-  { name: 'Social', href: '/social/groups', current: false },
-  { name: 'Calendar', href: '/calendar/', current: false },
+  { name: 'Accueil', href: '/', current: false },
+  { name: 'Trajets', href: '/rides', current: false },
+  { name: 'Portefeuille', href: '/wallet', current: false },
+  { name: 'Groupe', href: '/social/groups', current: false },
+  { name: 'Calendrier', href: '/calendar/', current: false },
+  { name: 'Contact', href: '#', current: false },
 ]
 
 function classNames(...classes: string[]) {
@@ -70,7 +71,6 @@ export default function Nav() {
     if(session){
         // Subscribe to the channel related the current user
         const channel = pusher.subscribe(`passenger-channel-${session.user.id}`);
-        console.log("Channel subscribed: ", channel.name)
         
         function handleNewNotification(data: Notification ){
           const newMessages = [...messages, data.message]
@@ -78,34 +78,14 @@ export default function Nav() {
           alert(data.message);
         }
 
-        // const channelDriver = pusher.subscribe(`passenger-channel-${session.user.id}`);
-        // console.log("Channel subscribed: ", channelDriver.name)
-        
-        // function handleNewNotificationDriver(data: Notification ){
-        //   const newMessages = [...messages, data.message]
-        //   setMessages(newMessages)
-        //   console.log("Notification: ", data.message);
-        //   alert(data.message);
-        // }
-        // Bind to the ride-started event & add the notification to the list
-        // channelDriver.bind('status-checked', handleNewNotificationDriver);
-
         // Bind to the ride-started event & add the notification to the list
         channel.bind('ride-started', handleNewNotification);
          
         return () => {
           channel.unbind('ride-started', handleNewNotification);
-          console.log("Channel unsubscribed: ", channel.name);
-          // channelDriver.unbind('status-checked', handleNewNotificationDriver);
-          // console.log("Channel unsubscribed: ", channelDriver.name);
         }
     }
   }, [session?.user.id])
-
-
-  // useEffect(() => {
-  //   console.log("Notifications: ", notifications);
-  // }, [notifications]);
 
   return (
   
