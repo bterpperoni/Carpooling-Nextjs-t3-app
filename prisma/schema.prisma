@@ -55,6 +55,8 @@ model User {
   image              String?
   birthDate          DateTime?
   address            String?
+  addressLatitude    Float?
+  addressLongitude   Float?
   campus             String?
   phone              String?
   role               UserRole      @default(USER) 

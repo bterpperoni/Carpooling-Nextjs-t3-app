@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -5,14 +6,13 @@
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import Slider from "$/lib/components/button/Slider";
-import { useState, useTransition } from "react";
+import {  useState, useTransition } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import RideCard from "$/lib/components/containers/rides/RideCard";
 import { useRouter } from "next/router";
 import Button from "$/lib/components/button/Button";
 import { useMap } from "$/context/mapContext";
-import { geocode } from "$/hook/geocoding";
 import Loading from "$/lib/components/error/Loader";
 
 /* ------------------------------------------------------------------------------------------------------------------------
@@ -37,9 +37,12 @@ const AllRides: React.FC = () => {
     enabled: sessionData?.user !== undefined,
   });
 
-  const userAddress = sessionData?.user?.address;
-  const [filterValue, setFilterValue] = useState("all");
+  // Get user by id
+  const {data: userAddress} = api.user.userAddressById.useQuery({id: sessionData?.user.id ?? ""}, {enabled: sessionData?.user !== undefined});
+  const userLocation: google.maps.LatLng | null = (userAddress ? new google.maps.LatLng(userAddress.addressLatitude ?? 0, userAddress.addressLongitude ?? 0) : null);
+  const [filterValue, setFilterValue] = useState("departure");
 
+console.log(rideList);
 
   // Used to display the list of rides or the map
   const [checked, setChecked] = useState(true);
@@ -81,10 +84,12 @@ const AllRides: React.FC = () => {
                 <span className="mr-2 text-sm text-xl text-fuchsia-700">
                   Filtres
                 </span>
-                <select className="rounded-md border px-3 py-2" onChange={(option) => setFilterValue(option.target.value)}>
-                  <option value="all">Tout</option>
-                  <option value="active">Destinations</option>
-                  <option value="inactive">Départs</option>
+                <select value={filterValue} className="rounded-md border px-3 py-2" onChange={(option) => {
+                  setFilterValue(option.target.value);
+                  console.log(option.target.value);
+                }}>
+                  <option value="destinations">Destinations</option>
+                  <option value="departure">Départs</option>
                 </select>
               </div>
               <Button
@@ -119,8 +124,38 @@ const AllRides: React.FC = () => {
                   center={center}
                   onMapLoad={() => {
                     // The marker, positioned at
+                    if(userLocation) {
+                      new google.maps.Marker({
+                        position: userLocation,
+                        map: mapRef.current,
+                        icon: {
+                          path: window.google.maps.SymbolPath.CIRCLE,
+                          scale: 8,
+                          fillColor: "blue",
+                          fillOpacity: 1,
+                          strokeWeight: 2,
+                          strokeColor: "black"
+                        },
+                        title: "Votre position",
+                        clickable: false
+                      });
+                      new google.maps.Marker({
+                        position: userLocation,
+                        map: mapRef.current,
+                        icon: {
+                          path: window.google.maps.SymbolPath.CIRCLE,
+                          scale: 14,
+                          fillColor: "blue",
+                          fillOpacity: 0.5,
+                          strokeWeight: 2,
+                          strokeColor: "black"
+                        },
+                        title: "Votre position",
+                        clickable: false
+                      });
+                    }
                     rideList?.map((ride) => {
-                      if(filterValue === "all") {
+                      if(filterValue === "departure") {
                       const marker = new google.maps.Marker({
                         position: { lat: ride.departureLatitude, lng: ride.departureLongitude },
                         map: mapRef.current,
@@ -136,7 +171,8 @@ const AllRides: React.FC = () => {
                         clickable: true
                       });
                       marker.addListener("click", () => handleClick(ride.id));
-                    }else if(filterValue === "inactive"){
+                      mapRef.current?.setZoom(9);
+                    }else if(filterValue === "destinations"){
                       const marker = new google.maps.Marker({
                         position: { lat: ride.destinationLatitude, lng: ride.destinationLongitude },
                         map: mapRef.current,
@@ -152,6 +188,7 @@ const AllRides: React.FC = () => {
                         clickable: true
                       });
                       marker.addListener("click", () => handleClick(ride.id));
+                      mapRef.current?.setZoom(12);
                     }
                       
                     });

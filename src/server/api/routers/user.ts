@@ -23,6 +23,19 @@ export const userRouter = createTRPCRouter({
         });
       }),
 
+    userAddressById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+        return ctx.db.user.findUnique({
+          where: { id: input.id },
+          select: { 
+            address: true,
+            addressLatitude: true,
+            addressLongitude: true
+          },
+        });
+      }),
+
   userByName: protectedProcedure
     .input(z.object({ name: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -43,6 +56,7 @@ export const userRouter = createTRPCRouter({
           email: ctx.session.user.email,
           image: ctx.session.user.image,
           role: ctx.session.user.role,
+          address: ctx.session.user.address,
           // ../utils/interface.ts
         },
       });
@@ -55,6 +69,8 @@ export const userRouter = createTRPCRouter({
         name: z.string(), 
         email: z.string().email().nullable(),  
         address: z.string().nullable(),   
+        addressLatitude: z.number().nullable(),
+        addressLongitude: z.number().nullable(),
       }))
     .mutation(async ({ ctx, input }) => {
       // simulate a slow db call
@@ -66,6 +82,8 @@ export const userRouter = createTRPCRouter({
           name: input.name,
           email: input.email,
           address: input.address,
+          addressLatitude: input.addressLatitude,
+          addressLongitude: input.addressLongitude
         },
       });
     }),

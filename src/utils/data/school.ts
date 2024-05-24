@@ -187,8 +187,9 @@ export const formatAddress = (address: string) => {
     const cityParts = parts[1].split(' ');
     // set city
     const city = cityParts[2];
+    const cityNext = cityParts[3];
     if(city){
-      return `${streetParts}, ${city.trim()}`;
+      return `${streetParts}, ${city.trim()} ${cityNext?.trim() ?? ''}`;
     }
   }
 }

@@ -1,7 +1,7 @@
-import LayoutMain from '../../lib/components/layout/LayoutMain';
-import { signIn, useSession } from 'next-auth/react';
-import NewRideForm from '../../lib/components/form/RideForm';
-import Button from '$/lib/components/button/Button';
+import Loader from '$/lib/components/error/Loader';
+import { useSession } from 'next-auth/react';
+import NewRideForm from '$/lib/components/form/RideForm';
+import LayoutMain from '$/lib/components/layout/LayoutMain';
 
 
 /* ------------------------------------------------------------------------------------------------------------------------
@@ -29,17 +29,7 @@ export default function NewRide()  {
     return (
         <>     
             <LayoutMain>
-                <h1>Not Connected, Please Sign in</h1>
-                <Button 
-                    className="
-                        mt-4 rounded-full 
-                        bg-white/10 
-                        px-10 py-3 
-                        font-semibold 
-                        text-white 
-                        no-underline 
-                        transition 
-                        hover:bg-white/20" onClick={() => void signIn()}>Sign in</Button>
+                <Loader />
             </LayoutMain> 
         </>
     );
