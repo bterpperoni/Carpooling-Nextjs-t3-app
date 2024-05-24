@@ -207,7 +207,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                   <>
                     {groupedRidesAsDriver?.[dayjs(date).format("YYYY-MM-DD")]?.map((ride) => {
                       if(ride.status === RideStatus.COMPLETED) return (
-                        <p className={`${isToday ? "text-white" : "text-gray-600"}`}>Aucun trajet pour cette date</p>
+                        <p key={ride.id} className={`${isToday ? "text-white" : "text-gray-600"}`}>Aucun trajet pour cette date</p>
                       );
                       return (
                         <div key={ride.id}>

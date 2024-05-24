@@ -158,7 +158,7 @@ export default function currentRide() {
   }
     , [currentRide]);
 
-    console.log("Current ride: ", completedBookings);
+
 
   ///
 
@@ -169,7 +169,7 @@ export default function currentRide() {
   const sortedBookings: SortedBookingProps[] = []; 
 
   const [stb, setStb] = useState<SortedBookingProps[] | undefined>();
-  console.log("Checked bookings: ", completedBookings?.length, sortedBookings?.length)
+
 
   ///
   useEffect(() => {
