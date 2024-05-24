@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import Button from "$/lib/components/button/Button";
 import { calculateDetourEligibility, calculateDistance } from "$/hook/distanceMatrix";
 import type { Booking, Ride } from "@prisma/client";
-import { AsyncLoadPlacesProvider } from "$/context/asyncLoadApiContext";
+import Error from "next/error";
+import { Loader } from "@googlemaps/js-api-loader";
 
 
 export default function BookingForm({
@@ -101,6 +102,27 @@ export default function BookingForm({
   const { data: bookingUpdated, mutate: updateBooking } =
     api.booking.update.useMutation();
 
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  // Load the Google Maps API when the component is mounted
+  useEffect(() => {
+    if (!apiKey) throw new Error({ title: "API key is not defined", statusCode: 404 });
+
+    // Initialize the loader of the Google Maps API
+    const loader = new Loader({
+      apiKey: apiKey,
+      version: "weekly",
+      region: "BE",
+      retries: 3,
+      language: "fr"
+    });
+
+    void loader.importLibrary("places").then((google) => {
+      if(google === null) throw new Error({ title: "Google Places API not loaded", statusCode: 404 });
+      setIsLoaded(true);
+    });
+  });
+
 
   // When click on submit button
   function handleClick() {
@@ -148,13 +170,6 @@ export default function BookingForm({
     setDistanceToPassengerInKm(distanceToWaypointInKm);
     setDistanceToDestinationInKm(distanceToDestinationInKm);
   }
-
-  // useEffect(() => {
-  //   if(destinationBooking ?? destPickup !== null){
-  //     void setTimeAndDistanceWithWayPoint();
-  //   }
-
-  // }, [destinationBooking, destPickup, origin, totalDistance]);
 
 
 
@@ -209,7 +224,7 @@ export default function BookingForm({
 
   // ________________________________ RENDER ________________________________
   return (
-    <AsyncLoadPlacesProvider>
+    <>
       <div className="mt-2 flex w-[90vw] flex-col p-2 md:flex-row">
         <p className="text-gray-400 md:text-2xl"></p>
         <label
@@ -222,7 +237,8 @@ export default function BookingForm({
           Où souhaitez vous que l'on vous récupère ?
         </label>
         {/* This autocomplete will be used as destination to calcul distance from driver departure to this address */}
-        <Autocomplete
+        {isLoaded && (
+          <Autocomplete
           defaultValue={ride?.destination}
           apiKey={apiKey}
           options={options}
@@ -248,6 +264,7 @@ export default function BookingForm({
                     md:w-[75%] md:text-2xl"
           id="destination"
         />
+    )}
       </div>
       <div className="m-1 mt-5 flex w-[90vw] flex-col border-t-2 border-[var(--pink-g1)] p-2">
         <div className="text-xl text-white">
@@ -353,6 +370,6 @@ export default function BookingForm({
       >
         Annuler
       </Button>
-    </AsyncLoadPlacesProvider>
+    </>
   );
 }

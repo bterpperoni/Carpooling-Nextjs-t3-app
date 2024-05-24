@@ -18,7 +18,8 @@ import { useEffect, useState } from "react";
 import Autocomplete from "react-google-autocomplete";
 import Dropdown from "../dropdown/Dropdown";
 import DateTimeSelect from "./DateTimeSelect";
-import { AsyncLoadPlacesProvider } from "$/context/asyncLoadApiContext";
+import Error from "next/error";
+import { Loader } from "@googlemaps/js-api-loader";
 
 
 export default function RideForm({
@@ -48,6 +49,27 @@ export default function RideForm({
   const [dateDeparture, setDateDeparture] = useState<Dayjs | null>(
     ride?.departureDateTime ? dayjs(ride.departureDateTime) : null,
   );
+
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  // Load the Google Maps API when the component is mounted
+  useEffect(() => {
+    if (!apiKey) throw new Error({ title: "API key is not defined", statusCode: 404 });
+
+    // Initialize the loader of the Google Maps API
+    const loader = new Loader({
+      apiKey: apiKey,
+      version: "weekly",
+      region: "BE",
+      retries: 3,
+      language: "fr"
+    });
+
+    void loader.importLibrary("places").then((google) => {
+      if(google === null) throw new Error({ title: "Google Places API not loaded", statusCode: 404 });
+      setIsLoaded(true);
+    });
+  });
 
   // Time of departure and destination
   const [timeDeparture, setTimeDeparture] = useState<Dayjs | null>();
@@ -274,7 +296,7 @@ export default function RideForm({
   };
 
   return (
-    <AsyncLoadPlacesProvider>
+    
     <form onSubmit={handleClick} className="m-2 ">
       <div className="m-auto flex w-auto rounded-lg flex-col items-center justify-center bg-[var(--purple-g3)]">
         {/* First step of the form -> Departure & Destination */}
@@ -287,7 +309,8 @@ export default function RideForm({
             >
               D'où partez-vous ?
             </label>
-            <Autocomplete
+            {isLoaded && (
+              <Autocomplete
               defaultValue={ride?.departure ?? ""}
               apiKey={apiKey}
               options={options}
@@ -317,6 +340,7 @@ export default function RideForm({
                 md:w-[75%] md:text-2xl"
               id="departure"
             />
+            )}
           </div>
           {/* Set up destination */}
           <div className="m-1 flex flex-col border-b-2 border-[var(--purple-g1)] p-2">
@@ -570,7 +594,7 @@ export default function RideForm({
               Voulez-vous planifier le retour ?
             </label>
             <div className="mt-5 flex flex-col items-center">
-              <Slider check={handleCheck} checked={isRideReturn} />
+              <Slider textLbl="" check={handleCheck} checked={isRideReturn} />
               <p className="mt-2">
                 {isRideReturn
                   ? "Oui je le souhaite !"
@@ -646,6 +670,5 @@ export default function RideForm({
         </Button>
       </div>
     </form>
-    </AsyncLoadPlacesProvider>
   );
 }

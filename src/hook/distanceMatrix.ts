@@ -1,10 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/prefer-for-of */
-/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { DistanceMatrixPromise } from "$/lib/types/types";
-import { error } from "console";
 
 
 export async function calculateDistance(origin: string, destination: string): Promise<DistanceMatrixPromise> {
@@ -23,7 +17,7 @@ export async function calculateDistance(origin: string, destination: string): Pr
           },
         },
         (response, status) => {
-          if (status === "OK") {
+          if (status === google.maps.DistanceMatrixStatus.OK) {
             if (response?.rows[0]?.elements[0]  && response.rows.length > 0  ) {
               if (response.rows[0].elements[0].distance !== undefined) {
                 const distance = response.rows[0].elements[0].distance.value;
@@ -46,6 +40,7 @@ export async function calculateDistance(origin: string, destination: string): Pr
   });
 }
 
+///
 
 // Function to display line between driver departure & passenger pickup point
 export async function displayRoute(
@@ -79,6 +74,8 @@ export async function displayRoute(
     });
 }
 
+
+///
 /*
 // Implementation of the calculateDetour function to check if a passenger can be included in a ride without exceeding 
 // the maximum detour distance.
@@ -127,6 +124,7 @@ export const calculateDetourEligibility = async (origin: string, destination: st
   }
 };
 
+///
 export const getPolylines = async (map: google.maps.Map | null, origin: string, way_points: string[], destination: string): Promise<google.maps.DirectionsRoute | undefined> => {
   const directionsService = new window.google.maps.DirectionsService;
   const bounds = new google.maps.LatLngBounds();
@@ -147,7 +145,7 @@ export const getPolylines = async (map: google.maps.Map | null, origin: string, 
 
         if(result?.routes[0]?.legs.length) {
 
-        ///
+        
           const markerDepartureBig = new window.google.maps.Marker({
               position: result.routes[0].legs[0]?.start_location,
               icon: {
@@ -189,7 +187,7 @@ export const getPolylines = async (map: google.maps.Map | null, origin: string, 
             infoWindowDeparture.open(map, markerDepartureBig);
           });
 
-          ///
+          
           const markerDestinationBig = new window.google.maps.Marker({
               position: result.routes[0].legs[result.routes[0].legs.length - 1]?.end_location,
               icon: {
@@ -203,7 +201,7 @@ export const getPolylines = async (map: google.maps.Map | null, origin: string, 
               clickable: false
             });
 
-            ///
+          
           markerDepartureBig.setMap(map);
           markerDepartureLittle.setMap(map);
           markerDestinationBig.setMap(map);
@@ -212,7 +210,7 @@ export const getPolylines = async (map: google.maps.Map | null, origin: string, 
           result.routes[0].legs.forEach((leg, index) => {
             if(leg.end_address !== destination) {
 
-              ///
+              
               const marker = new window.google.maps.Marker({
                 position: leg.end_location,
                 map: map,
@@ -241,7 +239,6 @@ export const getPolylines = async (map: google.maps.Map | null, origin: string, 
                 infoWindow.open(map, marker);
               });
 
-              ///
               const polyline = new google.maps.Polyline({
                 strokeColor: colors[index % colors.length],
                 strokeOpacity: 0.75,
@@ -269,23 +266,3 @@ export const getPolylines = async (map: google.maps.Map | null, origin: string, 
   });
 }
 
-export const setPolylines = async (map: google.maps.Map | null, origin: string, way_points: string[], destination: string): Promise<void> => {
-  
-    const directionsService = new window.google.maps.DirectionsService;
-
-    await directionsService.route({
-      optimizeWaypoints: true,
-      origin: origin,
-      destination: destination,
-      waypoints: way_points.map(waypoint => ({ location: waypoint, stopover: true })),
-      travelMode: window.google.maps.TravelMode.DRIVING
-    }
-    , (result: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
-      if (status === window.google.maps.DirectionsStatus.OK) {
-       
-        
-      } else {
-        console.log("Error getting directions: ", status,"\n", result);
-      }
-    });
-};

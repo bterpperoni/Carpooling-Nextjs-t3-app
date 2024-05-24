@@ -5,7 +5,7 @@
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import Map from "$/lib/components/map/Map";
 import Slider from "$/lib/components/button/Slider";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "$/utils/api";
 import RideCard from "$/lib/components/containers/rides/RideCard";
@@ -19,7 +19,7 @@ import { useMap } from "$/context/mapContext";
 const AllRides: React.FC = () => {
   // Map settings
   const center = { lat: 50.463727, lng: 3.938247 };
-  const zoom = 12;
+
   // Session recovery
   const { data: sessionData } = useSession();
   // Router
@@ -34,28 +34,30 @@ const AllRides: React.FC = () => {
   const { data: rideList } = api.ride.rideList.useQuery(undefined, {
     enabled: sessionData?.user !== undefined,
   });
+
+  const [filterValue, setFilterValue] = useState("all");
   
 
   // Used to display the list of rides or the map
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
 
   const handleCheck = () => {
     setChecked(!checked);
   };
+  
 
+      // loader.importLibrary("marker").then(({ AdvancedMarkerElement }) => {
+    //   // The marker, positioned at
+    //   new AdvancedMarkerElement({
+    //     position: position,
+    //     map: map,
+    //     title: `Trajet n°${ride?.id}`
+    //   });
+    // });
 
   
   // Access the map object
   const mapRef = useMap();
-
-  useEffect(() => {
-      if(mapRef.current !== null){
-        console.log("Map Loaded \n Map ref: ", mapRef.current);
-      }
-  }
-  , [checked, mapRef]);
-
-
 
   return (
     <>
@@ -82,10 +84,10 @@ const AllRides: React.FC = () => {
               <span className="mr-2 text-sm text-xl text-fuchsia-700">
                 Filtres
               </span>
-              <select className="rounded-md border px-3 py-2">
+              <select className="rounded-md border px-3 py-2" onChange={(option) => console.log('option : ', option.target.value)}>
                 <option value="all">Tout</option>
                 <option value="active">Destinations</option>
-                <option value="inactive">Autres</option>
+                <option value="inactive">Départs</option>
               </select>
             </div>
             <Button
@@ -115,10 +117,30 @@ const AllRides: React.FC = () => {
           {/* -------------------------------------- display map ---------------------------------------------- */}
           {checked && (
             <>
-              <Map 
-                zoom={zoom} 
+              <Map
                 center={center}
-              />
+                onMapLoad={() => {
+                    // The marker, positioned at
+                    rideList?.map((ride) => {
+                      const marker = new google.maps.Marker({
+                        position: { lat: ride.departureLatitude, lng: ride.departureLongitude },
+                        map: mapRef.current,
+                        icon: {
+                          path: window.google.maps.SymbolPath.CIRCLE,
+                          scale: 12,
+                          fillColor: "yellow",
+                          fillOpacity: 1,
+                          strokeWeight: 2,
+                          strokeColor:  "black"
+                        },
+                        title: `${ride.driver.name} - Départ : ${ride.departure}`,
+                        clickable: true
+                      });
+                      marker.addListener("click", () => handleClick(ride.id));
+                    });
+                }}
+              >
+              </Map>
             </>
           )}
         </div>

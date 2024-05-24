@@ -52,7 +52,7 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad }) => {
       // The map object
       map = new Map(mapContainerRef.current!, {
         center: center ?? position,
-        zoom: zoom ?? 12,
+        zoom: zoom ?? 9,
         clickableIcons: true,
         styles: customGoogleMap
       });
@@ -65,14 +65,6 @@ const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad }) => {
 
     });
 
-    // loader.importLibrary("marker").then(({ AdvancedMarkerElement }) => {
-    //   // The marker, positioned at
-    //   new AdvancedMarkerElement({
-    //     position: position,
-    //     map: map,
-    //     title: `Trajet n°${ride?.id}`
-    //   });
-    // });
   }, [mapRef, center, zoom, apiKey, onMapLoad]);
 
   return (
