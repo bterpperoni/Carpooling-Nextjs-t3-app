@@ -11,8 +11,7 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "prisma:seed": "prisma db seed",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+    "prisma:seed": "prisma db seed"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
