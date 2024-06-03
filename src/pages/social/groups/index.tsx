@@ -4,7 +4,7 @@
 import Button from "$/lib/components/button/Button";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
-import { getCampusAbbr  } from "$/utils/data/school";
+import { getCampusAbbrWithFullName  } from "$/utils/data/school";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
@@ -85,7 +85,7 @@ export default function Groups() {
                                 Créer un groupe
                         </Button>
                         <Button 
-                                onClick={() => router.push(`/social/groups/users/${sessionData.user.name}`)}
+                                onClick={() => router.push(`/social/${sessionData.user.name}`)}
                                 className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-md">
                                 Mes groupes
@@ -99,7 +99,7 @@ export default function Groups() {
                                     <div className="m-6 text-2xl bold text-center">
                                         Trouves des étudiants qui se rendent au même établissement.
                                         <p className="text-xl text-center">
-                                            Rejoind un groupe et commences à covoiturer. 
+                                            Rejoinds un groupe ou crée le tien!
                                         </p>
                                     </div>
                                 </div>
@@ -135,7 +135,7 @@ export default function Groups() {
                                                     <label htmlFor="groupCampus" className="mr-2 font-bold text-[18px] text-left">
                                                         Destination
                                                     </label>
-                                                    <div className="text-white">{getCampusAbbr(group.campus)}</div>
+                                                    <div className="text-white">{getCampusAbbrWithFullName(group.campus)}</div>
                                                 </div>
                                                 <div className="flex-col flex">
                                                     {userGroups?.find((userGroup) => userGroup.groupId === group.id) ? (

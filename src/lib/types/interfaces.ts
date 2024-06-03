@@ -1,3 +1,4 @@
+import type { Ride } from "@prisma/client";
 import type { ChangeEvent } from "react";
 
 export interface Campus {
@@ -13,9 +14,26 @@ export interface School {
     pays: string;
     campus: Campus[];
   }
+
+export interface RideCardProps {
+  driverImg: string;
+  ride: Ride;
+  driver?: string;
+  goToRide: () => void;
+}
+
+export interface RideDetailsProps {
+  ride: Ride;
+  driver: string;
+  imageDriver: string;
+  children?: React.ReactNode;
+  isActualUserride?: boolean;
+}
   
 export interface DropdownProps {
     data: { school: School[] };
+    styleDropdown?: string;
+    colorLabel?: string;
     onChange: (selectedSchool: ChangeEvent<HTMLSelectElement>, selectedCampus:  ChangeEvent<HTMLSelectElement> ) => void;
   }
 
@@ -26,5 +44,14 @@ export interface DropdownProps {
 
   export interface PaypalTokenResponse {
     access_token: string;
-
   }
+
+  export interface InputProps {
+    label: string;
+    type: string;
+    value: string | number | readonly string[] | undefined;
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    placeholder?: string;
+    classInput?: string;
+    classLabel?: string;
+}

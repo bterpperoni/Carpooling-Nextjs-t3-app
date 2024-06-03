@@ -1,4 +1,5 @@
-import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+import { DatePicker} from '@mui/x-date-pickers/DatePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
@@ -7,7 +8,7 @@ import {  useState } from 'react';
 import MuiStyle from '$/styles/MuiStyle.module.css';
 
 
-export default function DateSelect({labelexp, labelexpTime, disableDate, disableTime, handleChangeDate, handleChangeTime, defaultDate, defaultTime}: {
+export default function DateSelect({labelexp, labelexpTime, disableDate, disableTime, handleChangeDate, handleChangeTime, defaultDate, defaultTime, justTime}: {
     labelexp: string, 
     labelexpTime: string,
     disableDate: boolean,
@@ -15,7 +16,8 @@ export default function DateSelect({labelexp, labelexpTime, disableDate, disable
     handleChangeDate: (date: Dayjs | null) => void,
     handleChangeTime: (time: Dayjs | null) => void,
     defaultDate?: Dayjs | null,
-    defaultTime?: Dayjs | null
+    defaultTime?: Dayjs | null,
+    justTime: boolean
 }) {
     
     // Get actual date & Set the date to just allow the user to select a date in the next 7 days in DatePicker component
@@ -31,7 +33,8 @@ export default function DateSelect({labelexp, labelexpTime, disableDate, disable
         // AdapterDayjs allows to use dayjs instead of the default date-fns
         // DatePicker is the component itself from @mui/x-date-pickers
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
+                {!justTime &&
+                    <DatePicker
                     defaultValue={defaultDate}
                     label={labelexp}
                     disablePast
@@ -41,8 +44,8 @@ export default function DateSelect({labelexp, labelexpTime, disableDate, disable
                     onChange={(date) => {
                         handleChangeDate(date)
                     }}
-                    className={`${MuiStyle.MuiInputBaseRoot} ${MuiStyle.MuiInputBaseInput} ${MuiStyle.MuiFormLabelRoot}`}
-                />
+                    className={`${MuiStyle.MuiInputBaseRoot} ${MuiStyle.MuiInputBaseInput} ${MuiStyle.MuiFormLabelRoot}`}/>
+                }
                 <TimePicker
                     defaultValue={defaultTime}
                     label={labelexpTime}

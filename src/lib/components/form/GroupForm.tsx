@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import Input from '$/lib/components/form/Input';
 import Button from '$/lib/components/button/Button';
 import Dropdown from '$/lib/components/dropdown/Dropdown';
@@ -105,7 +106,9 @@ export default function GroupForm({ group, cancelButtonHandler }:
                                 </div>
                                 <div className="flex flex-col mb-4 overflow-hidden">
                                     <Dropdown 
-                                        data={data} 
+                                        data={data}
+                                        styleDropdown='max-w-md mx-auto mt-4 p-4 border rounded-md shadow-md bg-white'
+                                        colorLabel='text-gray-600'
                                         onChange={(sc: ChangeEvent<HTMLSelectElement>, ca: ChangeEvent<HTMLSelectElement> ) => {
                                         setSelectedSchool(sc.target.value);
                                         if(sc) setSelectedCampus(ca.target.value);
@@ -116,7 +119,7 @@ export default function GroupForm({ group, cancelButtonHandler }:
                                     <label className="text-black text-left mr-2">
                                         Privé
                                     </label>
-                                    <Slider check={handleCheck} checked={isPrivate} />
+                                    <Slider textLbl='' check={handleCheck} checked={isPrivate} />
                                     <label className="text-black text-left ml-2">
                                         Public
                                     </label>

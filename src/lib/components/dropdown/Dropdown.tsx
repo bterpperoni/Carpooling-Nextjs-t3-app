@@ -6,7 +6,7 @@ import React, { useState } from "react";
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Dropdown to select school -----------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------ */
-const Dropdown: React.FC<DropdownProps> = ({ data, onChange }) => {
+const Dropdown: React.FC<DropdownProps> = ({ data, styleDropdown, colorLabel, onChange }) => {
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
   const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
 
@@ -30,38 +30,37 @@ const Dropdown: React.FC<DropdownProps> = ({ data, onChange }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-4 p-4 border rounded-md shadow-md bg-white">
-      <label className="block text-sm font-medium text-gray-600 mb-2">Ecole :</label>
+    <div className={`${styleDropdown}`}>
       <select
         className="border p-2 w-full rounded-md"
         onChange={handleSchoolChange}
         value={selectedSchool ?? ""}
       >
-        <option value="" disabled>
-          Select a school
+        <option value="" disabled className="text-[1.25rem]">
+          Sélectionner un établissement
         </option>
         {data.school.map((school) => (
-          <option key={school.name} value={school.reference}>
+          <option key={school.name} value={school.reference} className="text-[1.25rem]">
             {school.name}
           </option>
         ))}
       </select>
-
+{/* block text-xl font-medium text-gray-600 mt-4 mb-2 */}
       {selectedSchool && (
         <>
-          <label className="block text-sm font-medium text-gray-600 mt-4 mb-2">Campus :</label>
+          <label className={`block text-xl font-medium mt-4 mb-2 ${colorLabel}`}>Campus :</label>
           <select
             className="border p-2 w-full rounded-md"
             onChange={handleCampusChange}
             value={selectedCampus ?? ""}
           >
-            <option value="" disabled>
-              Select a campus
+            <option value="" disabled className="text-[1.25rem]">
+              Sélectionner un campus
             </option>
             {data.school
               .find((school) => school.reference === selectedSchool)
               ?.campus.map((campus) => (
-                <option key={campus.campus_ref} value={campus.campus_ref}>
+                <option key={campus.campus_ref} value={campus.campus_ref} className="text-[1.25rem]">
                   {campus.campus_name}
                 </option>
               ))}

@@ -33,7 +33,10 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string(),
     GOOGLE_MAPS_API_KEY: z.string(),
     PAYPAL_CLIENT_ID: z.string(),
-    PAYPAL_CLIENT_SECRET: z.string()
+    PAYPAL_CLIENT_SECRET: z.string(),
+    PUSHER_APP_ID: z.string(),
+    PUSHER_APP_KEY: z.string(),
+    PUSHER_APP_SECRET: z.string()
   },
 
   /**
@@ -42,7 +45,10 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_PAYPAL_CLIENT_ID: z.string()
+    NEXT_PUBLIC_PAYPAL_CLIENT_ID: z.string(),
+    NEXT_PUBLIC_PUSHER_APP_ID: z.string(),
+    NEXT_PUBLIC_PUSHER_APP_KEY: z.string(),
+    NEXT_PUBLIC_PUSHER_APP_SECRET: z.string()
   },
 
   /**
@@ -59,7 +65,13 @@ export const env = createEnv({
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
     PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
     PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET,
-    NEXT_PUBLIC_PAYPAL_CLIENT_ID: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
+    NEXT_PUBLIC_PAYPAL_CLIENT_ID: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+    PUSHER_APP_ID: process.env.PUSHER_APP_ID,
+    PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
+    PUSHER_APP_SECRET: process.env.PUSHER_APP_SECRET,
+    NEXT_PUBLIC_PUSHER_APP_ID: process.env.NEXT_PUBLIC_PUSHER_APP_ID,
+    NEXT_PUBLIC_PUSHER_APP_KEY: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
+    NEXT_PUBLIC_PUSHER_APP_SECRET: process.env.NEXT_PUBLIC_PUSHER_APP_SECRET
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

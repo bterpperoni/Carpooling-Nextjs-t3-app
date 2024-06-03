@@ -17,12 +17,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? // @db.Text
-  access_token      String? // @db.Text
+  refresh_token     String? 
+  access_token      String? 
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? // @db.Text
+  id_token          String? 
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -55,21 +55,31 @@ model User {
   image              String?
   birthDate          DateTime?
   address            String?
-  locality           String?
-  zip                Int?
+  addressLatitude    Float?
+  addressLongitude   Float?
   campus             String?
-  role               String        @default("user")
+  phone              String?
+  role               UserRole      @default(USER) 
+  rating             Int           @default(0)
   accounts           Account[]
   sessions           Session[]
-  travelsAsDriver    Travel[]      @relation("Driver")
-  travelsAsPassenger Passenger[]   @relation("UserPassenger")
+  ridesAsDriver      Ride[]        @relation("Driver")
+  ridesAsPassenger   Booking[]     @relation("UserPassenger")
   groupCreated       Group[]       @relation("GroupCreatedBy")
   groupMembers       GroupMember[] 
-  wallet             Wallet[]         
+  wallet             Wallet[]     
+  notified          Notifications[] @relation("userNotified")
+  notifying         Notifications[] @relation("userNotifying")
 }
 
-// -------------------------------------------TRAVEL & PASSENGER------------------------------------------------
-model Travel {
+enum UserRole {
+  USER
+  ADMIN
+  BANNED
+}
+
+// -------------------------------------------Ride & PASSENGER (BOOKING)------------------------------------------------
+model Ride {
   id                   Int         @id @default(autoincrement())
   isForGroup           Boolean     @default(false)
   groupId              Int?
@@ -77,27 +87,58 @@ model Travel {
   departure            String
   departureLatitude    Float
   departureLongitude   Float
-  departureDateTime    DateTime
+  departureDateTime    DateTime 
+  arrivalDateTime      DateTime
   destination          String
   destinationLatitude  Float
   destinationLongitude Float
-  returnDateTime       DateTime?
-  maxPassengers        Int?        @default(2)
-  status               Int         @default(0)
-  group                Group?      @relation("GroupTravels", fields: [groupId], references: [id])
-  driver               User        @relation("Driver", fields: [driverId], references: [name])
-  passengers           Passenger[] @relation("Passengers")
-
-  @@index([departureLatitude, departureLongitude], name: "departure")
-  @@index([destinationLatitude, destinationLongitude], name: "destination")
+  maxPassengers        Int        
+  maxDetourDist        Int?
+  distance             String?        
+  type                 RideType   @default(ALLER)
+  returnTime           DateTime?
+  status               RideStatus  @default(CREATED)
+  group                Group?      @relation("GroupRides", fields: [groupId], references: [id])
+  driver               User        @relation("Driver", fields: [driverId], references: [id], onDelete: Cascade)
+  passengers           Booking[]   @relation("Passengers")
 }
 
-model Passenger {
-  id       Int    @id @default(autoincrement())
-  travelId Int
-  userName   String
-  travel   Travel @relation("Passengers", fields: [travelId], references: [id])
-  user     User   @relation("UserPassenger", fields: [userName], references: [name])
+model Booking {
+  id                 Int    @id @default(autoincrement())
+  rideId             Int
+  userId             String
+  pickupPoint        String
+  pickupLatitude     Float
+  pickupLongitude    Float
+  distanceWithDetour Float?
+  price              String
+  status             BookingStatus @default(CREATED)
+  driverRating       Int?     
+  ride       Ride   @relation("Passengers", fields: [rideId], references: [id], onDelete: Cascade)
+  userPassenger       User   @relation("UserPassenger", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum RideType {
+  ALLER
+  RETOUR
+}
+
+enum RideStatus {
+  CREATED
+  UPDATED
+  IN_PROGRESS_FORTH
+  IN_PROGRESS_BACK
+  COMPLETED
+  CANCELLED
+}
+
+enum BookingStatus {
+  CREATED
+  UPDATED
+  CHECKED
+  ONBOARD
+  COMPLETED
+  CANCELLED
 }
 
 // -------------------------------------------GROUP & GROUPMEMBER------------------------------------------------
@@ -108,8 +149,8 @@ model Group {
   createdBy        String
   visibility       Boolean       @default(false)
   acceptInvitation Boolean?      @default(true)
-  travels          Travel[]      @relation("GroupTravels")
-  creator          User          @relation("GroupCreatedBy", fields: [createdBy], references: [name])
+  rides            Ride[]        @relation("GroupRides")
+  creator          User          @relation("GroupCreatedBy", fields: [createdBy], references: [name], onDelete: Cascade)
   members          GroupMember[] @relation("GroupMembers")
 }
 
@@ -128,8 +169,8 @@ model Wallet {
   id            String     @id @default(cuid())
   userId        String
   paypalId      String?
-  balance       String     @default("0")
-  owner         User    @relation(fields: [userId], references: [id])
+  balance       String   @default("0")
+  owner         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   fromWalletTransaction  Transaction[] @relation("fromWallet")
   toWalletTransaction    Transaction[] @relation("toWallet")
   paypalTransaction      PaypalTransaction[]
@@ -155,4 +196,25 @@ model PaypalTransaction {
   type      String       
   createdAt DateTime @default(now())
   wallet    Wallet   @relation(fields: [walletId], references: [id])
+}
+
+// ------------------------------------------- NOTIFICATIONS ------------------------------------------------
+
+model Notifications {
+  id          Int      @id @default(autoincrement())
+  fromUserId  String?
+  toUserId    String?
+  message     String
+  type        NotificationType
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  userNotified      User?    @relation("userNotified", fields: [toUserId], references: [id], onDelete: Cascade)
+  userNotifying     User?     @relation("userNotifying", fields: [fromUserId], references: [id], onDelete: Cascade)
+}
+
+enum NotificationType {
+  RIDE
+  WALLET
+  GROUP
+  USER
 }

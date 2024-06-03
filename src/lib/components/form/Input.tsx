@@ -1,6 +1,4 @@
-// Input.tsx
-
-import type { InputProps } from '$/lib/types/types';
+import type { InputProps } from '$/lib/types/interfaces';
 import React from 'react';
 
 const Input: React.FC<InputProps> = ({ label, classInput, type, value, onChange, placeholder, classLabel }) => {
@@ -10,7 +8,7 @@ const Input: React.FC<InputProps> = ({ label, classInput, type, value, onChange,
         {label}
       </label>
       <input
-        className={`rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 text-center ${classInput}`}
+        className={`rounded-md mb-2 shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 text-center ${classInput}`}
         type={type}
         id={label}
         value={value ?? ""}

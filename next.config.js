@@ -6,11 +6,11 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   env: {
-    PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
-    PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET,
-    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
+    PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID ?? "",
+    PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET ?? "",
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY ?? ""
   },
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
@@ -20,6 +20,10 @@ const config = {
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
+  },
+  images: {
+    domains: ["lh3.googleusercontent.com"],
+    path: "/_next/image",
   }
 };
 

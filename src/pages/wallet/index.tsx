@@ -175,7 +175,6 @@ return (
                     <div className="flex flex-row mt-4 mb-8 justify-center items-center">
                             <h2 className="m-0 text-gray-600 border-y-2 border-gray-400 text-xl md:text-3xl"> Solde </h2>
                             <span className="   ml-4
-                                                relative
                                                 border-2
                                                 border-gray-400
                                                 text-gray-500
@@ -202,7 +201,8 @@ return (
                                        className="ds-range ds-range-warning"
                                        onChange={function (e: ChangeEvent<HTMLInputElement>): void {
                                         setDepositAmount(e.target.value);
-                                    }} />
+                                       }} 
+                                />
                             </div>
                             <PayPalScriptProvider
                                 options={{

@@ -1,45 +1,77 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
-import React, { useEffect, useRef, useState } from 'react';
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import type { MapProps } from '$/lib/types/types';
-import { useApiKey } from '$/context/process';
 
-function Map({ center, zoom, children, onLoad }: MapProps) {
+import React, { useEffect, useRef } from "react";
+import { useApiKey } from "$/context/apiContext";
+import Error from "next/error";
+import { Loader } from "@googlemaps/js-api-loader";
+import { useMap } from "$/context/mapContext";
+import type { Ride } from "@prisma/client";
+import { customGoogleMap } from "$/styles/customGoogleMaps";
 
+type MapProps = {
+  center?: google.maps.LatLngLiteral;
+  zoom?: number;
+  children?: React.ReactNode | undefined;
+  ride?: Ride;
+  onMapLoad?: () => void;
+};
+
+const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad }) => {
   const apiKey = useApiKey();
 
-  // Set the map container style
-  const mapContainerStyle = {
-    width: '100%',
-    height: '25rem',
+  const position = {
+    lat: 50.4637089,
+    lng: 3.956881,
   };
 
   // Access the map object
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const mapRef = useMap();
+  // Reference to the map container
+  const mapContainerRef = useRef<HTMLDivElement>(null);
 
-  // Set the map options
   useEffect(() => {
-    if (mapRef.current) {
-      console.log('mapRef.current', mapRef.current);
-    }
-  }, [mapRef]);
+    if (!apiKey) throw new Error({ title: "API key is not defined", statusCode: 0 });
 
-  if(!apiKey) return <div>Google maps api key is missing</div>
+    // Initialize the loader of the Google Maps API
+    const loader = new Loader({
+      apiKey: apiKey,
+      version: "weekly",
+      region: "BE",
+      retries: 3,
+      language: "fr"
+    });
+
+    let map: google.maps.Map;
+    // Load the library and create the map 
+    void loader.importLibrary("maps").then(({ Map }) => {
+      // The map object
+      map = new Map(mapContainerRef.current!, {
+        center: center ?? position,
+        zoom: zoom ?? 9,
+        clickableIcons: true,
+        styles: customGoogleMap
+      });
+      // Set the map object in the context
+      mapRef.current = map;
+
+      if (onMapLoad) {
+        onMapLoad();
+      }
+
+    });
+
+  }, [mapRef, center, zoom, apiKey, onMapLoad]);
+
   return (
     <>
-      <LoadScript googleMapsApiKey={apiKey}>
-        <GoogleMap 
-            center={center} 
-            zoom={zoom} 
-            mapContainerStyle={mapContainerStyle}
-            onLoad={onLoad ? onLoad : () => setIsMapLoaded(true)}
-            onUnmount={() => setIsMapLoaded(false)}>
-            {isMapLoaded && children}
-        </GoogleMap>
-      </LoadScript>
+      <div
+        ref={mapContainerRef}
+        style={{ width: "100%", height: "50vh" }}
+        className="rounded-lg border-2 border-black p-2"
+      >
+        {children}
+      </div>
     </>
   );
-};
+}
 
 export default Map;

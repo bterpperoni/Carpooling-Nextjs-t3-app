@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("colors.css");
+@import url("theme.css");
 
 html {
     background: var(--purple-g3)!important;
@@ -36,7 +36,7 @@ h2{
 
 /* Style for Input DatePicker */
 .MuiInputBase-input {
-    font-size: 1.75rem!important;
+    font-size: 2rem!important;
     color: rgb(255, 255, 255)!important;
     border: 1px solid var(--pink-g1)!important;
 }
@@ -97,7 +97,7 @@ h2{
 
     /* Label */
     .MuiFormLabel-root {
-        font-size: 1rem!important;
+        font-size: 1.15rem!important;
     }
 }
 

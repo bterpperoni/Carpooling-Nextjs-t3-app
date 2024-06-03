@@ -1,3 +1,5 @@
+import { number } from "zod";
+
 export const data ={
     "school": [
       {
@@ -35,7 +37,7 @@ export const data ={
         "pays": "Belgique",
         "campus": [
           {
-            "campus_ref": "Plaine de Nimy",
+            "campus_ref": "Pl. de Nimy",
             "campus_name": "Campus Plaine de Nimy",
             "address": "Chaussée de Binche 159, 7000 Mons",
             "location": {
@@ -107,18 +109,88 @@ export const data ={
     ]
   }
 
-export const getCampusFullName = (str: string) => {
-    const ref = str.split('-', 2);
-    const school = data.school.find((school) => school.reference === (ref ?? [])[0])?.name ?? (ref?.[0] ?? '');
-    const campus = data.school.find((school) => school.reference === (ref ?? [])[0])
-                   ?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_name ?? (ref?.[1] ?? '');
+export const getCampusFullNameWithAbbr = (str: string) => {
+    const abbr = str.split('-', 2);
+    const school = data.school.find((school) => school.reference === (abbr ?? [])[0])?.name ?? (abbr?.[0] ?? '');
+    const campus = data.school.find((school) => school.reference === (abbr ?? [])[0])
+                   ?.campus?.find((campus) => campus.campus_ref === abbr?.[1])?.campus_name ?? (abbr?.[1] ?? '');
     return school + ' - ' + campus;
 }
 
-export const getCampusAbbr = (str: string) => {
+export const getCampusAbbrWithFullName = (str: string) => {
     const ref = str.split('-', 2);
     const school = data.school.find((school) => school.reference === (ref ?? [])[0])?.reference ?? (ref?.[0] ?? '');
     const campus = data.school.find((school) => school.reference === (ref ?? [])[0])
                    ?.campus?.find((campus) => campus.campus_ref === ref?.[1])?.campus_ref ?? (ref?.[1] ?? '');
     return school + ' - ' + campus;
 }
+
+export const getCampusAddressWithAbbr = (str: string) => {
+  for (const school of data.school) {
+    for (const campus of school.campus) {
+        if (campus.campus_ref === str) {
+            // console.log(campus.address);
+            const address = campus.address;
+            return address;
+        }
+    }
+  }
+  return null;
+}
+
+export const getCampusNameWithAddress = (str: string) => {
+  for (const school of data.school) {
+    for (const campus of school.campus) {
+        if (campus.address === str) {
+            // console.log(campus.campus_name);
+            const campusName = school.name + ' - ' + campus.campus_name;
+            return campusName;
+        }
+    }
+  }
+  return null;
+}
+
+export const getCampusAbbrWithAddress = (str: string) => {
+  for (const school of data.school) {
+    for (const campus of school.campus) {
+        if (campus.address === str) {
+            // console.log(campus.campus_ref);
+            const campusAbbr = school.reference + ' - ' + campus.campus_ref;
+            return campusAbbr;
+        }
+    }
+  }
+  return null;
+}
+
+export const getCampusLatLng = (str: string) => {
+  for (const school of data.school) {
+    for (const campus of school.campus) {
+        if (campus.campus_ref === str) {
+            // console.log(campus.location);
+            const campusLat = campus.location.lat;
+            const campusLng = campus.location.lng;
+            return { lat: campusLat, lng: campusLng };
+        }
+    }
+  } return { lat: 0, lng: 0};
+}
+
+// Format the address to "street, city"
+export const formatAddress = (address: string) => {
+  const parts = address.split(',');
+  if(parts[0] && parts[1]?.split(' ')[1]){
+    // set street
+    const streetParts = parts[0];
+    // Second part splitted is the city and postal code '7000 Mons'
+    const cityParts = parts[1].split(' ');
+    // set city
+    const city = cityParts[2];
+    const cityNext = cityParts[3];
+    if(city){
+      return `${streetParts}, ${city.trim()} ${cityNext?.trim() ?? ''}`;
+    }
+  }
+}
+
