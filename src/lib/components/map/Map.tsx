@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from "react";
-import { useApiKey } from "$/context/apiContext";
+import { ApiKeyType, useApiKey } from "$/context/apiContext";
 import Error from "next/error";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useMap } from "$/context/mapContext";
@@ -16,7 +16,7 @@ type MapProps = {
 };
 
 const Map: React.FC<MapProps> = ({ center, zoom, children, onMapLoad }) => {
-  const apiKey = useApiKey();
+  const apiKey: ApiKeyType = useApiKey();
 
   const position = {
     lat: 50.4637089,

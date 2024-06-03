@@ -4,7 +4,7 @@ import React, { createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
 
 
-type ApiKeyType = string|undefined;
+export type ApiKeyType = string|undefined;
 
 // Create a provider context
 const ApiKeyContext = createContext<ApiKeyType | undefined>(undefined);
