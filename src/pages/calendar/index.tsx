@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import React, { useEffect, useState } from "react"; // Import the React module
 import { getCampusNameWithAddress } from "$/utils/data/school";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
@@ -91,12 +87,14 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
           acc[rideDate] = [];
         }
         // Add the ride to the date key
-        acc[rideDate].push(ride);
+        if(acc !== undefined){
+          acc[rideDate]?.push(ride) ?? [];
+        }
         return acc;
       }, {});
     };
 
-///
+
   // Fetch the notification creation function
   const { mutate: createNotification } = api.notification.create.useMutation();
 
@@ -127,7 +125,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
         await notifyStartRide(rideInformations, listPassengers.map(({passengerId}) => passengerId)).then(() => {
             console.log("Les passagers ont été notifiés");
             // Save the ride start notification in the database for each passenger
-            listPassengers.map(async ({passengerId}) => {
+            void listPassengers.map(async ({passengerId}) => {
               createNotification({
                   toUserId: passengerId,
                   fromUserId: sessionData?.user.id ?? "",
