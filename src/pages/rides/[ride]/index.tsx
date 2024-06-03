@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
+
 import { useRouter } from "next/dist/client/router";
 import { useSession } from "next-auth/react";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { api } from "$/utils/api";
 import Map from "$/lib/components/map/Map";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
@@ -47,16 +45,13 @@ export default function Detail() {
   // Set if ride can be edited
   const canEdit = sessionData?.user?.id === ride?.driverId;
   // Get booking id
-  const bookingId = userBooking?.[0]?.id ?? "";
-
-  // Get lat & lng of departure & destination
   const departureLatLng: google.maps.LatLngLiteral = {
-    lat: ride?.departureLatitude!,
-    lng: ride?.departureLongitude!,
+    lat: ride?.departureLatitude ?? 0,
+    lng: ride?.departureLongitude ?? 0,
   };
   const destinationLatLng: google.maps.LatLngLiteral = {
-    lat: ride?.destinationLatitude!,
-    lng: ride?.destinationLongitude!,
+    lat: ride?.destinationLatitude ?? 0,
+    lng: ride?.destinationLongitude ?? 0,
   };
 
   ///
@@ -88,8 +83,8 @@ export default function Detail() {
   useEffect(() => {
     if (userBooking && userBooking.length > 0) {
       console.log(
-        "Vous avez déjà réservé ce trajet. Le numéro de réservation est " +
-          bookingId
+        "Vous avez déjà réservé ce trajet. Le numéro de réservation est " ,
+          bookings
       );
     }
   }, []);
@@ -161,7 +156,7 @@ export default function Detail() {
                     <div 
                       className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
                       onClick={() =>
-                        window.location.assign(`/rides/${id as string}/bookings/${bookingId}`)
+                        window.location.assign(`/rides/${id as string}/bookings/${userBooking?.[0]?.id ?? ""}`)
                       }
                       >
                       <span>Voir ma réservation</span>
