@@ -7,3 +7,5 @@ This project use :
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
+
+  **DEPLOYED ON NETLIFY AT : https://carheh.netlify.app/**
