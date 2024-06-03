@@ -83,7 +83,7 @@ export default function User() {
   };
   // Save user data & disable edit mode
   const handleSaveClick = () => {
-    if ((editedName ?? user?.name) || (editedEmail ?? user?.email) || (editedAddress ?? user?.address))
+    if ((editedName ?? user?.name) && (editedEmail ?? user?.email) && (editedAddress ?? user?.address)){
       updateUser({
         id: user?.id ?? '',
         name: editedName ?? user?.name,
@@ -93,7 +93,10 @@ export default function User() {
         addressLongitude: longitude ?? null,
       });
     setIsEditing(false);
-  };
+    }else{
+    alert("Veuillez remplir tous les champs");
+  }
+  }
   /* -------------------------------- User's school data & handler -------------------------------- */
   // School & campus state
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
