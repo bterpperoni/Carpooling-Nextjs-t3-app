@@ -5,9 +5,9 @@ import {
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-import GOOGLEProvider from "next-auth/providers/GOOGLE";
+import Google from "next-auth/providers/google";
 
-import { env } from "$/env";
+
 import { db } from "$/server/db";
 import type { userRole } from "$/lib/types/enums";
 
@@ -57,16 +57,9 @@ export const authOptions: NextAuthOptions = {
   },
   adapter: PrismaAdapter(db),
   providers: [
-    GOOGLEProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code"
-        }
-      }
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
     }),
     /**
      * ...add more providers here.

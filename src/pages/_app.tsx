@@ -22,7 +22,7 @@ const Carheh: AppType<{ session: Session | null }> = ({
     pageProps: {session, ...pageProps},
 }) => {
     return (
-        <StrictMode>
+        
             <SessionProvider session={session}>
                 <PusherProvider pusher={ pusher }>
                         <ApiKeyProvider>
@@ -32,7 +32,7 @@ const Carheh: AppType<{ session: Session | null }> = ({
                         </ApiKeyProvider>
                 </PusherProvider>
             </SessionProvider>
-        </StrictMode>
+        
     );
 };
 
