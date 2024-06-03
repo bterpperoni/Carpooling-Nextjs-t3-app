@@ -1,35 +1,22 @@
 import { type Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
-  darkMode: "class",
-  content: ["./src/**/*.tsx"],
+  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: false,
+    styled: true,
+    base: true,
+    themeRoot: ":root",
+    logs: false,
+    prefix: "ds-"
+  },
   theme: {
     extend: {
-        colors: {
-          primary: {"50":"#eff6ff","100":"#dbeafe","200":"#bfdbfe","300":"#93c5fd","400":"#60a5fa","500":"#3b82f6","600":"#2563eb","700":"#1d4ed8","800":"#1e40af","900":"#1e3a8a","950":"#172554"}
-          }
+      animation: {
+        'ping-fast': 'ping 1.25s cubic-bezier(0, -0.2, 1, 0.5) infinite',
+      },
     },
-    fontFamily: {
-      sans: ["var(--font-sans)", ...fontFamily.sans],
-      body:  [
-        'Inter', 
-        'ui-sans-serif', 
-        'system-ui', 
-        '-apple-system', 
-        'system-ui', 
-        'Segoe UI', 
-        'Roboto', 
-        'Helvetica Neue', 
-        'Arial', 
-        'Noto Sans', 
-        'sans-serif', 
-        'Apple Color Emoji', 
-        'Segoe UI Emoji', 
-        'Segoe UI Symbol', 
-        'Noto Color Emoji'
-      ]
-    }   
   }
 }satisfies Config;
 

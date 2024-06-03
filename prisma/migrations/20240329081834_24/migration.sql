@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Ride" ALTER COLUMN "maxPassengers" DROP DEFAULT,
+ALTER COLUMN "maxDetourDist" DROP DEFAULT;

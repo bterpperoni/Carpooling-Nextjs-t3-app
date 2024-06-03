@@ -1,21 +1,40 @@
-import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
-import { type AppType } from "next/app";
+import "$/styles/globals.css";
 
+import {type Session} from "next-auth";
+import {SessionProvider} from "next-auth/react";
+import {type AppType} from "next/app";
+import {api} from "$/utils/api";
+import {ApiKeyProvider} from "$/context/apiContext";
+import { StrictMode } from "react";
+import { MapProvider } from '$/context/mapContext';
+import { PusherProvider } from "$/context/pusherContext";
+import Pusher from "pusher-js";
 
-import { api } from "$/utils/api";
+const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+    cluster: "eu",
+    forceTLS: true
+  });
 
-import "$/lib/styles/globals.css";
+  
 
-const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
+const Carheh: AppType<{ session: Session | null }> = ({
+    Component,
+    pageProps: {session, ...pageProps},
 }) => {
-  return (
-    <SessionProvider session={session}>
-      <Component {...pageProps} />
-    </SessionProvider>
-  );
+    return (
+        <StrictMode>
+            <SessionProvider session={session}>
+                <PusherProvider pusher={ pusher }>
+                        <ApiKeyProvider>
+                            <MapProvider>
+                                <Component {...pageProps} />
+                            </MapProvider>
+                        </ApiKeyProvider>
+                </PusherProvider>
+            </SessionProvider>
+        </StrictMode>
+    );
 };
 
-export default api.withTRPC(MyApp);
+// default _app export with trpc context
+export default api.withTRPC(Carheh);

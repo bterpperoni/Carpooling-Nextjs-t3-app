@@ -9,8 +9,7 @@ import GOOGLEProvider from "next-auth/providers/GOOGLE";
 
 import { env } from "$/env";
 import { db } from "$/server/db";
-import { userRouter } from './api/routers/user';
-import { userRole } from "$/utils/interface";
+import type { userRole } from "$/lib/types/enums";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -25,15 +24,15 @@ declare module "next-auth" {
       name: string,
       email: string,
       image: string,
+      address: string,
       role: userRole,
       // ...other properties
-      // role: UserRole;
     };
   }
 
   interface User {
     // ...other properties
-    role: userRole;
+    role: userRole
   }
 }
 
@@ -49,6 +48,10 @@ export const authOptions: NextAuthOptions = {
       user: {
         ...session.user,
         id: user.id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        role: user.role
       },
     }),
   },
@@ -57,6 +60,13 @@ export const authOptions: NextAuthOptions = {
     GOOGLEProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     }),
     /**
      * ...add more providers here.
@@ -81,3 +91,4 @@ export const getServerAuthSession = (ctx: {
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
+
