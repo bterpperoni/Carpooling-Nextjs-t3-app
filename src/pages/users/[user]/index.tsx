@@ -4,7 +4,6 @@
 import Input from "$/lib/components/form/Input";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
-import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
@@ -83,7 +82,7 @@ export default function User() {
   };
   // Save user data & disable edit mode
   const handleSaveClick = () => {
-    if ((editedName ?? user?.name) && (editedEmail ?? user?.email) && (editedAddress ?? user?.address)){
+    if ((editedName ?? user?.name) && (editedEmail ?? user?.email) && (editedAddress ?? user?.address)) {
       updateUser({
         id: user?.id ?? '',
         name: editedName ?? user?.name,
@@ -92,10 +91,10 @@ export default function User() {
         addressLatitude: latitude ?? null,
         addressLongitude: longitude ?? null,
       });
-    setIsEditing(false);
-    }else{
-    alert("Veuillez remplir tous les champs");
-  }
+      setIsEditing(false);
+    } else {
+      alert("Veuillez remplir tous les champs");
+    }
   }
   /* -------------------------------- User's school data & handler -------------------------------- */
   // School & campus state
@@ -139,6 +138,14 @@ export default function User() {
           <LayoutMain>
             <div className="w-[90vw] h-auto mx-auto mt-8 bg-white p-8 rounded shadow-md">
               <div className="flex flex-col items-center">
+                {!user.address &&
+                  <button
+                    className="ds-btn ds-btn-warning mb-5"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Veuillez compléter votre profil pour accéder à la liste des trajets
+                  </button>
+                }
                 <img
                   className="w-18 h-18 rounded-full"
                   src={user?.image ?? '/images/default-profile.png'}
