@@ -16,7 +16,7 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children, driver, imageD
 
 
   const school: string[] | undefined = getCampusNameWithAddress(ride.destination)?.split(" - ");
-  const schoolName: string =school ? school[0]! : "";
+  const schoolName: string = school ? school[0]! : "";
   const campusName: string = school ? school[1]! : "";
   const isToday = ride.departureDateTime.getDate() === new Date().getDate() ? true : false;
 
@@ -31,8 +31,8 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children, driver, imageD
         </div>
         <div className="flex items-center flex-row text-white mb-2">
           <img
-            className="w-9 h-9 rounded-full mr-2" 
-            src={imageDriver ?? "/avatar.png"} 
+            className="w-9 h-9 rounded-full mr-2"
+            src={imageDriver ?? "/avatar.png"}
             alt="Profil Pic"
           />
           <div>
@@ -51,15 +51,15 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children, driver, imageD
         <div className="flex flex-row justify-center">
           <div className="flex flex-col items-center mt-4">
             <FaCircleDot className="text-[var(--pink-g1)]" />
-                <div className="border-l-4 border-[var(--pink-g1)] border-dashed h-32"></div>
+            <div className="border-l-4 border-[var(--pink-g1)] border-dashed h-28 sm:h-24"></div>
             <FaCircle className="text-[var(--pink-g1)]" />
           </div>
           <div className="pb-2 m-2 text-white">
             <div className="mb-11">
-              <div className="flex flex-row ml-1 items-center mb-2">
+              <div className="flex flex-row ml-1 items-start mb-2">
                 <FaHouseChimney className="h-[2rem] w-[2rem] mr-2 text-[var(--pink-g1)]" />
                 <div>
-                    {formatAddress(ride.departure)}
+                  {formatAddress(ride.departure)}
                 </div>
               </div>
               <div>
@@ -70,17 +70,17 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children, driver, imageD
               </div>
             </div>
             <div>
-              <div className="flex md:text-lg flex-row items-center mb-2 ml-1">
+              <div className="flex md:text-lg flex-row items-start mb-2 ml-1">
                 <RiSchoolFill className="w-[2.25rem] h-[2.25rem] text-[var(--pink-g1)] mr-2" />
                 <div className="leading-none">
-                    <div>
-                      {schoolName ?? ride.destination}
-                    </div>
-                    <div>
-                      {campusName}
-                    </div>
+                  <div>
+                    {schoolName ?? ride.destination}
+                  </div>
+                  <div>
+                    {campusName}
+                  </div>
                 </div>
-              </div> 
+              </div>
               <div>
                 <div className="flex flex-row items-center justify-center">
                   <FaClock className="h-[1.25rem] w-[1.25rem] mb-[3px] mr-2 text-[var(--pink-g1)]" />
@@ -90,18 +90,18 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children, driver, imageD
             </div>
           </div>
         </div>
-      <div className="flex items-center flex-row text-white mb-2">
-      {ride.type === RideType.RETOUR && ride.returnTime && (
-          <div className="ride-info flex flex-row items-center">
-              <GiBackwardTime className="h-[2rem] w-[2rem] mr-2 text-[var(--pink-g1)] "/>
+        <div className="flex items-center flex-row text-white mb-2">
+          {ride.type === RideType.RETOUR && ride.returnTime && (
+            <div className="ride-info flex flex-row items-center">
+              <GiBackwardTime className="h-[2rem] w-[2rem] mr-2 text-[var(--pink-g1)] " />
               <div>
-                  {ride.returnTime.toLocaleTimeString()}
+                {ride.returnTime.toLocaleTimeString()}
               </div>
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-    {children}  
+      {children}
     </div>
   );
 };

@@ -16,7 +16,7 @@ export default function NewRideForGroup() {
     const { query } = useRouter();
     const groupId = query.group;
 
-    if(!groupId){
+    if (!groupId) {
         return (
             <LayoutMain>
                 <LoaderSpinner></LoaderSpinner>
@@ -30,7 +30,7 @@ export default function NewRideForGroup() {
                 <LayoutMain>
                     <div className="flex flex-col items-center">
                         <h2 className="mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
-                        Planifier un trajet pour le groupe {groupId}
+                            Planifier un trajet
                         </h2>
                         <NewTripForGroupForm isForGroup groupId={parseInt(groupId as string)} />
                     </div>
@@ -41,9 +41,9 @@ export default function NewRideForGroup() {
     return (
         <>
             <LayoutMain>
-                    <h1>Not Connected, Please Sign in</h1>
-                    <Button 
-                        className=" m-4 
+                <h1>Not Connected, Please Sign in</h1>
+                <Button
+                    className=" m-4 
                                     rounded-full 
                                     bg-white/10 
                                     px-10 
@@ -52,8 +52,8 @@ export default function NewRideForGroup() {
                                     text-white 
                                     no-underline 
                                     transition 
-                                    hover:bg-white/20" 
-                        onClick={() => void signIn()}>Sign in</Button>
+                                    hover:bg-white/20"
+                    onClick={() => void signIn()}>Sign in</Button>
             </LayoutMain>
         </>
     );
