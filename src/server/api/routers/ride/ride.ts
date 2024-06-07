@@ -78,6 +78,14 @@ export const rideRouter = createTRPCRouter({
           groupId: input.groupId,
           isForGroup: true,
         },
+        include: {
+          driver: {
+            select: {
+              name: true,
+              image: true,
+            },
+          },
+        }
       });
     }),
 

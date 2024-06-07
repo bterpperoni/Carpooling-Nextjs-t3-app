@@ -162,10 +162,9 @@ return (
         <div className="w-screen overflow-hidden bg-[var(--purple-g3)]">
             <div className='flex flex-col items-center mt-2'>  
                 <div className='border-b-t-2 border-0 border-white'>   
-                    <div className='md:text-2xl text-xl mx-12 bg-[var(--purple-g3)] text-center 
-                                    rounded-[5%] p-4 mb-4 text-fuchsia-700 border-fuchsia-700 border-y-2 mt-4'>                    
-                        <p>Gérer le portefeuille</p>
-                    </div>
+                <h2 className="mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
+                    Gérer le portefeuille
+                </h2>
                 </div>
             </div>
         </div>

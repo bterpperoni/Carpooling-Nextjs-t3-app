@@ -51,7 +51,7 @@ const rideDetail: React.FC<RideDetailsProps> = ({ ride, children, driver, imageD
         <div className="flex flex-row justify-center">
           <div className="flex flex-col items-center mt-4">
             <FaCircleDot className="text-[var(--pink-g1)]" />
-                <div className="border-l-4 border-[var(--pink-g1)] border-dashed h-24"></div>
+                <div className="border-l-4 border-[var(--pink-g1)] border-dashed h-32"></div>
             <FaCircle className="text-[var(--pink-g1)]" />
           </div>
           <div className="pb-2 m-2 text-white">
