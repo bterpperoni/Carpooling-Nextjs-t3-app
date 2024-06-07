@@ -13,7 +13,6 @@ import RideCard from "$/lib/components/containers/rides/RideCard";
 import Button from "$/lib/components/button/Button";
 import { useMap } from "$/context/mapContext";
 import Loader from "$/lib/components/error/Loader";
-import LoaderSpinner from "$/lib/components/error/LoaderSpinner";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display all rides -----------------------------------------------------------------------
