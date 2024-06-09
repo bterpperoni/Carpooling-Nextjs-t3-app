@@ -7,6 +7,7 @@ import { userRole } from "$/lib/types/enums";
 import { api } from "$/utils/api";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import Search from '../../lib/components/dropdown/Search';
 
 
 export default function UsersList() {
@@ -38,6 +39,7 @@ export default function UsersList() {
                         Liste des utilisateurs
                     </h2>
                     <div className="flex flex-col items-center">
+                        <Search users={users} />
                         {users?.map((user: User) => (
                             <div key={user.id} className="flex flex-col w-[90%] items-center bg-white/10 rounded-md p-4 m-4">
                                 <div className="flex flex-col items-center">

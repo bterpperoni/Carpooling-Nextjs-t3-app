@@ -13,7 +13,7 @@ import { api } from "$/utils/api";
 import { useRouter } from "next/router";
 import { BookingStatus, NotificationType } from "@prisma/client";
 import { useEffect, useState, useTransition } from "react";
-import Map from "$/lib/components/map/Map";
+import Map from "$/lib/components/Map";
 // import { useMap } from "$/context/mapContext";
 import type { BookingInformationsProps, Notification, OrderBookingProps, SortedBookingProps } from "$/lib/types/types";
 import { notifyStatusChecked } from "$/hook/pusher/statusChecked";
@@ -36,7 +36,7 @@ export default function currentRide() {
   const mapRef = useMap();
   // // Define the state for the map loading
   const [isMapLoaded, setIsMapLoaded] = useState(false);
-  
+
   // Fetch the passengers details and here details ride
   const { data: passengers } = api.booking.bookingByRideId.useQuery(
     { rideId: parseInt(rideId) ?? 0 },
@@ -48,7 +48,7 @@ export default function currentRide() {
     { enabled: sessionData?.user !== undefined },
   );
 
-  
+
 
   // Fetch all checked bookings for the current ride
   const { data: checkedBookings } = api.booking.bookingCheckedByRideId.useQuery(
@@ -86,10 +86,10 @@ export default function currentRide() {
   const pusher = usePusher();
 
   useEffect(() => {
-    if(updatedStatusCompleted){
+    if (updatedStatusCompleted) {
       void window.location.assign('/calendar/');
     }
-}, [updatedStatusCompleted]);
+  }, [updatedStatusCompleted]);
 
   useEffect(() => {
     if (sessionData && isPassengerSession === false) {
@@ -130,7 +130,7 @@ export default function currentRide() {
         read: false,
       });
       setTimeout(() => {
-        window.location.reload(); 
+        window.location.reload();
       }, 1000);
     }
   }
@@ -166,7 +166,7 @@ export default function currentRide() {
 
   // const waypoints_order: number[]  = [];
 
-  const sortedBookings: SortedBookingProps[] = []; 
+  const sortedBookings: SortedBookingProps[] = [];
 
   const [stb, setStb] = useState<SortedBookingProps[] | undefined>();
 
@@ -199,7 +199,7 @@ export default function currentRide() {
 
   useEffect(() => {
     setStb(sortedBookings);
-  },[checkedBookings]);
+  }, [checkedBookings]);
 
   ///
 
@@ -222,11 +222,11 @@ export default function currentRide() {
                 {/*  */}
                 {passenger.status === BookingStatus.CHECKED || passenger.status === BookingStatus.COMPLETED ? (
                   <GiConfirmed
-                  className="text-[2rem] rounded-full bg-green-500 text-white"
+                    className="text-[2rem] rounded-full bg-green-500 text-white"
                   />
                 ) : (
                   <GiCancel
-                  className="text-[2rem] rounded-full bg-red-500 text-white"
+                    className="text-[2rem] rounded-full bg-red-500 text-white"
                   />
                 )}
               </div>
@@ -263,24 +263,24 @@ export default function currentRide() {
                       <div>
                         {userBooking.status == BookingStatus.CREATED || userBooking.status == BookingStatus.UPDATED ? (
                           <div className="flex w-full flex-row items-center justify-between">
-                            <div 
+                            <div
                               className="flex ml-4 w-full justify-end hover:transform hover:bg-red-700 hover:border-red-700 hover:text-white cursor-pointer
                                           cursor pointer pr-max px-2 flex flex-row itmes-center text-white py-1 rounded-lg bg-red-500"
-                               onClick={async () => {
-                                  // Update the passenger status to checked
-                                  updateStatusToChecked({ bookingId: passenger.id });
-                                }
-                                }>
-                                <GiConfirmed
+                              onClick={async () => {
+                                // Update the passenger status to checked
+                                updateStatusToChecked({ bookingId: passenger.id });
+                              }
+                              }>
+                              <GiConfirmed
                                 className="text-[2rem] p-1  rounded-full bg-red-500 text-white"
-                                />
-                                <div className="my-auto">
-                                  Confirmer
-                                </div>
+                              />
+                              <div className="my-auto">
+                                Confirmer
+                              </div>
                             </div>
                           </div>
-                        ):
-                        (null)
+                        ) :
+                          (null)
                         }
                       </div>
                       {passenger.status === BookingStatus.CHECKED ? (
@@ -302,35 +302,35 @@ export default function currentRide() {
                           </div>
                         </div>
                       ) :
-                      (null)
+                        (null)
                       }
                     </div>
-                  ) : ( null)}
+                  ) : (null)}
                 </div>
               </div>
             </div>
           ))}
           {(completedBookings?.length ?? 1) > sortedBookings.length && !isPassengerSession ? (
-          <div className="flex flex-col items-center my-2 justify-center">
-            <div
-              className="flex w-max justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
+            <div className="flex flex-col items-center my-2 justify-center">
+              <div
+                className="flex w-max justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
                                           cursor pointer pr-max px-2 flex flex-row itmes-center text-white py-1 rounded-lg bg-green-500"
-              onClick={() => startTransition(() => {
-                    updateRideStatus({ id: parseInt(rideId) });   
-                    window.location.assign("/calendar");             
+                onClick={() => startTransition(() => {
+                  updateRideStatus({ id: parseInt(rideId) });
+                  window.location.assign("/calendar");
                 }
-            )}
+                )}
               >
-              <GiConfirmed
-                className="text-[2rem] p-1  rounded-full bg-green-500 text-white"
-              />
-              <div className="my-auto mb-2 text-left">
-                Marquer comme terminé
+                <GiConfirmed
+                  className="text-[2rem] p-1  rounded-full bg-green-500 text-white"
+                />
+                <div className="my-auto mb-2 text-left">
+                  Marquer comme terminé
+                </div>
+                {isPending && <Loader />}
               </div>
-              {isPending && <Loader />}
             </div>
-          </div>
-            ):(null)}
+          ) : (null)}
         </div>
 
         {/* 
@@ -339,48 +339,48 @@ export default function currentRide() {
           */}
 
         <div className="mt-8">
-        <h2 className=" w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl mb-4">
-          {" "}
-          Détails du trajet{" "}
-        </h2>
-        <div className="mb-4 cursor-pointer hover:border-y-2 hover:border-[var(--pink-g1)] p-1" onClick={() => setIsCheckedBooking(!isCheckedBooking)}>
-          {isCheckedBooking ? (
-            <div className="">
-            {stb?.map((booking) => (
+          <h2 className=" w-max mx-auto border-y-2 border-gray-400 text-white md:text-3xl lg:text-4xl mb-4">
+            {" "}
+            Détails du trajet{" "}
+          </h2>
+          <div className="mb-4 cursor-pointer hover:border-y-2 hover:border-[var(--pink-g1)] p-1" onClick={() => setIsCheckedBooking(!isCheckedBooking)}>
+            {isCheckedBooking ? (
+              <div className="">
+                {stb?.map((booking) => (
+                  <CalendarCardDetail
+                    key={booking.sortedId}
+                    address={booking.from}
+                    time={booking.date.departureDateTime}
+                    isDestination={false}
+                  />
+                ))}
+                <CalendarCardDetail
+                  address={stb?.[stb.length - 1]?.to ?? currentRide?.destination}
+                  time={stb?.[stb.length - 1]?.date.arrivalDateTime ?? undefined}
+                  isDestination={true}
+                />
+              </div>
+            ) : (
               <CalendarCardDetail
-                key={booking.sortedId}
-                address={booking.from} 
-                time={booking.date.departureDateTime}
-                isDestination={false}
+                address={undefined}
+                time={undefined}
+                children={"Voir les détails"}
+                isDestination={true}
               />
-            ))}
-          <CalendarCardDetail
-              address={stb?.[stb.length-1]?.to ?? currentRide?.destination}
-              time={stb?.[stb.length-1]?.date.arrivalDateTime ?? undefined}
-              isDestination={true}
-          />
+            )}
           </div>
-          ):(
-            <CalendarCardDetail
-              address={undefined}
-              time={undefined}
-              children={"Voir les détails"}
-              isDestination={true}
-          />
-          )}
-        </div>
-          
+
           <Map zoom={10} onMapLoad={async () => {
             if (currentRide) {
               if (checkedBookings) {
                 const wayPoints: string[] = checkedBookings.map((checkedBooking) => checkedBooking.pickupPoint);
                 const route = await getPolylines(mapRef.current, currentRide.departure, wayPoints, currentRide.destination).
-                then((result) => {
-                  return result;
-                }).catch((error) => {
-                  console.log("Error: ", error);
-                });
-                if(route && checkedBookings) {
+                  then((result) => {
+                    return result;
+                  }).catch((error) => {
+                    console.log("Error: ", error);
+                  });
+                if (route && checkedBookings) {
                   route.legs.forEach((leg, index) => {
                     const addLeg: SortedBookingProps = {
                       sortedId: leg.end_address,
@@ -388,12 +388,12 @@ export default function currentRide() {
                       from: leg.start_address,
                       to: leg.end_address,
                       fromInfos: { distanceFromPrevious: leg?.distance?.value, durationFromPrevious: leg?.duration?.value },
-                      date: { 
-                        departureDateTime:sortedBookings[index-1]?.date.arrivalDateTime ?? currentRide.departureDateTime,
+                      date: {
+                        departureDateTime: sortedBookings[index - 1]?.date.arrivalDateTime ?? currentRide.departureDateTime,
                         arrivalDateTime: addTimeWithMinutes(
-                          sortedBookings[index-1]?.date.arrivalDateTime?.toLocaleTimeString() 
-                            ?? 
-                          currentRide.departureDateTime.toLocaleTimeString(), (leg?.duration?.value ?? 0)/60)
+                          sortedBookings[index - 1]?.date.arrivalDateTime?.toLocaleTimeString()
+                          ??
+                          currentRide.departureDateTime.toLocaleTimeString(), (leg?.duration?.value ?? 0) / 60)
                       },
                       price: "0",
                     };
@@ -401,11 +401,12 @@ export default function currentRide() {
                     console.log("Sorted bookings: ", sortedBookings);
                   });
                 }
-            }}
+              }
+            }
             setIsMapLoaded(true);
           }}
           />
-        </div> 
+        </div>
       </div>
     </LayoutMain>
   );

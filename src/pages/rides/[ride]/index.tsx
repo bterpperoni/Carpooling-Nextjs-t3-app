@@ -3,7 +3,7 @@ import { useRouter } from "next/dist/client/router";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { api } from "$/utils/api";
-import Map from "$/lib/components/map/Map";
+import Map from "$/lib/components/Map";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import RideDetail from "$/lib/components/containers/rides/RideDetail";
 import { displayRoute } from "$/hook/distanceMatrix";
@@ -36,7 +36,7 @@ export default function Detail() {
   const { mutate: deleteride } = api.ride.delete.useMutation();
   // Get if a user already subscribed to this ride
   const { data: userBooking } = api.booking.userBookingByRideId.useQuery(
-    { rideId: parseInt(id as string)},
+    { rideId: parseInt(id as string) },
     { enabled: sessionData?.user !== undefined },
   );
 
@@ -58,7 +58,7 @@ export default function Detail() {
 
   // Access the map object
   const mapRef = useMap();
-  
+
   // Used to define if the map is loaded
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
@@ -67,7 +67,7 @@ export default function Detail() {
 
 
 
-///
+  ///
 
   // Redirect to update ride page
   const handleEditClick = () => {
@@ -83,8 +83,8 @@ export default function Detail() {
   useEffect(() => {
     if (userBooking && userBooking.length > 0) {
       console.log(
-        "Vous avez déjà réservé ce trajet. Le numéro de réservation est " ,
-          bookings
+        "Vous avez déjà réservé ce trajet. Le numéro de réservation est ",
+        bookings
       );
     }
   }, []);
@@ -97,18 +97,18 @@ export default function Detail() {
     }
   }, [rideDeleted]);
 
-    return (
-      <LayoutMain>
-        {!ride ? (
-          <LoaderSpinner />
-        ) : (
-          ride && 
-          <>
+  return (
+    <LayoutMain>
+      {!ride ? (
+        <LoaderSpinner />
+      ) : (
+        ride &&
+        <>
           <div className="flex flex-col items-center">
-              <h2 className=" mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
-                  Détails du trajet
-                </h2>
-            </div>
+            <h2 className=" mb-4 mt-4 w-full w-max rounded-lg bg-fuchsia-700 p-4 text-center text-2xl font-bold text-white shadow-lg md:text-4xl">
+              Détails du trajet
+            </h2>
+          </div>
           <RideDetail ride={ride} driver={ride?.driver.name} imageDriver={ride?.driver.image ?? ""}>
             {canEdit ? (
               <>
@@ -119,7 +119,7 @@ export default function Detail() {
                   >
                     Modifier votre trajet
                   </RiEditFill>
-                  <RiDeleteBin6Fill 
+                  <RiDeleteBin6Fill
                     onClick={handleDelete}
                     className="h-[2rem] w-[2rem] p-1 hover:border-gray-500 border-2 border-red-500 text-red-500 hover:text-gray-500 cursor-pointer"
                   >
@@ -127,23 +127,23 @@ export default function Detail() {
                   </RiDeleteBin6Fill>
                 </div>
               </>
-              ) : (
-                <div className="my-4 flex justify-end ">
-                  {userBooking && ride?.maxPassengers && userBooking.length === 0  ? (
-                    <>
+            ) : (
+              <div className="my-4 flex justify-end ">
+                {userBooking && ride?.maxPassengers && userBooking.length === 0 ? (
+                  <>
                     {bookings && bookings.length < ride.maxPassengers ? (
-                      <div 
+                      <div
                         className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
                         onClick={() =>
-                            window.location.assign(`/rides/${id as string}/bookings/create`)
-                          }
+                          window.location.assign(`/rides/${id as string}/bookings/create`)
+                        }
                       >
                         <MdAddBox
                           className="h-[2rem] w-[2rem] p-1 mr-1 "
                         />
                         <span>Réserver</span>
                       </div>
-                    ): (
+                    ) : (
                       <>
                         <MdAddBox
                           className="h-[2rem] w-[2rem]  p-1 mr-1 cursor-not-allowed"
@@ -151,42 +151,42 @@ export default function Detail() {
                         <span className="text-blue-500">Aucune place disponible</span>
                       </>
                     )}
-                    </>
-                  ) : (
-                    <div 
-                      className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
-                      onClick={() =>
-                        window.location.assign(`/rides/${id as string}/bookings/${userBooking?.[0]?.id ?? ""}`)
-                      }
-                      >
-                      <span>Voir ma réservation</span>
-                      <GoMoveToEnd
-                        className="h-[2rem] w-[2rem] p-1 mr-1"
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-              <Map zoom={zoom} onMapLoad={async () => {
-                    setIsMapLoaded(true);
-                    if(isMapLoaded){
-                      // Create the directions service & renderer
-                      const directionsService = new google.maps.DirectionsService();
-                      const directionsRenderer = new google.maps.DirectionsRenderer(
-                        { map: mapRef.current }
-                      );
-                      // Display the route
-                      void displayRoute(
-                        directionsService,
-                        directionsRenderer,
-                        departureLatLng,
-                        destinationLatLng,
-                      );
+                  </>
+                ) : (
+                  <div
+                    className="flex flex-row items-center p-1 hover:text-gray-500 text-blue-500 hover:border-gray-500 border-blue-500 border-2 cursor-pointer"
+                    onClick={() =>
+                      window.location.assign(`/rides/${id as string}/bookings/${userBooking?.[0]?.id ?? ""}`)
                     }
-              }}/>
+                  >
+                    <span>Voir ma réservation</span>
+                    <GoMoveToEnd
+                      className="h-[2rem] w-[2rem] p-1 mr-1"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+            <Map zoom={zoom} onMapLoad={async () => {
+              setIsMapLoaded(true);
+              if (isMapLoaded) {
+                // Create the directions service & renderer
+                const directionsService = new google.maps.DirectionsService();
+                const directionsRenderer = new google.maps.DirectionsRenderer(
+                  { map: mapRef.current }
+                );
+                // Display the route
+                void displayRoute(
+                  directionsService,
+                  directionsRenderer,
+                  departureLatLng,
+                  destinationLatLng,
+                );
+              }
+            }} />
           </RideDetail>
         </>
-        )}
-      </LayoutMain>
-    );
+      )}
+    </LayoutMain>
+  );
 }

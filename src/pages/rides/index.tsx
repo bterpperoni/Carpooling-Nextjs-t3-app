@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use client'
 import LayoutMain from "$/lib/components/layout/LayoutMain";
-import Map from "$/lib/components/map/Map";
+import Map from "$/lib/components/Map";
 import Slider from "$/lib/components/button/Slider";
 import { useEffect, useState, useTransition } from "react";
 import { useSession } from "next-auth/react";
