@@ -141,9 +141,9 @@ export default function User() {
                 {!user.address &&
                   <button
                     className="ds-btn ds-btn-warning mb-5"
-                    onClick={() => setIsEditing(true)}
+                    onClick={() => alert("Il est nécessaire de compléter le profil pour accéder à la liste des trajets")}
                   >
-                    Veuillez compléter votre profil pour accéder à la liste des trajets
+                    {sessionData.user.name === user.name ? "Compléter votre profil" : "Profil de l'utilisateur incomplet"}
                   </button>
                 }
                 <img
