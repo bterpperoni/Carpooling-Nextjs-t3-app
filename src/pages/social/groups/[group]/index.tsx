@@ -60,7 +60,7 @@ export default function Group() {
   };
 
   // Render
-  if (group){
+  if (group) {
     return (
       <>
         <LayoutMain>
@@ -379,7 +379,7 @@ export default function Group() {
         </LayoutMain>
       </>
     );
-  }else if(!sessionData){
+  } else if (!sessionData) {
     return (
       <>
         <LayoutMain>
@@ -403,9 +403,9 @@ export default function Group() {
         </LayoutMain>
       </>
     );
-  }else return (
+  } else return (
     <LayoutMain>
       <LoaderSpinner></LoaderSpinner>
     </LayoutMain>
-  ) 
+  )
 }

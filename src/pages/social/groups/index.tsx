@@ -4,12 +4,13 @@
 import Button from "$/lib/components/button/Button";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
 import { api } from "$/utils/api";
-import { getCampusAbbrWithFullName  } from "$/utils/data/school";
+import { getCampusAbbrWithFullName } from "$/utils/data/school";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 import type { Group } from "@prisma/client";
 import GroupForm from "$/lib/components/form/GroupForm";
+import LoaderSPinner from '../../../lib/components/error/LoaderSpinner';
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display all groups and search for a specific group --------------------------------------
@@ -35,13 +36,13 @@ export default function Groups() {
 
     // Get router
     const router = useRouter();
-    
+
     // ------------------------------- Handlers ------------------------------------------------------
 
     // Join group
-    function joinGroup(gr: Group){
-        if(sessionData){
-            if(gr.visibility){
+    function joinGroup(gr: Group) {
+        if (sessionData) {
+            if (gr.visibility) {
                 const groupMember = {
                     userName: sessionData.user.name,
                     groupId: gr.id,
@@ -52,7 +53,7 @@ export default function Groups() {
                     alert("Groupe rejoind avec succès !")
                     router.reload();
                 }, 1000)
-            }else{
+            } else {
                 const groupMember = {
                     userName: sessionData.user.name,
                     groupId: gr.id,
@@ -69,29 +70,29 @@ export default function Groups() {
     // ------------------------------- Render ------------------------------------------------------
     if (sessionData) {
         return (
-            <LayoutMain>        
+            <LayoutMain>
                 <div className='flex flex-col items-center'>
-                    <div className='border-0 m-4'>   
+                    <div className='border-0 m-4'>
                         <div className='md:text-2xl text-xl mx-12 bg-[var(--purple-g3)] text-center 
-                                        rounded-[5%] p-4 text-fuchsia-700 border-fuchsia-700 border-y-2'>                    
+                                        rounded-[5%] p-4 text-fuchsia-700 border-fuchsia-700 border-y-2'>
                             <p>Trouver un groupe</p>
                         </div>
                     </div>
                     <div className="mb-4 flex flex-row justify-between w-[90%]">
-                        <Button 
-                                onClick={() => setIsCreating(true)}
-                                className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                        <Button
+                            onClick={() => setIsCreating(true)}
+                            className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-md">
-                                Créer un groupe
+                            Créer un groupe
                         </Button>
-                        <Button 
-                                onClick={() => router.push(`/social/${sessionData.user.name}`)}
-                                className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
+                        <Button
+                            onClick={() => router.push(`/social/${sessionData.user.name}`)}
+                            className="bg-[var(--purple-g3)] hover:bg-[var(--pink-g1)] border-[var(--pink-g1)] 
                                            border-2 text-white px-3 py-2 rounded-md">
-                                Mes groupes
+                            Mes groupes
                         </Button>
                     </div>
-                    
+
                     <div className="bg-[var(--purple-g3)] w-[85vw] h-[80vh] rounded-[2%]">
                         <div className="">
                             <div className="border-y-2 mb-4">
@@ -105,7 +106,7 @@ export default function Groups() {
                                 </div>
                             </div>
                             <div className="border-2 border-indigo-500">
-                            {/* ---------------------------------- Group Card ----------------------------------------- */}
+                                {/* ---------------------------------- Group Card ----------------------------------------- */}
                                 {groupsData?.map((group) => (
                                     <div key={group.id} className=" border-y-2 
                                                                     text-[var(--pink-g1)]
@@ -115,7 +116,7 @@ export default function Groups() {
                                             <div className="flex flex-col w-[50%]">
                                                 <div className="mb-4">
                                                     <label htmlFor="groupName" className="mr-2 font-bold text-[18px] text-left">
-                                                        Nom du groupe 
+                                                        Nom du groupe
                                                     </label>
                                                     <div id="groupName" className="text-white">{group.name}</div>
                                                 </div>
@@ -125,7 +126,7 @@ export default function Groups() {
                                                     </label>
                                                     {!group.visibility ? (
                                                         <div className="text-white">Sur invitation</div>
-                                                    ) : (  
+                                                    ) : (
                                                         <div className="text-white">Public</div>
                                                     )}
                                                 </div>
@@ -142,7 +143,7 @@ export default function Groups() {
                                                         <div className="flex flex-col">
                                                             {userGroups.find((userGroup) => userGroup.groupId === group.id && userGroup.validated
                                                             ) ? (
-                                                                <Button 
+                                                                <Button
                                                                     onClick={() => router.push(`/social/groups/${group.id}`)}
                                                                     className=" bg-[var(--purple-g3)] 
                                                                             hover:bg-white 
@@ -152,10 +153,10 @@ export default function Groups() {
                                                                             text-white 
                                                                             px-3 py-2 
                                                                             rounded-md">
-                                                                Voir le groupe
+                                                                    Voir le groupe
                                                                 </Button>
                                                             ) : (
-                                                             <p className=" text-white
+                                                                <p className=" text-white
                                                                             px-3 py-2
                                                                             rounded-md
                                                                             border-2
@@ -163,15 +164,15 @@ export default function Groups() {
                                                                             bg-[var(--purple-g3)]
                                                                             text-center
                                                                             cursor-not-allowed">
-                                                                Demande en attente..
-                                                            </p>   
+                                                                    Demande en attente..
+                                                                </p>
                                                             )}
                                                         </div>
                                                     ) : (
                                                         <div className="flex flex-col">
-                                                                <Button 
-                                                                    onClick={() => joinGroup(group)}
-                                                                    className=" bg-[var(--purple-g3)] 
+                                                            <Button
+                                                                onClick={() => joinGroup(group)}
+                                                                className=" bg-[var(--purple-g3)] 
                                                                                 hover:bg-white 
                                                                                 hover:text-[var(--pink-g1)] 
                                                                                 border-[var(--pink-g1)] 
@@ -183,28 +184,28 @@ export default function Groups() {
                                                             </Button>
                                                         </div>
                                                     )}
-                                                </div>    
+                                                </div>
                                             </div>
-                                        </div>   
+                                        </div>
                                     </div>
                                 ))}
-                            {/* ---------------------------------- /Group Card ----------------------------------------- */}
+                                {/* ---------------------------------- /Group Card ----------------------------------------- */}
                             </div>
                         </div>
                     </div>
                 </div>
                 {/* --------------------------------------- Form to create à new group ------------------------------------------- */}
                 {isCreating && (
-                    <GroupForm cancelButtonHandler={() => {setIsCreating(false)}} />
+                    <GroupForm cancelButtonHandler={() => { setIsCreating(false) }} />
                 )}
             </LayoutMain>
         );
-    }
-    return (   
-        <LayoutMain>
-                    <h1>Not Connected, Please Sign in</h1>
-                    <Button 
-                        className=" m-4 
+    } else if (!sessionData) {
+        return (
+            <LayoutMain>
+                <h1>Not Connected, Please Sign in</h1>
+                <Button
+                    className=" m-4 
                                     rounded-full 
                                     bg-white/10 
                                     px-10 
@@ -213,8 +214,15 @@ export default function Groups() {
                                     text-white 
                                     no-underline 
                                     transition 
-                                    hover:bg-white/20" 
-                        onClick={() => void signIn()}>Sign in</Button>
+                                    hover:bg-white/20"
+                    onClick={() => void signIn()}>Sign in</Button>
+            </LayoutMain>
+        );
+    }
+    return (
+        <LayoutMain>
+            <LoaderSPinner></LoaderSPinner>
         </LayoutMain>
     );
+
 }

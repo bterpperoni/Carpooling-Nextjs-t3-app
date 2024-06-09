@@ -49,7 +49,7 @@ export default function UsersList() {
                                 <div className="flex flex-row items-center">
                                     <Button
                                         className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md m-2"
-                                        onClick={() => window.location.assign(`/users/${user.name}/profile`)}>
+                                        onClick={() => window.location.assign(`/users/${user.name}`)}>
                                         Profile
                                     </Button>
                                     <Button
