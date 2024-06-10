@@ -398,7 +398,6 @@ export default function currentRide() {
                       price: "0",
                     };
                     sortedBookings.push(addLeg);
-                    console.log("Sorted bookings: ", sortedBookings);
                   });
                 }
               }
