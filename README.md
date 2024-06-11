@@ -7,3 +7,7 @@ This project use :
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
+
+- More details about T3 Stack at https://www.init.tips/
+
+Test project deployed on Netlify : https://carheh.netlify.app/
