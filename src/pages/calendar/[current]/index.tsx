@@ -310,7 +310,7 @@ export default function currentRide() {
               </div>
             </div>
           ))}
-          {(completedBookings?.length ?? 1) > sortedBookings.length && !isPassengerSession ? (
+          {(completedBookings?.length ?? 1) > (checkedBookings?.length ?? 0) && !isPassengerSession && (
             <div className="flex flex-col items-center my-2 justify-center">
               <div
                 className="flex w-max justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
@@ -327,10 +327,9 @@ export default function currentRide() {
                 <div className="my-auto mb-2 text-left">
                   Marquer comme terminé
                 </div>
-                {isPending && <Loader />}
               </div>
             </div>
-          ) : (null)}
+          )}
         </div>
 
         {/* 
@@ -353,7 +352,7 @@ export default function currentRide() {
                     time={booking.date.departureDateTime}
                     isDestination={false}
                   />
-                ))}
+                )) ?? null}
                 <CalendarCardDetail
                   address={stb?.[stb.length - 1]?.to ?? currentRide?.destination}
                   time={stb?.[stb.length - 1]?.date.arrivalDateTime ?? undefined}

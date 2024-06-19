@@ -5,7 +5,6 @@ import LayoutMain from '../lib/components/layout/LayoutMain';
 import { signIn, useSession } from "next-auth/react";
 import Button from "$/lib/components/button/Button";
 import dayjs from 'dayjs';
-import Image from 'next/image';
 export default function Home() {
 
   // Session recovery

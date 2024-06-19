@@ -4,7 +4,7 @@ import {
   createTRPCRouter,
   protectedProcedure,
   // publicProcedure,
-} from "$/server/api/trpc";
+} from "../trpc";
 
 
 // API definition for users
