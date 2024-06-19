@@ -310,7 +310,7 @@ export default function currentRide() {
               </div>
             </div>
           ))}
-          {(completedBookings?.length ?? 1) > (checkedBookings?.length ?? 0) && !isPassengerSession && (
+          {(completedBookings?.length ?? 1) > (checkedBookings?.length ?? 0) && (isPassengerSession === false) && (
             <div className="flex flex-col items-center my-2 justify-center">
               <div
                 className="flex w-max justify-end hover:transform hover:bg-green-700 hover:border-green-700 hover:text-white cursor-pointer
