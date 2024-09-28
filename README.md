@@ -8,4 +8,7 @@ This project use :
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
 
-  **DEPLOYED ON NETLIFY AT : https://carheh.netlify.app/**
+
+- More details about T3 Stack at https://www.init.tips/
+
+Test project deployed on Netlify : https://carheh.netlify.app/

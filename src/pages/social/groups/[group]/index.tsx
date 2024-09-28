@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
 import { api } from "$/utils/api";
@@ -7,6 +8,7 @@ import { useState } from "react";
 import GroupForm from "$/lib/components/form/GroupForm";
 import { getCampusAbbrWithFullName } from "$/utils/data/school";
 import Infos from "$/lib/components/button/Infos";
+import LoaderSpinner from "$/lib/components/error/LoaderSpinner";
 
 /* ------------------------------------------------------------------------------------------------------------------------
 ------------------------- Page to display a specifig group ----------------------------------------------------------------  
@@ -58,7 +60,7 @@ export default function Group() {
   };
 
   // Render
-  if (sessionData)
+  if (group) {
     return (
       <>
         <LayoutMain>
@@ -116,7 +118,7 @@ export default function Group() {
                         <div className="m-2">
                           <label
                             htmlFor="rideName"
-                            className="mr-2 border-b-[1px] border-[var(--purple-g3)] text-left text-[18px] font-bold"
+                            className="mr-2 border-b-[1px] border-[var(--purple-g3)] text-left text-[16px] font-bold"
                           >
                             Départ
                           </label>
@@ -125,20 +127,15 @@ export default function Group() {
                           </div>
                         </div>
                         <div className="m-2">
-                          <label
-                            htmlFor="rideCampus"
-                            className="my-auto border-b-[1px] border-b-[1px] border-[var(--purple-g3)] border-[var(--purple-g3)] text-left text-base font-bold"
-                          >
-                            Conducteur
-                          </label>
-                          <div id="rideCampus">{ride.driverId}</div>
+                          <img src={ride.driver.image ?? ""} className="h-10 w-10 rounded-full" alt="Driver Pic" />
+                          <div id="rideCampus">{ride.driver.name}</div>
                         </div>
                       </div>
                       <div className="flex w-[50%] flex-col">
                         <div className="m-2">
                           <label
                             htmlFor="rideCampus"
-                            className="mr-2 border-b-[1px] border-[var(--purple-g3)] text-left text-[18px] font-bold"
+                            className="mr-2 border-b-[1px] border-[var(--purple-g3)] text-left text-[16px] font-bold"
                           >
                             Max. passagers
                           </label>
@@ -157,7 +154,7 @@ export default function Group() {
                             hover:bg-white 
                             hover:text-[var(--pink-g1)]"
                         >
-                          Voir le trajet
+                          Détails
                         </Button>
                       </div>
                     </div>
@@ -194,7 +191,7 @@ export default function Group() {
                   >
                     Retour
                   </Button>
-                  {group?.createdBy === sessionData.user.name ? (
+                  {group?.createdBy === sessionData?.user.name ? (
                     <Button
                       onClick={() => setIsEditing(true)}
                       className="
@@ -225,7 +222,7 @@ export default function Group() {
                           >
                             Administrateur
                           </label>
-                          <div id="memberName">{group?.createdBy}</div>
+                          <div id="memberName">{group.createdBy}</div>
                         </div>
                         <div className="">
                           <label
@@ -240,7 +237,7 @@ export default function Group() {
                           >
                             Nom du groupe
                           </label>
-                          <div id="groupName">{group?.name}</div>
+                          <div id="groupName">{group.name}</div>
                         </div>
                       </div>
                       <div className="grid grid-flow-col grid-cols-2">
@@ -281,7 +278,7 @@ export default function Group() {
                             Destination
                           </label>
                           <div id="groupMemberCount">
-                            {getCampusAbbrWithFullName(group?.campus ?? "")}
+                            {getCampusAbbrWithFullName(group.campus ?? "")}
                           </div>
                         </div>
                       </div>
@@ -320,7 +317,7 @@ export default function Group() {
                             >
                               Profil
                             </Button>
-                            {member.userName === sessionData.user.name ? (
+                            {member.userName === sessionData?.user.name ? (
                               <Button
                                 onClick={() => handleDelete(member.id)}
                                 className=" 
@@ -341,7 +338,7 @@ export default function Group() {
                               </Button>
                             ) : (
                               <>
-                                {group?.createdBy === sessionData.user.name ? (
+                                {group.createdBy === sessionData?.user.name ? (
                                   <Button
                                     onClick={() => handleExclude(member.id)}
                                     className=" 
@@ -382,7 +379,7 @@ export default function Group() {
         </LayoutMain>
       </>
     );
-  else
+  } else if (!sessionData) {
     return (
       <>
         <LayoutMain>
@@ -406,4 +403,9 @@ export default function Group() {
         </LayoutMain>
       </>
     );
+  } else return (
+    <LayoutMain>
+      <LoaderSpinner></LoaderSpinner>
+    </LayoutMain>
+  )
 }

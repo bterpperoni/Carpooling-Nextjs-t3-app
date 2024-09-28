@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef } from "react";
-import { ApiKeyType, useApiKey } from "$/context/apiContext";
+import { useApiKey } from "$/context/apiContext";
+import type { ApiKeyType } from "$/context/apiContext";
 import Error from "next/error";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useMap } from "$/context/mapContext";

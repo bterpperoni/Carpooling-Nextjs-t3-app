@@ -16,30 +16,30 @@ export default function Calendar() {
   const { data: sessionData } = useSession();
 
   const [checkIfModalDriverIsOpen, setCheckIfModalDriverIsOpen] =
-  useState<boolean>(false);
-const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
-  useState<boolean>(false);    
+    useState<boolean>(false);
+  const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
+    useState<boolean>(false);
 
   const { data: updatedRideStatus, mutate: updateRideStatus } = api.ride.updateStatus.useMutation();
 
-    // State for managing selected ride and modal visibility
-    const [selectedRide, setSelectedRide] = useState<Ride & {
-      driver: {
-        name: string | null;
-        email: string | null;
-        image: string | null;
-      } | null;
-    } | null>(null);
+  // State for managing selected ride and modal visibility
+  const [selectedRide, setSelectedRide] = useState<Ride & {
+    driver: {
+      name: string | null;
+      email: string | null;
+      image: string | null;
+    } | null;
+  } | null>(null);
 
-    // Fetch the passengers details
-    const { data: passengersDetail, refetch: refetchPassengersDetails } = api.booking.bookingByRideId.useQuery(
-      { rideId: selectedRide?.id ?? 0},
-      { enabled: sessionData?.user !== undefined }
-    );
+  // Fetch the passengers details
+  const { data: passengersDetail, refetch: refetchPassengersDetails } = api.booking.bookingByRideId.useQuery(
+    { rideId: selectedRide?.id ?? 0 },
+    { enabled: sessionData?.user !== undefined }
+  );
 
 
 
-///
+  ///
   // Fetch all rides attached to the user where is passenger
   const { data: rideListAsPassenger } =
     api.ride.rideListAsPassengerIncDriverData.useQuery(
@@ -50,7 +50,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
   const { data: rideListAsDriver } = api.ride.rideListAsDriver.useQuery(
     undefined,
     { enabled: sessionData?.user !== undefined },
-  );  
+  );
 
   // State for managing grouped rides as driver
   const [groupedRidesAsDriver, setGroupedRidesAsDriver] = useState<GroupedRides>();
@@ -59,7 +59,7 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
 
   // Boolean to check when updating the ride status
   // const [isRideStatusUpdated, setIsRideStatusUpdated] = useState<boolean>(false);
-  
+
 
   ///
 
@@ -73,78 +73,78 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
   });
 
   // Type definition for grouping rides by date
-  type GroupedRides = Record<string, Ride[] & TypeRideAsPassenger[]> ;
+  type GroupedRides = Record<string, Ride[] & TypeRideAsPassenger[]>;
 
   // Function to group rides by their departure date
   const groupRidesByDate = (rideList: Ride[]): GroupedRides => {
-      return rideList.reduce((acc: GroupedRides, ride: Ride) => {
-        const rideDate: string = dayjs(ride.departureDateTime).format(
-          "YYYY-MM-DD",
-        );
-        // Initialize the key for the date if it does not exist
-        if (!(acc && acc[rideDate])) {
-          acc = acc ?? {};
-          acc[rideDate] = [];
-        }
-        // Add the ride to the date key
-        if(acc !== undefined){
-          acc[rideDate]?.push(ride) ?? [];
-        }
-        return acc;
-      }, {});
-    };
+    return rideList.reduce((acc: GroupedRides, ride: Ride) => {
+      const rideDate: string = dayjs(ride.departureDateTime).format(
+        "YYYY-MM-DD",
+      );
+      // Initialize the key for the date if it does not exist
+      if (!(acc && acc[rideDate])) {
+        acc = acc ?? {};
+        acc[rideDate] = [];
+      }
+      // Add the ride to the date key
+      if (acc !== undefined) {
+        acc[rideDate]?.push(ride) ?? [];
+      }
+      return acc;
+    }, {});
+  };
 
 
   // Fetch the notification creation function
   const { mutate: createNotification } = api.notification.create.useMutation();
 
-    async function notifyPassenger(ride: 
-        Ride & {
-        driver: { 
-          name: string; 
-          email: string | null; 
-          image: string | null 
-        } | null;
-      }) {
-        // set the ride informations
-        const rideInformations: RideInformationsProps = {
-          rideId: ride.id,
-          driverId: ride.driver?.name ?? "",
-          destination: ride.destination
-        };
+  async function notifyPassenger(ride:
+    Ride & {
+      driver: {
+        name: string;
+        email: string | null;
+        image: string | null
+      } | null;
+    }) {
+    // set the ride informations
+    const rideInformations: RideInformationsProps = {
+      rideId: ride.id,
+      driverId: ride.driver?.name ?? "",
+      destination: ride.destination
+    };
 
-        // Set passengers name List
-        const listPassengers: {passengerId: string, passengerName: string}[] = [];
-        // Destruct passengers list 
-        passengersDetail?.forEach((passenger) => {
-            // Add the passenger name to the list
-            listPassengers.push({passengerId: passenger.userId, passengerName: passenger.userPassenger.name});
-          });
+    // Set passengers name List
+    const listPassengers: { passengerId: string, passengerName: string }[] = [];
+    // Destruct passengers list 
+    passengersDetail?.forEach((passenger) => {
+      // Add the passenger name to the list
+      listPassengers.push({ passengerId: passenger.userId, passengerName: passenger.userPassenger.name });
+    });
 
-        // Notify the passengers that the ride has started
-        await notifyStartRide(rideInformations, listPassengers.map(({passengerId}) => passengerId)).then(() => {
-            console.log("Les passagers ont été notifiés");
-            // Save the ride start notification in the database for each passenger
-            void listPassengers.map(async ({passengerId}) => {
-              createNotification({
-                  toUserId: passengerId,
-                  fromUserId: sessionData?.user.id ?? "",
-                  message: `Le trajet avec ${sessionData?.user.name} à destination de ${getCampusNameWithAddress(rideInformations.destination) !== null ? getCampusNameWithAddress(rideInformations.destination): rideInformations.destination} a commencé ! 🚗🎉`,
-                  type: NotificationType.RIDE,
-                  read: false
-              });
-            });
-            // Redirect to the ride page after 2 seconds
-            setTimeout(() => {
-              location.assign(`/calendar/${ride.id}`);
-            }, 2000);
-        }).catch((error) => {
-            console.error("Erreur lors de la notification des passagers", error);
+    // Notify the passengers that the ride has started
+    await notifyStartRide(rideInformations, listPassengers.map(({ passengerId }) => passengerId)).then(() => {
+      console.log("Les passagers ont été notifiés");
+      // Save the ride start notification in the database for each passenger
+      void listPassengers.map(async ({ passengerId }) => {
+        createNotification({
+          toUserId: passengerId,
+          fromUserId: sessionData?.user.id ?? "",
+          message: `Le trajet avec ${sessionData?.user.name} à destination de ${getCampusNameWithAddress(rideInformations.destination) !== null ? getCampusNameWithAddress(rideInformations.destination) : rideInformations.destination} a commencé ! 🚗🎉`,
+          type: NotificationType.RIDE,
+          read: false
         });
+      });
+      // Redirect to the ride page after 2 seconds
+      setTimeout(() => {
+        location.assign(`/calendar/${ride.id}`);
+      }, 2000);
+    }).catch((error) => {
+      console.error("Erreur lors de la notification des passagers", error);
+    });
 
-    }
+  }
 
-    ///
+  ///
 
   useEffect(() => {
     setGroupedRidesAsDriver(groupRidesByDate(rideListAsDriver ?? []));
@@ -152,21 +152,22 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
   }, [rideListAsDriver, rideListAsPassenger]);
 
   useEffect(() => {
-    if(selectedRide !== undefined){
+    if (selectedRide !== undefined) {
       void refetchPassengersDetails();
     }
-  }, [ selectedRide, passengersDetail ]);
+  }, [selectedRide, passengersDetail]);
 
   useEffect(() => {
-    if(updatedRideStatus && selectedRide !== null){
+    if (updatedRideStatus && selectedRide !== null) {
       // Notify the passengers that the ride has started
-        void notifyPassenger(selectedRide as Ride & { driver: { name: string; email: string | null; image: string | null };
-        });
+      void notifyPassenger(selectedRide as Ride & {
+        driver: { name: string; email: string | null; image: string | null };
+      });
     }
   }, [updatedRideStatus, selectedRide]);
 
 
-///
+  ///
 
   return (
     <LayoutMain>
@@ -176,13 +177,13 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
         </h2>
       </div>
 
-{/*
+      {/*
 
 ///
        ---------------------------------------------- as Driver ----------------------------------------------- 
 
 ///
-*/}     
+*/}
       <div className="m-1 rounded-lg bg-white p-2 shadow-lg overflow-hidden">
         <h3 className="mb-4 text-2xl font-semibold text-[var(--pink-g1)]">
           Conducteur
@@ -204,14 +205,14 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                 {groupedRidesAsDriver?.[dayjs(date).format("YYYY-MM-DD")] !== undefined ? (
                   <>
                     {groupedRidesAsDriver?.[dayjs(date).format("YYYY-MM-DD")]?.map((ride) => {
-                      if(ride.status === RideStatus.COMPLETED) return (
+                      if (ride.status === RideStatus.COMPLETED) return (
                         <p key={ride.id} className={`${isToday ? "text-white" : "text-gray-600"}`}>Aucun trajet pour cette date</p>
                       );
                       return (
                         <div key={ride.id}>
                           {ride && (
                             <div
-                            className={`
+                              className={`
                               ${isToday ? "text-black" : "text-gray-600"} 
                               box-border
                               cursor-pointer 
@@ -224,91 +225,106 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                               p-2 
                               hover:bg-blue-200
                             `}
-                            onClick={() => {
-                              if (ride) {
-                                const rideSelected = {
-                                  ...ride,
-                                  driver: {
-                                    name: sessionData?.user.name ?? null,
-                                    email: sessionData?.user.email ?? null,
-                                    image: sessionData?.user.image ?? null,
-                                  },
-                                };
-                                setSelectedRide(rideSelected);
-                                setCheckIfModalDriverIsOpen(true);
-                              }
-                            }}
-                          >
-                            <div>
-
-{/* 
-                              ///
-*/}
-                              <CalendarCard 
-                                ride={ride} 
-                                onClick={() => console.log("No problem")}
-                                isDriver={true}
-                              />
-{/* 
-                              ///
-*/}
-                            </div>
-                            {checkIfModalDriverIsOpen && (
-                              <Modal
-                                ride={
-                                  selectedRide as Ride & {
+                              onClick={() => {
+                                if (ride) {
+                                  const rideSelected = {
+                                    ...ride,
                                     driver: {
-                                      name: string;
-                                      email: string | null;
-                                      image: string | null;
-                                    };
+                                      name: sessionData?.user.name ?? null,
+                                      email: sessionData?.user.email ?? null,
+                                      image: sessionData?.user.image ?? null,
+                                    },
+                                  };
+                                  setSelectedRide(rideSelected);
+                                  setCheckIfModalDriverIsOpen(true);
+                                }
+                              }}
+                            >
+                              <div>
+
+                                {/* 
+                              ///
+*/}
+                                <CalendarCard
+                                  ride={ride}
+                                  onClick={() => console.log("No problem")}
+                                  isDriver={true}
+                                />
+                                {/* 
+                              ///
+*/}
+                              </div>
+                              {checkIfModalDriverIsOpen && (
+                                <Modal
+                                  ride={
+                                    selectedRide as Ride & {
+                                      driver: {
+                                        name: string;
+                                        email: string | null;
+                                        image: string | null;
+                                      };
+                                    }
                                   }
-                                }
-                                isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
-                                childrenToday={
+                                  isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
+                                  childrenToday={
+                                    (selectedRide?.status !== RideStatus.IN_PROGRESS_FORTH) ? (
+                                      <Button
+                                        className="mt-4 w-full rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700 mr-3"
+                                        onClick={async () => {
+                                          if (selectedRide) {
+                                            // Update the ride status to IN_PROGRESS 
+                                            updateRideStatus({ id: selectedRide.id, status: RideStatus.IN_PROGRESS_FORTH });
+                                          }
+                                        }}
+                                      >
+                                        Démarrer
+                                      </Button>
+                                    ) : (
+                                      <Button
+                                        className="mt-4 w-full rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700 mr-3"
+                                        onClick={async () => {
+                                          if (selectedRide) {
+                                            location.assign(`/calendar/${selectedRide.id}/`);
+                                          }
+                                        }}
+                                      >
+                                        Voir le trajet en cours
+                                      </Button>
+                                    )
+
+                                  }
+                                  isOpen={checkIfModalDriverIsOpen}
+                                  onClose={() => {
+                                    setCheckIfModalDriverIsOpen(false);
+                                    setCheckIfModalPassengerIsOpen(false);
+                                    setSelectedRide(null);
+                                  }}
+                                >
                                   <Button
-                                    className="mt-4 w-full rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700 mr-3"
-                                    onClick={async () => {
-                                      if (selectedRide) {
-                                      // Update the ride status to IN_PROGRESS 
-                                        updateRideStatus({id: selectedRide.id, status: RideStatus.IN_PROGRESS_FORTH});
-                                      }
-                                    }}
-                                  >
-                                    Démarrer
-                                  </Button>
-                                }
-                                isOpen={checkIfModalDriverIsOpen}
-                                onClose={() => {
-                                  setCheckIfModalDriverIsOpen(false);
-                                  setCheckIfModalPassengerIsOpen(false);
-                                  setSelectedRide(null);
-                                }}
-                              >
-                                <Button
                                     className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700 w-full"
                                     onClick={() => location.assign(`/rides/${selectedRide?.id}`)}
                                   >
                                     Détails
-                                </Button>    
-                                
-                              </Modal>
-                            )}
-                          </div>
+                                  </Button>
+
+                                </Modal>
+                              )}
+                            </div>
 
                           )}
                         </div>
-                      ); 
-                  })}
+                      );
+                    })}
                   </>
-                  ):(
-                    <p className={`${isToday ? "text-white" : "text-gray-600"}`}>Aucun trajet pour cette date</p>
-                  )}
+                ) : (
+                  <p className={`${isToday ? "text-white" : "text-gray-600"}`}>Aucun trajet pour cette date</p>
+                )}
               </div>
-            )})};
+            )
+          })};
         </div>
       </div>
-{/*
+      {/*
 
 ///
        ---------------------------------------------- as Booking----------------------------------------------- 
@@ -334,15 +350,15 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                   <>
                     {/* Check if the ride is available for the date */}
                     {groupRidesByDate(rideListAsPassenger ?? [])?.[dayjs(date).format("YYYY-MM-DD")]?.map(
-                    (
-                      ride: Ride & TypeRideAsPassenger | null,
-                    ) => {
-                      if(ride?.status === RideStatus.COMPLETED) return (
-                        <p className={`${isToday ? "text-white" : "text-gray-600"}`}>Aucun trajet pour cette date</p>
-                      );
-                      return <div
-                        key={ride?.id}
-                        className={`
+                      (
+                        ride: Ride & TypeRideAsPassenger | null,
+                      ) => {
+                        if (ride?.status === RideStatus.COMPLETED) return (
+                          <p className={`${isToday ? "text-white" : "text-gray-600"}`}>Aucun trajet pour cette date</p>
+                        );
+                        return <div
+                          key={ride?.id}
+                          className={`
                           ${isToday ? "text-black" : "text-gray-600"} 
                           box-content 
                           cursor-pointer 
@@ -354,80 +370,81 @@ const [checkIfModalPassengerIsOpen, setCheckIfModalPassengerIsOpen] =
                           p-2 
                           hover:bg-green-400 
                         `}
-                        onClick={() => {
-                          if (ride && ride.driver !== null) {
-                            const rideSelected = {
-                              ...ride,
-                              driver: {
-                                name: ride.driver.name,
-                                email: ride.driver.email ?? null,
-                                image: ride.driver.image ?? null,
-                              },
-                            };
-                            setSelectedRide(rideSelected);
-                            setCheckIfModalPassengerIsOpen(true);
-                          }
-                        }}
-                      >
-                        <div>
-{/* 
+                          onClick={() => {
+                            if (ride && ride.driver !== null) {
+                              const rideSelected = {
+                                ...ride,
+                                driver: {
+                                  name: ride.driver.name,
+                                  email: ride.driver.email ?? null,
+                                  image: ride.driver.image ?? null,
+                                },
+                              };
+                              setSelectedRide(rideSelected);
+                              setCheckIfModalPassengerIsOpen(true);
+                            }
+                          }}
+                        >
+                          <div>
+                            {/* 
                               ///
 */}
-                              <CalendarCard 
-                                ride={ride} 
-                                onClick={function (): void { console.log("No problem") } }
-                                isDriver={false}
-                              />
-{/* 
+                            <CalendarCard
+                              ride={ride}
+                              onClick={function (): void { console.log("No problem") }}
+                              isDriver={false}
+                            />
+                            {/* 
                               ///
 */}                     </div>
-                        {checkIfModalPassengerIsOpen && (
-                          <Modal
-                            ride={
-                              selectedRide as Ride & {
-                                driver: {
-                                  name: string;
-                                  email: string | null;
-                                  image: string | null;
-                                };
+                          {checkIfModalPassengerIsOpen && (
+                            <Modal
+                              ride={
+                                selectedRide as Ride & {
+                                  driver: {
+                                    name: string;
+                                    email: string | null;
+                                    image: string | null;
+                                  };
+                                }
                               }
-                            }
-                            isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
-                            childrenToday={
-                              (selectedRide?.status === RideStatus.IN_PROGRESS_FORTH) && (
-                              <Button
-                                className="mt-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700 mr-3"
-                                onClick={async () => {
-                                  location.assign(`/calendar/${selectedRide?.id}/`);
-                                }}
-                              >
-                                Afficher le trajet en cours
-                              </Button>
-                            )}
-                            isOpen={checkIfModalPassengerIsOpen}
-                            onClose={() => {
-                              setCheckIfModalPassengerIsOpen(false);
-                              setCheckIfModalDriverIsOpen(false);
-                              setSelectedRide(null);
-                            }}
-                          >
-                            <Button
-                              className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
-                              onClick={() => location.assign(`/rides/${selectedRide?.id}`)}
+                              isToday={dayjs(selectedRide?.departureDateTime).isSame(dayjs(), 'day')}
+                              childrenToday={
+                                (selectedRide?.status === RideStatus.IN_PROGRESS_FORTH) && (
+                                  <Button
+                                    className="mt-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700 mr-3"
+                                    onClick={async () => {
+                                      location.assign(`/calendar/${selectedRide?.id}/`);
+                                    }}
+                                  >
+                                    Afficher le trajet en cours
+                                  </Button>
+                                )}
+                              isOpen={checkIfModalPassengerIsOpen}
+                              onClose={() => {
+                                setCheckIfModalPassengerIsOpen(false);
+                                setCheckIfModalDriverIsOpen(false);
+                                setSelectedRide(null);
+                              }}
                             >
-                              Voir le trajet
-                            </Button>
-                          </Modal>
-                        )}
-                      </div>
-                    },
+                              <Button
+                                className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
+                                onClick={() => location.assign(`/rides/${selectedRide?.id}`)}
+                              >
+                                Voir le trajet
+                              </Button>
+                            </Modal>
+                          )}
+                        </div>
+                      },
                     )}
                   </>
-                ):(
+                ) : (
                   <p className={`${isToday ? "text-white" : "text-gray-600"}`}>Aucun trajet pour cette date</p>
                 )}
               </div>
-          )})}
+            )
+          })}
         </div>
       </div>
     </LayoutMain>

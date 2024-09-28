@@ -6,7 +6,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import Button from "$/lib/components/button/Button";
 import LayoutMain from "$/lib/components/layout/LayoutMain";
-import Map from "$/lib/components/map/Map";
+import Map from "$/lib/components/Map";
 import { api } from "$/utils/api";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/dist/client/router";
@@ -58,17 +58,18 @@ export default function BookingDetails() {
 
   // Used to define if the map is loaded
   const [isMapLoaded, setIsMapLoaded] = useState(false);
-  
+
   useEffect(() => {
     // Display route on map when booking & ride are fetched
     if (fetchedBooking !== undefined && fetchedRide !== undefined) {
       if ((departureLatLng && destinationLatLng) !== undefined) {
         console.log("Booking verified :", fetchedBooking);
         console.log("Ride verified :", fetchedRide);
-    }}
+      }
+    }
   }, [fetchedBooking, fetchedRide]);
 
-  
+
   if (sessionData) {
     return (
       <LayoutMain>
@@ -165,8 +166,8 @@ export default function BookingDetails() {
           </div>
           <Map zoom={zoom} onMapLoad={async () => {
             setIsMapLoaded(true);
-            if(isMapLoaded){
-              if(fetchedBooking !== undefined && fetchedRide !== undefined){
+            if (isMapLoaded) {
+              if (fetchedBooking !== undefined && fetchedRide !== undefined) {
                 const directionsService = new google.maps.DirectionsService();
                 const directionsRenderer = new google.maps.DirectionsRenderer(
                   { map: mapRef.current }
